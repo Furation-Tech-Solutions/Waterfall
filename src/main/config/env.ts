@@ -6,7 +6,7 @@ export default {
   dbOptions: {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    dbName: "ADMINPANEL",
+    dbName: "waterfall",
   },
   accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "XXXXXXXXXXXXXXXXXXXX",
   secretAccessKey:
