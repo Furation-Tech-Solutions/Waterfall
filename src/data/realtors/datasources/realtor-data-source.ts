@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import ApiError from "@presentation/error-handling/api-error";
 export interface RealtorDataSource {
   create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
+  getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
 }
 
 export class RealtorDataSourceImpl implements RealtorDataSource {
@@ -21,6 +22,11 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     const createdRealtor = await realtorData.save();
 
     return createdRealtor.toObject();
+  }
+
+  async getAllRealtors(): Promise<any[]> {
+    const realtors = await Realtor.find();
+    return realtors.map((realtor) => realtor.toObject()); // Convert to plain JavaScript objects before returning
   }
 }
 

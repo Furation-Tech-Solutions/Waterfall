@@ -25,4 +25,14 @@ export class RealtorRepositoryImpl implements RealtorRepository {
       return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
     }
   }
+
+  async getRealtors(): Promise<Either<ErrorClass, RealtorEntity[]>> {
+    // return await this.dataSource.getAllRealtors();
+    try {
+      let i = await this.dataSource.getAllRealtors();
+      return Right<ErrorClass, RealtorEntity[]>(i);
+    } catch {
+      return Left<ErrorClass, RealtorEntity[]>(ApiError.badRequest());
+    }
+  }
 }
