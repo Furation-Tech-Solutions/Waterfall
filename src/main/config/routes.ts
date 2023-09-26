@@ -1,5 +1,6 @@
 
 import { clientTagCategoryRouter } from "@presentation/routes/client-tag-category-route";
+import { realtorRouter } from "@presentation/routes/realtor-routes";
 
 import { type Express, Router } from "express";
 
@@ -15,6 +16,7 @@ export default (app: Express): void => {
   });
 
   app.use("/api/v1/clients/tag/category", clientTagCategoryRouter);
+  app.use("/api/v1/realtor", realtorRouter);
 
   app.use(router);
 };
