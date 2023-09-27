@@ -37,20 +37,20 @@ export const clientTagCategoryRouter = Router();
 
 // Route handling for creating a new tag category
 clientTagCategoryRouter.post(
-    "/add",
+    "/",
     validateClientTagCategoryInputMiddleware(false),
     clientTagCategoryService.createClientTagCategory.bind(clientTagCategoryService)
 );
 
 // Route handling for deleting a tag category by ID
 clientTagCategoryRouter.delete(
-    "/:ClientTagCategoryId",
+    "/:id",
     clientTagCategoryService.deleteClientTagCategory.bind(clientTagCategoryService)
 );
 
 // Route handling for getting a tag category by ID
 clientTagCategoryRouter.get(
-    "/:ClientTagCategoryId",
+    "/:id",
     clientTagCategoryService.getClientTagCategoryById.bind(clientTagCategoryService)
 );
 
@@ -59,7 +59,7 @@ clientTagCategoryRouter.get("/", clientTagCategoryService.getAllClientTagCategor
 
 // Route handling for updating a tag category by ID
 clientTagCategoryRouter.put(
-    "/:ClientTagCategoryId",
+    "/:id",
     validateClientTagCategoryInputMiddleware(true),
     clientTagCategoryService.updateClientTagCategory.bind(clientTagCategoryService)
 );
