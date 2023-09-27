@@ -7,6 +7,7 @@ import {
 import { CreateRealtorUsecase } from "@domain/realtors/usecases/create-realtor";
 import { GetAllRealtorsUsecase } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorByIdUsecase } from "@domain/realtors/usecases/get-realtor-by-id";
+import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import ApiError from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
@@ -15,15 +16,18 @@ export class RealtorService {
   private readonly CreateRealtorUsecase: CreateRealtorUsecase;
   private readonly GetAllRealtorsUsecase: GetAllRealtorsUsecase;
   private readonly GetRealtorByIdUsecase: GetRealtorByIdUsecase;
+  private readonly UpdateRealtorUsecase: UpdateRealtorUsecase;
 
   constructor(
     CreateRealtorUsecase: CreateRealtorUsecase,
     GetAllRealtorsUsecase: GetAllRealtorsUsecase,
-    GetRealtorByIdUsecase: GetRealtorByIdUsecase
+    GetRealtorByIdUsecase: GetRealtorByIdUsecase,
+    UpdateRealtorUsecase: UpdateRealtorUsecase
   ) {
     this.CreateRealtorUsecase = CreateRealtorUsecase;
     this.GetAllRealtorsUsecase = GetAllRealtorsUsecase;
     this.GetRealtorByIdUsecase = GetRealtorByIdUsecase;
+    this.UpdateRealtorUsecase = UpdateRealtorUsecase;
   }
 
   async createRealtor(req: Request, res: Response): Promise<void> {
@@ -75,6 +79,42 @@ export class RealtorService {
         res.status(error.status).json({ error: error.message }),
         (result: RealtorEntity | null) =>{
           const responseData = RealtorMapper.toEntity(result, true);
+          return res.json(responseData)
+        }
+      )
+  }
+
+  async updateRealtor(req: Request, res: Response): Promise<void> {
+      const realtorId: string = req.params.realtorId;
+      const realtorData: RealtorModel = req.body;
+
+      // Get the existing realtor by ID
+      const existingRealtor: Either<ErrorClass, RealtorEntity | null> =
+        await this.GetRealtorByIdUsecase.execute(realtorId);
+
+      if (!existingRealtor) {
+        // If realtor is not found, send a not found message as a JSON response
+        ApiError.notFound();
+        return;
+      }
+
+      // Convert realtorData from RealtorModel to RealtorEntity using RealtorMapper
+      const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
+        realtorData,
+        true
+      );
+
+      // Call the UpdateRealtorUsecase to update the Realtor
+      const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
+        realtorId,
+        updatedRealtorEntity
+      );
+
+      updatedRealtor.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: RealtorEntity) =>{
+          const responseData = RealtorMapper.toModel(result);
           return res.json(responseData)
         }
       )

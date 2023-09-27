@@ -6,6 +6,7 @@ export interface RealtorDataSource {
   create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
   getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
+  update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
 }
 
 export class RealtorDataSourceImpl implements RealtorDataSource {
@@ -33,6 +34,13 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
   async read(id: string): Promise<any | null> {
     const realtor = await Realtor.findById(id);
     return realtor ? realtor.toObject() : null; // Convert to plain JavaScript object before returning
+  }
+
+  async update(id: string, realtor: RealtorModel): Promise<any> {
+    const updatedRealtor = await Realtor.findByIdAndUpdate(id, realtor, {
+      new: true,
+    }); // No need for conversion here
+    return updatedRealtor ? updatedRealtor.toObject() : null; // Convert to plain JavaScript object before returning
   }
 }
 

@@ -45,4 +45,14 @@ export class RealtorRepositoryImpl implements RealtorRepository {
       return Left<ErrorClass, RealtorEntity | null>(ApiError.badRequest());
     }
   }
+
+  async updateRealtor(id: string, data: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>> {
+    // return await this.dataSource.update(id, data);
+    try {
+      let i = await this.dataSource.update(id, data);
+      return Right<ErrorClass, RealtorEntity>(i);
+    } catch {
+      return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
+    }
+  }
 }
