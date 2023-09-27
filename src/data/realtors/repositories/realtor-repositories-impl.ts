@@ -55,4 +55,14 @@ export class RealtorRepositoryImpl implements RealtorRepository {
       return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
     }
   }
+
+  async deleteRealtor(id: string): Promise<Either<ErrorClass, void>> {
+    // await this.dataSource.delete(id);
+    try {
+      let i = await this.dataSource.delete(id);
+      return Right<ErrorClass, void>(i);
+    } catch {
+      return Left<ErrorClass, void>(ApiError.badRequest());
+    }
+  }
 }

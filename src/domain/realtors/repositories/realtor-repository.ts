@@ -6,4 +6,5 @@ export interface RealtorRepository {
   getRealtors(): Promise<Either<ErrorClass, RealtorEntity[]>>;
   getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity | null>>;
   updateRealtor(id: string, data: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>>;
+  deleteRealtor(id: string): Promise<Either<ErrorClass, void>>;
 }

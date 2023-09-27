@@ -9,6 +9,7 @@ import validateRealtorMiddleware from "@presentation/middlewares/realtors/valida
 import { GetAllRealtors } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtor } from "@domain/realtors/usecases/update-realtor";
+import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -22,6 +23,7 @@ const createRealtorUsecase = new CreateRealtor(realtorRepository);
 const getAllRealtorsUsecase = new GetAllRealtors(realtorRepository);
 const getRealtorByIdUsecase = new GetRealtorById(realtorRepository);
 const updateRealtorUsecase = new UpdateRealtor(realtorRepository);
+const deleteRealtorUsecase = new DeleteRealtor(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
@@ -29,6 +31,7 @@ const realtorService = new RealtorService(
   getAllRealtorsUsecase,
   getRealtorByIdUsecase,
   updateRealtorUsecase,
+  deleteRealtorUsecase
 );
 
 // Create an Express router
@@ -45,3 +48,6 @@ realtorRouter.get("/:realtorId", realtorService.getRealtorById.bind(realtorServi
 
 // Route handling for updating an realtor by ID
 realtorRouter.put("/:realtorId", realtorService.updateRealtor.bind(realtorService));
+
+// Route handling for deleting an realtor by ID
+realtorRouter.delete("/:realtorId", realtorService.deleteRealtor.bind(realtorService));

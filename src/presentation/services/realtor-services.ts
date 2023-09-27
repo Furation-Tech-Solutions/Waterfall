@@ -8,6 +8,7 @@ import { CreateRealtorUsecase } from "@domain/realtors/usecases/create-realtor";
 import { GetAllRealtorsUsecase } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorByIdUsecase } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
+import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import ApiError from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
@@ -17,17 +18,20 @@ export class RealtorService {
   private readonly GetAllRealtorsUsecase: GetAllRealtorsUsecase;
   private readonly GetRealtorByIdUsecase: GetRealtorByIdUsecase;
   private readonly UpdateRealtorUsecase: UpdateRealtorUsecase;
+  private readonly DeleteRealtorUsecase: DeleteRealtorUsecase;
 
   constructor(
     CreateRealtorUsecase: CreateRealtorUsecase,
     GetAllRealtorsUsecase: GetAllRealtorsUsecase,
     GetRealtorByIdUsecase: GetRealtorByIdUsecase,
-    UpdateRealtorUsecase: UpdateRealtorUsecase
+    UpdateRealtorUsecase: UpdateRealtorUsecase,
+    DeleteRealtorUsecase: DeleteRealtorUsecase,
   ) {
     this.CreateRealtorUsecase = CreateRealtorUsecase;
     this.GetAllRealtorsUsecase = GetAllRealtorsUsecase;
     this.GetRealtorByIdUsecase = GetRealtorByIdUsecase;
     this.UpdateRealtorUsecase = UpdateRealtorUsecase;
+    this.DeleteRealtorUsecase = DeleteRealtorUsecase;
   }
 
   async createRealtor(req: Request, res: Response): Promise<void> {
@@ -111,6 +115,31 @@ export class RealtorService {
       );
 
       updatedRealtor.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: RealtorEntity) =>{
+          const responseData = RealtorMapper.toModel(result);
+          return res.json(responseData)
+        }
+      )
+  }
+
+  async deleteRealtor(req: Request, res: Response): Promise<void> {
+      const realtorId: string = req.params.realtorId;
+    
+
+      const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
+        { deleteStatus: false },
+        true
+      );
+      
+      // Call the UpdateTableUsecase to update the table
+      const updatedAre: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
+        realtorId,
+        updatedRealtorEntity
+      );
+
+      updatedAre.cata(
         (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
         (result: RealtorEntity) =>{
