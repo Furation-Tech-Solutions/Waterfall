@@ -3,24 +3,16 @@ export class RealtorModel {
     constructor(
       public firstName: string = "",
       public lastName: string = "",
-      public address: addressModel,
       public email: string = "",
+      public contact: number = 0,
+      public DOB: string = "",
+      public gender: string = "",
+      public location: string = "",
+      public about: string = "",
       public password: string = "",
-      public phone: number = 0,
-      public aadharCard: number = 0,
-      public yearsOfExperience: number = 0,
-      public specialization: string = "",
+      public profileImage: string = "",
+      public countryCode: number = 0,
       public deleteStatus: boolean
-    ) {}
-  }
-  export class addressModel {
-    constructor(
-      public streetName: string = "",
-      public landMark: string = "",
-      public city: string = "",
-      public pinCode: number = 0,
-      public state: string = "",
-      public country: string = "",
     ) {}
   }
   
@@ -30,27 +22,19 @@ export class RealtorModel {
       public id: string | undefined = undefined, // Set a default value for id
       public firstName: string,
       public lastName: string,
-      public address: addressEntity,
       public email: string,
+      public contact: number,
+      public DOB: string,
+      public gender: string,
+      public location: string,
+      public about: string,
       public password: string,
-      public phone: number,
-      public aadharCard: number,
-      public yearsOfExperience: number,
-      public specialization: string,
+      public profileImage: string,
+      public countryCode: number,
       public deleteStatus: boolean
     ) {}
   }
-  export class addressEntity {
-    constructor(
-      public streetName: string,
-      public landMark: string,
-      public city: string,
-      public pinCode: number,
-      public state: string,
-      public country: string,
-    ) {}
-  }
-  
+
   export class RealtorMapper {
     static toEntity(
       realtorData: any,
@@ -69,34 +53,42 @@ export class RealtorModel {
             realtorData.lastName !== undefined 
             ? realtorData.lastName 
             : existingRealtor.lastName,
-          address:
-            realtorData.address !== undefined 
-            ? realtorData.address 
-            : existingRealtor.address,
           email:
             realtorData.email !== undefined 
             ? realtorData.email 
             : existingRealtor.email,
+          contact:
+            realtorData.contact !== undefined 
+            ? realtorData.contact 
+            : existingRealtor.contact,
+          DOB:
+            realtorData.DOB !== undefined
+              ? realtorData.DOB
+              : existingRealtor.DOB,
+          gender:
+            realtorData.gender !== undefined
+              ? realtorData.gender
+              : existingRealtor.gender,
+          location:
+            realtorData.location !== undefined 
+            ? realtorData.location 
+            : existingRealtor.location,
+          about:
+            realtorData.about !== undefined
+              ? realtorData.about
+              : existingRealtor.about,
           password:
             realtorData.password !== undefined
               ? realtorData.password
               : existingRealtor.password,
-          phone:
-            realtorData.phone !== undefined
-              ? realtorData.phone
-              : existingRealtor.phone,
-          aadharCard:
-            realtorData.aadharCard !== undefined 
-            ? realtorData.aadharCard 
-            : existingRealtor.aadharCard,
-          yearsOfExperience:
-            realtorData.yearsOfExperience !== undefined
-              ? realtorData.yearsOfExperience
-              : existingRealtor.yearsOfExperience,
-          specialization:
-            realtorData.specialization !== undefined
-              ? realtorData.specialization
-              : existingRealtor.specialization,
+          profileImage:
+            realtorData.profileImage !== undefined
+              ? realtorData.profileImage
+              : existingRealtor.profileImage,
+          countryCode:
+            realtorData.countryCode !== undefined
+              ? realtorData.countryCode
+              : existingRealtor.countryCode,
           deleteStatus:
             realtorData.deleteStatus !== undefined
               ? realtorData.deleteStatus
@@ -108,13 +100,15 @@ export class RealtorModel {
           id: includeId ? (realtorData._id ? realtorData._id.toString() : undefined) : realtorData._id.toString(),
           firstName: realtorData.firstName,
           lastName: realtorData.lastName,
-          address: realtorData.address,
           email: realtorData.email,
+          contact: realtorData.contact,
+          DOB: realtorData.DOB,
+          gender: realtorData.gender,
+          location: realtorData.location,
+          about: realtorData.about,
           password: realtorData.password,
-          phone: realtorData.phone,
-          aadharCard: realtorData.aadharCard,
-          yearsOfExperience: realtorData.yearsOfExperience,
-          specialization: realtorData.specialization,
+          profileImage: realtorData.profileImage,
+          countryCode: realtorData.countryCode,
           deleteStatus: realtorData.deleteStatus,
         };
         return realtorEntity;
@@ -125,15 +119,17 @@ export class RealtorModel {
       return {
         id: realtor.id,
         firstName: realtor.firstName,
-          lastName: realtor.lastName,
-          address: realtor.address,
-          email: realtor.email,
-          password: realtor.password,
-          phone: realtor.phone,
-          aadharCard: realtor.aadharCard,
-          yearsOfExperience: realtor.yearsOfExperience,
-          specialization: realtor.specialization,
-          deleteStatus: realtor.deleteStatus,
+        lastName: realtor.lastName,
+        email: realtor.email,
+        contact: realtor.contact,
+        DOB: realtor.DOB,
+        gender: realtor.gender,
+        location: realtor.location,
+        about: realtor.about,
+        password: realtor.password,
+        profileImage: realtor.profileImage,
+        countryCode: realtor.countryCode,
+        deleteStatus: realtor.deleteStatus,
       };
     }
   }

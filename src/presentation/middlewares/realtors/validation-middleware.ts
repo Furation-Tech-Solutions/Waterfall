@@ -8,43 +8,84 @@ interface CustomRequest extends Request {
   }
 
 const realtorSchema: Schema<RealtorModel> = Joi.object({
-  firstName: Joi.string().required().max(53).trim().messages({
-    "string.base": "Name must be a string",
-    "string.empty": "Name is required",
-    "string.max": "Name should be under 53 characters",
-    "any.required": "Name is required",
-  }),
-  lastName: Joi.string().required().max(53).trim().messages({
-    "string.base": "Name must be a string",
-    "string.empty": "Name is required",
-    "string.max": "Name should be under 53 characters",
-    "any.required": "Name is required",
-  }),
-  address: Joi.object({
-    streetName: Joi.string().required(),
-    landMark: Joi.string().required(),
-    city: Joi.string().required(),
-    pinCode: Joi.number().required(),
-    state: Joi.string().required(),
-    country: Joi.string().required(),
-  }).required(),
-  email: Joi.string().email().required().trim().lowercase().messages({
-    "string.base": "Email must be a string",
-    "string.empty": "Email is required",
-    "string.email": "Invalid email format",
-    "any.required": "Email is required",
-  }),
-  password: Joi.string().required().min(5),
-  phone: Joi.number().required().max(9999999999999).messages({
-    "number.base": "Phone number must be a number",
-    "number.empty": "Phone number is required",
-    "number.integer": "Phone number must be an integer",
-    "number.max": "Phone number should be under 13 digits",
-    "any.required": "Phone number is required",
-  }),
-  aadharCard: Joi.number().required(),
-  yearsOfExperience: Joi.number(),
-  specialization: Joi.string().max(50),
+  firstName: Joi.string()
+    .required()
+    .max(50)
+    .trim()
+    .messages({
+      'any.required': 'First name is required',
+      'string.empty': 'First name cannot be empty',
+      'string.max': 'First name should be under 50 characters',
+    }),
+  lastName: Joi.string()
+    .required()
+    .max(50)
+    .trim()
+    .messages({
+      'any.required': 'Last name is required',
+      'string.empty': 'Last name cannot be empty',
+      'string.max': 'Last name should be under 50 characters',
+    }),
+  email: Joi.string()
+    .required()
+    .email()
+    .trim()
+    .lowercase()
+    .messages({
+      'any.required': 'Email is required',
+      'string.empty': 'Email cannot be empty',
+      'string.email': 'Invalid email format',
+    }),
+  contact: Joi.number()
+    .required()
+    .messages({
+      'any.required': 'Contact number is required',
+      'number.base': 'Contact number must be a number',
+    }),
+  DOB: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Date of birth is required',
+      'string.empty': 'Date of birth cannot be empty',
+    }),
+  gender: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Gender is required',
+      'string.empty': 'Gender cannot be empty',
+    }),
+  location: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Location is required',
+      'string.empty': 'Location cannot be empty',
+    }),
+  about: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'About is required',
+      'string.empty': 'About cannot be empty',
+    }),
+  password: Joi.string()
+    .required()
+    .min(5)
+    .messages({
+      'any.required': 'Password is required',
+      'string.empty': 'Password cannot be empty',
+      'string.min': 'Password must be at least 5 characters',
+    }),
+  profileImage: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Profile image is required',
+      'string.empty': 'Profile image cannot be empty',
+    }),
+  countryCode: Joi.number()
+    .required()
+    .messages({
+      'any.required': 'Country code is required',
+      'number.base': 'Country code must be a number',
+    }),
   deleteStatus: Joi.boolean().default(true)
   });
   

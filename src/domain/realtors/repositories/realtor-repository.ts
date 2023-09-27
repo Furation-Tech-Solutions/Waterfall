@@ -4,4 +4,5 @@ import { ErrorClass } from "@presentation/error-handling/api-error";
 export interface RealtorRepository {
   createRealtor(realtor: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>>;
   getRealtors(): Promise<Either<ErrorClass, RealtorEntity[]>>;
+  getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity | null>>;
 }

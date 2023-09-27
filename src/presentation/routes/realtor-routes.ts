@@ -7,6 +7,7 @@ import { RealtorRepositoryImpl } from "@data/realtors/repositories/realtor-repos
 import { CreateRealtor } from "@domain/realtors/usecases/create-realtor";
 import validateRealtorMiddleware from "@presentation/middlewares/realtors/validation-middleware";
 import { GetAllRealtors } from "@domain/realtors/usecases/get-all-realtors";
+import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -18,11 +19,13 @@ const realtorRepository = new RealtorRepositoryImpl(realtorDataSource);
 // Create instances of the required use cases and pass the RealtorRepositoryImpl
 const createRealtorUsecase = new CreateRealtor(realtorRepository);
 const getAllRealtorsUsecase = new GetAllRealtors(realtorRepository);
+const getRealtorByIdUsecase = new GetRealtorById(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
   createRealtorUsecase,
-  getAllRealtorsUsecase
+  getAllRealtorsUsecase,
+  getRealtorByIdUsecase
 );
 
 // Create an Express router
@@ -33,3 +36,6 @@ realtorRouter.post("/add", validateRealtorMiddleware, realtorService.createRealt
 
 // Route handling for getting all realtors
 realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));
+
+// Route handling for getting an Realtor by ID
+realtorRouter.get("/:realtorId", realtorService.getRealtorById.bind(realtorService));
