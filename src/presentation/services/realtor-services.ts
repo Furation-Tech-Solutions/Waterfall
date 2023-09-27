@@ -71,11 +71,11 @@ export class RealtorService {
   }
 
   async getRealtorById(req: Request, res: Response): Promise<void> {
-      const realtorId: string = req.params.realtorId;
+      const id: string = req.params.id;
 
       // Call the GetRealtorByIdUsecase to get the realtor by ID
       const realtor: Either<ErrorClass, RealtorEntity | null> = await this.GetRealtorByIdUsecase.execute(
-        realtorId
+        id
       );
 
       realtor.cata(
@@ -89,12 +89,12 @@ export class RealtorService {
   }
 
   async updateRealtor(req: Request, res: Response): Promise<void> {
-      const realtorId: string = req.params.realtorId;
+      const id: string = req.params.id;
       const realtorData: RealtorModel = req.body;
 
       // Get the existing realtor by ID
       const existingRealtor: Either<ErrorClass, RealtorEntity | null> =
-        await this.GetRealtorByIdUsecase.execute(realtorId);
+        await this.GetRealtorByIdUsecase.execute(id);
 
       if (!existingRealtor) {
         // If realtor is not found, send a not found message as a JSON response
@@ -110,7 +110,7 @@ export class RealtorService {
 
       // Call the UpdateRealtorUsecase to update the Realtor
       const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
-        realtorId,
+        id,
         updatedRealtorEntity
       );
 
@@ -125,7 +125,7 @@ export class RealtorService {
   }
 
   async deleteRealtor(req: Request, res: Response): Promise<void> {
-      const realtorId: string = req.params.realtorId;
+      const id: string = req.params.id;
     
 
       const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
@@ -135,7 +135,7 @@ export class RealtorService {
       
       // Call the UpdateTableUsecase to update the table
       const updatedAre: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
-        realtorId,
+        id,
         updatedRealtorEntity
       );
 

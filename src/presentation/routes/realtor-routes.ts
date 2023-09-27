@@ -44,10 +44,10 @@ realtorRouter.post("/", validateRealtorMiddleware, realtorService.createRealtor.
 realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));
 
 // Route handling for getting an Realtor by ID
-realtorRouter.get("/:realtorId", realtorService.getRealtorById.bind(realtorService));
+realtorRouter.get("/:id", realtorService.getRealtorById.bind(realtorService));
 
 // Route handling for updating an realtor by ID
-realtorRouter.put("/:realtorId", realtorService.updateRealtor.bind(realtorService));
+realtorRouter.put("/:id", realtorService.updateRealtor.bind(realtorService));
 
 // Route handling for deleting an realtor by ID
-realtorRouter.delete("/:realtorId", realtorService.deleteRealtor.bind(realtorService));
+realtorRouter.delete("/:id", realtorService.deleteRealtor.bind(realtorService));

@@ -4,7 +4,7 @@ import { Either } from "monet";
 import  ErrorClass  from "@presentation/error-handling/api-error";
 
 export interface GetRealtorByIdUsecase {
-  execute: (realtorId: string) => Promise<Either<ErrorClass, RealtorEntity | null>>;
+  execute: (id: string) => Promise<Either<ErrorClass, RealtorEntity | null>>;
 }
 
 export class GetRealtorById implements GetRealtorByIdUsecase {
@@ -14,7 +14,7 @@ export class GetRealtorById implements GetRealtorByIdUsecase {
     this.realtorRepository = realtorRepository;
   }
 
-  async execute(realtorId: string): Promise<Either<ErrorClass, RealtorEntity | null>> {
-    return await this.realtorRepository.getRealtorById(realtorId);
+  async execute(id: string): Promise<Either<ErrorClass, RealtorEntity | null>> {
+    return await this.realtorRepository.getRealtorById(id);
   }
 }

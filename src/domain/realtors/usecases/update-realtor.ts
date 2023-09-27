@@ -5,7 +5,7 @@ import ErrorClass from "@presentation/error-handling/api-error";
 
 export interface UpdateRealtorUsecase {
   execute: (
-    realtorId: string,
+    id: string,
     realtorData: RealtorModel
   ) => Promise<Either<ErrorClass, RealtorEntity>>;
 }
@@ -17,7 +17,7 @@ export class UpdateRealtor implements UpdateRealtorUsecase {
     this.realtorRepository = realtorRepository;
   }
 
-  async execute(realtorId: string, realtorData: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>> {
-    return await this.realtorRepository.updateRealtor(realtorId, realtorData);
+  async execute(id: string, realtorData: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>> {
+    return await this.realtorRepository.updateRealtor(id, realtorData);
   }
 }

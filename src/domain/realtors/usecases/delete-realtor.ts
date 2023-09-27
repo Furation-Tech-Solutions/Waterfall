@@ -2,7 +2,7 @@ import { type RealtorRepository } from "@domain/realtors/repositories/realtor-re
 import { Either } from "monet";
 import  ErrorClass  from "@presentation/error-handling/api-error";
 export interface DeleteRealtorUsecase {
-  execute: (realtorId: string) => Promise<Either<ErrorClass, void>>
+  execute: (id: string) => Promise<Either<ErrorClass, void>>
 }
 
 export class DeleteRealtor implements DeleteRealtorUsecase {
@@ -12,7 +12,7 @@ export class DeleteRealtor implements DeleteRealtorUsecase {
     this.realtorRepository = realtorRepository;
   }
 
-  async execute(realtorId: string): Promise<Either<ErrorClass, void>> {
-    return await this.realtorRepository.deleteRealtor(realtorId);
+  async execute(id: string): Promise<Either<ErrorClass, void>> {
+    return await this.realtorRepository.deleteRealtor(id);
   }
 }
