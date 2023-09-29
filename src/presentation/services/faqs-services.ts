@@ -6,6 +6,7 @@ import {
 } from "@domain/faqs/entities/faqs";
 import { CreateFAQSUsecase } from "@domain/faqs/usecases/create-faqs";
 import { GetAllFAQSsUsecase } from "@domain/faqs/usecases/get-all-faqs";
+import { GetFAQSByIdUsecase } from "@domain/faqs/usecases/get-faqs-by-id";
 import ApiError from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
@@ -13,13 +14,16 @@ import ErrorClass from "@presentation/error-handling/api-error";
 export class FAQSService {
   private readonly CreateFAQSUsecase: CreateFAQSUsecase;
   private readonly GetAllFAQSsUsecase: GetAllFAQSsUsecase;
+  private readonly GetFAQSByIdUsecase: GetFAQSByIdUsecase;
 
   constructor(
     CreateFAQSUsecase: CreateFAQSUsecase,
     GetAllFAQSsUsecase: GetAllFAQSsUsecase,
+    GetFAQSByIdUsecase: GetFAQSByIdUsecase,
   ) {
     this.CreateFAQSUsecase = CreateFAQSUsecase;
     this.GetAllFAQSsUsecase = GetAllFAQSsUsecase;
+    this.GetFAQSByIdUsecase = GetFAQSByIdUsecase;
   }
 
   async createFAQS(req: Request, res: Response): Promise<void> {
@@ -56,5 +60,23 @@ export class FAQSService {
             return res.json(responseData);
         }
     );
+  }
+
+  async getFAQSById(req: Request, res: Response): Promise<void> {
+      const id: string = req.params.id;
+
+      // Call the GetFAQSByIdUsecase to get the faqs by ID
+      const faqs: Either<ErrorClass, FAQSEntity | null> = await this.GetFAQSByIdUsecase.execute(
+        id
+      );
+
+      faqs.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: FAQSEntity | null) =>{
+          const responseData = FAQSMapper.toEntity(result, true);
+          return res.json(responseData)
+        }
+      )
   }
 }

@@ -5,12 +5,6 @@ import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
 
-// import AWS from "aws-sdk";
-// import dotenv from "dotenv";
-// import env from "../../../main/config/env";
-
-// dotenv.config();
-
 export class FAQSRepositoryImpl implements FAQSRepository {
   private readonly dataSource: FAQSDataSource;
 
@@ -38,6 +32,16 @@ export class FAQSRepositoryImpl implements FAQSRepository {
       return Right<ErrorClass, FAQSEntity[]>(i);
     } catch {
       return Left<ErrorClass, FAQSEntity[]>(ApiError.badRequest());
+    }
+  }
+
+  async getFAQSById(id: string): Promise<Either<ErrorClass, FAQSEntity | null>> {
+    // return await this.dataSource.read(id);
+    try {
+      let i = await this.dataSource.read(id);
+      return Right<ErrorClass, FAQSEntity | null>(i);
+    } catch {
+      return Left<ErrorClass, FAQSEntity | null>(ApiError.badRequest());
     }
   }
 }

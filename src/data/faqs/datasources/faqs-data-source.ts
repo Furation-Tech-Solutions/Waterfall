@@ -5,6 +5,7 @@ import ApiError from "@presentation/error-handling/api-error";
 export interface FAQSDataSource {
   create(faqs: FAQSModel): Promise<any>; // Return type should be Promise of FAQSEntity
   getAllFAQSs(): Promise<any[]>; // Return type should be Promise of an array of FAQSEntity
+  read(id: string): Promise<any | null>; // Return type should be Promise of FAQSEntity or null
 }
 
 export class FAQSDataSourceImpl implements FAQSDataSource {
@@ -27,6 +28,11 @@ export class FAQSDataSourceImpl implements FAQSDataSource {
   async getAllFAQSs(): Promise<any[]> {
     const faqss = await FAQS.find();
     return faqss.map((faqs) => faqs.toObject()); // Convert to plain JavaScript objects before returning
+  }
+
+  async read(id: string): Promise<any | null> {
+    const faqs = await FAQS.findById(id);
+    return faqs ? faqs.toObject() : null; // Convert to plain JavaScript object before returning
   }
 }
 

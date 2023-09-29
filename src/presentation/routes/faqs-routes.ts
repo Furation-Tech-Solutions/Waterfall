@@ -7,6 +7,7 @@ import { FAQSRepositoryImpl } from "@data/faqs/repositories/faqs-repositories-im
 import { CreateFAQS } from "@domain/faqs/usecases/create-faqs";
 import validateFAQSMiddleware from "@presentation/middlewares/faqs/validation-middleware";
 import { GetAllFAQSs } from "@domain/faqs/usecases/get-all-faqs";
+import { GetFAQSById } from "@domain/faqs/usecases/get-faqs-by-id";
 
 
 // Create an instance of the FAQSDataSourceImpl and pass the mongoose connection
@@ -18,11 +19,13 @@ const faqsRepository = new FAQSRepositoryImpl(faqsDataSource);
 // Create instances of the required use cases and pass the FAQSRepositoryImpl
 const createFAQSUsecase = new CreateFAQS(faqsRepository);
 const getAllFAQSsUsecase = new GetAllFAQSs(faqsRepository);
+const getFAQSByIdUsecase = new GetFAQSById(faqsRepository);
 
 // Initialize FAQSService and inject required dependencies
 const faqsService = new FAQSService(
   createFAQSUsecase,
-  getAllFAQSsUsecase
+  getAllFAQSsUsecase,
+  getFAQSByIdUsecase
 );
 
 // Create an Express router
@@ -33,4 +36,7 @@ faqsRouter.post("/", validateFAQSMiddleware, faqsService.createFAQS.bind(faqsSer
 
 // Route handling for getting all faqssx`
 faqsRouter.get("/", faqsService.getAllFAQSs.bind(faqsService));
+
+// Route handling for getting an FAQS by ID
+faqsRouter.get("/:id", faqsService.getFAQSById.bind(faqsService));
 
