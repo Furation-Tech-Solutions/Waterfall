@@ -12,7 +12,18 @@ const realtorSchema = new mongoose.Schema({
   password: { type: String, required: true , minlength: [5, "Password must be at least 5 characters"], select: false },
   profileImage: {type: String, required: true},
   countryCode: { type: Number, required: true },
-  deleteStatus: { type: Boolean, default: true }
+  deleteStatus: { type: Boolean, default: true },
+
+  // RECO fields
+  // recoRegistrationNumber: { type: String, required: true },
+  // recoRegistrationStatus: { type: String, required: true },
+  // recoLicenseType: { type: String, required: true },
+  // recoLicenseExpiry: { type: Date, required: true },
+  // recoLicenseIssuedDate: { type: Date, required: true },
+  // recoAgencyName: { type: String, required: true },
+  // recoAgencyRegistrationNumber: { type: String, required: true },
+  // recoAgencyAddress: { type: String, required: true },
+  // recoAgencyPhone: { type: String, required: true }
 });
 
 export const Realtor = mongoose.model("Realtor", realtorSchema);
