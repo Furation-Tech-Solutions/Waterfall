@@ -6,6 +6,7 @@ export interface FAQSRepository {
   getFAQS(): Promise<Either<ErrorClass, FAQSEntity[]>>;
   getFAQSById(id: string): Promise<Either<ErrorClass, FAQSEntity | null>>;
   updateFAQS(id: string, data: FAQSModel): Promise<Either<ErrorClass, FAQSEntity>>;
+  deleteFAQS(id: string): Promise<Either<ErrorClass, void>>;
 }
 
 

@@ -8,6 +8,7 @@ import { CreateFAQSUsecase } from "@domain/faqs/usecases/create-faqs";
 import { GetAllFAQSsUsecase } from "@domain/faqs/usecases/get-all-faqs";
 import { GetFAQSByIdUsecase } from "@domain/faqs/usecases/get-faqs-by-id";
 import { UpdateFAQSUsecase } from "@domain/faqs/usecases/update-faqs";
+import { DeleteFAQSUsecase } from "@domain/faqs/usecases/delete-faqs";
 import ApiError from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
@@ -17,17 +18,20 @@ export class FAQSService {
   private readonly GetAllFAQSsUsecase: GetAllFAQSsUsecase;
   private readonly GetFAQSByIdUsecase: GetFAQSByIdUsecase;
   private readonly UpdateFAQSUsecase: UpdateFAQSUsecase;
+  private readonly DeleteFAQSUsecase: DeleteFAQSUsecase;
 
   constructor(
     CreateFAQSUsecase: CreateFAQSUsecase,
     GetAllFAQSsUsecase: GetAllFAQSsUsecase,
     GetFAQSByIdUsecase: GetFAQSByIdUsecase,
     UpdateFAQSUsecase: UpdateFAQSUsecase,
+    DeleteFAQSUsecase: DeleteFAQSUsecase
   ) {
     this.CreateFAQSUsecase = CreateFAQSUsecase;
     this.GetAllFAQSsUsecase = GetAllFAQSsUsecase;
     this.GetFAQSByIdUsecase = GetFAQSByIdUsecase;
     this.UpdateFAQSUsecase = UpdateFAQSUsecase;
+    this.DeleteFAQSUsecase = DeleteFAQSUsecase;
   }
 
   async createFAQS(req: Request, res: Response): Promise<void> {
@@ -111,6 +115,31 @@ export class FAQSService {
       );
 
       updatedFAQS.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: FAQSEntity) =>{
+          const responseData = FAQSMapper.toModel(result);
+          return res.json(responseData)
+        }
+      )
+  }
+
+  async deleteFAQS(req: Request, res: Response): Promise<void> {
+      const id: string = req.params.id;
+    
+
+      const updatedFAQSEntity: FAQSEntity = FAQSMapper.toEntity(
+        { deleteStatus: false },
+        true
+      );
+      
+      // Call the UpdateTableUsecase to update the table
+      const updatedAre: Either<ErrorClass, FAQSEntity> = await this.UpdateFAQSUsecase.execute(
+        id,
+        updatedFAQSEntity
+      );
+
+      updatedAre.cata(
         (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
         (result: FAQSEntity) =>{

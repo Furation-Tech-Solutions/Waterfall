@@ -54,6 +54,16 @@ export class FAQSRepositoryImpl implements FAQSRepository {
       return Left<ErrorClass, FAQSEntity>(ApiError.badRequest());
     }
   }
+
+  async deleteFAQS(id: string): Promise<Either<ErrorClass, void>> {
+    // await this.dataSource.delete(id);
+    try {
+      let i = await this.dataSource.delete(id);
+      return Right<ErrorClass, void>(i);
+    } catch {
+      return Left<ErrorClass, void>(ApiError.badRequest());
+    }
+  }
 }
 
 
