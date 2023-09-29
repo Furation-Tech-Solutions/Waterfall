@@ -44,6 +44,16 @@ export class FAQSRepositoryImpl implements FAQSRepository {
       return Left<ErrorClass, FAQSEntity | null>(ApiError.badRequest());
     }
   }
+
+  async updateFAQS(id: string, data: FAQSModel): Promise<Either<ErrorClass, FAQSEntity>> {
+    // return await this.dataSource.update(id, data);
+    try {
+      let i = await this.dataSource.update(id, data);
+      return Right<ErrorClass, FAQSEntity>(i);
+    } catch {
+      return Left<ErrorClass, FAQSEntity>(ApiError.badRequest());
+    }
+  }
 }
 
 

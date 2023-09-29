@@ -7,6 +7,7 @@ import {
 import { CreateFAQSUsecase } from "@domain/faqs/usecases/create-faqs";
 import { GetAllFAQSsUsecase } from "@domain/faqs/usecases/get-all-faqs";
 import { GetFAQSByIdUsecase } from "@domain/faqs/usecases/get-faqs-by-id";
+import { UpdateFAQSUsecase } from "@domain/faqs/usecases/update-faqs";
 import ApiError from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
@@ -15,15 +16,18 @@ export class FAQSService {
   private readonly CreateFAQSUsecase: CreateFAQSUsecase;
   private readonly GetAllFAQSsUsecase: GetAllFAQSsUsecase;
   private readonly GetFAQSByIdUsecase: GetFAQSByIdUsecase;
+  private readonly UpdateFAQSUsecase: UpdateFAQSUsecase;
 
   constructor(
     CreateFAQSUsecase: CreateFAQSUsecase,
     GetAllFAQSsUsecase: GetAllFAQSsUsecase,
     GetFAQSByIdUsecase: GetFAQSByIdUsecase,
+    UpdateFAQSUsecase: UpdateFAQSUsecase,
   ) {
     this.CreateFAQSUsecase = CreateFAQSUsecase;
     this.GetAllFAQSsUsecase = GetAllFAQSsUsecase;
     this.GetFAQSByIdUsecase = GetFAQSByIdUsecase;
+    this.UpdateFAQSUsecase = UpdateFAQSUsecase;
   }
 
   async createFAQS(req: Request, res: Response): Promise<void> {
@@ -75,6 +79,42 @@ export class FAQSService {
         res.status(error.status).json({ error: error.message }),
         (result: FAQSEntity | null) =>{
           const responseData = FAQSMapper.toEntity(result, true);
+          return res.json(responseData)
+        }
+      )
+  }
+
+  async updateFAQS(req: Request, res: Response): Promise<void> {
+      const id: string = req.params.id;
+      const faqsData: FAQSModel = req.body;
+
+      // Get the existing faqs by ID
+      const existingFAQS: Either<ErrorClass, FAQSEntity | null> =
+        await this.GetFAQSByIdUsecase.execute(id);
+
+      if (!existingFAQS) {
+        // If faqs is not found, send a not found message as a JSON response
+        ApiError.notFound();
+        return;
+      }
+
+      // Convert faqsData from FAQSModel to FAQSEntity using FAQSMapper
+      const updatedFAQSEntity: FAQSEntity = FAQSMapper.toEntity(
+        faqsData,
+        true
+      );
+
+      // Call the UpdateFAQSUsecase to update the FAQS
+      const updatedFAQS: Either<ErrorClass, FAQSEntity> = await this.UpdateFAQSUsecase.execute(
+        id,
+        updatedFAQSEntity
+      );
+
+      updatedFAQS.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: FAQSEntity) =>{
+          const responseData = FAQSMapper.toModel(result);
           return res.json(responseData)
         }
       )

@@ -6,6 +6,7 @@ export interface FAQSDataSource {
   create(faqs: FAQSModel): Promise<any>; // Return type should be Promise of FAQSEntity
   getAllFAQSs(): Promise<any[]>; // Return type should be Promise of an array of FAQSEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of FAQSEntity or null
+  update(id: string, faqs: FAQSModel): Promise<any>; // Return type should be Promise of FAQSEntity
 }
 
 export class FAQSDataSourceImpl implements FAQSDataSource {
@@ -33,6 +34,13 @@ export class FAQSDataSourceImpl implements FAQSDataSource {
   async read(id: string): Promise<any | null> {
     const faqs = await FAQS.findById(id);
     return faqs ? faqs.toObject() : null; // Convert to plain JavaScript object before returning
+  }
+
+  async update(id: string, faqs: FAQSModel): Promise<any> {
+    const updatedFAQS = await FAQS.findByIdAndUpdate(id, faqs, {
+      new: true,
+    }); // No need for conversion here
+    return updatedFAQS ? updatedFAQS.toObject() : null; // Convert to plain JavaScript object before returning
   }
 }
 
