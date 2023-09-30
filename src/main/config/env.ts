@@ -16,4 +16,5 @@ export default {
   sendmailport: process.env.MAILPORT,
   user: process.env.USER,
   password: process.env.PASSWORD,
+  postgressURL: process.env.POSTGRESS_URL ?? ""
 };
