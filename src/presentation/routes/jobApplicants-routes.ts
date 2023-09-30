@@ -35,17 +35,17 @@ const jobApplicantService = new JobApplicantService(
 export const jobApplicantRouter = Router();
 
 // Route handling for creating a new Job Applicant
-jobApplicantRouter.post("/add", jobApplicantService.createJobApplicant.bind(jobApplicantService));
+jobApplicantRouter.post("/", jobApplicantService.createJobApplicant.bind(jobApplicantService));
 
 // Route handling for getting an JobApplicant by ID
-jobApplicantRouter.get("/getById/:jobApplicantId", jobApplicantService.getJobApplicantById.bind(jobApplicantService));
+jobApplicantRouter.get("/:id", jobApplicantService.getJobApplicantById.bind(jobApplicantService));
 
 
 // Route handling for getting all Jobs
-jobApplicantRouter.get("/getAllJobApplicants", jobApplicantService.getAllJobApplicants.bind(jobApplicantService));
+jobApplicantRouter.get("/", jobApplicantService.getAllJobApplicants.bind(jobApplicantService));
 
 // Route handling for updating an JobApplicant by ID
-jobApplicantRouter.put("/update/:jobApplicantId", jobApplicantService.updateJobApplicant.bind(jobApplicantService));
+jobApplicantRouter.put("/id", jobApplicantService.updateJobApplicant.bind(jobApplicantService));
 
 
 

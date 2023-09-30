@@ -28,6 +28,19 @@ try {
   //     console.error('Unable to connect to the database:', error);
   // }
 
+  // Sync the model with the database
+  // async function syncDatabase() {
+  //   try {
+  //     await sequelize.sync({ force: false });
+  //     console.log("Table synchronized successfully.");
+  //   } catch (error) {
+  //     console.error("Error syncing table:", error);
+  //   }
+  // }
+
+  // Call the syncDatabase function to create the table
+  // syncDatabase();
+
   app.listen(env.port, () => {
     console.log(`${Message.SERVER_RUNNING} ${env.port}`);
   });

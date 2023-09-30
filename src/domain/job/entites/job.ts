@@ -73,7 +73,7 @@ export class JobMapper {
         } else {
             // If existingJob is not provided, create a new JobEntity using jobData
             const jobEntity: JobEntity = {
-                id: includeId ? jobData._id ? jobData._id: undefined : jobData._id,
+                id: includeId ? jobData.id ? jobData.id.toString(): undefined : jobData.id,
                 jobOwner: jobData.jobOwner,
                 location: jobData.location,
                 address: jobData.address,

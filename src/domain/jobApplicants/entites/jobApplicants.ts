@@ -40,12 +40,16 @@ export class JobApplicantMapper {
         } else {
             // If existingJobApplicant is not provided, create a new JobApplicantEntity using jobApplicantData
             const jobApplicantEntity: JobApplicantEntity = {
-                id: includeId ? jobApplicantData._id ? jobApplicantData._id.toString() : undefined : undefined,
-                job: jobApplicantData.job,
-                applicant: jobApplicantData.applicant,
-                status: jobApplicantData.status,
-                appliedTimestamp: jobApplicantData.appliedTimestamp,
-                // agreement: jobApplicantData.agreement,
+              id: includeId
+                ? jobApplicantData.id
+                  ? jobApplicantData.id.toString()
+                  : undefined
+                : jobApplicantData.id,
+              job: jobApplicantData.job,
+              applicant: jobApplicantData.applicant,
+              status: jobApplicantData.status,
+              appliedTimestamp: jobApplicantData.appliedTimestamp,
+              // agreement: jobApplicantData.agreement,
             };
             return jobApplicantEntity;
         }

@@ -9,20 +9,21 @@ const statusEnum = {
 
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
-    type: DataTypes.UUID, // Assuming 'Job' is represented by UUID in PostgreSQL
+    type: DataTypes.UUID,
     allowNull: false,
-    references: {
-      model: "Job", // Replace with the actual name of the 'Job' table
-      key: "id", // Replace with the actual primary key of the 'Job' table
-    },
+    // references: {
+    //   model: "Job", // Make sure this matches your "Jobs" model name
+    //   key: "id", // Adjust this key if necessary
+    // },
   },
+
   applicant: {
     type: DataTypes.UUID, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
-    references: {
-      model: "Realtor", // Replace with the actual name of the 'Realtor' table
-      key: "id", // Replace with the actual primary key of the 'Realtor' table
-    },
+    // references: {
+    //   model: "Realtor", // Replace with the actual name of the 'Realtor' table
+    //   key: "id", // Replace with the actual primary key of the 'Realtor' table
+    // },
   },
   status: {
     type: DataTypes.STRING,
@@ -39,6 +40,12 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+
+  //   (async () => {
+  //     await sequelize.sync({ force: true });
+  //     // Code here
+  //   })();
+
   // agreement: {
   //     type: DataTypes.UUID, // Assuming 'Agreement' is represented by UUID in PostgreSQL
   //     references: {
@@ -47,5 +54,10 @@ const JobApplicant = sequelize.define("JobApplicant", {
   //     },
   // },
 });
+
+(async () => {
+  await sequelize.sync({ force: false });
+  // Code here
+})();
 
 export default JobApplicant;

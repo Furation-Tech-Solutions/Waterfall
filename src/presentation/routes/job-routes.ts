@@ -44,7 +44,7 @@ jobRouter.post(
 );
 
 // Route handling for getting an Job by ID
-jobRouter.get("/:id", validateJobInputMiddleware, jobService.getJobById.bind(jobService));
+jobRouter.get("/:id", jobService.getJobById.bind(jobService));
 
 // Route handling for updating an Job by ID
 jobRouter.put("/:id", jobService.updateJob.bind(jobService));

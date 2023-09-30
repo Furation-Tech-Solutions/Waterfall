@@ -1,4 +1,5 @@
 import { jobRouter } from "@presentation/routes/job-routes";
+import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 
 import { type Express, Router } from "express";
 
@@ -14,6 +15,7 @@ export default (app: Express): void => {
   });
 
   app.use("/api/v1/jobs", jobRouter);
+  app.use("/api/v1/jobApplicants", jobApplicantRouter);
 
   app.use(router);
 };

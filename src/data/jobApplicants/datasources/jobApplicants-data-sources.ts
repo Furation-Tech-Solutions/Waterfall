@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { JobApplicantModel } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
+import { JobApplicantEntity, JobApplicantModel } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import ApiError from "@presentation/error-handling/api-error";
 
@@ -8,8 +8,8 @@ export interface JobApplicantDataSource {
   create(jobApplicant: JobApplicantModel): Promise<any>;
   update(id: string, jobApplicant: JobApplicantModel): Promise<any>;
   delete(id: string): Promise<void>;
-  read(id: string): Promise<any | null>;
-  getAll(): Promise<any[]>;
+  read(id: string): Promise<JobApplicantEntity | null>;
+  getAll(): Promise<JobApplicantEntity[]>;
 }
 
 // jobApplicant Data Source communicates with the database
@@ -17,14 +17,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) {}
 
   async create(jobApplicant: any): Promise<any> {
-    const existingJobApplicant = await JobApplicant.findOne({
-      where: {
-        name: jobApplicant.name,
-      },
-    });
-    if (existingJobApplicant) {
-      throw ApiError.emailExist();
-    }
     const createdJobApplicant = await JobApplicant.create(jobApplicant);
     return createdJobApplicant.toJSON();
   }
@@ -37,7 +29,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     });
   }
 
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<JobApplicantEntity | null> {
     const jobApplicant = await JobApplicant.findOne({
       where: {
         id: id,
@@ -47,7 +39,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return jobApplicant ? jobApplicant.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  async getAll(): Promise<any[]> {
+  async getAll(): Promise<JobApplicantEntity[]> {
     const jobApplicant = await JobApplicant.findAll({});
     return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON()); // Convert to plain JavaScript objects before returning
   }

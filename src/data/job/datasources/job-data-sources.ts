@@ -1,23 +1,24 @@
 import { Sequelize } from "sequelize";
-import { JobModel } from "@domain/job/entites/job"; // Import the JobModel
+import { JobEntity, JobModel } from "@domain/job/entites/job"; // Import the JobModel
 import Job from "..//models/job-model";
 import ApiError from "@presentation/error-handling/api-error";
 
 // Create JobDataSource Interface
 export interface JobDataSource {
-  create(job: JobModel): Promise<any>;
+  create(job: JobModel): Promise<JobEntity>;
   update(id: string, job: JobModel): Promise<any>;
   delete(id: string): Promise<void>;
-  read(id: string): Promise<any | null>;
-  getAll(): Promise<any[]>;
+  read(id: string): Promise<JobEntity | null>;
+  getAll(): Promise<JobEntity[]>;
 }
 
 // Job Data Source communicates with the database
 export class JobDataSourceImpl implements JobDataSource {
   constructor(private db: Sequelize) {}
 
-  async create(job: any): Promise<any> {
+  async create(job: any): Promise<JobEntity> {
     const createdJob = await Job.create(job);
+
     return createdJob.toJSON();
   }
 
@@ -29,7 +30,7 @@ export class JobDataSourceImpl implements JobDataSource {
     });
   }
 
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<JobEntity | null> {
     const job = await Job.findOne({
       where: {
         id: id,
@@ -39,7 +40,7 @@ export class JobDataSourceImpl implements JobDataSource {
     return job ? job.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  async getAll(): Promise<any[]> {
+  async getAll(): Promise<JobEntity[]> {
     const job = await Job.findAll({});
     return job.map((job: any) => job.toJSON()); // Convert to plain JavaScript objects before returning
   }
