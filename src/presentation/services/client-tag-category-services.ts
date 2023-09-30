@@ -35,9 +35,12 @@ export class ClientTagCategoryServices {
 
     async createClientTagCategory(req: Request, res: Response): Promise<void> {
         const clientTagCategoryData: ClientTagCategoryModel = ClientTagCategoryMapper.toModel(req.body);
+        console.log(clientTagCategoryData, "service-38");
 
         const newClientTagCategory: Either<ErrorClass, ClientTagCategoryEntity> =
             await this.createClientTagCategoryUsecases.execute(clientTagCategoryData);
+
+        console.log(clientTagCategoryData, "service-43");
 
         newClientTagCategory.cata(
             (error: ErrorClass) =>
@@ -50,7 +53,7 @@ export class ClientTagCategoryServices {
     }
 
     async deleteClientTagCategory(req: Request, res: Response): Promise<void> {
-        const clientTagCategoryId: string = req.params.ClientTagCategoryId;
+        const clientTagCategoryId: string = req.params.id;
 
         const deletedClientTagCategory: Either<ErrorClass, void> =
             await this.deleteClientTagCategoryUsecases.execute(clientTagCategoryId);
@@ -65,7 +68,7 @@ export class ClientTagCategoryServices {
     }
 
     async getClientTagCategoryById(req: Request, res: Response): Promise<void> {
-        const clientTagCategoryId: string = req.params.ClientTagCategoryId;
+        const clientTagCategoryId: string = req.params.id;
 
         const clientTagCategory: Either<ErrorClass, ClientTagCategoryEntity> =
             await this.getClientTagCategoryByIdUsecases.execute(clientTagCategoryId);
@@ -104,7 +107,7 @@ export class ClientTagCategoryServices {
     }
 
     async updateClientTagCategory(req: Request, res: Response): Promise<void> {
-        const clientTagCategoryId: string = req.params.ClientTagCategoryId;
+        const clientTagCategoryId: string = req.params.id;
         const clientTagCategoryData: ClientTagCategoryModel = req.body;
 
         const existingClientTagCategory: Either<ErrorClass, ClientTagCategoryEntity> =
