@@ -1,5 +1,4 @@
-
-import { clientTagCategoryRouter } from "@presentation/routes/client-tag-category-route";
+import { jobRouter } from "@presentation/routes/job-routes";
 
 import { type Express, Router } from "express";
 
@@ -14,7 +13,7 @@ export default (app: Express): void => {
     res.status(200).json({ message: "ok" });
   });
 
-  app.use("/api/v1/clients/tag/category", clientTagCategoryRouter);
+  app.use("/api/v1/jobs", jobRouter);
 
   app.use(router);
 };
