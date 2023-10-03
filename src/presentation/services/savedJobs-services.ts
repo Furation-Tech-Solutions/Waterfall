@@ -45,36 +45,36 @@ export class SavedJobService {
     );
   }
 
-  // async deleteSavedJob(req: Request, res: Response): Promise<void> {
-  //   const savedJobId: string = req.params.id;
+  async deleteSavedJob(req: Request, res: Response): Promise<void> {
+    const savedJobId: string = req.params.id;
 
-  //   const response: Either<ErrorClass, void> =
-  //     await this.deleteSavedJobUsecase.execute(savedJobId);
+    const response: Either<ErrorClass, void> =
+      await this.deleteSavedJobUsecase.execute(savedJobId);
 
-  //   response.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     () => {
-  //       return res.json({ message: "SavedJob deleted successfully." });
-  //     }
-  //   );
-  // }
+    response.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      () => {
+        return res.json({ message: "SavedJob deleted successfully." });
+      }
+    );
+  }
 
-  // async getSavedJobById(req: Request, res: Response): Promise<void> {
-  //   const savedJobId: string = req.params.id;
+  async getSavedJobById(req: Request, res: Response): Promise<void> {
+    const savedJobId: string = req.params.id;
 
-  //   const savedJob: Either<ErrorClass, SavedJobEntity> =
-  //     await this.getSavedJobByIdUsecase.execute(savedJobId);
+    const savedJob: Either<ErrorClass, SavedJobEntity> =
+      await this.getSavedJobByIdUsecase.execute(savedJobId);
 
-  //   savedJob.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (result: SavedJobEntity) => {
-  //       const resData = SavedJobMapper.toEntity(result, true);
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    savedJob.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: SavedJobEntity) => {
+        const resData = SavedJobMapper.toEntity(result, true);
+        return res.json(resData);
+      }
+    );
+  }
 
   // async updateSavedJob(req: Request, res: Response): Promise<void> {
   //   const savedJobId: string = req.params.id;
