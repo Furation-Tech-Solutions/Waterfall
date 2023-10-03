@@ -165,6 +165,9 @@ class ApiError extends ErrorClass {
   static clienttagExist(): ApiError {
     return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
   }
+  static connectionExist(): ApiError {
+    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
+  }
   static guestExist(): ApiError {
     return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
   }
