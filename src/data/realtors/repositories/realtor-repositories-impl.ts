@@ -22,6 +22,8 @@ export class RealtorRepositoryImpl implements RealtorRepository {
           const realtors = await this.realtorDataSource.create(realtor); // Use the realtor data source
           return Right<ErrorClass, RealtorEntity>(realtors);
       } catch (error:any) {
+        console.log(error);
+        
           if (error instanceof ApiError && error.name === "email_conflict") {
               return Left<ErrorClass, RealtorEntity>(ApiError.emailExist());
           }

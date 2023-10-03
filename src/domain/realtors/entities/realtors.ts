@@ -12,7 +12,7 @@ export class RealtorModel {
       public password: string = "",
       public profileImage: string = "",
       public countryCode: number = 0,
-      public deleteStatus: boolean 
+      public deleteStatus: boolean = false
     ) {}
   }
   
