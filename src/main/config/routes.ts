@@ -1,6 +1,5 @@
 
 import { connectionsRouter } from "@presentation/routes/connections";
-import { clientTagCategoryRouter } from "@presentation/routes/client-tag-category-route";
 
 import { type Express, Router } from "express";
 
@@ -16,7 +15,6 @@ export default (app: Express): void => {
   });
 
   app.use("/api/v1/connections", connectionsRouter);
-  app.use("/api/v1/connection", clientTagCategoryRouter);
 
   app.use(router);
 };
