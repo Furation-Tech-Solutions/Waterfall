@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { Sequelize } from "sequelize"
 import { ClientTagCategoryModel } from "@domain/client-tag-category/entities/client_tag_category_entities"; // Import the TagCategoryModel
-import { ClientTagCategory } from "../models/client_tag_category_model";
+import ClientTagCategory from "..//models/client_tag_category_model";
 import ApiError from "@presentation/error-handling/api-error";
 
 // Create CLientTagCategoryDataSource Interface
@@ -14,36 +14,58 @@ export interface ClientTagCategoryDataSource {
 
 // TagCategory Data Source communicates with the database
 export class ClientTagCategoryDataSourceImpl implements ClientTagCategoryDataSource {
-    constructor(private db: mongoose.Connection) { }
+    constructor(private db: Sequelize) { }
 
-    async create(clientTagCategory: ClientTagCategoryModel): Promise<any> {
-        const existingClientTagCategory = await ClientTagCategory.findOne({ name: clientTagCategory.name });
-        if (existingClientTagCategory) {
+    async create(clientTagCategory: any): Promise<any> {
+        console.log(clientTagCategory, "datasouce-20");
+        const existingClientTagCategories = await ClientTagCategory.findOne({
+            where: {
+                name: clientTagCategory.name
+            }
+        });
+        console.log(existingClientTagCategories, "datasouce-26");
+        if (existingClientTagCategories) {
             throw ApiError.emailExist();
         }
-        const clientTagCategoryData = new ClientTagCategory(clientTagCategory);
-        const createdClientTagCategory = await clientTagCategoryData.save();
-        return createdClientTagCategory.toObject();
+        const createdClientTagCategory = await ClientTagCategory.create(clientTagCategory);
+        return createdClientTagCategory.toJSON();
     }
 
     async delete(id: string): Promise<void> {
-        await ClientTagCategory.findByIdAndDelete(id);
+        await ClientTagCategory.destroy({
+            where: {
+                id: id,
+            },
+        });
     }
 
     async read(id: string): Promise<any | null> {
-        const clientTagCategory = await ClientTagCategory.findById(id).populate('tags');
-        return clientTagCategory ? clientTagCategory.toObject() : null; // Convert to a plain JavaScript object before returning
+        const clientTagCategory = await ClientTagCategory.findOne({
+            where: {
+                id: id,
+            },
+            // include: 'tags', // Replace 'tags' with the actual name of your association
+        });
+        return clientTagCategory ? clientTagCategory.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-        const clientTagCategories = await ClientTagCategory.find().populate('tags');
-        return clientTagCategories.map((clientTagCategory) => clientTagCategory.toObject()); // Convert to plain JavaScript objects before returning
+        const clientTagCategories = await ClientTagCategory.findAll({});
+        return clientTagCategories.map((clientTagCategory: any) => clientTagCategory.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
-    async update(id: string, clientTagCategory: ClientTagCategoryModel): Promise<any> {
-        const updatedClientTagCategory = await ClientTagCategory.findByIdAndUpdate(id, clientTagCategory, {
-            new: true,
-        }).populate('tags'); // No need for conversion here
-        return updatedClientTagCategory ? updatedClientTagCategory.toObject() : null; // Convert to a plain JavaScript object before returning
+    async update(id: string, updatedData: ClientTagCategoryModel): Promise<any> {
+        // Find the record by ID
+        const clientTagCategory = await ClientTagCategory.findByPk(id);
+
+
+        // Update the record with the provided data
+        if (clientTagCategory) {
+            await clientTagCategory.update(updatedData);
+        }
+        // Fetch the updated record
+        const updatedClientTagCategory = await ClientTagCategory.findByPk(id);
+
+        return updatedClientTagCategory ? updatedClientTagCategory.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 }

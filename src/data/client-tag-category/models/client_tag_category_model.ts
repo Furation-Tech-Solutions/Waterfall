@@ -1,60 +1,28 @@
 import { strict } from "assert";
+import { DataTypes } from "sequelize";
+import env from '@main/config/env';
 import { array, boolean, object, string } from "joi";
-import mongoose from "mongoose";
+import sequelize from "@main/sequalizeClient";
 
-const clientTagCategorySchema = new mongoose.Schema({
+const ClientTagCategory = sequelize.define('ClientTagCategory', {
   name: {
-    type: String,
-    minlength: [3, "Name should have at least 3 characters"],
-    maxlength: [30, "Name should have less than 30 characters"],
-    required: [true, "Please enter a name"],
+    type: DataTypes.STRING,
+    allowNull: false,
     unique: true,
-    trim: true,
+    validate: {
+      len: [3, 30],
+    },
   },
   color: {
-    type: String,
-    required: true,
-  },
-  classification: {
-    global: Boolean,
-    local: Boolean,
-  },
-  vip: Boolean,
-  display: {
-    visible_to_superusers_only: Boolean,
-    show_on_chit: Boolean,
-    show_on_reservation_summary: Boolean,
-  },
-  followers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAccount",
-    },
-  ],
-  tags: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ClientTag",
-    },
-  ],
-  updatedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserAccount",
-    default: null,
-  },
-
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserAccount",
-    default: null,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
-export const ClientTagCategory = mongoose.model(
-  "ClientTagCategory",
-  clientTagCategorySchema
-);
+
+
+// Define associations if needed
+// ClientTagCategory.hasMany(UserAccount, { foreignKey: 'updatedBy', as: 'UpdatedBy' });
+
+
+export default ClientTagCategory;
