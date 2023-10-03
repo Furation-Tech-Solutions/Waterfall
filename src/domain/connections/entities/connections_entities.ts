@@ -12,10 +12,10 @@ export class ConnectionsModel {
 export class ConnectionsEntity {
   constructor(
     public id: string | undefined = undefined, // Set a default value for id
-    public fromId: number = 0,
-    public toId: number = 0,
-    public connected: boolean = false,
-    public sentByMe: boolean = false
+    public fromId: number,
+    public toId: number,
+    public connected: boolean,
+    public sentByMe: boolean,
   ) { }
 }
 
@@ -38,7 +38,7 @@ export class ConnectionMapper {
             ? connectionData.toId
             : existingConnection.toId,
         connected:
-          connectionData.status !== undefined
+          connectionData.connected !== undefined
             ? connectionData.connected
             : existingConnection.connected,
         sentByMe:

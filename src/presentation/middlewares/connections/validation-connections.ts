@@ -34,13 +34,7 @@ const connectionsValidator = (
         "any.required": "toId is required",
       }),
 
-    connected: isUpdate
-      ? Joi.boolean().optional().messages({
-        "any.required": "connected is required",
-      })
-      : Joi.boolean().required().messages({
-        "any.required": "connected is required",
-      }),
+    connected: Joi.boolean().default(false),
 
     sentByMe: isUpdate
       ? Joi.boolean().optional().messages({

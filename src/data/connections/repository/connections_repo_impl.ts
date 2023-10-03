@@ -3,6 +3,7 @@ import { ConnectionsRepository } from "@domain/connections/repositories/connecti
 import { ConnectionsDataSource } from "../datasource/connections_datasource"; // Import the ConnectionsDataSource
 import { Either, Right, Left } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
+import { string } from "joi";
 
 export class ConnectionsRepositoryImpl implements ConnectionsRepository {
     private readonly connectionsDataSource: ConnectionsDataSource;
@@ -14,7 +15,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         try {
             const createdConnections = await this.connectionsDataSource.create(data); // Use the Connections data source
             return Right<ErrorClass, ConnectionsEntity>(createdConnections);
-        } catch (error:any) {
+        } catch (error: any) {
             if (error instanceof ApiError && error.name === "conflict") {
                 return Left<ErrorClass, ConnectionsEntity>(ApiError.connectionExist());
             }
@@ -71,4 +72,30 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
             return Left<ErrorClass, ConnectionsEntity>(ApiError.badRequest());
         }
     }
+
+    async getAllConnectionRequests(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+        try {
+            const connections = await this.connectionsDataSource.getAllRequest(id); // Use the connections data source
+            return Right<ErrorClass, ConnectionsEntity[]>(connections);
+        } catch (e) {
+            if (e instanceof ApiError && e.name === "notfound") {
+                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
+            }
+            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.badRequest());
+        }
+    }
+
+    async getAllConnectedConnections(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+        try {
+            const connections = await this.connectionsDataSource.getAllconnected(id); // Use the connections data source
+            return Right<ErrorClass, ConnectionsEntity[]>(connections);
+        } catch (e) {
+            if (e instanceof ApiError && e.name === "notfound") {
+                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
+            }
+            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.badRequest());
+        }
+    }
+
+
 }

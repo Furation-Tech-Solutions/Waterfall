@@ -13,4 +13,10 @@ export interface ConnectionsRepository {
         data: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
     getAllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+
+    // for connected realtors
+    // getConnectedConnectionsById(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    getAllConnectionRequests(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    getAllConnectedConnections(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+
 }

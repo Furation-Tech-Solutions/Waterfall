@@ -8,6 +8,8 @@ import { DeleteConnections } from "@domain/connections/usecases/delete_connectio
 import { GetConnectionsById } from "@domain/connections/usecases/get_by_id_connections";
 import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
 import { UpdateConnections } from "@domain/connections/usecases/update_connections";
+import { GetAllConnectionRequest } from "@domain/connections/usecases/get_all_requests";
+import { GetAllConnedctedConnetions } from "@domain/connections/usecases/get_all_connected_Connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection
@@ -22,6 +24,8 @@ const deleteConnectionsUsecase = new DeleteConnections(connectionsRepository);
 const getConnectionsByIdUsecase = new GetConnectionsById(connectionsRepository);
 const getAllConnectionsUsecase = new GetAllConnections(connectionsRepository);
 const updateConnectionsUsecase = new UpdateConnections(connectionsRepository);
+const GetAllConnectionRequestUsecase = new GetAllConnectionRequest(connectionsRepository);
+const GetAllConnectedConnectionstUsecase = new GetAllConnedctedConnetions(connectionsRepository);
 
 // Initialize connectionsServices and inject required dependencies
 const connectionsService = new ConnectionsServices(
@@ -29,7 +33,9 @@ const connectionsService = new ConnectionsServices(
     deleteConnectionsUsecase,
     getConnectionsByIdUsecase,
     getAllConnectionsUsecase,
-    updateConnectionsUsecase
+    updateConnectionsUsecase,
+    GetAllConnectionRequestUsecase,
+    GetAllConnectedConnectionstUsecase
 );
 
 // Create an Express router
@@ -64,3 +70,9 @@ connectionsRouter.put(
     connectionsService.updateConnections.bind(connectionsService)
 );
 
+
+// Route handling for getting all connection requests
+connectionsRouter.get("/request/:id", connectionsService.getAllConnectionRequests.bind(connectionsService));
+
+// Route handling for getting all connection requests
+connectionsRouter.get("/connected/:id", connectionsService.getAllConnectedConnections.bind(connectionsService));

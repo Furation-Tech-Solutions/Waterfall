@@ -10,6 +10,9 @@ export interface ConnectionsDataSource {
     delete(id: string): Promise<void>;
     read(id: string): Promise<any | null>;
     getAll(): Promise<any[]>;
+    getAllRequest(id: string): Promise<any[]>;
+    getAllconnected(id: string): Promise<any[]>
+
 }
 
 // Connections Data Source communicates with the database
@@ -43,6 +46,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         await Connections.destroy({
             where: {
                 id: id,
+                connected: false
             },
         });
     }
@@ -51,13 +55,37 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         const connections = await Connections.findOne({
             where: {
                 id: id,
+                connected: false
             },
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-        const connections = await Connections.findAll({});
+        const connections = await Connections.findAll({
+            where: {
+                connected: false
+            }
+        });
+        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+    }
+
+    async getAllRequest(id: string): Promise<any[]> {
+        const connections = await Connections.findAll({
+            where: {
+                toId: id,
+                connected: false
+            }
+        });
+        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+    }
+    async getAllconnected(id: string): Promise<any[]> {
+        const connections = await Connections.findAll({
+            where: {
+                toId: id,
+                connected: true
+            }
+        });
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
@@ -75,4 +103,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
         return updatedConnections ? updatedConnections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
+
+
 }

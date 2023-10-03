@@ -11,6 +11,8 @@ import { DeleteConnectionsUsecase } from "@domain/connections/usecases/delete_co
 import { GetConnectionsByIdUsecase } from "@domain/connections/usecases/get_by_id_connections";
 import { GetAllConnectionsUsecase } from "@domain/connections/usecases/get_all_connections";
 import { UpdateConnectionsUsecase } from "@domain/connections/usecases/update_connections";
+import { GetAllConnectionRequestsUsecase } from "@domain/connections/usecases/get_all_requests";
+import { GetAllConnectedConnectionsUsecase } from "@domain/connections/usecases/get_all_connected_Connections";
 import { Either } from "monet";
 
 // Define a class for handling Connections-related services
@@ -20,6 +22,8 @@ export class ConnectionsServices {
     private readonly getConnectionsByIdUsecase: GetConnectionsByIdUsecase;
     private readonly getAllConnectionsUsecase: GetAllConnectionsUsecase;
     private readonly updateConnectionsUsecase: UpdateConnectionsUsecase;
+    private readonly GetAllConnectionRequestsUsecase: GetAllConnectionRequestsUsecase;
+    private readonly GetAllConnectedConnectionsUsecase: GetAllConnectedConnectionsUsecase;
 
     constructor(
         createConnectionsUsecase: CreateConnectionsUsecase,
@@ -27,12 +31,16 @@ export class ConnectionsServices {
         getConnectionsByIdUsecase: GetConnectionsByIdUsecase,
         getAllConnectionsUsecase: GetAllConnectionsUsecase,
         updateConnectionsUsecase: UpdateConnectionsUsecase,
+        getAllConnectionRequestsUsecase: GetAllConnectionRequestsUsecase,
+        getAllConnectedConnectionsUsecase: GetAllConnectedConnectionsUsecase
     ) {
         this.createConnectionsUsecase = createConnectionsUsecase;
         this.deleteConnectionsUsecase = deleteConnectionsUsecase;
         this.getConnectionsByIdUsecase = getConnectionsByIdUsecase;
         this.getAllConnectionsUsecase = getAllConnectionsUsecase;
         this.updateConnectionsUsecase = updateConnectionsUsecase;
+        this.GetAllConnectionRequestsUsecase = getAllConnectionRequestsUsecase;
+        this.GetAllConnectedConnectionsUsecase = getAllConnectedConnectionsUsecase;
     }
 
     // Handler for creating new connections
@@ -40,13 +48,9 @@ export class ConnectionsServices {
         // Extract data from the request body and map it to the ConnectionsModel
         const Data: ConnectionsModel = ConnectionMapper.toModel(req.body);
 
-        // console.log(Data, "service-42");
-
         // Execute the createConnections use case to create a new connection
         const newConnections: Either<ErrorClass, ConnectionsEntity> =
             await this.createConnectionsUsecase.execute(Data);
-
-        // console.log(newConnections, "service-47");
 
         // Handle the result of the use case execution
         newConnections.cata(
@@ -169,4 +173,54 @@ export class ConnectionsServices {
             }
         );
     }
+
+    async getAllConnectionRequests(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> {
+        const id: string = req.params.id;
+        // Execute the getAllConnections use case to retrieve all connections
+        const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
+            await this.GetAllConnectionRequestsUsecase.execute(id);
+
+        // Handle the result of the use case execution
+        clientConnections.cata(
+            (error: ErrorClass) =>
+                res.status(error.status).json({ error: error.message }), // Handle error case
+            (result: ConnectionsEntity[]) => {
+                // Handle success case
+                const responseData = result.map((connection) =>
+                    ConnectionMapper.toEntity(connection)
+                );
+                return res.json(responseData);
+            }
+        );
+    }
+
+    async getAllConnectedConnections(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> {
+        const id: string = req.params.id;
+        // Execute the getAllConnections use case to retrieve all connections
+        const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
+            await this.GetAllConnectedConnectionsUsecase.execute(id);
+
+        // Handle the result of the use case execution
+        clientConnections.cata(
+            (error: ErrorClass) =>
+                res.status(error.status).json({ error: error.message }), // Handle error case
+            (result: ConnectionsEntity[]) => {
+                // Handle success case
+                const responseData = result.map((connection) =>
+                    ConnectionMapper.toEntity(connection)
+                );
+                return res.json(responseData);
+            }
+        );
+    }
+
+
 }
