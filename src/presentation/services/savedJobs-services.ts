@@ -113,21 +113,21 @@ export class SavedJobService {
     );
   }
 
-  // async getAllSavedJobs(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
-  //     await this.getAllSavedJobsUsecase.execute();
+  async getAllSavedJobs(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
+      await this.getAllSavedJobsUsecase.execute();
 
-  //   savedJobs.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (savedJobs: SavedJobEntity[]) => {
-  //       const resData = savedJobs.map((savedJob: any) => SavedJobMapper.toEntity(savedJob));
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    savedJobs.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (savedJobs: SavedJobEntity[]) => {
+        const resData = savedJobs.map((savedJob: any) => SavedJobMapper.toEntity(savedJob));
+        return res.json(resData);
+      }
+    );
+  }
 }

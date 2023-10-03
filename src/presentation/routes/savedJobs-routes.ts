@@ -52,5 +52,5 @@ savedJobRouter.put("/:id", savedJobService.updateSavedJob.bind(savedJobService))
 // Route handling for deleting an SavedJob by ID
 savedJobRouter.delete("/:id", savedJobService.deleteSavedJob.bind(savedJobService));
 
-// // Route handling for getting all SavedJobs
-// savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));
+// Route handling for getting all SavedJobs
+savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));
