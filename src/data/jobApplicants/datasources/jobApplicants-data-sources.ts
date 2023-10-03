@@ -7,7 +7,6 @@ import ApiError from "@presentation/error-handling/api-error";
 export interface JobApplicantDataSource {
   create(jobApplicant: JobApplicantModel): Promise<any>;
   update(id: string, jobApplicant: JobApplicantModel): Promise<any>;
-  delete(id: string): Promise<void>;
   read(id: string): Promise<JobApplicantEntity | null>;
   getAll(): Promise<JobApplicantEntity[]>;
 }
@@ -21,13 +20,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return createdJobApplicant.toJSON();
   }
 
-  async delete(id: string): Promise<void> {
-    await JobApplicant.destroy({
-      where: {
-        id: id,
-      },
-    });
-  }
 
   async read(id: string): Promise<JobApplicantEntity | null> {
     const jobApplicant = await JobApplicant.findOne({
@@ -41,7 +33,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
   async getAll(): Promise<JobApplicantEntity[]> {
     const jobApplicant = await JobApplicant.findAll({});
-    return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON()); // Convert to plain JavaScript objects before returning
+    return jobApplicant.map((jobA: any) => jobA.toJSON()); // Convert to plain JavaScript objects before returning
   }
 
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {

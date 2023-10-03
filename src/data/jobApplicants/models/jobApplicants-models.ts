@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
-const statusEnum = {
+export const statusEnum = {
   ACCEPT: "Accept",
   PENDING: "Pending",
   DECLINE: "Decline",
@@ -41,10 +41,6 @@ const JobApplicant = sequelize.define("JobApplicant", {
     defaultValue: DataTypes.NOW,
   },
 
-  //   (async () => {
-  //     await sequelize.sync({ force: true });
-  //     // Code here
-  //   })();
 
   // agreement: {
   //     type: DataTypes.UUID, // Assuming 'Agreement' is represented by UUID in PostgreSQL

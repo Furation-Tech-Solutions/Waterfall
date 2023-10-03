@@ -1,7 +1,6 @@
 import { Sequelize } from "sequelize";
-import { JobEntity, JobModel } from "@domain/job/entites/job"; // Import the JobModel
+import { JobEntity, JobModel } from "@domain/job/entities/job"; // Import the JobModel
 import Job from "..//models/job-model";
-import ApiError from "@presentation/error-handling/api-error";
 
 // Create JobDataSource Interface
 export interface JobDataSource {

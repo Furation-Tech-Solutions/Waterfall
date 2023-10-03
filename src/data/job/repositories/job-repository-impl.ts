@@ -1,4 +1,4 @@
-import { JobEntity, JobModel } from "@domain/job/entites/job";
+import { JobEntity, JobModel } from "@domain/job/entities/job";
 import { JobRepository } from "@domain/job/repositories/job-repository";
 import { JobDataSource } from "@data/job/datasources/job-data-sources";
 import { Either, Left, Right } from "monet";
@@ -32,7 +32,7 @@ export class JobRepositoryImpl implements JobRepository {
     try {
       const res = await this.dataSource.delete(id);
       return Right<ErrorClass, void>(res);
-    } catch (error:any) {
+    } catch (error: any) {
       return Left<ErrorClass, void>(
         ApiError.customError(HttpStatus.BAD_REQUEST, `${error.message}`)
       );
@@ -46,7 +46,7 @@ export class JobRepositoryImpl implements JobRepository {
     try {
       const response = await this.dataSource.update(id, data);
       return Right<ErrorClass, JobEntity>(response);
-    } catch (error:any) {
+    } catch (error: any) {
       return Left<ErrorClass, JobEntity>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
       );
@@ -57,7 +57,7 @@ export class JobRepositoryImpl implements JobRepository {
     try {
       const response = await this.dataSource.getAll();
       return Right<ErrorClass, JobEntity[]>(response);
-    } catch (error:any) {
+    } catch (error: any) {
       if (error instanceof ApiError && error.status === 404) {
         return Left<ErrorClass, JobEntity[]>(ApiError.notFound());
       }
@@ -74,7 +74,7 @@ export class JobRepositoryImpl implements JobRepository {
         return Left<ErrorClass, JobEntity>(ApiError.notFound());
       }
       return Right<ErrorClass, JobEntity>(response);
-    } catch (error:any) {
+    } catch (error: any) {
       return Left<ErrorClass, JobEntity>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
       );

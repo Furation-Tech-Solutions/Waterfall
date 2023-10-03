@@ -8,6 +8,7 @@ import { GetJobApplicantById } from "@domain/jobApplicants/usecases/get-jobAppli
 import { GetAllJobApplicants } from "@domain/jobApplicants/usecases/get-all-jobApplicants";
 import { UpdateJobApplicant } from "@domain/jobApplicants/usecases/update-jobApplicant";
 import { CreateJobApplicant } from "@domain/jobApplicants/usecases/create-jobApplicants";
+import { validateJobApplicantInputMiddleware } from "@presentation/middlewares/jobApplicants/validation-middleware";
 
 // Create an instance of the JobApplicantDataSourceImpl and pass the sequelize connection
 const jobApplicantDataSource = new JobApplicantDataSourceImpl(sequelize);
@@ -35,7 +36,12 @@ const jobApplicantService = new JobApplicantService(
 export const jobApplicantRouter = Router();
 
 // Route handling for creating a new Job Applicant
-jobApplicantRouter.post("/", jobApplicantService.createJobApplicant.bind(jobApplicantService));
+jobApplicantRouter.post(
+  "/",
+  validateJobApplicantInputMiddleware,jobApplicantService.createJobApplicant.bind(
+    jobApplicantService
+  )
+);
 
 // Route handling for getting an JobApplicant by ID
 jobApplicantRouter.get("/:id", jobApplicantService.getJobApplicantById.bind(jobApplicantService));
@@ -45,7 +51,7 @@ jobApplicantRouter.get("/:id", jobApplicantService.getJobApplicantById.bind(jobA
 jobApplicantRouter.get("/", jobApplicantService.getAllJobApplicants.bind(jobApplicantService));
 
 // Route handling for updating an JobApplicant by ID
-jobApplicantRouter.put("/id", jobApplicantService.updateJobApplicant.bind(jobApplicantService));
+jobApplicantRouter.put("/:id", jobApplicantService.updateJobApplicant.bind(jobApplicantService));
 
 
 
