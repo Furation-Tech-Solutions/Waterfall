@@ -13,9 +13,9 @@ const Connections = sequelize.define('Connections', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  connected: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
   sentByMe: {
     type: DataTypes.BOOLEAN,

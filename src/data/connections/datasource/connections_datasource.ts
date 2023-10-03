@@ -18,14 +18,21 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async create(newConnection: any): Promise<any> {
 
-        const existingConnections = await Connections.findOne({
+        const existingConnection1 = await Connections.findOne({
             where: {
                 fromId: newConnection.fromId,
                 toId: newConnection.toId
             }
         });
 
-        if (existingConnections) {
+        const existingConnection2 = await Connections.findOne({
+            where: {
+                fromId: newConnection.toId,
+                toId: newConnection.fromId
+            }
+        });
+
+        if (existingConnection1 || existingConnection2) {
             throw ApiError.emailExist();
         }
         const createdConnections = await Connections.create(newConnection);

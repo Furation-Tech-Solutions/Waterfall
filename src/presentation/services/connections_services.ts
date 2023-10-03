@@ -40,13 +40,13 @@ export class ConnectionsServices {
         // Extract data from the request body and map it to the ConnectionsModel
         const Data: ConnectionsModel = ConnectionMapper.toModel(req.body);
 
-        console.log(Data, "service-42");
+        // console.log(Data, "service-42");
 
         // Execute the createConnections use case to create a new connection
         const newConnections: Either<ErrorClass, ConnectionsEntity> =
             await this.createConnectionsUsecase.execute(Data);
 
-        console.log(newConnections, "service-47");
+        // console.log(newConnections, "service-47");
 
         // Handle the result of the use case execution
         newConnections.cata(

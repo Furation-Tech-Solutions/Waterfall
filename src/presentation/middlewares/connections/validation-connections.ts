@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from "express";
 interface ConnectionsInput {
   fromId: number;
   toId: number;
-  status: string;
+  connected: boolean;
   sentByMe: boolean;
 }
 
@@ -34,12 +34,12 @@ const connectionsValidator = (
         "any.required": "toId is required",
       }),
 
-    status: isUpdate
-      ? Joi.string().optional().trim().messages({
-        "any.required": "Status is required",
+    connected: isUpdate
+      ? Joi.boolean().optional().messages({
+        "any.required": "connected is required",
       })
-      : Joi.string().required().trim().messages({
-        "any.required": "Status is required",
+      : Joi.boolean().required().messages({
+        "any.required": "connected is required",
       }),
 
     sentByMe: isUpdate
