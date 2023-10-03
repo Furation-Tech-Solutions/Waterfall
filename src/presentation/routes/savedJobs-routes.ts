@@ -43,14 +43,14 @@ savedJobRouter.post(
   savedJobService.createSavedJob.bind(savedJobService)
 );
 
-// Route handling for getting an SavedJob by ID
-savedJobRouter.get("/:id", savedJobService.getSavedJobById.bind(savedJobService));
+// // Route handling for getting an SavedJob by ID
+// savedJobRouter.get("/:id", savedJobService.getSavedJobById.bind(savedJobService));
 
-// Route handling for updating an SavedJob by ID
-savedJobRouter.put("/:id", savedJobService.updateSavedJob.bind(savedJobService));
+// // Route handling for updating an SavedJob by ID
+// savedJobRouter.put("/:id", savedJobService.updateSavedJob.bind(savedJobService));
 
-// Route handling for deleting an SavedJob by ID
-savedJobRouter.delete("/:id", savedJobService.deleteSavedJob.bind(savedJobService));
+// // Route handling for deleting an SavedJob by ID
+// savedJobRouter.delete("/:id", savedJobService.deleteSavedJob.bind(savedJobService));
 
-// Route handling for getting all SavedJobs
-savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));
+// // Route handling for getting all SavedJobs
+// savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));

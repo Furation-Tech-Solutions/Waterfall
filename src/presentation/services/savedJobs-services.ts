@@ -45,89 +45,89 @@ export class SavedJobService {
     );
   }
 
-  async deleteSavedJob(req: Request, res: Response): Promise<void> {
-    const savedJobId: string = req.params.id;
+  // async deleteSavedJob(req: Request, res: Response): Promise<void> {
+  //   const savedJobId: string = req.params.id;
 
-    const response: Either<ErrorClass, void> =
-      await this.deleteSavedJobUsecase.execute(savedJobId);
+  //   const response: Either<ErrorClass, void> =
+  //     await this.deleteSavedJobUsecase.execute(savedJobId);
 
-    response.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      () => {
-        return res.json({ message: "SavedJob deleted successfully." });
-      }
-    );
-  }
+  //   response.cata(
+  //     (error: ErrorClass) =>
+  //       res.status(error.status).json({ error: error.message }),
+  //     () => {
+  //       return res.json({ message: "SavedJob deleted successfully." });
+  //     }
+  //   );
+  // }
 
-  async getSavedJobById(req: Request, res: Response): Promise<void> {
-    const savedJobId: string = req.params.id;
+  // async getSavedJobById(req: Request, res: Response): Promise<void> {
+  //   const savedJobId: string = req.params.id;
 
-    const savedJob: Either<ErrorClass, SavedJobEntity> =
-      await this.getSavedJobByIdUsecase.execute(savedJobId);
+  //   const savedJob: Either<ErrorClass, SavedJobEntity> =
+  //     await this.getSavedJobByIdUsecase.execute(savedJobId);
 
-    savedJob.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: SavedJobEntity) => {
-        const resData = SavedJobMapper.toEntity(result, true);
-        return res.json(resData);
-      }
-    );
-  }
+  //   savedJob.cata(
+  //     (error: ErrorClass) =>
+  //       res.status(error.status).json({ error: error.message }),
+  //     (result: SavedJobEntity) => {
+  //       const resData = SavedJobMapper.toEntity(result, true);
+  //       return res.json(resData);
+  //     }
+  //   );
+  // }
 
-  async updateSavedJob(req: Request, res: Response): Promise<void> {
-    const savedJobId: string = req.params.id;
-    const savedJobData: SavedJobModel = req.body;
+  // async updateSavedJob(req: Request, res: Response): Promise<void> {
+  //   const savedJobId: string = req.params.id;
+  //   const savedJobData: SavedJobModel = req.body;
 
-    const existingSavedJob: Either<ErrorClass, SavedJobEntity> =
-      await this.getSavedJobByIdUsecase.execute(savedJobId);
+  //   const existingSavedJob: Either<ErrorClass, SavedJobEntity> =
+  //     await this.getSavedJobByIdUsecase.execute(savedJobId);
 
-    existingSavedJob.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
-      async (result: SavedJobEntity) => {
-        const resData = SavedJobMapper.toEntity(result, true);
+  //   existingSavedJob.cata(
+  //     (error: ErrorClass) => {
+  //       res.status(error.status).json({ error: error.message });
+  //     },
+  //     async (result: SavedJobEntity) => {
+  //       const resData = SavedJobMapper.toEntity(result, true);
 
-        const updatedSavedJobEntity: SavedJobEntity = SavedJobMapper.toEntity(
-          savedJobData,
-          true,
-          resData
-        );
+  //       const updatedSavedJobEntity: SavedJobEntity = SavedJobMapper.toEntity(
+  //         savedJobData,
+  //         true,
+  //         resData
+  //       );
 
-        const updatedSavedJob: Either<ErrorClass, SavedJobEntity> =
-          await this.updateSavedJobUsecase.execute(savedJobId, updatedSavedJobEntity);
+  //       const updatedSavedJob: Either<ErrorClass, SavedJobEntity> =
+  //         await this.updateSavedJobUsecase.execute(savedJobId, updatedSavedJobEntity);
 
-        updatedSavedJob.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
-          (response: SavedJobEntity) => {
-            const responseData = SavedJobMapper.toModel(response);
+  //       updatedSavedJob.cata(
+  //         (error: ErrorClass) => {
+  //           res.status(error.status).json({ error: error.message });
+  //         },
+  //         (response: SavedJobEntity) => {
+  //           const responseData = SavedJobMapper.toModel(response);
 
-            res.json(responseData);
-          }
-        );
-      }
-    );
-  }
+  //           res.json(responseData);
+  //         }
+  //       );
+  //     }
+  //   );
+  // }
 
-  async getAllSavedJobs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
-      await this.getAllSavedJobsUsecase.execute();
+  // async getAllSavedJobs(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
+  //     await this.getAllSavedJobsUsecase.execute();
 
-    savedJobs.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (savedJobs: SavedJobEntity[]) => {
-        const resData = savedJobs.map((savedJob: any) => SavedJobMapper.toEntity(savedJob));
-        return res.json(resData);
-      }
-    );
-  }
+  //   savedJobs.cata(
+  //     (error: ErrorClass) =>
+  //       res.status(error.status).json({ error: error.message }),
+  //     (savedJobs: SavedJobEntity[]) => {
+  //       const resData = savedJobs.map((savedJob: any) => SavedJobMapper.toEntity(savedJob));
+  //       return res.json(resData);
+  //     }
+  //   );
+  // }
 }
