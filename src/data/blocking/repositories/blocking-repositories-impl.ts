@@ -40,5 +40,43 @@ export class BlockingRepositoryImpl implements BlockingRepository {
           return Left<ErrorClass, BlockingEntity[]>(ApiError.badRequest());
       }
   }
+
+  async getBlockingById(id: string): Promise<Either<ErrorClass, BlockingEntity>> {
+      try {
+          const blocking = await this.blockingDataSource.read(id); // Use the tag blocking data source
+          return blocking
+              ? Right<ErrorClass, BlockingEntity>(blocking)
+              : Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "notfound") {
+              return Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+          }
+          return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
+      }
+  }
+
+  async updateBlocking(id: string, data: BlockingModel): Promise<Either<ErrorClass, BlockingEntity>> {
+      try {
+          const updatedBlocking = await this.blockingDataSource.update(id, data); // Use the tag blocking data source
+          return Right<ErrorClass, BlockingEntity>(updatedBlocking);
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "conflict") {
+              return Left<ErrorClass, BlockingEntity>(ApiError.emailExist());
+          }
+          return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
+      }
+  }
+
+  async deleteBlocking(id: string): Promise<Either<ErrorClass, void>> {
+      try {
+          const result = await this.blockingDataSource.delete(id); // Use the tag blocking data source
+          return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "notfound") {
+              return Left<ErrorClass, void>(ApiError.notFound());
+          }
+          return Left<ErrorClass, void>(ApiError.badRequest());
+      }
+  }
 }
 
