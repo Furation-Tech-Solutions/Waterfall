@@ -1,20 +1,20 @@
-import { JobEntity } from "@domain/job/entities/job";
-import { JobRepository } from "@domain/job/repositories/job-repository";
+import { SavedJobEntity } from "@domain/savedJobs/entities/savedJobs";
+import { SavedJobRepository } from "@domain/savedJobs/repositories/savedJob-repository";
 import { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
-export interface GetAllJobsUsecase {
-  execute: () => Promise<Either<ErrorClass, JobEntity[]>>;
+export interface GetAllSavedJobsUsecase {
+  execute: () => Promise<Either<ErrorClass, SavedJobEntity[]>>;
 }
 
-export class GetAllJobs implements GetAllJobsUsecase {
-  private readonly jobRepository: JobRepository;
+export class GetAllSavedJobs implements GetAllSavedJobsUsecase {
+  private readonly savedJobRepository: SavedJobRepository;
 
-  constructor(jobRepository: JobRepository) {
-    this.jobRepository = jobRepository;
+  constructor(savedJobRepository: SavedJobRepository) {
+    this.savedJobRepository = savedJobRepository;
   }
 
-  async execute(): Promise<Either<ErrorClass, JobEntity[]>> {
-    return await this.jobRepository.getJobs();
+  async execute(): Promise<Either<ErrorClass, SavedJobEntity[]>> {
+    return await this.savedJobRepository.getSavedJobs();
   }
 }
