@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 const FQAs = sequelize.define('FQAs', {
   question: { type: DataTypes.STRING, allowNull: false, },

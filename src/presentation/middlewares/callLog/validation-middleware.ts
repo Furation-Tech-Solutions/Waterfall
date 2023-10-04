@@ -4,18 +4,18 @@ import { Request, Response, NextFunction } from "express";
 import { OutcomeEnum } from "@data/callLog/models/callLog-model"; // Adjust the import path accordingly
 
 interface CallLogInput {
-  realtor: string;
+  jobApplicant: string;
   logActivity: string;
   logOutcome: string;
 }
 
 const callLogValidator = function (input: CallLogInput): CallLogInput {
   const callLogSchema = Joi.object<CallLogInput>({
-    realtor: Joi.string().required().uuid().messages({
-      "string.base": "Realtor must be a string",
-      "string.empty": "Realtor is required",
-      "string.hex": "Invalid realtor format",
-      "any.required": "Realtor is required",
+    jobApplicant: Joi.string().required().uuid().messages({
+      "string.base": "jobApplicant must be a string",
+      "string.empty": "jobApplicant is required",
+      "string.hex": "Invalid jobApplicant format",
+      "any.required": "jobApplicant is required",
     }),
     logActivity: Joi.string().required().min(1).max(500).messages({
       "string.base": "Log activity must be a string",
