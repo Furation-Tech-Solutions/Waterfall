@@ -1,3 +1,4 @@
+import { callLogRouter } from "@presentation/routes/callLog-routes";
 import { jobRouter } from "@presentation/routes/job-routes";
 import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 import { savedJobRouter } from "@presentation/routes/savedJobs-routes";
@@ -18,6 +19,7 @@ export default (app: Express): void => {
   app.use("/api/v1/jobs", jobRouter);
   app.use("/api/v1/jobApplicants", jobApplicantRouter);
   app.use("/api/v1/savedJobs", savedJobRouter);
+  app.use("/api/v1/callLogs", callLogRouter);
 
   app.use(router);
 };
