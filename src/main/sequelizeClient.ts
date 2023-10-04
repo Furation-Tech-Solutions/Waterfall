@@ -4,12 +4,9 @@ import ApiError from "@presentation/error-handling/api-error";
 
 let sequelize: Sequelize;
 
-sequelize = new Sequelize(env.postgressURL,);
+sequelize = new Sequelize(env.postgressURL);
 if (sequelize === undefined) {
-    console.log("undefine error pass siliently")
-
+  console.log("undefine error pass siliently");
 }
 
-
 export default sequelize;
-
