@@ -80,45 +80,45 @@ export class CallLogService {
     );
   }
 
-  // async updateCallLog(req: Request, res: Response): Promise<void> {
-  //   const callLogId: string = req.params.id;
-  //   const callLogData: CallLogModel = req.body;
+  async updateCallLog(req: Request, res: Response): Promise<void> {
+    const callLogId: string = req.params.id;
+    const callLogData: CallLogModel = req.body;
 
-  //   const existingCallLog: Either<ErrorClass, CallLogEntity> =
-  //     await this.getCallLogByIdUsecase.execute(callLogId);
+    const existingCallLog: Either<ErrorClass, CallLogEntity> =
+      await this.getCallLogByIdUsecase.execute(callLogId);
 
-  //   existingCallLog.cata(
-  //     (error: ErrorClass) => {
-  //       res.status(error.status).json({ error: error.message });
-  //     },
-  //     async (result: CallLogEntity) => {
-  //       const resData = CallLogMapper.toEntity(result, true);
+    existingCallLog.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (result: CallLogEntity) => {
+        const resData = CallLogMapper.toEntity(result, true);
 
-  //       const updatedCallLogEntity: CallLogEntity = CallLogMapper.toEntity(
-  //         callLogData,
-  //         true,
-  //         resData
-  //       );
+        const updatedCallLogEntity: CallLogEntity = CallLogMapper.toEntity(
+          callLogData,
+          true,
+          resData
+        );
 
-  //       const updatedCallLog: Either<ErrorClass, CallLogEntity> =
-  //         await this.updateCallLogUsecase.execute(
-  //           callLogId,
-  //           updatedCallLogEntity
-  //         );
+        const updatedCallLog: Either<ErrorClass, CallLogEntity> =
+          await this.updateCallLogUsecase.execute(
+            callLogId,
+            updatedCallLogEntity
+          );
 
-  //       updatedCallLog.cata(
-  //         (error: ErrorClass) => {
-  //           res.status(error.status).json({ error: error.message });
-  //         },
-  //         (response: CallLogEntity) => {
-  //           const responseData = CallLogMapper.toModel(response);
+        updatedCallLog.cata(
+          (error: ErrorClass) => {
+            res.status(error.status).json({ error: error.message });
+          },
+          (response: CallLogEntity) => {
+            const responseData = CallLogMapper.toModel(response);
 
-  //           res.json(responseData);
-  //         }
-  //       );
-  //     }
-  //   );
-  // }
+            res.json(responseData);
+          }
+        );
+      }
+    );
+  }
 
   // async getAllCallLogs(
   //   req: Request,
