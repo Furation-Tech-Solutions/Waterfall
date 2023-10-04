@@ -64,21 +64,21 @@ export class CallLogService {
     );
   }
 
-  // async getCallLogById(req: Request, res: Response): Promise<void> {
-  //   const callJobId: string = req.params.id;
+  async getCallLogById(req: Request, res: Response): Promise<void> {
+    const callJobId: string = req.params.id;
 
-  //   const job: Either<ErrorClass, CallLogEntity> =
-  //     await this.getCallLogByIdUsecase.execute(callJobId);
+    const job: Either<ErrorClass, CallLogEntity> =
+      await this.getCallLogByIdUsecase.execute(callJobId);
 
-  //   job.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (result: CallLogEntity) => {
-  //       const resData = CallLogMapper.toEntity(result, true);
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    job.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: CallLogEntity) => {
+        const resData = CallLogMapper.toEntity(result, true);
+        return res.json(resData);
+      }
+    );
+  }
 
   // async updateCallLog(req: Request, res: Response): Promise<void> {
   //   const callLogId: string = req.params.id;

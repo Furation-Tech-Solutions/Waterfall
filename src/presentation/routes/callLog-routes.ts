@@ -43,8 +43,8 @@ callLogRouter.post(
   callLogService.createCallLog.bind(callLogService)
 );
 
-// // Route handling for getting an CallLog by ID
-// callLogRouter.get("/:id", callLogService.getCallLogById.bind(callLogService));
+// Route handling for getting an CallLog by ID
+callLogRouter.get("/:id", callLogService.getCallLogById.bind(callLogService));
 
 // // Route handling for updating an CallLog by ID
 // callLogRouter.put("/:id", callLogService.updateCallLog.bind(callLogService));
