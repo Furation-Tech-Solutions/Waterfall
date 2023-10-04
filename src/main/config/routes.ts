@@ -1,5 +1,4 @@
 import { callLogRouter } from "@presentation/routes/callLog-routes";
-import { realtorRouter } from "@presentation/routes/realtor-routes";
 import { blockingRouter } from "@presentation/routes/blocking-routes";
 import { fqaRouter } from "@presentation/routes/fqa-routes";
 import { realtorRouter } from "@presentation/routes/realtor-routes";

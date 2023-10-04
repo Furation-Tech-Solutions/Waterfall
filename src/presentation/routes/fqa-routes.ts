@@ -10,7 +10,7 @@ import { GetAllFQAs } from "@domain/fqa/usecases/get-all-fqas";
 import { GetFQAById } from "@domain/fqa/usecases/get-fqa-by-id";
 import { UpdateFQA } from "@domain/fqa/usecases/update-fqa";
 import { DeleteFQA } from "@domain/fqa/usecases/delete-fqa";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 
 // Create an instance of the FQADataSourceImpl and pass the mongoose connection

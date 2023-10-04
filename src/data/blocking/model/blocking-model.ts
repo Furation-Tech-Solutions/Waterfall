@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
 
 const Blockings = sequelize.define('Blockings', {
