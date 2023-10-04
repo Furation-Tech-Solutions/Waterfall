@@ -1,4 +1,4 @@
-
+import { fqaRouter } from "@presentation/routes/fqa-routes";
 import { realtorRouter } from "@presentation/routes/realtor-routes";
 import { jobRouter } from "@presentation/routes/job-routes";
 import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
@@ -18,6 +18,7 @@ export default (app: Express): void => {
     res.status(200).json({ message: "ok" });
   });
 
+  app.use("/api/v1/fqas", fqaRouter);
   app.use("/api/v1/realtors", realtorRouter);
   app.use("/api/v1/jobs", jobRouter);
   app.use("/api/v1/jobApplicants", jobApplicantRouter);
