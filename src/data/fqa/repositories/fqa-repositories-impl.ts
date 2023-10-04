@@ -5,12 +5,6 @@ import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
 
-import AWS from "aws-sdk";
-import dotenv from "dotenv";
-import env from "../../../main/config/env";
-
-dotenv.config();
-
 export class FQARepositoryImpl implements FQARepository {
   private readonly fqaDataSource: FQADataSource;
   constructor(fqaDataSource: FQADataSource) {
@@ -64,6 +58,18 @@ export class FQARepositoryImpl implements FQARepository {
               return Left<ErrorClass, FQAEntity>(ApiError.emailExist());
           }
           return Left<ErrorClass, FQAEntity>(ApiError.badRequest());
+      }
+  }
+
+  async deleteFQA(id: string): Promise<Either<ErrorClass, void>> {
+      try {
+          const result = await this.fqaDataSource.delete(id); // Use the tag fqa data source
+          return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "notfound") {
+              return Left<ErrorClass, void>(ApiError.notFound());
+          }
+          return Left<ErrorClass, void>(ApiError.badRequest());
       }
   }
 }

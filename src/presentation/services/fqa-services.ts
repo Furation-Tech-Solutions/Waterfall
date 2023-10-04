@@ -8,6 +8,7 @@ import { CreateFQAUsecase } from "@domain/fqa/usecases/create-fqa";
 import { GetAllFQAsUsecase } from "@domain/fqa/usecases/get-all-fqas";
 import { GetFQAByIdUsecase } from "@domain/fqa/usecases/get-fqa-by-id";
 import { UpdateFQAUsecase } from "@domain/fqa/usecases/update-fqa";
+import { DeleteFQAUsecase } from "@domain/fqa/usecases/delete-fqa";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -16,17 +17,20 @@ export class FQAService {
   private readonly GetAllFQAsUsecase: GetAllFQAsUsecase;
   private readonly GetFQAByIdUsecase: GetFQAByIdUsecase;
   private readonly UpdateFQAUsecase: UpdateFQAUsecase;
+  private readonly DeleteFQAUsecase: DeleteFQAUsecase;
 
   constructor(
     CreateFQAUsecase: CreateFQAUsecase,
     GetAllFQAsUsecase: GetAllFQAsUsecase,
     GetFQAByIdUsecase: GetFQAByIdUsecase,
-    UpdateFQAUsecase: UpdateFQAUsecase
+    UpdateFQAUsecase: UpdateFQAUsecase,
+    DeleteFQAUsecase: DeleteFQAUsecase
   ) {
     this.CreateFQAUsecase = CreateFQAUsecase;
     this.GetAllFQAsUsecase = GetAllFQAsUsecase;
     this.GetFQAByIdUsecase = GetFQAByIdUsecase;
     this.UpdateFQAUsecase = UpdateFQAUsecase;
+    this.DeleteFQAUsecase = DeleteFQAUsecase;
   }
 
   async createFQA(req: Request, res: Response): Promise<void> {
@@ -119,5 +123,21 @@ export class FQAService {
             );
         }
     );
+  }
+
+  async deleteFQA(req: Request, res: Response): Promise<void> {
+      const id: string = req.params.id;
+    
+      // Execute the deleteBlock use case to delete a fqa by ID
+      const deleteBlock: Either<ErrorClass, void> 
+        = await this.DeleteFQAUsecase.execute(id);
+
+      deleteBlock.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: void) =>{
+          return res.json({ message: "FQA deleted successfully." })
+        }
+      )
   }
 }

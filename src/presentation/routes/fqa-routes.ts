@@ -9,6 +9,7 @@ import { validateFQAInputMiddleware } from "@presentation/middlewares/fqa/valida
 import { GetAllFQAs } from "@domain/fqa/usecases/get-all-fqas";
 import { GetFQAById } from "@domain/fqa/usecases/get-fqa-by-id";
 import { UpdateFQA } from "@domain/fqa/usecases/update-fqa";
+import { DeleteFQA } from "@domain/fqa/usecases/delete-fqa";
 import sequelize from "@main/sequalizeClient";
 
 
@@ -23,13 +24,15 @@ const createFQAUsecase = new CreateFQA(fqaRepository);
 const getAllFQAsUsecase = new GetAllFQAs(fqaRepository);
 const getFQAByIdUsecase = new GetFQAById(fqaRepository);
 const updateFQAUsecase = new UpdateFQA(fqaRepository);
+const deleteFQAUsecase = new DeleteFQA(fqaRepository);
 
 // Initialize FQAService and inject required dependencies
 const fqaService = new FQAService(
   createFQAUsecase,
   getAllFQAsUsecase,
   getFQAByIdUsecase,
-  updateFQAUsecase
+  updateFQAUsecase,
+  deleteFQAUsecase
 );
 
 // Create an Express router
@@ -46,3 +49,6 @@ fqaRouter.get("/:id", fqaService.getFQAById.bind(fqaService));
 
 // Route handling for updating an fqa by ID
 fqaRouter.put("/:id", validateFQAInputMiddleware(true), fqaService.updateFQA.bind(fqaService));
+
+// Route handling for deleting an fqa by ID
+fqaRouter.delete("/:id", fqaService.deleteFQA.bind(fqaService));

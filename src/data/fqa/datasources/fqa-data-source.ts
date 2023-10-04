@@ -9,6 +9,7 @@ export interface FQADataSource {
   getAllFQAs(): Promise<any[]>; // Return type should be Promise of an array of FQAEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of FQAEntity or null
   update(id: string, fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
+  delete(id: string): Promise<void>;
 }
 
 // FQA Data Source communicates with the database
@@ -50,6 +51,14 @@ export class FQADataSourceImpl implements FQADataSource {
       const updatedFQA = await FQA.findByPk(id);
 
       return updatedFQA ? updatedFQA.toJSON() : null; // Convert to a plain JavaScript object before returning
+  }
+
+  async delete(id: string): Promise<void> {
+      await FQA.destroy({
+          where: {
+              id: id,
+          },
+      });
   }
 }
 
