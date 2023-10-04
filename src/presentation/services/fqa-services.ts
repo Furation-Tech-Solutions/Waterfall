@@ -6,19 +6,23 @@ import {
 } from "@domain/fqa/entities/fqa";
 import { CreateFQAUsecase } from "@domain/fqa/usecases/create-fqa";
 import { GetAllFQAsUsecase } from "@domain/fqa/usecases/get-all-fqas";
+import { GetFQAByIdUsecase } from "@domain/fqa/usecases/get-fqa-by-id";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
 export class FQAService {
   private readonly CreateFQAUsecase: CreateFQAUsecase;
   private readonly GetAllFQAsUsecase: GetAllFQAsUsecase;
+  private readonly GetFQAByIdUsecase: GetFQAByIdUsecase;
 
   constructor(
     CreateFQAUsecase: CreateFQAUsecase,
-    GetAllFQAsUsecase: GetAllFQAsUsecase
+    GetAllFQAsUsecase: GetAllFQAsUsecase,
+    GetFQAByIdUsecase: GetFQAByIdUsecase
   ) {
     this.CreateFQAUsecase = CreateFQAUsecase;
     this.GetAllFQAsUsecase = GetAllFQAsUsecase;
+    this.GetFQAByIdUsecase = GetFQAByIdUsecase;
   }
 
   async createFQA(req: Request, res: Response): Promise<void> {
@@ -55,5 +59,24 @@ export class FQAService {
           return res.json(responseData);
       }
   );
+  }
+
+  async getFQAById(req: Request, res: Response): Promise<void> {
+    const fqaId: string = req.params.id;
+
+    const fqa: Either<ErrorClass, FQAEntity> =
+        await this.GetFQAByIdUsecase.execute(fqaId);
+
+    fqa.cata(
+        (error: ErrorClass) =>
+            res.status(error.status).json({ error: error.message }),
+        (result: FQAEntity) => {
+            if (!result) {
+                return res.json({ message: "FQA Name not found." });
+            }
+            const resData = FQAMapper.toEntity(result);
+            return res.json(resData);
+        }
+    );
   }
 }

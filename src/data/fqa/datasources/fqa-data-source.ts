@@ -7,6 +7,7 @@ import { Sequelize } from "sequelize"
 export interface FQADataSource {
   create(fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
   getAllFQAs(): Promise<any[]>; // Return type should be Promise of an array of FQAEntity
+  read(id: string): Promise<any | null>; // Return type should be Promise of FQAEntity or null
 }
 
 // FQA Data Source communicates with the database
@@ -23,6 +24,16 @@ export class FQADataSourceImpl implements FQADataSource {
   async getAllFQAs(): Promise<any[]> {
       const fqa = await FQA.findAll({});
       return fqa.map((fqa: any) => fqa.toJSON()); // Convert to plain JavaScript objects before returning
+  }
+
+  async read(id: string): Promise<any | null> {
+      const fqa = await FQA.findOne({
+          where: {
+              id: id,
+          },
+          // include: 'tags', // Replace 'tags' with the actual name of your association
+      });
+      return fqa ? fqa.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 }
 

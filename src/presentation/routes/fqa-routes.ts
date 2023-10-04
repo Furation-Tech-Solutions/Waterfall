@@ -7,6 +7,7 @@ import { FQARepositoryImpl } from "@data/fqa/repositories/fqa-repositories-impl"
 import { CreateFQA } from "@domain/fqa/usecases/create-fqa";
 import { validateFQAInputMiddleware } from "@presentation/middlewares/fqa/validation-middleware";
 import { GetAllFQAs } from "@domain/fqa/usecases/get-all-fqas";
+import { GetFQAById } from "@domain/fqa/usecases/get-fqa-by-id";
 import sequelize from "@main/sequalizeClient";
 
 
@@ -19,11 +20,13 @@ const fqaRepository = new FQARepositoryImpl(fqaDataSource);
 // Create instances of the required use cases and pass the FQARepositoryImpl
 const createFQAUsecase = new CreateFQA(fqaRepository);
 const getAllFQAsUsecase = new GetAllFQAs(fqaRepository);
+const getFQAByIdUsecase = new GetFQAById(fqaRepository);
 
 // Initialize FQAService and inject required dependencies
 const fqaService = new FQAService(
   createFQAUsecase,
-  getAllFQAsUsecase
+  getAllFQAsUsecase,
+  getFQAByIdUsecase
 );
 
 // Create an Express router
@@ -34,3 +37,6 @@ fqaRouter.post("/", validateFQAInputMiddleware(false), fqaService.createFQA.bind
 
 // Route handling for getting all fqasx`
 fqaRouter.get("/", fqaService.getAllFQAs.bind(fqaService));
+
+// Route handling for getting an FQA by ID
+fqaRouter.get("/:id", fqaService.getFQAById.bind(fqaService));
