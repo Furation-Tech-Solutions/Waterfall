@@ -10,7 +10,7 @@ export const OutcomeEnum = {
   WRONGNUMBER: "WrongNumber",
 };
 const CallLog = sequelize.define("CallLog", {
-  realtor: {
+  jobApplicant: {
     type: DataTypes.UUID, // Assuming the equivalent of ObjectId in PostgreSQL is UUID
     allowNull: false,
   },

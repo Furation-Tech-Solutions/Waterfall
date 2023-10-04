@@ -1,7 +1,7 @@
 // Express API request DTO
 export class CallLogModel {
   constructor(
-    public realtor: string = "",
+    public jobApplicant: string = "",
     public logActivity: string = "",
     public logOutcome: string = ""
   ) {}
@@ -11,7 +11,7 @@ export class CallLogModel {
 export class CallLogEntity {
   constructor(
     public id: string | undefined = undefined,
-    public realtor: string,
+    public jobApplicant: string,
     public logActivity: string,
     public logOutcome: string
   ) {}
@@ -27,10 +27,10 @@ export class CallLogMapper {
       // If existingCallLog is provided, merge the data from callLogData with the existingCallLog
       return {
         ...existingCallLog,
-        realtor:
-          callLogData.realtor !== undefined
-            ? callLogData.realtor
-            : existingCallLog.realtor,
+        jobApplicant:
+          callLogData.jobApplicant !== undefined
+            ? callLogData.jobApplicant
+            : existingCallLog.jobApplicant,
         logActivity:
           callLogData.logActivity !== undefined
             ? callLogData.logActivity
@@ -48,7 +48,7 @@ export class CallLogMapper {
             ? callLogData.id.toString()
             : undefined
           : callLogData.id,
-        realtor: callLogData.realtor,
+        jobApplicant: callLogData.jobApplicant,
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
       };
@@ -59,7 +59,7 @@ export class CallLogMapper {
   static toModel(callLog: CallLogEntity): any {
     return {
       id: callLog.id,
-      realtor: callLog.realtor,
+      jobApplicant: callLog.jobApplicant,
       logActivity: callLog.logActivity,
       logOutcome: callLog.logOutcome,
     };
