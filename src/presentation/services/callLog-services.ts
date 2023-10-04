@@ -49,20 +49,20 @@ export class CallLogService {
     );
   }
 
-  // async deleteCallLog(req: Request, res: Response): Promise<void> {
-  //   const callLogId: string = req.params.id;
+  async deleteCallLog(req: Request, res: Response): Promise<void> {
+    const callLogId: string = req.params.id;
 
-  //   const response: Either<ErrorClass, void> =
-  //     await this.deleteCallLogUsecase.execute(callLogId);
+    const response: Either<ErrorClass, void> =
+      await this.deleteCallLogUsecase.execute(callLogId);
 
-  //   response.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     () => {
-  //       return res.json({ message: "CallLog deleted successfully." });
-  //     }
-  //   );
-  // }
+    response.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      () => {
+        return res.json({ message: "CallLog deleted successfully." });
+      }
+    );
+  }
 
   // async getCallLogById(req: Request, res: Response): Promise<void> {
   //   const callJobId: string = req.params.id;
