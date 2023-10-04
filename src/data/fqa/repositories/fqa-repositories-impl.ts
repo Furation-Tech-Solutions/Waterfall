@@ -28,5 +28,17 @@ export class FQARepositoryImpl implements FQARepository {
           return Left<ErrorClass, FQAEntity>(ApiError.customError(400, error.message));
       }
   }
+
+  async getFQAs(): Promise<Either<ErrorClass, FQAEntity[]>> {
+      try {
+          const fqas = await this.fqaDataSource.getAllFQAs(); // Use the tag fqa data source
+          return Right<ErrorClass, FQAEntity[]>(fqas);
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "notfound") {
+              return Left<ErrorClass, FQAEntity[]>(ApiError.notFound());
+          }
+          return Left<ErrorClass, FQAEntity[]>(ApiError.badRequest());
+      }
+  }
 }
 
