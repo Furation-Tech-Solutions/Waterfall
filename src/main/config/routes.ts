@@ -1,4 +1,4 @@
-
+import { callLogRouter } from "@presentation/routes/callLog-routes";
 import { realtorRouter } from "@presentation/routes/realtor-routes";
 import { blockingRouter } from "@presentation/routes/blocking-routes";
 import { fqaRouter } from "@presentation/routes/fqa-routes";
@@ -21,6 +21,7 @@ export default (app: Express): void => {
     res.status(200).json({ message: "ok" });
   });
 
+  app.use("/api/v1/callLogs", callLogRouter);
   app.use("/api/v1/realtors", realtorRouter);
   app.use("/api/v1/blockings", blockingRouter);
   app.use("/api/v1/fqas", fqaRouter);
@@ -29,7 +30,6 @@ export default (app: Express): void => {
   app.use("/api/v1/jobApplicants", jobApplicantRouter);
   app.use("/api/v1/savedJobs", savedJobRouter);
   app.use("/api/v1/connections", connectionsRouter);
-
   app.use(router);
 };
 
