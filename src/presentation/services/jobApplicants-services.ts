@@ -17,7 +17,7 @@ export class JobApplicantService {
     createJobApplicantUsecase: CreateJobApplicantUsecase,
     getJobApplicantByIdUsecase: GetJobApplicantByIdUsecase,
     getAllJobApplicantsUsecase: GetAllJobApplicantsUsecase,
-    updateJobApplicantUsecase: UpdateJobApplicantUsecase
+    updateJobApplicantUsecase: UpdateJobApplicantUsecase,
   ) {
     this.createJobApplicantUsecase = createJobApplicantUsecase;
     this.getJobApplicantByIdUsecase = getJobApplicantByIdUsecase;

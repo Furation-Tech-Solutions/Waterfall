@@ -23,13 +23,13 @@ const getAllJobApplicantUsecase = new GetAllJobApplicants(jobApplicantRepository
 const updateJobApplicantUsecase = new UpdateJobApplicant(jobApplicantRepository);
 
 
+
 // Initialize JobApplicantService and inject required dependencies
 const jobApplicantService = new JobApplicantService(
     createJobApplicantUsecase,
     getJobApplicantByIdUsecase,
     getAllJobApplicantUsecase,
-    updateJobApplicantUsecase
-   
+    updateJobApplicantUsecase,   
 );
 
 // Create an Express router
@@ -52,6 +52,8 @@ jobApplicantRouter.get("/", jobApplicantService.getAllJobApplicants.bind(jobAppl
 
 // Route handling for updating an JobApplicant by ID
 jobApplicantRouter.put("/:id", jobApplicantService.updateJobApplicant.bind(jobApplicantService));
+
+
 
 
 

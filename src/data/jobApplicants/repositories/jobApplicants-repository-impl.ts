@@ -22,8 +22,8 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       const i = await this.dataSource.create(jobApplicant);
       return Right<ErrorClass, JobApplicantEntity>(i);
     } catch (error: any) {
-        console.log(error);
-        
+      console.log(error);
+
       if (error instanceof ApiError && error.status === 401) {
         return Left<ErrorClass, JobApplicantEntity>(ApiError.unAuthorized());
       }
@@ -70,7 +70,7 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
         return Left<ErrorClass, JobApplicantEntity>(ApiError.notFound());
       }
       return Right<ErrorClass, JobApplicantEntity>(response);
-    } catch (error:any) {
+    } catch (error: any) {
       return Left<ErrorClass, JobApplicantEntity>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
       );

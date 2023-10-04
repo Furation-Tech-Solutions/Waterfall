@@ -1,12 +1,17 @@
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
-import { statusEnum } from "@data/jobApplicants/models/jobApplicants-models"; // Import the statusEnum from your Sequelize model
+import {
+  statusEnum,
+  jobStatusEnum,
+} from "@data/jobApplicants/models/jobApplicants-models";
 
 interface JobApplicantInput {
   job: string;
   applicant: string;
   status: string;
+  agreement: boolean;
+  jobStatus: string;
   appliedTimestamp: Date;
 }
 
@@ -17,13 +22,13 @@ const jobApplicantValidator = function (
     job: Joi.string().required().uuid().messages({
       "string.base": "Job must be a string",
       "string.empty": "Job is required",
-      "string.uuid": "Invalid job format",
+      "string.hex": "Invalid job format",
       "any.required": "Job is required",
     }),
     applicant: Joi.string().required().uuid().messages({
       "string.base": "Applicant must be a string",
       "string.empty": "Applicant is required",
-      "string.uuid": "Invalid applicant format",
+      "string.hex": "Invalid applicant format",
       "any.required": "Applicant is required",
     }),
     status: Joi.string()
@@ -32,6 +37,17 @@ const jobApplicantValidator = function (
       .messages({
         "any.only": "Invalid status",
         "any.required": "Status is required",
+      }),
+    agreement: Joi.boolean().required().messages({
+      "boolean.base": "Agreement must be a boolean",
+      "any.required": "Agreement is required",
+    }),
+    jobStatus: Joi.string()
+      .valid(...Object.values(jobStatusEnum))
+      .required()
+      .messages({
+        "any.only": "Invalid job status",
+        "any.required": "Job status is required",
       }),
     appliedTimestamp: Joi.date().required().messages({
       "date.base": "Applied timestamp must be a valid date",

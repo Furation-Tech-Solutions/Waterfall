@@ -20,7 +20,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return createdJobApplicant.toJSON();
   }
 
-
   async read(id: string): Promise<JobApplicantEntity | null> {
     const jobApplicant = await JobApplicant.findOne({
       where: {
@@ -49,6 +48,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
     return updatedJobApplicant ? updatedJobApplicant.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
+
 }
 // import {
 //     JobApplicantEntity,

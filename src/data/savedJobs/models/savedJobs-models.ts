@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
-const Agreement = sequelize.define("Agreement", {
+const SavedJob = sequelize.define("SavedJob", {
   Realtor: {
     type: DataTypes.UUID, // Assuming the equivalent of ObjectId in PostgreSQL is UUID
     allowNull: false,
@@ -18,4 +18,4 @@ const Agreement = sequelize.define("Agreement", {
   // Code here
 })();
 
-export default Agreement;
+export default SavedJob;

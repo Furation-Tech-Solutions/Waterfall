@@ -6,7 +6,11 @@ export const statusEnum = {
   PENDING: "Pending",
   DECLINE: "Decline",
 };
-
+export const jobStatusEnum = {
+  COMPLETED: "Completed",
+  PENDING: "Pending",
+  DECLINE: "Decline",
+};
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
     type: DataTypes.UUID,
@@ -36,11 +40,20 @@ const JobApplicant = sequelize.define("JobApplicant", {
       },
     },
   },
+  agreement: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  jobStatus: {
+    type: DataTypes.ENUM(...Object.values(jobStatusEnum)),
+    allowNull: false,
+    defaultValue: "Pending",
+  },
   appliedTimestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-
 
   // agreement: {
   //     type: DataTypes.UUID, // Assuming 'Agreement' is represented by UUID in PostgreSQL
