@@ -5,4 +5,5 @@ export interface FQARepository {
   createFQA(fqa: FQAModel): Promise<Either<ErrorClass, FQAEntity>>;
   getFQAs(): Promise<Either<ErrorClass, FQAEntity[]>>;
   getFQAById(id: string): Promise<Either<ErrorClass, FQAEntity>>;
+  updateFQA(id: string, data: FQAModel): Promise<Either<ErrorClass, FQAEntity>>;
 }

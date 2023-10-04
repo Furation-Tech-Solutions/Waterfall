@@ -8,6 +8,7 @@ export interface FQADataSource {
   create(fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
   getAllFQAs(): Promise<any[]>; // Return type should be Promise of an array of FQAEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of FQAEntity or null
+  update(id: string, fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
 }
 
 // FQA Data Source communicates with the database
@@ -34,6 +35,21 @@ export class FQADataSourceImpl implements FQADataSource {
           // include: 'tags', // Replace 'tags' with the actual name of your association
       });
       return fqa ? fqa.toJSON() : null; // Convert to a plain JavaScript object before returning
+  }
+
+  async update(id: string, updatedData: FQAModel): Promise<any> {
+      // Find the record by ID
+      const fqa = await FQA.findByPk(id);
+
+
+      // Update the record with the provided data
+      if (fqa) {
+          await fqa.update(updatedData);
+      }
+      // Fetch the updated record
+      const updatedFQA = await FQA.findByPk(id);
+
+      return updatedFQA ? updatedFQA.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 }
 

@@ -7,6 +7,7 @@ import {
 import { CreateFQAUsecase } from "@domain/fqa/usecases/create-fqa";
 import { GetAllFQAsUsecase } from "@domain/fqa/usecases/get-all-fqas";
 import { GetFQAByIdUsecase } from "@domain/fqa/usecases/get-fqa-by-id";
+import { UpdateFQAUsecase } from "@domain/fqa/usecases/update-fqa";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -14,15 +15,18 @@ export class FQAService {
   private readonly CreateFQAUsecase: CreateFQAUsecase;
   private readonly GetAllFQAsUsecase: GetAllFQAsUsecase;
   private readonly GetFQAByIdUsecase: GetFQAByIdUsecase;
+  private readonly UpdateFQAUsecase: UpdateFQAUsecase;
 
   constructor(
     CreateFQAUsecase: CreateFQAUsecase,
     GetAllFQAsUsecase: GetAllFQAsUsecase,
-    GetFQAByIdUsecase: GetFQAByIdUsecase
+    GetFQAByIdUsecase: GetFQAByIdUsecase,
+    UpdateFQAUsecase: UpdateFQAUsecase
   ) {
     this.CreateFQAUsecase = CreateFQAUsecase;
     this.GetAllFQAsUsecase = GetAllFQAsUsecase;
     this.GetFQAByIdUsecase = GetFQAByIdUsecase;
+    this.UpdateFQAUsecase = UpdateFQAUsecase;
   }
 
   async createFQA(req: Request, res: Response): Promise<void> {
@@ -76,6 +80,43 @@ export class FQAService {
             }
             const resData = FQAMapper.toEntity(result);
             return res.json(resData);
+        }
+    );
+  }
+
+  async updateFQA(req: Request, res: Response): Promise<void> {
+    const fqaId: string = req.params.id;
+    const fqaData: FQAModel = req.body;
+
+    const existingFQA: Either<ErrorClass, FQAEntity> =
+        await this.GetFQAByIdUsecase.execute(fqaId);
+
+    existingFQA.cata(
+        (error: ErrorClass) => {
+            res.status(error.status).json({ error: error.message });
+        },
+        async (existingFQAData: FQAEntity) => {
+            const updatedFQAEntity: FQAEntity = FQAMapper.toEntity(
+                fqaData,
+                true,
+                existingFQAData
+            );
+
+            const updatedFQA: Either<ErrorClass, FQAEntity> =
+                await this.UpdateFQAUsecase.execute(
+                    fqaId,
+                    updatedFQAEntity
+                );
+
+            updatedFQA.cata(
+                (error: ErrorClass) => {
+                    res.status(error.status).json({ error: error.message });
+                },
+                (result: FQAEntity) => {
+                    const resData = FQAMapper.toEntity(result, true);
+                    res.json(resData);
+                }
+            );
         }
     );
   }

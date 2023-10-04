@@ -54,5 +54,17 @@ export class FQARepositoryImpl implements FQARepository {
           return Left<ErrorClass, FQAEntity>(ApiError.badRequest());
       }
   }
+
+  async updateFQA(id: string, data: FQAModel): Promise<Either<ErrorClass, FQAEntity>> {
+      try {
+          const updatedFQA = await this.fqaDataSource.update(id, data); // Use the tag fqa data source
+          return Right<ErrorClass, FQAEntity>(updatedFQA);
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "conflict") {
+              return Left<ErrorClass, FQAEntity>(ApiError.emailExist());
+          }
+          return Left<ErrorClass, FQAEntity>(ApiError.badRequest());
+      }
+  }
 }
 
