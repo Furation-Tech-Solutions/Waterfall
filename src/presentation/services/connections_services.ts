@@ -106,6 +106,7 @@ export class ConnectionsServices {
         );
     }
 
+    
     // Handler for getting all connections
     async getAllConnections(
         req: Request,
