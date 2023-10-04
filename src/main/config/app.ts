@@ -3,7 +3,6 @@ import setupRoutes from "@main/config/routes";
 
 import cors from "cors";
 
-
 export default (): Express => {
   const app = express();
   app.use(express.json());
