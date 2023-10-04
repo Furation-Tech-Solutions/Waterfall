@@ -1,6 +1,7 @@
 
 import { realtorRouter } from "@presentation/routes/realtor-routes";
 import { blockingRouter } from "@presentation/routes/blocking-routes";
+import { fqaRouter } from "@presentation/routes/fqa-routes";
 
 import { type Express, Router } from "express";
 
@@ -17,6 +18,7 @@ export default (app: Express): void => {
 
   app.use("/api/v1/realtors", realtorRouter);
   app.use("/api/v1/blockings", blockingRouter);
+  app.use("/api/v1/fqas", fqaRouter);
 
   app.use(router);
 };
