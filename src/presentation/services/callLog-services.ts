@@ -120,23 +120,23 @@ export class CallLogService {
     );
   }
 
-  // async getAllCallLogs(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const callLogs: Either<ErrorClass, CallLogEntity[]> =
-  //     await this.getAllCallLogsUsecase.execute();
+  async getAllCallLogs(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const callLogs: Either<ErrorClass, CallLogEntity[]> =
+      await this.getAllCallLogsUsecase.execute();
 
-  //   callLogs.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (callLogs: CallLogEntity[]) => {
-  //       const resData = callLogs.map((callLog: any) =>
-  //         CallLogMapper.toEntity(callLog)
-  //       );
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    callLogs.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (callLogs: CallLogEntity[]) => {
+        const resData = callLogs.map((callLog: any) =>
+          CallLogMapper.toEntity(callLog)
+        );
+        return res.json(resData);
+      }
+    );
+  }
 }

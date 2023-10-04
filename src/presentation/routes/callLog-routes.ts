@@ -52,5 +52,5 @@ callLogRouter.put("/:id", callLogService.updateCallLog.bind(callLogService));
 // Route handling for deleting an CallLog by ID
 callLogRouter.delete("/:id", callLogService.deleteCallLog.bind(callLogService));
 
-// // Route handling for getting all CallLogs
-// callLogRouter.get("/", callLogService.getAllCallLogs.bind(callLogService));
+// Route handling for getting all CallLogs
+callLogRouter.get("/", callLogService.getAllCallLogs.bind(callLogService));
