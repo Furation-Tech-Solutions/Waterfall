@@ -18,7 +18,15 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
   async create(feedBack: any): Promise<any> {
       console.log(feedBack, "datasouce-20");
-      
+        const existingFeedBack = await FeedBack.findOne({
+            where: {
+                jobId: feedBack.jobId
+            }
+        });
+        console.log(existingFeedBack, "datasouce-26");
+        if (existingFeedBack) {
+            throw ApiError.feedBackGiven();
+        }  
       const createdFeedBack = await FeedBack.create(feedBack);
       return createdFeedBack.toJSON();
   }
