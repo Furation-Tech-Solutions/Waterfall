@@ -91,6 +91,10 @@ const Job = sequelize.define("Job", {
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
     allowNull: false,
   },
+  deleteReason: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
   (async () => {
