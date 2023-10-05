@@ -6,6 +6,9 @@ import { FeedBackDataSourceImpl } from "@data/feedBack/datasources/feedBack-data
 import { FeedBackRepositoryImpl } from "@data/feedBack/repositories/feedBack-repositories-impl";
 import { CreateFeedBack } from "@domain/feedBack/usecases/create-feedBack";
 import { validateFeedBackInputMiddleware } from "@presentation/middlewares/feedBack/validation-middleware";
+import { GetAllFeedBacks } from "@domain/feedBack/usecases/get-all-feedBacks";
+import { GetFeedBackById } from "@domain/feedBack/usecases/get-feedBack-by-id";
+import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import sequelize from "@main/sequelizeClient";
 
 
@@ -17,10 +20,16 @@ const feedBackRepository = new FeedBackRepositoryImpl(feedBackDataSource);
 
 // Create instances of the required use cases and pass the FeedBackRepositoryImpl
 const createFeedBackUsecase = new CreateFeedBack(feedBackRepository);
+const getAllFeedBacksUsecase = new GetAllFeedBacks(feedBackRepository);
+const getFeedBackByIdUsecase = new GetFeedBackById(feedBackRepository);
+const updateFeedBackUsecase = new UpdateFeedBack(feedBackRepository);
 
 // Initialize FeedBackService and inject required dependencies
 const feedBackService = new FeedBackService(
-  createFeedBackUsecase
+  createFeedBackUsecase,
+  getAllFeedBacksUsecase,
+  getFeedBackByIdUsecase,
+  updateFeedBackUsecase
 );
 
 // Create an Express router
@@ -28,3 +37,12 @@ export const feedBackRouter = Router();
 
 // Route handling for creating a new feedBack
 feedBackRouter.post("/", validateFeedBackInputMiddleware(false), feedBackService.createFeedBack.bind(feedBackService));
+
+// Route handling for getting all feedBacksx`
+feedBackRouter.get("/", feedBackService.getAllFeedBacks.bind(feedBackService));
+
+// Route handling for getting an FeedBack by ID
+feedBackRouter.get("/:id", feedBackService.getFeedBackById.bind(feedBackService));
+
+// Route handling for updating an feedBack by ID
+feedBackRouter.put("/:id", validateFeedBackInputMiddleware(true), feedBackService.updateFeedBack.bind(feedBackService));
