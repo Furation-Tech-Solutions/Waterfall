@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
-import Realtors from "@data/realtors/model/realtor-model";
-import Jobs from "@data/job/models/job-model";
 
 const FeedBacks = sequelize.define('FeedBacks', {
   fromRealtor: { type: DataTypes.STRING, allowNull: false, },
