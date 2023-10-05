@@ -8,7 +8,7 @@ import { CreateJob } from "@domain/job/usecases/create-job";
 import { DeleteJob } from "@domain/job/usecases/delete-job";
 import { GetJobById } from "@domain/job/usecases/get-job-by-id";
 import { GetAllJobs } from "@domain/job/usecases/get-all-jobs";
-import { UpdateJob } from "@domain/job/usecases/update-jobs";
+import { UpdateJob } from "@domain/job/usecases/update-job";
 import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware";
 
 // Create an instance of the JobDataSourceImpl and pass the sequalize connection
