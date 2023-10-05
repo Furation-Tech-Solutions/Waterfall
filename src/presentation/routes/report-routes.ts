@@ -43,8 +43,8 @@ reportRouter.post(
   reportService.createReport.bind(reportService)
 );
 
-// // Route handling for getting an Report by ID
-// reportRouter.get("/:id", reportService.getReportById.bind(reportService));
+// Route handling for getting an Report by ID
+reportRouter.get("/:id", reportService.getReportById.bind(reportService));
 
 // // Route handling for updating an Report by ID
 // reportRouter.put("/:id", reportService.updateReport.bind(reportService));

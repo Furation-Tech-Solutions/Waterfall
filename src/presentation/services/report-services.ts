@@ -64,21 +64,21 @@ export class ReportService {
     );
   }
 
-  // async getReportById(req: Request, res: Response): Promise<void> {
-  //   const reportId: string = req.params.id;
+  async getReportById(req: Request, res: Response): Promise<void> {
+    const reportId: string = req.params.id;
 
-  //   const report: Either<ErrorClass, ReportEntity> =
-  //     await this.getReportByIdUsecase.execute(reportId);
+    const report: Either<ErrorClass, ReportEntity> =
+      await this.getReportByIdUsecase.execute(reportId);
 
-  //   report.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (result: ReportEntity) => {
-  //       const resData = ReportMapper.toEntity(result, true);
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    report.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: ReportEntity) => {
+        const resData = ReportMapper.toEntity(result, true);
+        return res.json(resData);
+      }
+    );
+  }
 
   // async updateReport(req: Request, res: Response): Promise<void> {
   //   const reportId: string = req.params.id;
