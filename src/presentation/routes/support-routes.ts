@@ -46,8 +46,8 @@ supportRouter.post(
 // Route handling for getting an Support by ID
 supportRouter.get("/:id", supportService.getSupportById.bind(supportService));
 
-// // Route handling for updating an Support by ID
-// supportRouter.put("/:id", supportService.updateSupport.bind(supportService));
+// Route handling for updating an Support by ID
+supportRouter.put("/:id", supportService.updateSupport.bind(supportService));
 
 // Route handling for deleting an Support by ID
 supportRouter.delete("/:id", supportService.deleteSupport.bind(supportService));

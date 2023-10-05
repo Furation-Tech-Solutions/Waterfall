@@ -76,42 +76,42 @@ export class SupportService {
     );
   }
 
-  // async updateSupport(req: Request, res: Response): Promise<void> {
-  //   const supportId: string = req.params.id;
-  //   const supportData: SupportModel = req.body;
+  async updateSupport(req: Request, res: Response): Promise<void> {
+    const supportId: string = req.params.id;
+    const supportData: SupportModel = req.body;
 
-  //   const existingSupport: Either<ErrorClass, SupportEntity> =
-  //     await this.getSupportByIdUsecase.execute(supportId);
+    const existingSupport: Either<ErrorClass, SupportEntity> =
+      await this.getSupportByIdUsecase.execute(supportId);
 
-  //   existingSupport.cata(
-  //     (error: ErrorClass) => {
-  //       res.status(error.status).json({ error: error.message });
-  //     },
-  //     async (result: SupportEntity) => {
-  //       const resData = SupportMapper.toEntity(result, true);
+    existingSupport.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (result: SupportEntity) => {
+        const resData = SupportMapper.toEntity(result, true);
 
-  //       const updatedSupportEntity: SupportEntity = SupportMapper.toEntity(
-  //         supportData,
-  //         true,
-  //         resData
-  //       );
+        const updatedSupportEntity: SupportEntity = SupportMapper.toEntity(
+          supportData,
+          true,
+          resData
+        );
 
-  //       const updatedSupport: Either<ErrorClass, SupportEntity> =
-  //         await this.updateSupportUsecase.execute(supportId, updatedSupportEntity);
+        const updatedSupport: Either<ErrorClass, SupportEntity> =
+          await this.updateSupportUsecase.execute(supportId, updatedSupportEntity);
 
-  //       updatedSupport.cata(
-  //         (error: ErrorClass) => {
-  //           res.status(error.status).json({ error: error.message });
-  //         },
-  //         (response: SupportEntity) => {
-  //           const responseData = SupportMapper.toModel(response);
+        updatedSupport.cata(
+          (error: ErrorClass) => {
+            res.status(error.status).json({ error: error.message });
+          },
+          (response: SupportEntity) => {
+            const responseData = SupportMapper.toModel(response);
 
-  //           res.json(responseData);
-  //         }
-  //       );
-  //     }
-  //   );
-  // }
+            res.json(responseData);
+          }
+        );
+      }
+    );
+  }
 
   // async getAllSupports(
   //   req: Request,
