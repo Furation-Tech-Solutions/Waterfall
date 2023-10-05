@@ -113,21 +113,21 @@ export class BugReportService {
     );
   }
 
-  // async getAllBugReports(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const bugReports: Either<ErrorClass, BugReportEntity[]> =
-  //     await this.getAllBugReportsUsecase.execute();
+  async getAllBugReports(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const bugReports: Either<ErrorClass, BugReportEntity[]> =
+      await this.getAllBugReportsUsecase.execute();
 
-  //   bugReports.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (bugReports: BugReportEntity[]) => {
-  //       const resData = bugReports.map((bugReport: any) => BugReportMapper.toEntity(bugReport));
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    bugReports.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (bugReports: BugReportEntity[]) => {
+        const resData = bugReports.map((bugReport: any) => BugReportMapper.toEntity(bugReport));
+        return res.json(resData);
+      }
+    );
+  }
 }
