@@ -46,8 +46,8 @@ reportRouter.post(
 // Route handling for getting an Report by ID
 reportRouter.get("/:id", reportService.getReportById.bind(reportService));
 
-// // Route handling for updating an Report by ID
-// reportRouter.put("/:id", reportService.updateReport.bind(reportService));
+// Route handling for updating an Report by ID
+reportRouter.put("/:id", reportService.updateReport.bind(reportService));
 
 // Route handling for deleting an Report by ID
 reportRouter.delete("/:id", reportService.deleteReport.bind(reportService));

@@ -80,42 +80,42 @@ export class ReportService {
     );
   }
 
-  // async updateReport(req: Request, res: Response): Promise<void> {
-  //   const reportId: string = req.params.id;
-  //   const reportData: ReportModel = req.body;
+  async updateReport(req: Request, res: Response): Promise<void> {
+    const reportId: string = req.params.id;
+    const reportData: ReportModel = req.body;
 
-  //   const existingReport: Either<ErrorClass, ReportEntity> =
-  //     await this.getReportByIdUsecase.execute(reportId);
+    const existingReport: Either<ErrorClass, ReportEntity> =
+      await this.getReportByIdUsecase.execute(reportId);
 
-  //   existingReport.cata(
-  //     (error: ErrorClass) => {
-  //       res.status(error.status).json({ error: error.message });
-  //     },
-  //     async (result: ReportEntity) => {
-  //       const resData = ReportMapper.toEntity(result, true);
+    existingReport.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (result: ReportEntity) => {
+        const resData = ReportMapper.toEntity(result, true);
 
-  //       const updatedReportEntity: ReportEntity = ReportMapper.toEntity(
-  //         reportData,
-  //         true,
-  //         resData
-  //       );
+        const updatedReportEntity: ReportEntity = ReportMapper.toEntity(
+          reportData,
+          true,
+          resData
+        );
 
-  //       const updatedReport: Either<ErrorClass, ReportEntity> =
-  //         await this.updateReportUsecase.execute(reportId, updatedReportEntity);
+        const updatedReport: Either<ErrorClass, ReportEntity> =
+          await this.updateReportUsecase.execute(reportId, updatedReportEntity);
 
-  //       updatedReport.cata(
-  //         (error: ErrorClass) => {
-  //           res.status(error.status).json({ error: error.message });
-  //         },
-  //         (response: ReportEntity) => {
-  //           const responseData = ReportMapper.toModel(response);
+        updatedReport.cata(
+          (error: ErrorClass) => {
+            res.status(error.status).json({ error: error.message });
+          },
+          (response: ReportEntity) => {
+            const responseData = ReportMapper.toModel(response);
 
-  //           res.json(responseData);
-  //         }
-  //       );
-  //     }
-  //   );
-  // }
+            res.json(responseData);
+          }
+        );
+      }
+    );
+  }
 
   // async getAllReports(
   //   req: Request,
