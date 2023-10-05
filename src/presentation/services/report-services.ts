@@ -49,20 +49,20 @@ export class ReportService {
     );
   }
 
-  // async deleteReport(req: Request, res: Response): Promise<void> {
-  //   const reportId: string = req.params.id;
+  async deleteReport(req: Request, res: Response): Promise<void> {
+    const reportId: string = req.params.id;
 
-  //   const response: Either<ErrorClass, void> =
-  //     await this.deleteReportUsecase.execute(reportId);
+    const response: Either<ErrorClass, void> =
+      await this.deleteReportUsecase.execute(reportId);
 
-  //   response.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     () => {
-  //       return res.json({ message: "Report deleted successfully." });
-  //     }
-  //   );
-  // }
+    response.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      () => {
+        return res.json({ message: "Report deleted successfully." });
+      }
+    );
+  }
 
   // async getReportById(req: Request, res: Response): Promise<void> {
   //   const reportId: string = req.params.id;
