@@ -6,10 +6,10 @@ import { Sequelize } from "sequelize"
 
 export interface FeedBackDataSource {
   create(feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
-  getAllFeedBacks(): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
-  read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
-  update(id: string, feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
-  delete(id: string): Promise<void>;
+    getAllFeedBacks(): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
+    read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
+    update(id: string, feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
+    delete(id: string): Promise<void>;
 }
 
 // FeedBack Data Source communicates with the database

@@ -10,7 +10,7 @@ import { GetAllRealtors } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtor } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
-import sequelize from "@main/sequelizeClient";
+import sequelize from "@main/sequalizeClient";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection

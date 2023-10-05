@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import sequelize from "@main/sequalizeClient";
 
 const Realtors = sequelize.define('Realtors', {
   firstName: { type: DataTypes.STRING, allowNull: false,  validate: { len: [3, 30] } },
