@@ -13,7 +13,6 @@ const Blocking = sequelize.define('Blocking', {
 //   targetKey: 'id' // The name of the target key column in Realtor
 // });
 
-// Define the association between Blockings and Realtor
 // Blockings.belongsTo(Realtors, {
 //   foreignKey: 'toRealtor', // The name of the foreign key column in Blockings
 //   targetKey: 'id' // The name of the target key column in Realtor

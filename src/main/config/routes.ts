@@ -7,8 +7,10 @@ import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 import { savedJobRouter } from "@presentation/routes/savedJobs-routes";
 import { connectionsRouter } from "@presentation/routes/connections";
 import { feedBackRouter } from "@presentation/routes/feedBack-routes";
-
 import { type Express, Router } from "express";
+import { reportRouter } from "@presentation/routes/report-routes";
+import { bugReportRouter } from "@presentation/routes/bugReport-routes";
+
 
 export default (app: Express): void => {
   const router = Router();
@@ -29,6 +31,8 @@ export default (app: Express): void => {
   app.use("/api/v1/savedJobs", savedJobRouter);
   app.use("/api/v1/connections", connectionsRouter);
   app.use("/api/v1/feedbacks", feedBackRouter);
+  app.use("/api/v1/reports", reportRouter);
+  app.use("/api/v1/bugReports", bugReportRouter);
 
   app.use(router);
 };
