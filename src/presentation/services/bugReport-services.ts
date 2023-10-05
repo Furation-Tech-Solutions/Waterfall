@@ -45,20 +45,20 @@ export class BugReportService {
     );
   }
 
-  // async deleteBugReport(req: Request, res: Response): Promise<void> {
-  //   const bugReportId: string = req.params.id;
+  async deleteBugReport(req: Request, res: Response): Promise<void> {
+    const bugReportId: string = req.params.id;
 
-  //   const response: Either<ErrorClass, void> =
-  //     await this.deleteBugReportUsecase.execute(bugReportId);
+    const response: Either<ErrorClass, void> =
+      await this.deleteBugReportUsecase.execute(bugReportId);
 
-  //   response.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     () => {
-  //       return res.json({ message: "BugReport deleted successfully." });
-  //     }
-  //   );
-  // }
+    response.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      () => {
+        return res.json({ message: "BugReport deleted successfully." });
+      }
+    );
+  }
 
   async getBugReportById(req: Request, res: Response): Promise<void> {
     const bugReportId: string = req.params.id;
