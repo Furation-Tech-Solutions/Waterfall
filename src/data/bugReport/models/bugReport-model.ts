@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
 const BugReport = sequelize.define("BugReport", {
-  Realtor: {
+  realtor: {
     type: DataTypes.UUID,
     allowNull: false,
     // references: {
@@ -25,7 +25,7 @@ const BugReport = sequelize.define("BugReport", {
     type: DataTypes.ARRAY(DataTypes.STRING), // PostgreSQL ARRAY type for attachments
     allowNull: true, // Change to false if it should not be nullable
   },
-  reportTimestamp: {
+  timestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },

@@ -4,7 +4,7 @@ export class BugReportModel {
     public realtor: string = "", // Replace with the appropriate data type if needed
     public description: string = "",
     public attachments: string[] | null = null,
-    public reportTimestamp: Date = new Date()
+    public timestamp: Date = new Date()
   ) {}
 }
 
@@ -15,7 +15,7 @@ export class BugReportEntity {
     public realtor: string, // Replace with the appropriate data type if needed
     public description: string,
     public attachments: string[] | null,
-    public reportTimestamp: Date
+    public timestamp: Date
   ) {}
 }
 
@@ -41,10 +41,10 @@ export class BugReportMapper {
           bugReportData.attachments !== undefined
             ? bugReportData.attachments
             : existingBugReport.attachments,
-        reportTimestamp:
-          bugReportData.reportTimestamp !== undefined
-            ? bugReportData.reportTimestamp
-            : existingBugReport.reportTimestamp,
+        timestamp:
+          bugReportData.timestamp !== undefined
+            ? bugReportData.timestamp
+            : existingBugReport.timestamp,
       };
     } else {
       // If existingBugReport is not provided, create a new BugReportEntity using bugReportData
@@ -57,7 +57,7 @@ export class BugReportMapper {
         realtor: bugReportData.realtor,
         description: bugReportData.description,
         attachments: bugReportData.attachments,
-        reportTimestamp: bugReportData.reportTimestamp,
+        timestamp: bugReportData.timestamp,
       };
       return bugReportEntity;
     }
@@ -69,7 +69,7 @@ export class BugReportMapper {
       realtor: bugReport.realtor,
       description: bugReport.description,
       attachments: bugReport.attachments,
-      reportTimestamp: bugReport.reportTimestamp,
+      timestamp: bugReport.timestamp,
     };
   }
 }
