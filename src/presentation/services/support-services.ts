@@ -45,20 +45,20 @@ export class SupportService {
     );
   }
 
-  // async deleteSupport(req: Request, res: Response): Promise<void> {
-  //   const supportId: string = req.params.id;
+  async deleteSupport(req: Request, res: Response): Promise<void> {
+    const supportId: string = req.params.id;
 
-  //   const response: Either<ErrorClass, void> =
-  //     await this.deleteSupportUsecase.execute(supportId);
+    const response: Either<ErrorClass, void> =
+      await this.deleteSupportUsecase.execute(supportId);
 
-  //   response.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     () => {
-  //       return res.json({ message: "Support deleted successfully." });
-  //     }
-  //   );
-  // }
+    response.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      () => {
+        return res.json({ message: "Support deleted successfully." });
+      }
+    );
+  }
 
   async getSupportById(req: Request, res: Response): Promise<void> {
     const supportId: string = req.params.id;
