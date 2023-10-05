@@ -43,8 +43,8 @@ bugReportRouter.post(
   bugReportService.createBugReport.bind(bugReportService)
 );
 
-// // Route handling for getting an BugReport by ID
-// bugReportRouter.get("/:id", bugReportService.getBugReportById.bind(bugReportService));
+// Route handling for getting an BugReport by ID
+bugReportRouter.get("/:id", bugReportService.getBugReportById.bind(bugReportService));
 
 // // Route handling for updating an BugReport by ID
 // bugReportRouter.put("/:id", bugReportService.updateBugReport.bind(bugReportService));

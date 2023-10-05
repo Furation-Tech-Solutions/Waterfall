@@ -60,21 +60,21 @@ export class BugReportService {
   //   );
   // }
 
-  // async getBugReportById(req: Request, res: Response): Promise<void> {
-  //   const bugReportId: string = req.params.id;
+  async getBugReportById(req: Request, res: Response): Promise<void> {
+    const bugReportId: string = req.params.id;
 
-  //   const bugReport: Either<ErrorClass, BugReportEntity> =
-  //     await this.getBugReportByIdUsecase.execute(bugReportId);
+    const bugReport: Either<ErrorClass, BugReportEntity> =
+      await this.getBugReportByIdUsecase.execute(bugReportId);
 
-  //   bugReport.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (result: BugReportEntity) => {
-  //       const resData = BugReportMapper.toEntity(result, true);
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    bugReport.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: BugReportEntity) => {
+        const resData = BugReportMapper.toEntity(result, true);
+        return res.json(resData);
+      }
+    );
+  }
 
   // async updateBugReport(req: Request, res: Response): Promise<void> {
   //   const bugReportId: string = req.params.id;
