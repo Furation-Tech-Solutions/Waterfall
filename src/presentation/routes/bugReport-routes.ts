@@ -46,8 +46,8 @@ bugReportRouter.post(
 // Route handling for getting an BugReport by ID
 bugReportRouter.get("/:id", bugReportService.getBugReportById.bind(bugReportService));
 
-// // Route handling for updating an BugReport by ID
-// bugReportRouter.put("/:id", bugReportService.updateBugReport.bind(bugReportService));
+// Route handling for updating an BugReport by ID
+bugReportRouter.put("/:id", bugReportService.updateBugReport.bind(bugReportService));
 
 // Route handling for deleting an BugReport by ID
 bugReportRouter.delete("/:id", bugReportService.deleteBugReport.bind(bugReportService));

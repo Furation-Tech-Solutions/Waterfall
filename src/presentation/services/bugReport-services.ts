@@ -76,42 +76,42 @@ export class BugReportService {
     );
   }
 
-  // async updateBugReport(req: Request, res: Response): Promise<void> {
-  //   const bugReportId: string = req.params.id;
-  //   const bugReportData: BugReportModel = req.body;
+  async updateBugReport(req: Request, res: Response): Promise<void> {
+    const bugReportId: string = req.params.id;
+    const bugReportData: BugReportModel = req.body;
 
-  //   const existingBugReport: Either<ErrorClass, BugReportEntity> =
-  //     await this.getBugReportByIdUsecase.execute(bugReportId);
+    const existingBugReport: Either<ErrorClass, BugReportEntity> =
+      await this.getBugReportByIdUsecase.execute(bugReportId);
 
-  //   existingBugReport.cata(
-  //     (error: ErrorClass) => {
-  //       res.status(error.status).json({ error: error.message });
-  //     },
-  //     async (result: BugReportEntity) => {
-  //       const resData = BugReportMapper.toEntity(result, true);
+    existingBugReport.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (result: BugReportEntity) => {
+        const resData = BugReportMapper.toEntity(result, true);
 
-  //       const updatedBugReportEntity: BugReportEntity = BugReportMapper.toEntity(
-  //         bugReportData,
-  //         true,
-  //         resData
-  //       );
+        const updatedBugReportEntity: BugReportEntity = BugReportMapper.toEntity(
+          bugReportData,
+          true,
+          resData
+        );
 
-  //       const updatedBugReport: Either<ErrorClass, BugReportEntity> =
-  //         await this.updateBugReportUsecase.execute(bugReportId, updatedBugReportEntity);
+        const updatedBugReport: Either<ErrorClass, BugReportEntity> =
+          await this.updateBugReportUsecase.execute(bugReportId, updatedBugReportEntity);
 
-  //       updatedBugReport.cata(
-  //         (error: ErrorClass) => {
-  //           res.status(error.status).json({ error: error.message });
-  //         },
-  //         (response: BugReportEntity) => {
-  //           const responseData = BugReportMapper.toModel(response);
+        updatedBugReport.cata(
+          (error: ErrorClass) => {
+            res.status(error.status).json({ error: error.message });
+          },
+          (response: BugReportEntity) => {
+            const responseData = BugReportMapper.toModel(response);
 
-  //           res.json(responseData);
-  //         }
-  //       );
-  //     }
-  //   );
-  // }
+            res.json(responseData);
+          }
+        );
+      }
+    );
+  }
 
   // async getAllBugReports(
   //   req: Request,
