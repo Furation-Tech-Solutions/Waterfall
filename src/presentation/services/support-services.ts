@@ -60,21 +60,21 @@ export class SupportService {
   //   );
   // }
 
-  // async getSupportById(req: Request, res: Response): Promise<void> {
-  //   const supportId: string = req.params.id;
+  async getSupportById(req: Request, res: Response): Promise<void> {
+    const supportId: string = req.params.id;
 
-  //   const support: Either<ErrorClass, SupportEntity> =
-  //     await this.getSupportByIdUsecase.execute(supportId);
+    const support: Either<ErrorClass, SupportEntity> =
+      await this.getSupportByIdUsecase.execute(supportId);
 
-  //   support.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (result: SupportEntity) => {
-  //       const resData = SupportMapper.toEntity(result, true);
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    support.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: SupportEntity) => {
+        const resData = SupportMapper.toEntity(result, true);
+        return res.json(resData);
+      }
+    );
+  }
 
   // async updateSupport(req: Request, res: Response): Promise<void> {
   //   const supportId: string = req.params.id;
