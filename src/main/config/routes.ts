@@ -6,7 +6,6 @@ import { jobRouter } from "@presentation/routes/job-routes";
 import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 import { savedJobRouter } from "@presentation/routes/savedJobs-routes";
 import { connectionsRouter } from "@presentation/routes/connections";
-
 import { type Express, Router } from "express";
 import { reportRouter } from "@presentation/routes/report-routes";
 
