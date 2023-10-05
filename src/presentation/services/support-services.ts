@@ -113,21 +113,21 @@ export class SupportService {
     );
   }
 
-  // async getAllSupports(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const supports: Either<ErrorClass, SupportEntity[]> =
-  //     await this.getAllSupportsUsecase.execute();
+  async getAllSupports(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const supports: Either<ErrorClass, SupportEntity[]> =
+      await this.getAllSupportsUsecase.execute();
 
-  //   supports.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (supports: SupportEntity[]) => {
-  //       const resData = supports.map((support: any) => SupportMapper.toEntity(support));
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    supports.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (supports: SupportEntity[]) => {
+        const resData = supports.map((support: any) => SupportMapper.toEntity(support));
+        return res.json(resData);
+      }
+    );
+  }
 }
