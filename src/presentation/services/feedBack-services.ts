@@ -8,6 +8,7 @@ import { CreateFeedBackUsecase } from "@domain/feedBack/usecases/create-feedBack
 import { GetAllFeedBacksUsecase } from "@domain/feedBack/usecases/get-all-feedBacks";
 import { GetFeedBackByIdUsecase } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBackUsecase } from "@domain/feedBack/usecases/update-feedBack";
+import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -16,17 +17,20 @@ export class FeedBackService {
   private readonly GetAllFeedBacksUsecase: GetAllFeedBacksUsecase;
   private readonly GetFeedBackByIdUsecase: GetFeedBackByIdUsecase;
   private readonly UpdateFeedBackUsecase: UpdateFeedBackUsecase;
+  private readonly DeleteFeedBackUsecase: DeleteFeedBackUsecase;
 
   constructor(
     CreateFeedBackUsecase: CreateFeedBackUsecase,
     GetAllFeedBacksUsecase: GetAllFeedBacksUsecase,
     GetFeedBackByIdUsecase: GetFeedBackByIdUsecase,
-    UpdateFeedBackUsecase: UpdateFeedBackUsecase
+    UpdateFeedBackUsecase: UpdateFeedBackUsecase,
+    DeleteFeedBackUsecase: DeleteFeedBackUsecase
   ) {
     this.CreateFeedBackUsecase = CreateFeedBackUsecase;
     this.GetAllFeedBacksUsecase = GetAllFeedBacksUsecase;
     this.GetFeedBackByIdUsecase = GetFeedBackByIdUsecase;
     this.UpdateFeedBackUsecase = UpdateFeedBackUsecase;
+    this.DeleteFeedBackUsecase = DeleteFeedBackUsecase;
   }
 
   async createFeedBack(req: Request, res: Response): Promise<void> {
@@ -119,5 +123,21 @@ export class FeedBackService {
             );
         }
     );
+  }
+
+  async deleteFeedBack(req: Request, res: Response): Promise<void> {
+      const id: string = req.params.id;
+    
+      // Execute the deleteBlock use case to delete a feedBack by ID
+      const deleteBlock: Either<ErrorClass, void> 
+        = await this.DeleteFeedBackUsecase.execute(id);
+
+      deleteBlock.cata(
+        (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+        (result: void) =>{
+          return res.json({ message: "FeedBack deleted successfully." })
+        }
+      )
   }
 }

@@ -60,5 +60,17 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
           return Left<ErrorClass, FeedBackEntity>(ApiError.badRequest());
       }
   }
+
+  async deleteFeedBack(id: string): Promise<Either<ErrorClass, void>> {
+      try {
+          const result = await this.feedBackDataSource.delete(id); // Use the tag feedBack data source
+          return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
+      } catch (e) {
+          if (e instanceof ApiError && e.name === "notfound") {
+              return Left<ErrorClass, void>(ApiError.notFound());
+          }
+          return Left<ErrorClass, void>(ApiError.badRequest());
+      }
+  }
 }
 

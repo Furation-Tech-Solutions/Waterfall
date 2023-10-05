@@ -9,6 +9,7 @@ import { validateFeedBackInputMiddleware } from "@presentation/middlewares/feedB
 import { GetAllFeedBacks } from "@domain/feedBack/usecases/get-all-feedBacks";
 import { GetFeedBackById } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
+import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
 import sequelize from "@main/sequelizeClient";
 
 
@@ -23,13 +24,15 @@ const createFeedBackUsecase = new CreateFeedBack(feedBackRepository);
 const getAllFeedBacksUsecase = new GetAllFeedBacks(feedBackRepository);
 const getFeedBackByIdUsecase = new GetFeedBackById(feedBackRepository);
 const updateFeedBackUsecase = new UpdateFeedBack(feedBackRepository);
+const deleteFeedBackUsecase = new DeleteFeedBack(feedBackRepository);
 
 // Initialize FeedBackService and inject required dependencies
 const feedBackService = new FeedBackService(
   createFeedBackUsecase,
   getAllFeedBacksUsecase,
   getFeedBackByIdUsecase,
-  updateFeedBackUsecase
+  updateFeedBackUsecase,
+  deleteFeedBackUsecase
 );
 
 // Create an Express router
@@ -46,3 +49,6 @@ feedBackRouter.get("/:id", feedBackService.getFeedBackById.bind(feedBackService)
 
 // Route handling for updating an feedBack by ID
 feedBackRouter.put("/:id", validateFeedBackInputMiddleware(true), feedBackService.updateFeedBack.bind(feedBackService));
+
+// Route handling for deleting an feedBack by ID
+feedBackRouter.delete("/:id", feedBackService.deleteFeedBack.bind(feedBackService));

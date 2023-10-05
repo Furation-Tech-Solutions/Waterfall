@@ -6,4 +6,5 @@ export interface FeedBackRepository {
   getFeedBacks(): Promise<Either<ErrorClass, FeedBackEntity[]>>;
   getFeedBackById(id: string): Promise<Either<ErrorClass, FeedBackEntity>>;
   updateFeedBack(id: string, data: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>>;
+  deleteFeedBack(id: string): Promise<Either<ErrorClass, void>>;
 }

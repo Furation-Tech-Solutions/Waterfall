@@ -9,6 +9,7 @@ export interface FeedBackDataSource {
   getAllFeedBacks(): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
   update(id: string, feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
+  delete(id: string): Promise<void>;
 }
 
 // FeedBack Data Source communicates with the database
@@ -50,6 +51,14 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       const updatedFeedBack = await FeedBack.findByPk(id);
 
       return updatedFeedBack ? updatedFeedBack.toJSON() : null; // Convert to a plain JavaScript object before returning
+  }
+
+  async delete(id: string): Promise<void> {
+      await FeedBack.destroy({
+          where: {
+              id: id,
+          },
+      });
   }
 }
 
