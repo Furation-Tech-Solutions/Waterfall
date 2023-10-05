@@ -52,5 +52,6 @@ reportRouter.put("/:id", reportService.updateReport.bind(reportService));
 // Route handling for deleting an Report by ID
 reportRouter.delete("/:id", reportService.deleteReport.bind(reportService));
 
-// // Route handling for getting all Reports
-// reportRouter.get("/", reportService.getAllReports.bind(reportService));
+
+// Route handling for getting all Reports
+reportRouter.get("/", reportService.getAllReports.bind(reportService));

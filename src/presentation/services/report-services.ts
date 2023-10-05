@@ -117,23 +117,23 @@ export class ReportService {
     );
   }
 
-  // async getAllReports(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const reports: Either<ErrorClass, ReportEntity[]> =
-  //     await this.getAllReportsUsecase.execute();
+  async getAllReports(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const reports: Either<ErrorClass, ReportEntity[]> =
+      await this.getAllReportsUsecase.execute();
 
-  //   reports.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (reports: ReportEntity[]) => {
-  //       const resData = reports.map((report: any) =>
-  //         ReportMapper.toEntity(report)
-  //       );
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
+    reports.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (reports: ReportEntity[]) => {
+        const resData = reports.map((report: any) =>
+          ReportMapper.toEntity(report)
+        );
+        return res.json(resData);
+      }
+    );
+  }
 }
