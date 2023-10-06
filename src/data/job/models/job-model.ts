@@ -99,6 +99,10 @@ const Job = sequelize.define("Job", {
     type: DataTypes.STRING, // Data type for deleteReason is STRING
     allowNull: false, // It cannot be null
   },
+  deleteReason: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 // Asynchronous function for database synchronization
