@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import { FeedBackModel, FeedBackEntity } from "@domain/feedBack/entities/feedBack";
 import { FeedBackRepository } from "@domain/feedBack/repositories/feedBack-repository";
 import { FeedBackDataSource } from "@data/feedBack/datasources/feedBack-data-source";
@@ -5,12 +6,15 @@ import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
 
+// Define the implementation class for the FeedBackRepository interface
 export class FeedBackRepositoryImpl implements FeedBackRepository {
   private readonly feedBackDataSource: FeedBackDataSource;
+
   constructor(feedBackDataSource: FeedBackDataSource) {
       this.feedBackDataSource = feedBackDataSource;
   }
 
+  // Create a new feedback entry
   async createFeedBack(feedBack: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>> {
       try {
           const feedBacks = await this.feedBackDataSource.create(feedBack); // Use the feedBack data source
@@ -23,6 +27,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       }
   }
 
+  // Retrieve all feedback entries
   async getFeedBacks(): Promise<Either<ErrorClass, FeedBackEntity[]>> {
       try {
           const feedBacks = await this.feedBackDataSource.getAllFeedBacks(); // Use the tag feedBack data source
@@ -35,6 +40,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       }
   }
 
+  // Retrieve a feedback entry by its ID
   async getFeedBackById(id: string): Promise<Either<ErrorClass, FeedBackEntity>> {
       try {
           const feedBack = await this.feedBackDataSource.read(id); // Use the tag feedBack data source
@@ -49,6 +55,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       }
   }
 
+  // Update a feedback entry by ID
   async updateFeedBack(id: string, data: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>> {
       try {
           const updatedFeedBack = await this.feedBackDataSource.update(id, data); // Use the tag feedBack data source
@@ -61,6 +68,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       }
   }
 
+  // Delete a feedback entry by ID
   async deleteFeedBack(id: string): Promise<Either<ErrorClass, void>> {
       try {
           const result = await this.feedBackDataSource.delete(id); // Use the tag feedBack data source
@@ -73,4 +81,3 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       }
   }
 }
-

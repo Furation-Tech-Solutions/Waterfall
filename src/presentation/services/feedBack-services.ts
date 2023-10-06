@@ -33,14 +33,15 @@ export class FeedBackService {
     this.DeleteFeedBackUsecase = DeleteFeedBackUsecase;
   }
 
+  // Handler for creating a new feedback
   async createFeedBack(req: Request, res: Response): Promise<void> {
     const feedBackData: FeedBackModel = FeedBackMapper.toModel(req.body);
-    console.log(feedBackData, "service-38");
+    console.log(feedBackData, "service-38"); // Logging feedback data
 
     const newFeedBack: Either<ErrorClass, FeedBackEntity> =
         await this.CreateFeedBackUsecase.execute(feedBackData);
 
-    console.log(feedBackData, "service-43");
+    console.log(feedBackData, "service-43"); // Logging feedback data again
 
     newFeedBack.cata(
         (error: ErrorClass) =>
@@ -52,23 +53,25 @@ export class FeedBackService {
     );
   }
 
+  // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    // Call the GetAllFeedBacksUsecase to get all FeedBacks
+    // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> = await this.GetAllFeedBacksUsecase.execute();
       
     feedBacks.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
       (result: FeedBackEntity[]) => {
-          // Filter out feedBacks with del_status set to "Deleted"
-          // const nonDeletedFeedBacks = result.filter((feedBack) => feedBack.deleteStatus !== false);
+        // Filter out feedbacks with del_status set to "Deleted"
+        // const nonDeletedFeedBacks = result.filter((feedback) => feedback.deleteStatus !== false);
 
-          // Convert non-deleted feedBacks from an array of FeedBackEntity to an array of plain JSON objects using feedBackMapper
-          const responseData = feedBacks.map((feedBack) => FeedBackMapper.toEntity(feedBack));
-          return res.json(responseData);
+        // Convert non-deleted feedbacks from an array of FeedBackEntity to an array of plain JSON objects using feedbackMapper
+        const responseData = feedBacks.map((feedback) => FeedBackMapper.toEntity(feedback));
+        return res.json(responseData);
       }
   );
   }
 
+  // Handler for getting feedback by ID
   async getFeedBackById(req: Request, res: Response): Promise<void> {
     const feedBackId: string = req.params.id;
 
@@ -88,6 +91,7 @@ export class FeedBackService {
     );
   }
 
+  // Handler for updating feedback by ID
   async updateFeedBack(req: Request, res: Response): Promise<void> {
     const feedBackId: string = req.params.id;
     const feedBackData: FeedBackModel = req.body;
@@ -125,14 +129,15 @@ export class FeedBackService {
     );
   }
 
+  // Handler for deleting feedback by ID
   async deleteFeedBack(req: Request, res: Response): Promise<void> {
       const id: string = req.params.id;
     
-      // Execute the deleteBlock use case to delete a feedBack by ID
-      const deleteBlock: Either<ErrorClass, void> 
+      // Execute the deleteFeedBack use case to delete a feedback by ID
+      const deleteFeedBack: Either<ErrorClass, void> 
         = await this.DeleteFeedBackUsecase.execute(id);
 
-      deleteBlock.cata(
+      deleteFeedBack.cata(
         (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
         (result: void) =>{

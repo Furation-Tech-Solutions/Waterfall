@@ -1,19 +1,23 @@
+// Import necessary modules and classes
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
+// Define the structure of the input for feedback
 interface FeedBackInput {
-  fromRealtor: string,
-  toRealtor: string,
-  jobId: string,
-  rating: number,
-  description: string
+  fromRealtor: string;
+  toRealtor: string;
+  jobId: string;
+  rating: number;
+  description: string;
 }
 
+// Define a validator function for feedback input
 const feedBackValidator = (
   input: FeedBackInput,
   isUpdate: boolean = false
 ) => {
+  // Define a schema for feedback input using Joi
   const feedBackSchema = Joi.object<FeedBackInput>({
     fromRealtor: isUpdate
       ? Joi.string().optional().trim()
@@ -32,10 +36,12 @@ const feedBackValidator = (
       : Joi.string().required().trim()
   });
 
+  // Validate the input against the schema
   const { error, value } = feedBackSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -47,9 +53,10 @@ const feedBackValidator = (
     );
   }
 
-  return value;
+  return value; // Return the validated input
 };
 
+// Define a middleware for validating feedback input
 export const validateFeedBackInputMiddleware = (
   isUpdate: boolean = false
 ) => {
@@ -58,7 +65,7 @@ export const validateFeedBackInputMiddleware = (
       // Extract the request body
       const { body } = req;
 
-      // Validate the client feedBack  input using the feedBackValidator
+      // Validate the client's feedback input using the feedBackValidator
       const validatedInput: FeedBackInput = feedBackValidator(
         body,
         isUpdate
@@ -67,16 +74,11 @@ export const validateFeedBackInputMiddleware = (
       // Continue to the next middleware or route handler
       next();
     } catch (error: any) {
-      // if (error instanceof ApiError) {
-      //   return res.status(error.status).json(error.message);
-      // }
-
-      // Respond with the custom error
-      // const err = ApiError.badRequest();
+      // Handle errors, e.g., respond with a custom error message
       res.status(500).json({
         success: false,
         message: error.message
-      })
+      });
     }
   };
 };
