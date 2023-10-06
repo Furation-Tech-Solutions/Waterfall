@@ -73,9 +73,9 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         }
     }
 
-    async getAllConnectionRequests(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+    async getAllConnectionRequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
         try {
-            const connections = await this.connectionsDataSource.getAllRequest(id); // Use the connections data source
+            const connections = await this.connectionsDataSource.getAllRequest(); // Use the connections data source
             return Right<ErrorClass, ConnectionsEntity[]>(connections);
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {
@@ -85,9 +85,9 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         }
     }
 
-    async getAllConnectedConnections(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+    async getAllConnectedConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
         try {
-            const connections = await this.connectionsDataSource.getAllconnected(id); // Use the connections data source
+            const connections = await this.connectionsDataSource.getAllconnected(); // Use the connections data source
             return Right<ErrorClass, ConnectionsEntity[]>(connections);
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {

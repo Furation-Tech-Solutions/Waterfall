@@ -10,8 +10,8 @@ export interface ConnectionsDataSource {
     delete(id: string): Promise<void>;
     read(id: string): Promise<any | null>;
     getAll(): Promise<any[]>;
-    getAllRequest(id: string): Promise<any[]>;
-    getAllconnected(id: string): Promise<any[]>
+    getAllRequest(): Promise<any[]>;
+    getAllconnected(): Promise<any[]>
 
 }
 
@@ -45,8 +45,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     async delete(id: string): Promise<void> {
         await Connections.destroy({
             where: {
-                id: id,
-                connected: false
+                id: id
             },
         });
     }
@@ -54,35 +53,28 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     async read(id: string): Promise<any | null> {
         const connections = await Connections.findOne({
             where: {
-                id: id,
-                connected: false
+                id: id
             },
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-        const connections = await Connections.findAll({
-            where: {
-                connected: false
-            }
-        });
+        const connections = await Connections.findAll();
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
-    async getAllRequest(id: string): Promise<any[]> {
+    async getAllRequest(): Promise<any[]> {
         const connections = await Connections.findAll({
             where: {
-                toId: id,
                 connected: false
             }
         });
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
-    async getAllconnected(id: string): Promise<any[]> {
+    async getAllconnected(): Promise<any[]> {
         const connections = await Connections.findAll({
             where: {
-                toId: id,
                 connected: true
             }
         });

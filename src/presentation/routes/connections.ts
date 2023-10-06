@@ -72,7 +72,7 @@ connectionsRouter.put(
 
 
 // Route handling for getting all connection requests
-connectionsRouter.get("/request/:id", connectionsService.getAllConnectionRequests.bind(connectionsService));
+connectionsRouter.get("/request", connectionsService.getAllConnectionRequests.bind(connectionsService));
 
 // Route handling for getting all connection requests
-connectionsRouter.get("/connected/:id", connectionsService.getAllConnectedConnections.bind(connectionsService));
+connectionsRouter.get("/connected", connectionsService.getAllConnectedConnections.bind(connectionsService));

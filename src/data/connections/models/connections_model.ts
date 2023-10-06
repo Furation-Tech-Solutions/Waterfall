@@ -17,10 +17,7 @@ const Connections = sequelize.define('Connections', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  sentByMe: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-  },
+  
 });
 
 // Define associations if needed
