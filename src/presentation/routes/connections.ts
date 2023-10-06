@@ -1,4 +1,3 @@
-
 import sequelize from "@main/sequelizeClient";
 import { Router } from "express";
 import { ConnectionsServices } from "@presentation/services/connections_services"; // Import the ConnectionsServices

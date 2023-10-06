@@ -1,6 +1,6 @@
 // Import the necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model called 'FeedBacks' with several fields
 const FeedBacks = sequelize.define('FeedBacks', {

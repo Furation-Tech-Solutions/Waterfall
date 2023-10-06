@@ -5,6 +5,7 @@ import { RealtorDataSource } from "@data/realtors/datasources/realtor-data-sourc
 import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
+import * as HttpStatus from "@presentation/error-handling/http-status";
 
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
@@ -36,16 +37,16 @@ export class RealtorRepositoryImpl implements RealtorRepository {
 
   // Get all Realtor entities
   async getRealtors(): Promise<Either<ErrorClass, RealtorEntity[]>> {
-      try {
-          const realtors = await this.realtorDataSource.getAllRealtors(); // Use the tag realtor data source
-          return Right<ErrorClass, RealtorEntity[]>(realtors);
-      } catch (e) {
-          if (e instanceof ApiError && e.name === "notfound") {
-              return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
-          }
-          return Left<ErrorClass, RealtorEntity[]>(ApiError.badRequest());
-      }
-  }
+    try {
+        const realtors = await this.realtorDataSource.getAllRealtors(); // Use the tag realtor data source
+        return Right<ErrorClass, RealtorEntity[]>(realtors);
+    } catch (e) {
+        if (e instanceof ApiError && e.name === "notfound") {
+            return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
+        }
+        return Left<ErrorClass, RealtorEntity[]>(ApiError.badRequest());
+    }
+}
 
   // Get a Realtor entity by ID
   async getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity>> {

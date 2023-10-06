@@ -35,8 +35,8 @@ const realtorValidator = (
       ? Joi.string().min(3).max(30).optional()
       : Joi.string().min(3).max(30).optional(),
     contact: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().optional(),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     DOB: isUpdate
       ? Joi.string().optional()
       : Joi.string().optional(),

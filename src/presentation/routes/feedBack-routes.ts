@@ -10,7 +10,7 @@ import { GetAllFeedBacks } from "@domain/feedBack/usecases/get-all-feedBacks";
 import { GetFeedBackById } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 
 // Create an instance of the FeedBackDataSourceImpl and pass the mongoose connection

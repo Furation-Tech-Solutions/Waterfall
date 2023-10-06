@@ -34,8 +34,14 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     // Retrieve all Realtor entries
+    // async getAllRealtors(): Promise<any[]> {
+    //     const realtor = await Realtor.findAll({});
+    //     return realtor.map((realtor: any) => realtor.toJSON()); // Convert to plain JavaScript objects before returning
+    // }
     async getAllRealtors(): Promise<any[]> {
         const realtor = await Realtor.findAll({});
+        console.log("HelloFT", realtor, "HelloFT");
+        
         return realtor.map((realtor: any) => realtor.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
