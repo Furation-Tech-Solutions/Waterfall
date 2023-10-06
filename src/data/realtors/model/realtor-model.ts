@@ -5,17 +5,17 @@ import sequelize from "@main/sequelizeClient";
 // Define a Sequelize model called 'Realtors' with various fields
 const Realtors = sequelize.define('Realtors', {
   // Define fields with their data types and constraints
-  firstName: { type: DataTypes.STRING, allowNull: false, validate: { len: [3, 30] } },
-  lastName: { type: DataTypes.STRING, allowNull: false, validate: { len: [3, 30] } },
-  email: { type: DataTypes.STRING, allowNull: false, unique: true },
-  contact: { type: DataTypes.INTEGER, allowNull: false, unique: true },
-  DOB: { type: DataTypes.STRING, allowNull: false },
-  gender: { type: DataTypes.STRING, allowNull: false },
-  location: { type: DataTypes.STRING, allowNull: false },
-  about: { type: DataTypes.STRING, allowNull: false },
-  password: { type: DataTypes.STRING, allowNull: false, validate: { len: [5, 10] } },
-  profileImage: { type: DataTypes.STRING, allowNull: false },
-  countryCode: { type: DataTypes.INTEGER, allowNull: false },
+  firstName: { type: DataTypes.STRING, validate: { len: [3, 30] } },
+  lastName: { type: DataTypes.STRING, validate: { len: [3, 30] } },
+  email: { type: DataTypes.STRING, unique: true },
+  contact: { type: DataTypes.INTEGER, unique: true },
+  DOB: { type: DataTypes.STRING },
+  gender: { type: DataTypes.STRING },
+  location: { type: DataTypes.STRING },
+  about: { type: DataTypes.STRING },
+  password: { type: DataTypes.STRING,  validate: { len: [5, 10] } },
+  profileImage: { type: DataTypes.STRING },
+  countryCode: { type: DataTypes.INTEGER },
   deleteStatus: { type: DataTypes.BOOLEAN }
 });
 

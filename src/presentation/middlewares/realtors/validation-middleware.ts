@@ -26,99 +26,38 @@ const realtorValidator = (
   // Define a schema for Realtor input using Joi
   const realtorSchema = Joi.object<RealtorInput>({
     firstName: isUpdate
-      ? Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "firstName should have at least 3 characters",
-        "string.max": "firstName should have less than 30 characters",
-      })
-      : Joi.string().min(3).max(30).required().trim().messages({
-        "string.min": "firstName should have at least 3 characters",
-        "string.max": "firstName should have less than 30 characters",
-        "any.required": "firstName is required",
-      }),
+      ? Joi.string().min(3).max(30).optional()
+      : Joi.string().min(3).max(30).optional(),
     lastName: isUpdate
-      ? Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-      })
-      : Joi.string().min(3).max(30).required().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-        "any.required": "lastName is required",
-      }),
+      ? Joi.string().min(3).max(30).optional()
+      : Joi.string().min(3).max(30).optional(),
     email: isUpdate
-      ? Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-      })
-      : Joi.string().min(3).max(30).required().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-        "any.required": "lastName is required",
-      }),
+      ? Joi.string().min(3).max(30).optional()
+      : Joi.string().min(3).max(30).optional(),
     contact: isUpdate
-      ? Joi.number().optional().messages({
-        'number.base': 'Contact number must be a number',
-      })
-      : Joi.number().required().messages({
-        'any.required': 'Contact number is required',
-        'number.base': 'Contact number must be a number',
-      }),
+      ? Joi.number().optional()
+      : Joi.number().optional(),
     DOB: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'Date of birth cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'Date of birth is required',
-        'string.empty': 'Date of birth cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     gender: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'Gender cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'Gender is required',
-        'string.empty': 'Gender cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     location: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'Location cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'Location is required',
-        'string.empty': 'Location cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     about: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'About cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'About is required',
-        'string.empty': 'About cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     password: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'Password cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'Password is required',
-        'string.empty': 'Password cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     profileImage: isUpdate
-      ? Joi.string().optional().messages({
-        'string.empty': 'ProfileImage cannot be empty',
-      })
-      : Joi.string().required().messages({
-        'any.required': 'ProfileImage is required',
-        'string.empty': 'ProfileImage cannot be empty',
-      }),
+      ? Joi.string().optional()
+      : Joi.string().optional(),
     countryCode: isUpdate
-      ? Joi.number().optional().messages({
-        'string.empty': 'CountryCode cannot be empty',
-      })
-      : Joi.number().required().messages({
-        'any.required': 'CountryCode is required',
-        'string.empty': 'CountryCode cannot be empty',
-      }),
+      ? Joi.number().optional()
+      : Joi.number().optional(),
     deleteStatus: isUpdate
       ? Joi.boolean().optional()
       : Joi.boolean().optional().default(false)
