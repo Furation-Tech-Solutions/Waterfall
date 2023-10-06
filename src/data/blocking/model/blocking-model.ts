@@ -8,7 +8,6 @@ const Blocking = sequelize.define('Blocking', {
   toRealtor: { type: DataTypes.STRING, allowNull: false  }
 });
 
-// An asynchronous self-invoking function for database synchronization
 (async () => {
   // Synchronize the Sequelize model with the database, and ensure tables are not dropped (force: false)
   await sequelize.sync({ force: false });

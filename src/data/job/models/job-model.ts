@@ -91,6 +91,10 @@ const Job = sequelize.define("Job", {
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
     allowNull: false,
   },
+  deleteReason: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
   (async () => {
@@ -99,103 +103,3 @@ const Job = sequelize.define("Job", {
   })();
 
 export default Job;
-
-// const mongoose = require("mongoose");
-
-// export const numberOfApplicantsEnum = {
-//     FROM1TO5: "1To5",
-//     FROM5TO10: "5To10",
-//     FROM10TO15: "10To15",
-//     FROM15TO20: "15To20",
-//     FROM20TO25: "20To25",
-//     FROM25TO30: "25To30",
-// };
-
-// export const jobTypeEnum = {
-//     SHOWINGPROPERTYtTOCLIENT: "Showing property to client",
-//     ONETIMEVISIT: "One time visit",
-//     HELPWITHOPENHOUSE: "Help with open house",
-//     WRITINGCMA: "Writing CMA",
-//     WRITINGANOFFER: "Writing an offer",
-//     HELPINGWITHMOREINSPECTION: "Helping with more inspection",
-//     OTHERS: "Others",
-// };
-
-// export const feeTypeEnum = {
-//     FIXRATE: "Fix Rate",
-//     FLATFEE: "Flat Fee",
-// };
-
-// const jobSchema = new mongoose.Schema({
-//     jobOwner: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "Realtor", // Reference to the User who created the job
-//         required: true,
-//     },
-//     location: {
-//         type: String,
-//         required: true,
-//     },
-//     address: {
-//         type: String,
-//         required: true,
-//     },
-//     date: {
-//         type: Date,
-//         required: true,
-//     },
-//     numberOfApplicants: {
-//         type: String,
-//         enum: Object.values(numberOfApplicantsEnum),
-//         required: true,
-//     },
-//     fromTime: {
-//         type: String,
-//         required: true,
-//     },
-//     toTime: {
-//         type: String,
-//         required: true,
-//     },
-//     jobType: {
-//         type: String,
-//         enum: Object.values(jobTypeEnum),
-//         required: true,
-//     },
-//     clientEmail: {
-//         type: String,
-//         required: true,
-//     },
-//     clientPhoneNumber: {
-//         type: String,
-//         required: true,
-//     },
-//     feeType: {
-//         type: String,
-//         enum: Object.values(feeTypeEnum),
-//         required: true,
-//     },
-//     fee: {
-//         type: String,
-//         required: true,
-//     },
-//     description: {
-//         type: String,
-//         required: true,
-//     },
-//     attachments: [
-//         {
-//             type: String, // You can store attachment URLs or file paths as strings
-//         },
-//     ],
-//     applyBy: {
-//         type: Date,
-//         required: true,
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now,
-//     },
-// });
-
-// export const Job = mongoose.model("Job", jobSchema);

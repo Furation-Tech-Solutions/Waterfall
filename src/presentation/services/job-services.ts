@@ -3,7 +3,7 @@ import { JobEntity, JobModel, JobMapper } from "@domain/job/entities/job";
 import { CreateJobUsecase } from "@domain/job/usecases/create-job";
 import { DeleteJobUsecase } from "@domain/job/usecases/delete-job";
 import { GetJobByIdUsecase } from "@domain/job/usecases/get-job-by-id";
-import { UpdateJobUsecase } from "@domain/job/usecases/update-jobs";
+import { UpdateJobUsecase } from "@domain/job/usecases/update-job";
 import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";

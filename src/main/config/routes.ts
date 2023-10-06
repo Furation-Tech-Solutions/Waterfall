@@ -7,9 +7,10 @@ import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 import { savedJobRouter } from "@presentation/routes/savedJobs-routes";
 import { connectionsRouter } from "@presentation/routes/connections";
 import { feedBackRouter } from "@presentation/routes/feedBack-routes";
-
-// Import Express and Router types
-import { Express, Router } from "express";
+import { type Express, Router } from "express";
+import { reportRouter } from "@presentation/routes/report-routes";
+import { bugReportRouter } from "@presentation/routes/bugReport-routes";
+import { supportRouter } from "@presentation/routes/support-routes";
 
 // Export a function that sets up routes for the Express app
 export default (app: Express): void => {
@@ -34,7 +35,8 @@ export default (app: Express): void => {
   app.use("/api/v1/savedJobs", savedJobRouter);
   app.use("/api/v1/connections", connectionsRouter);
   app.use("/api/v1/feedbacks", feedBackRouter);
-
-  // Use the main router for the Express app
+  app.use("/api/v1/reports", reportRouter);
+  app.use("/api/v1/bugReports", bugReportRouter);
+  app.use("/api/v1/supports", supportRouter);
   app.use(router);
 };
