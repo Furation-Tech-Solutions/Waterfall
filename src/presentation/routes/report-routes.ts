@@ -1,6 +1,6 @@
 // Import necessary classes, interfaces, and dependencies
 import sequelize from "@main/sequelizeClient";
-import { Router } from "express"; // Correctly import Request and Response
+import { Router, Request, Response } from "express"; // Import the Router class and Request/Response types from Express
 import { ReportService } from "@presentation/services/report-services";
 import { ReportDataSourceImpl } from "@data/report/datasources/report-data-sources";
 import { ReportRepositoryImpl } from "@data/report/repositories/report-repository-impl";
@@ -11,7 +11,7 @@ import { GetAllReports } from "@domain/report/usecases/get-all-reports";
 import { UpdateReport } from "@domain/report/usecases/update-report";
 import { validateReportInputMiddleware } from "@presentation/middlewares/report/validation-middleware";
 
-// Create an instance of the ReportDataSourceImpl and pass the sequalize connection
+// Create an instance of the ReportDataSourceImpl and pass the Sequelize connection
 const reportDataSource = new ReportDataSourceImpl(sequelize);
 
 // Create an instance of the ReportRepositoryImpl and pass the ReportDataSourceImpl
@@ -39,19 +39,18 @@ export const reportRouter = Router();
 // Route handling for creating a new Report
 reportRouter.post(
   "/",
-  validateReportInputMiddleware,
-  reportService.createReport.bind(reportService)
+  validateReportInputMiddleware, // Apply input validation middleware
+  reportService.createReport.bind(reportService) // Bind the createReport method to handle the route
 );
 
-// Route handling for getting an Report by ID
+// Route handling for getting a Report by ID
 reportRouter.get("/:id", reportService.getReportById.bind(reportService));
 
-// Route handling for updating an Report by ID
+// Route handling for updating a Report by ID
 reportRouter.put("/:id", reportService.updateReport.bind(reportService));
 
-// Route handling for deleting an Report by ID
+// Route handling for deleting a Report by ID
 reportRouter.delete("/:id", reportService.deleteReport.bind(reportService));
-
 
 // Route handling for getting all Reports
 reportRouter.get("/", reportService.getAllReports.bind(reportService));

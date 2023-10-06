@@ -12,6 +12,7 @@ import { GetAllReportsUsecase } from "@domain/report/usecases/get-all-reports";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
+// Create a class for the ReportService
 export class ReportService {
   private readonly createReportUsecase: CreateReportUsecase;
   private readonly deleteReportUsecase: DeleteReportUsecase;
@@ -19,6 +20,7 @@ export class ReportService {
   private readonly updateReportUsecase: UpdateReportUsecase;
   private readonly getAllReportsUsecase: GetAllReportsUsecase;
 
+  // Constructor to initialize dependencies
   constructor(
     createReportUsecase: CreateReportUsecase,
     deleteReportUsecase: DeleteReportUsecase,
@@ -33,12 +35,16 @@ export class ReportService {
     this.getAllReportsUsecase = getAllReportsUsecase;
   }
 
+  // Function to create a new report
   async createReport(req: Request, res: Response): Promise<void> {
+    // Extract report data from the request body
     const reportData: ReportModel = ReportMapper.toModel(req.body);
 
+    // Execute the createReportUsecase and handle the result using Either
     const newReport: Either<ErrorClass, ReportEntity> =
       await this.createReportUsecase.execute(reportData);
 
+    // Handle the result and send a JSON response
     newReport.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
@@ -49,12 +55,16 @@ export class ReportService {
     );
   }
 
+  // Function to delete a report
   async deleteReport(req: Request, res: Response): Promise<void> {
+    // Extract report ID from the request parameters
     const reportId: string = req.params.id;
 
+    // Execute the deleteReportUsecase and handle the result using Either
     const response: Either<ErrorClass, void> =
       await this.deleteReportUsecase.execute(reportId);
 
+    // Handle the result and send a JSON response
     response.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
@@ -64,12 +74,16 @@ export class ReportService {
     );
   }
 
+  // Function to get a report by ID
   async getReportById(req: Request, res: Response): Promise<void> {
+    // Extract report ID from the request parameters
     const reportId: string = req.params.id;
 
+    // Execute the getReportByIdUsecase and handle the result using Either
     const report: Either<ErrorClass, ReportEntity> =
       await this.getReportByIdUsecase.execute(reportId);
 
+    // Handle the result and send a JSON response
     report.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
@@ -80,13 +94,18 @@ export class ReportService {
     );
   }
 
+  // Function to update a report
   async updateReport(req: Request, res: Response): Promise<void> {
+    // Extract report ID from the request parameters
     const reportId: string = req.params.id;
+    // Extract report data from the request body
     const reportData: ReportModel = req.body;
 
+    // Execute the getReportByIdUsecase to fetch the existing report
     const existingReport: Either<ErrorClass, ReportEntity> =
       await this.getReportByIdUsecase.execute(reportId);
 
+    // Handle the result of fetching the existing report
     existingReport.cata(
       (error: ErrorClass) => {
         res.status(error.status).json({ error: error.message });
@@ -94,15 +113,18 @@ export class ReportService {
       async (result: ReportEntity) => {
         const resData = ReportMapper.toEntity(result, true);
 
+        // Map the updated report data to an entity
         const updatedReportEntity: ReportEntity = ReportMapper.toEntity(
           reportData,
           true,
           resData
         );
 
+        // Execute the updateReportUsecase and handle the result using Either
         const updatedReport: Either<ErrorClass, ReportEntity> =
           await this.updateReportUsecase.execute(reportId, updatedReportEntity);
 
+        // Handle the result and send a JSON response
         updatedReport.cata(
           (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
@@ -117,14 +139,17 @@ export class ReportService {
     );
   }
 
+  // Function to get all reports
   async getAllReports(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    // Execute the getAllReportsUsecase and handle the result using Either
     const reports: Either<ErrorClass, ReportEntity[]> =
       await this.getAllReportsUsecase.execute();
 
+    // Handle the result and send a JSON response
     reports.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),

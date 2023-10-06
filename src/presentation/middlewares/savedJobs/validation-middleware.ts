@@ -1,13 +1,16 @@
-import Joi, { ValidationErrorItem } from "joi";
+import Joi, { ValidationErrorItem } from "joi"; // Importing Joi for input validation
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
+// Define an interface for the expected SavedJobInput structure
 interface SavedJobInput {
   Realtor: string;
   Job: string;
 }
 
+// Define a validator function for SavedJobInput
 const savedJobValidator = function (input: SavedJobInput): SavedJobInput {
+  // Define a Joi schema for validation
   const savedJobSchema = Joi.object<SavedJobInput>({
     Realtor: Joi.string().required().uuid().messages({
       "string.base": "Realtor must be a string",
@@ -23,10 +26,12 @@ const savedJobValidator = function (input: SavedJobInput): SavedJobInput {
     }),
   });
 
+  // Validate the input against the schema
   const { error, value } = savedJobSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If there are validation errors, throw an ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -39,9 +44,11 @@ const savedJobValidator = function (input: SavedJobInput): SavedJobInput {
     );
   }
 
+  // If validation passes, return the validated value
   return value;
 };
 
+// Middleware function for validating SavedJobInput
 export const validateSavedJobInputMiddleware = (
   req: Request,
   res: Response,
@@ -52,19 +59,20 @@ export const validateSavedJobInputMiddleware = (
     const { body } = req;
 
     // Validate the agreement input using the savedJobValidator
-    const validatedInput: SavedJobInput =savedJobValidator(body);
+    const validatedInput: SavedJobInput = savedJobValidator(body);
 
     // Continue to the next middleware or route handler
     next();
   } catch (error) {
+    // Handle errors during validation
     if (error instanceof ApiError) {
       return res.status(error.status).json(error.message);
     }
 
-    // Respond with the custom error
+    // Respond with a custom error for other types of errors
     const err = ApiError.badRequest();
     return res.status(err.status).json(err.message);
   }
 };
 
-export default savedJobValidator;
+export default savedJobValidator; // Export the validator function

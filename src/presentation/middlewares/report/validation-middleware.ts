@@ -1,7 +1,9 @@
+// Import necessary classes and dependencies
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
+// Define an interface to represent the expected input for report validation
 interface ReportInput {
   fromRealtor: string;
   toRealtor: string;
@@ -9,7 +11,9 @@ interface ReportInput {
   reportTimestamp?: Date; // Optional field, adjust as needed
 }
 
+// Define a function to validate the report input
 const reportValidator = function (input: ReportInput): ReportInput {
+  // Define a Joi schema to validate the input
   const reportSchema = Joi.object<ReportInput>({
     fromRealtor: Joi.string().required().uuid().messages({
       "string.base": "From Realtor must be a string",
@@ -35,10 +39,12 @@ const reportValidator = function (input: ReportInput): ReportInput {
     }),
   });
 
+  // Validate the input against the schema
   const { error, value } = reportSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If validation errors exist, throw an ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -51,9 +57,10 @@ const reportValidator = function (input: ReportInput): ReportInput {
     );
   }
 
-  return value;
+  return value; // Return the validated input
 };
 
+// Define a middleware function to validate report input in requests
 export const validateReportInputMiddleware = (
   req: Request,
   res: Response,
@@ -70,13 +77,13 @@ export const validateReportInputMiddleware = (
     next();
   } catch (error) {
     if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      return res.status(error.status).json(error.message); // Respond with ApiError details
     }
 
-    // Respond with the custom error
+    // Respond with a custom error in case of unexpected errors
     const err = ApiError.badRequest();
     return res.status(err.status).json(err.message);
   }
 };
 
-export default reportValidator;
+export default reportValidator; // Export the reportValidator function for external use

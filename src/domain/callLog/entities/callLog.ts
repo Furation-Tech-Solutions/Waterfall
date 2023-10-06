@@ -1,4 +1,4 @@
-// Express API request DTO
+// Define a data transfer object (DTO) for Express API requests
 export class CallLogModel {
   constructor(
     public jobApplicant: string = "",
@@ -7,7 +7,8 @@ export class CallLogModel {
   ) {}
 }
 
-// CallLog Entity provided by CallLog Repository is converted to Express API Response
+// Define an entity class to represent CallLog provided by the CallLog Repository
+// This class is used to convert data from the repository to Express API responses
 export class CallLogEntity {
   constructor(
     public id: string | undefined = undefined,
@@ -17,14 +18,16 @@ export class CallLogEntity {
   ) {}
 }
 
+// Create a mapper class to convert between different representations of CallLog data
 export class CallLogMapper {
+  // Method to convert data to a CallLogEntity
   static toEntity(
     callLogData: any,
     includeId?: boolean,
     existingCallLog?: CallLogEntity
   ): CallLogEntity {
     if (existingCallLog != null) {
-      // If existingCallLog is provided, merge the data from callLogData with the existingCallLog
+      // If an existingCallLog is provided, merge data from callLogData with it
       return {
         ...existingCallLog,
         jobApplicant:
@@ -41,13 +44,13 @@ export class CallLogMapper {
             : existingCallLog.logOutcome,
       };
     } else {
-      // If existingCallLog is not provided, create a new CallLogEntity using callLogData
+      // If no existingCallLog is provided, create a new CallLogEntity using callLogData
       const callLogEntity: CallLogEntity = {
         id: includeId
           ? callLogData.id
-            ? callLogData.id.toString()
+            ? callLogData.id.toString() // Convert the ID to a string if available
             : undefined
-          : callLogData.id,
+          : callLogData.id.toString(),
         jobApplicant: callLogData.jobApplicant,
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
@@ -56,6 +59,7 @@ export class CallLogMapper {
     }
   }
 
+  // Method to convert a CallLogEntity to a generic model object
   static toModel(callLog: CallLogEntity): any {
     return {
       id: callLog.id,

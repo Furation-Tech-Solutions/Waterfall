@@ -1,6 +1,6 @@
 // Import necessary classes, interfaces, and dependencies
 import sequelize from "@main/sequelizeClient";
-import { Router } from "express"; // Correctly import Request and Response
+import { Router } from "express"; // Import the Router class from Express
 import { BugReportService } from "@presentation/services/bugReport-services";
 import { BugReportDataSourceImpl } from "@data/bugReport/datasources/bugReport-data-sources";
 import { BugReportRepositoryImpl } from "@data/bugReport/repositories/bugReport-repository-impl";
@@ -11,7 +11,7 @@ import { GetAllBugReports } from "@domain/bugReport/usecases/get-all-bugReports"
 import { UpdateBugReport } from "@domain/bugReport/usecases/update-bugReport";
 import { validateBugReportInputMiddleware } from "@presentation/middlewares/bugReport/validation-middleware";
 
-// Create an instance of the BugReportDataSourceImpl and pass the sequalize connection
+// Create an instance of the BugReportDataSourceImpl and pass the sequelize connection
 const bugReportDataSource = new BugReportDataSourceImpl(sequelize);
 
 // Create an instance of the BugReportRepositoryImpl and pass the BugReportDataSourceImpl
@@ -39,18 +39,30 @@ export const bugReportRouter = Router();
 // Route handling for creating a new BugReport
 bugReportRouter.post(
   "/",
-  validateBugReportInputMiddleware,
-  bugReportService.createBugReport.bind(bugReportService)
+  validateBugReportInputMiddleware, // Apply input validation middleware
+  bugReportService.createBugReport.bind(bugReportService) // Bind the createBugReport method to handle the route
 );
 
-// Route handling for getting an BugReport by ID
-bugReportRouter.get("/:id", bugReportService.getBugReportById.bind(bugReportService));
+// Route handling for getting a BugReport by ID
+bugReportRouter.get(
+  "/:id",
+  bugReportService.getBugReportById.bind(bugReportService)
+);
 
-// Route handling for updating an BugReport by ID
-bugReportRouter.put("/:id", bugReportService.updateBugReport.bind(bugReportService));
+// Route handling for updating a BugReport by ID
+bugReportRouter.put(
+  "/:id",
+  bugReportService.updateBugReport.bind(bugReportService)
+);
 
-// Route handling for deleting an BugReport by ID
-bugReportRouter.delete("/:id", bugReportService.deleteBugReport.bind(bugReportService));
+// Route handling for deleting a BugReport by ID
+bugReportRouter.delete(
+  "/:id",
+  bugReportService.deleteBugReport.bind(bugReportService)
+);
 
 // Route handling for getting all BugReports
-bugReportRouter.get("/", bugReportService.getAllBugReports.bind(bugReportService));
+bugReportRouter.get(
+  "/",
+  bugReportService.getAllBugReports.bind(bugReportService)
+);

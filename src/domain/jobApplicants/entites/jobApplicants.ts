@@ -1,4 +1,4 @@
-// Express API request DTO
+// Express API request DTO (Data Transfer Object) for Job Applicants
 export class JobApplicantModel {
   constructor(
     public job: string = "",
@@ -23,7 +23,9 @@ export class JobApplicantEntity {
   ) {}
 }
 
+// Mapper class to convert between DTO, Entity, and API response formats
 export class JobApplicantMapper {
+  // Static method to convert DTO or API request data to an Entity
   static toEntity(
     jobApplicantData: any,
     includeId?: boolean,
@@ -77,6 +79,7 @@ export class JobApplicantMapper {
     }
   }
 
+  // Static method to convert an Entity to a DTO or API response format
   static toModel(jobApplicant: JobApplicantEntity): any {
     return {
       id: jobApplicant.id,
