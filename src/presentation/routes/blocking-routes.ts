@@ -10,7 +10,7 @@ import { GetAllBlockings } from "@domain/blocking/usecases/get-all-blockings";
 import { GetBlockingById } from "@domain/blocking/usecases/get-blocking-by-id";
 import { UpdateBlocking } from "@domain/blocking/usecases/update-blocking";
 import { DeleteBlocking } from "@domain/blocking/usecases/delete-blocking";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 
 // Create an instance of the BlockingDataSourceImpl and pass the mongoose connection

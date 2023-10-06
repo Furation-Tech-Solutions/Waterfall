@@ -1,6 +1,6 @@
 // Import the necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model called 'FQAs' with two string fields: 'question' and 'answer'
 const FQAs = sequelize.define('FQAs', {

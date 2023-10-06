@@ -1,13 +1,12 @@
 import mongoose, { Document } from "mongoose";
 
-
 export interface IGuestFacingDisplay {
   widgetTimeSlotDescription: string;
   timeSlotDescription: string;
   widgetTimeSlotDetail: {
     title: string;
     longDescription: string;
-    image: string; 
+    image: string;
   };
   linkToOffer: string;
   allowBookingOnChannelsWithoutDisplayFields: boolean;
@@ -16,14 +15,16 @@ export interface IGuestFacingDisplay {
 export interface IPaymentPolicy {
   folllowShift: boolean;
   timeBeforeCutOff: number;
-  bookingPolicy: 'Default Booking Policy' | 'Custom Policy';
+  bookingPolicy: "Default Booking Policy" | "Custom Policy";
   policyDescription?: string;
   allowCreditCard?: boolean;
   bundleUpgrade?: boolean;
 }
 
 export interface IBookingChannels {
-  AudienceTier: Array<'Direct Booking Channels' | 'Third Party Booking Channels' | 'Waitlist'>;
+  AudienceTier: Array<
+    "Direct Booking Channels" | "Third Party Booking Channels" | "Waitlist"
+  >;
 }
 
 export interface ISeatingArea {
@@ -38,7 +39,7 @@ export interface IPartySize {
 
 export interface IGuestBookingTime {
   value: number;
-  unit: 'hours' | 'days' | 'weeks' | 'months' | 'reservation_time';
+  unit: "hours" | "days" | "weeks" | "months" | "reservation_time";
   reservationTime: string;
 }
 
@@ -48,8 +49,14 @@ export interface IAccessRuleDocument extends Document {
   endDate?: Date;
   isIndefinite: boolean;
   daysOfWeek: string[];
-  timeSlots: Array<'All Times During Shift Category' | 'Custom time range' | 'Specific time slot'>;
-  shiftCategories?: Array<'All Lunch Shift' | 'All Dinner Shifts' | 'Specific time slot'>;
+  timeSlots: Array<
+    | "All Times During Shift Category"
+    | "Custom time range"
+    | "Specific time slot"
+  >;
+  shiftCategories?: Array<
+    "All Lunch Shift" | "All Dinner Shifts" | "Specific time slot"
+  >;
   firstReservation?: string;
   lastReservation?: string;
   specificTime?: string[];
@@ -70,7 +77,7 @@ export interface IAccessRuleDocument extends Document {
   };
   maxReservationOrCoverLimit: {
     perDay: number; // Default to no limit (0 means no limit)
-    unit: 'Reservations' | 'Covers';
+    unit: "Reservations" | "Covers";
   };
   pacing: {
     maxCoversPerSeatingInterval: number;

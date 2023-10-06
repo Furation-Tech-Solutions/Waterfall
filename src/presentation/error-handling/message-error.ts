@@ -16,7 +16,7 @@ export const UNAUTHORIZED = "Your not authorized";
 
 export const SERVICE_UNAVAILABLE = "service unavailable";
 
-export const CONFLICT = "email already exist";
+export const CONFLICT = "already exist";
 
 export const INTERNAL_SERVER_ERROR = "something went wrong";
 

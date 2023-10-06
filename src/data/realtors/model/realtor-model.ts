@@ -1,6 +1,6 @@
 // Import necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model called 'Realtors' with various fields
 const Realtors = sequelize.define('Realtors', {
