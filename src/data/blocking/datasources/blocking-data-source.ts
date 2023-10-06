@@ -1,86 +1,59 @@
-// Import necessary modules and classes
 import { BlockingModel } from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize"
 
-// Define an interface for the BlockingDataSource
+
 export interface BlockingDataSource {
   create(blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
-  getAllBlockings(): Promise<any[]>; // Return type should be Promise of an array of BlockingEntity
-  read(id: string): Promise<any | null>; // Return type should be Promise of BlockingEntity or null
-  update(id: string, blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
-  delete(id: string): Promise<void>;
+    getAllBlockings(): Promise<any[]>; // Return type should be Promise of an array of BlockingEntity
+    read(id: string): Promise<any | null>; // Return type should be Promise of BlockingEntity or null
+    update(id: string, blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
+    delete(id: string): Promise<void>;
 }
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
   constructor(private db: Sequelize) { }
 
-  // Method to create a new blocking entry
   async create(blocking: any): Promise<any> {
       console.log(blocking, "datasouce-20");
       
-      // Check if a blocking entry with the same 'fromRealtor' and 'toRealtor' already exists
-      const existingBlockor = await Blocking.findOne({
-          where: {
-              fromRealtor: blocking.fromRealtor,
-              toRealtor: blocking.toRealtor
-          }
-      });
-      console.log(existingBlockor, "datasouce-26");
-      
-      // If a matching entry exists, throw an error
-      if (existingBlockor) {
-          throw ApiError.idBlocked();
-      }
-      
-      // Create a new blocking entry and return its JSON representation
       const createdBlocking = await Blocking.create(blocking);
       return createdBlocking.toJSON();
   }
 
-  // Method to retrieve all blocking entries
   async getAllBlockings(): Promise<any[]> {
-      // Fetch all blocking entries from the database
       const blocking = await Blocking.findAll({});
-      
-      // Convert the Sequelize model instances to plain JavaScript objects before returning
-      return blocking.map((blocking: any) => blocking.toJSON());
+      return blocking.map((blocking: any) => blocking.toJSON()); // Convert to plain JavaScript objects before returning
   }
 
-  // Method to read a blocking entry by ID
   async read(id: string): Promise<any | null> {
-      // Find a blocking entry by its ID
       const blocking = await Blocking.findOne({
           where: {
               id: id,
           },
-          // include: 'tags', // You can uncomment this line if there are associations to include
+          // include: 'tags', // Replace 'tags' with the actual name of your association
       });
-      
-      // If a matching entry is found, convert it to a plain JavaScript object before returning
-      return blocking ? blocking.toJSON() : null;
+      return blocking ? blocking.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  // Method to update a blocking entry by ID
   async update(id: string, updatedData: BlockingModel): Promise<any> {
-      // Find the blocking entry by ID
+      // Find the record by ID
       const blocking = await Blocking.findByPk(id);
 
-      // Update the blocking entry with the provided data if it exists
+
+      // Update the record with the provided data
       if (blocking) {
           await blocking.update(updatedData);
       }
-      
-      // Fetch the updated blocking entry and convert it to a plain JavaScript object before returning
+      // Fetch the updated record
       const updatedBlocking = await Blocking.findByPk(id);
-      return updatedBlocking ? updatedBlocking.toJSON() : null;
+
+      return updatedBlocking ? updatedBlocking.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  // Method to delete a blocking entry by ID
   async delete(id: string): Promise<void> {
-      // Delete the blocking entry from the database based on its ID
       await Blocking.destroy({
           where: {
               id: id,
@@ -88,3 +61,4 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       });
   }
 }
+
