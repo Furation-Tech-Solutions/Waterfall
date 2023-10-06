@@ -1,16 +1,22 @@
+// Import necessary modules and dependencies
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+// Define statusEnum to represent possible status values
 export const statusEnum = {
   ACCEPT: "Accept",
   PENDING: "Pending",
   DECLINE: "Decline",
 };
+
+// Define jobStatusEnum to represent possible job status values
 export const jobStatusEnum = {
   COMPLETED: "Completed",
   PENDING: "Pending",
   DECLINE: "Decline",
 };
+
+// Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
     type: DataTypes.UUID,
@@ -54,19 +60,14 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-
-  // agreement: {
-  //     type: DataTypes.UUID, // Assuming 'Agreement' is represented by UUID in PostgreSQL
-  //     references: {
-  //         model: 'Agreement', // Replace with the actual name of the 'Agreement' table
-  //         key: 'id', // Replace with the actual primary key of the 'Agreement' table
-  //     },
-  // },
 });
 
+// Immediately-invoked async function for database synchronization
 (async () => {
+  // Synchronize the database schema (force:false means it won't drop existing tables)
   await sequelize.sync({ force: false });
   // Code here
 })();
 
+// Export the "JobApplicant" model as the default export
 export default JobApplicant;

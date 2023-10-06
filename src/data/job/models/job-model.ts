@@ -1,6 +1,8 @@
-import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+// Import necessary modules and dependencies
+import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize library
+import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instance
 
+// Define enums for specific values
 export const numberOfApplicantsEnum = {
   FROM1TO5: "1To5",
   FROM5TO10: "5To10",
@@ -25,71 +27,77 @@ export const feeTypeEnum = {
   FLATFEE: "Flat Fee",
 };
 
+// Define a Sequelize model named "Job"
 const Job = sequelize.define("Job", {
+  // Define various fields of the "Job" model with their data types and constraints
   jobOwner: {
-    type: DataTypes.UUID, // Assuming the equivalent of ObjectId in PostgreSQL is UUID
-    allowNull: false,
+    type: DataTypes.UUID, // Data type for jobOwner is UUID
+    allowNull: false, // It cannot be null
   },
   location: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for location is STRING
+    allowNull: false, // It cannot be null
   },
   address: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for address is STRING
+    allowNull: false, // It cannot be null
   },
   date: {
-    type: DataTypes.DATE,
-    allowNull: false,
+    type: DataTypes.DATE, // Data type for date is DATE
+    allowNull: false, // It cannot be null
   },
   numberOfApplicants: {
-    type: DataTypes.ENUM(...Object.values(numberOfApplicantsEnum)),
-    allowNull: false,
+    type: DataTypes.ENUM(...Object.values(numberOfApplicantsEnum)), // Data type for numberOfApplicants is ENUM with predefined values
+    allowNull: false, // It cannot be null
   },
   fromTime: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for fromTime is STRING
+    allowNull: false, // It cannot be null
   },
   toTime: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for toTime is STRING
+    allowNull: false, // It cannot be null
   },
   jobType: {
-    type: DataTypes.ENUM(...Object.values(jobTypeEnum)),
-    allowNull: false,
+    type: DataTypes.ENUM(...Object.values(jobTypeEnum)), // Data type for jobType is ENUM with predefined values
+    allowNull: false, // It cannot be null
   },
   clientEmail: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for clientEmail is STRING
+    allowNull: false, // It cannot be null
   },
   clientPhoneNumber: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for clientPhoneNumber is STRING
+    allowNull: false, // It cannot be null
   },
   feeType: {
-    type: DataTypes.ENUM(...Object.values(feeTypeEnum)),
-    allowNull: false,
+    type: DataTypes.ENUM(...Object.values(feeTypeEnum)), // Data type for feeType is ENUM with predefined values
+    allowNull: false, // It cannot be null
   },
   fee: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for fee is STRING
+    allowNull: false, // It cannot be null
   },
   description: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING, // Data type for description is STRING
+    allowNull: false, // It cannot be null
   },
   attachments: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // PostgreSQL ARRAY type for attachments
-    allowNull: true, // Change to false if it should not be nullable
+    type: DataTypes.ARRAY(DataTypes.STRING), // Data type for attachments is an ARRAY of STRINGS
+    allowNull: true, // It can be null
   },
   applyBy: {
-    type: DataTypes.DATE,
-    allowNull: false,
+    type: DataTypes.DATE, // Data type for applyBy is DATE
+    allowNull: false, // It cannot be null
   },
   createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
-    allowNull: false,
+    type: DataTypes.DATE, // Data type for createdAt is DATE
+    defaultValue: sequelize.literal("CURRENT_TIMESTAMP"), // Default value is the current timestamp
+    allowNull: false, // It cannot be null
+  },
+  deleteReason: {
+    type: DataTypes.STRING, // Data type for deleteReason is STRING
+    allowNull: false, // It cannot be null
   },
   deleteReason: {
     type: DataTypes.STRING,
@@ -97,9 +105,11 @@ const Job = sequelize.define("Job", {
   },
 });
 
-  (async () => {
-    await sequelize.sync({ force: false });
-    // Code here
-  })();
+// Asynchronous function for database synchronization
+(async () => {
+  await sequelize.sync({ force: false}); // Synchronize the model with the database (force: false means do not drop existing tables)
+  // Code here
+})();
 
+// Export the "Job" model as the default export of this module
 export default Job;

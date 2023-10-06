@@ -1,7 +1,8 @@
-import Joi, { ValidationErrorItem } from "joi";
-import ApiError from "@presentation/error-handling/api-error";
-import { Request, Response, NextFunction } from "express";
+import Joi, { ValidationErrorItem } from "joi"; // Import Joi for input validation
+import ApiError from "@presentation/error-handling/api-error"; // Import ApiError for custom error handling
+import { Request, Response, NextFunction } from "express"; // Import Request, Response, and NextFunction from Express
 
+// Define the structure of BugReportInput
 interface BugReportInput {
   realtor: string;
   description: string;
@@ -9,7 +10,9 @@ interface BugReportInput {
   timestamp?: Date; // Optional field, adjust as needed
 }
 
+// Define a function for validating BugReportInput
 const bugReportValidator = function (input: BugReportInput): BugReportInput {
+  // Define a Joi schema for BugReportInput
   const bugReportSchema = Joi.object<BugReportInput>({
     realtor: Joi.string().uuid().required().messages({
       "string.base": "realtor must be a valid UUID",
@@ -32,10 +35,12 @@ const bugReportValidator = function (input: BugReportInput): BugReportInput {
     }),
   });
 
+  // Validate the input against the schema
   const { error, value } = bugReportSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If there are validation errors, throw an ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -48,9 +53,11 @@ const bugReportValidator = function (input: BugReportInput): BugReportInput {
     );
   }
 
+  // Return the validated input
   return value;
 };
 
+// Define a middleware for validating BugReportInput
 export const validateBugReportInputMiddleware = (
   req: Request,
   res: Response,
@@ -60,7 +67,7 @@ export const validateBugReportInputMiddleware = (
     // Extract the request body
     const { body } = req;
 
-    // Validate the report input using the reportValidator
+    // Validate the report input using the bugReportValidator
     const validatedInput: BugReportInput = bugReportValidator(body);
 
     // Continue to the next middleware or route handler
@@ -70,10 +77,10 @@ export const validateBugReportInputMiddleware = (
       return res.status(error.status).json(error.message);
     }
 
-    // Respond with the custom error
+    // Respond with a custom error if not an ApiError
     const err = ApiError.badRequest();
     return res.status(err.status).json(err.message);
   }
 };
 
-export default bugReportValidator;
+export default bugReportValidator; // Export the bugReportValidator for reuse

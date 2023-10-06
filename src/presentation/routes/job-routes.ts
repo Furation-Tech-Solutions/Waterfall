@@ -1,17 +1,17 @@
 // Import necessary classes, interfaces, and dependencies
-import sequelize from "@main/sequelizeClient";
-import { Router } from "express"; // Correctly import Request and Response
-import { JobService } from "@presentation/services/job-services";
-import { JobDataSourceImpl } from "@data/job/datasources/job-data-sources";
-import { JobRepositoryImpl } from "@data/job/repositories/job-repository-impl";
-import { CreateJob } from "@domain/job/usecases/create-job";
-import { DeleteJob } from "@domain/job/usecases/delete-job";
-import { GetJobById } from "@domain/job/usecases/get-job-by-id";
-import { GetAllJobs } from "@domain/job/usecases/get-all-jobs";
-import { UpdateJob } from "@domain/job/usecases/update-job";
-import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware";
+import sequelize from "@main/sequelizeClient"; // Importing the Sequelize connection
+import { Router } from "express"; // Importing the Express Router class
+import { JobService } from "@presentation/services/job-services"; // Importing the JobService class
+import { JobDataSourceImpl } from "@data/job/datasources/job-data-sources"; // Importing the JobDataSourceImpl class
+import { JobRepositoryImpl } from "@data/job/repositories/job-repository-impl"; // Importing the JobRepositoryImpl class
+import { CreateJob } from "@domain/job/usecases/create-job"; // Importing the CreateJob use case
+import { DeleteJob } from "@domain/job/usecases/delete-job"; // Importing the DeleteJob use case
+import { GetJobById } from "@domain/job/usecases/get-job-by-id"; // Importing the GetJobById use case
+import { GetAllJobs } from "@domain/job/usecases/get-all-jobs"; // Importing the GetAllJobs use case
+import { UpdateJob } from "@domain/job/usecases/update-job"; // Importing the UpdateJob use case
+import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware"; // Importing a middleware for job input validation
 
-// Create an instance of the JobDataSourceImpl and pass the sequalize connection
+// Create an instance of the JobDataSourceImpl and pass the Sequelize connection
 const jobDataSource = new JobDataSourceImpl(sequelize);
 
 // Create an instance of the JobRepositoryImpl and pass the JobDataSourceImpl
@@ -38,19 +38,19 @@ export const jobRouter = Router();
 
 // Route handling for creating a new Job
 jobRouter.post(
-  "/",
-  validateJobInputMiddleware,
-  jobService.createJob.bind(jobService)
+  "/", // Route URL for creating a new job
+  validateJobInputMiddleware, // Middleware for validating job input data
+  jobService.createJob.bind(jobService) // Handling function for creating a new job
 );
 
-// Route handling for getting an Job by ID
-jobRouter.get("/:id", jobService.getJobById.bind(jobService));
+// Route handling for getting a Job by ID
+jobRouter.get("/:id", jobService.getJobById.bind(jobService)); // Route URL for getting a job by ID
 
-// Route handling for updating an Job by ID
-jobRouter.put("/:id", jobService.updateJob.bind(jobService));
+// Route handling for updating a Job by ID
+jobRouter.put("/:id", jobService.updateJob.bind(jobService)); // Route URL for updating a job by ID
 
-// Route handling for deleting an Job by ID
-jobRouter.delete("/:id", jobService.deleteJob.bind(jobService));
+// Route handling for deleting a Job by ID
+jobRouter.delete("/:id", jobService.deleteJob.bind(jobService)); // Route URL for deleting a job by ID
 
 // Route handling for getting all Jobs
-jobRouter.get("/", jobService.getAllJobs.bind(jobService));
+jobRouter.get("/", jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs

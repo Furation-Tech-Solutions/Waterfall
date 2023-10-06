@@ -1,4 +1,4 @@
-// Express API request DTO
+// Express API request DTO (Data Transfer Object)
 export class BugReportModel {
   constructor(
     public realtor: string = "", // Replace with the appropriate data type if needed
@@ -20,10 +20,11 @@ export class BugReportEntity {
 }
 
 export class BugReportMapper {
+  // Method to convert data to a BugReportEntity
   static toEntity(
-    bugReportData: any,
-    includeId?: boolean,
-    existingBugReport?: BugReportEntity
+    bugReportData: any, // Input data
+    includeId?: boolean, // Optional flag to include 'id' in the entity
+    existingBugReport?: BugReportEntity // Optional existing BugReportEntity for merging data
   ): BugReportEntity {
     if (existingBugReport != null) {
       // If existingBugReport is provided, merge the data from bugReportData with the existingBugReport
@@ -63,6 +64,7 @@ export class BugReportMapper {
     }
   }
 
+  // Method to convert a BugReportEntity to a plain JavaScript object (model)
   static toModel(bugReport: BugReportEntity): any {
     return {
       id: bugReport.id,

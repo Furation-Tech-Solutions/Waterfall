@@ -1,6 +1,6 @@
 // Import necessary classes, interfaces, and dependencies
 import sequelize from "@main/sequelizeClient";
-import { Router } from "express"; // Correctly import Request and Response
+import { Router } from "express"; // Import Express Router
 import { CallLogService } from "@presentation/services/callLog-services";
 import { CallLogDataSourceImpl } from "@data/callLog/datasources/callLog-data-sources";
 import { CallLogRepositoryImpl } from "@data/callLog/repositories/callLog-repository-impl";
@@ -11,7 +11,7 @@ import { GetAllCallLogs } from "@domain/callLog/usecases/get-all-callLog";
 import { UpdateCallLog } from "@domain/callLog/usecases/update-callLog";
 import { validateCallLogInputMiddleware } from "@presentation/middlewares/callLog/validation-middleware";
 
-// Create an instance of the CallLogDataSourceImpl and pass the sequalize connection
+// Create an instance of the CallLogDataSourceImpl and pass the sequelize connection
 const callLogDataSource = new CallLogDataSourceImpl(sequelize);
 
 // Create an instance of the CallLogRepositoryImpl and pass the CallLogDataSourceImpl
@@ -38,18 +38,18 @@ export const callLogRouter = Router();
 
 // Route handling for creating a new CallLog
 callLogRouter.post(
-  "/",
-  validateCallLogInputMiddleware,
-  callLogService.createCallLog.bind(callLogService)
+  "/", // Route URL
+  validateCallLogInputMiddleware, // Middleware for input validation
+  callLogService.createCallLog.bind(callLogService) // Handling function
 );
 
-// Route handling for getting an CallLog by ID
+// Route handling for getting a CallLog by ID
 callLogRouter.get("/:id", callLogService.getCallLogById.bind(callLogService));
 
-// Route handling for updating an CallLog by ID
+// Route handling for updating a CallLog by ID
 callLogRouter.put("/:id", callLogService.updateCallLog.bind(callLogService));
 
-// Route handling for deleting an CallLog by ID
+// Route handling for deleting a CallLog by ID
 callLogRouter.delete("/:id", callLogService.deleteCallLog.bind(callLogService));
 
 // Route handling for getting all CallLogs

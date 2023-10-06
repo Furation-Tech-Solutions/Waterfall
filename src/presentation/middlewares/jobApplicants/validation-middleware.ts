@@ -1,11 +1,13 @@
-import Joi, { ValidationErrorItem } from "joi";
-import ApiError from "@presentation/error-handling/api-error";
-import { Request, Response, NextFunction } from "express";
+// Import necessary modules and types
+import Joi, { ValidationErrorItem } from "joi"; // Import Joi for input validation and ValidationErrorItem for error details
+import ApiError from "@presentation/error-handling/api-error"; // Import custom error class ApiError
+import { Request, Response, NextFunction } from "express"; // Import Express types
 import {
   statusEnum,
   jobStatusEnum,
-} from "@data/jobApplicants/models/jobApplicants-models";
+} from "@data/jobApplicants/models/jobApplicants-models"; // Import enums for status and jobStatus
 
+// Define the interface for the expected input data
 interface JobApplicantInput {
   job: string;
   applicant: string;
@@ -15,9 +17,11 @@ interface JobApplicantInput {
   appliedTimestamp: Date;
 }
 
+// Define a function for validating job applicant input
 const jobApplicantValidator = function (
   input: JobApplicantInput
 ): JobApplicantInput {
+  // Define a Joi schema for validating the input
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
     job: Joi.string().required().uuid().messages({
       "string.base": "Job must be a string",
@@ -55,15 +59,19 @@ const jobApplicantValidator = function (
     }),
   });
 
+  // Validate the input against the schema
   const { error, value } = jobApplicantSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If there are validation errors, throw an ApiError
   if (error) {
+    // Extract validation error messages
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
 
+    // Throw a custom ApiError with a bad request status
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -71,9 +79,11 @@ const jobApplicantValidator = function (
     );
   }
 
+  // If validation passes, return the validated input
   return value;
 };
 
+// Export a middleware function to validate job applicant input
 export const validateJobApplicantInputMiddleware = (
   req: Request,
   res: Response,
@@ -89,14 +99,16 @@ export const validateJobApplicantInputMiddleware = (
     // Continue to the next middleware or route handler
     next();
   } catch (error) {
+    // Handle errors, including ApiError
     if (error instanceof ApiError) {
       return res.status(error.status).json(error.message);
     }
 
-    // Respond with the custom error
+    // If it's not an ApiError, respond with a custom bad request error
     const err = ApiError.badRequest();
     return res.status(err.status).json(err.message);
   }
 };
 
+// Export the jobApplicantValidator function
 export default jobApplicantValidator;

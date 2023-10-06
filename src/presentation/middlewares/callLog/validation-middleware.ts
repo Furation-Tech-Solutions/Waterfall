@@ -1,15 +1,19 @@
+// Import necessary modules and dependencies
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 import { OutcomeEnum } from "@data/callLog/models/callLog-model"; // Adjust the import path accordingly
 
+// Define an interface for the expected input data
 interface CallLogInput {
   jobApplicant: string;
   logActivity: string;
   logOutcome: string;
 }
 
+// Define a function for validating call log input data
 const callLogValidator = function (input: CallLogInput): CallLogInput {
+  // Define a schema using Joi for validating the input
   const callLogSchema = Joi.object<CallLogInput>({
     jobApplicant: Joi.string().required().uuid().messages({
       "string.base": "jobApplicant must be a string",
@@ -33,10 +37,12 @@ const callLogValidator = function (input: CallLogInput): CallLogInput {
       }),
   });
 
+  // Validate the input against the schema
   const { error, value } = callLogSchema.validate(input, {
-    abortEarly: false,
+    abortEarly: false, // Collect all validation errors
   });
 
+  // If there are validation errors, create an ApiError and throw it
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -44,14 +50,16 @@ const callLogValidator = function (input: CallLogInput): CallLogInput {
 
     throw new ApiError(
       ApiError.badRequest().status,
-      validationErrors.join(", "),
+      validationErrors.join(", "), // Combine validation error messages
       "ValidationError"
     );
   }
 
+  // Return the validated input data
   return value;
 };
 
+// Define a middleware for validating call log input
 export const validateCallLogInputMiddleware = (
   req: Request,
   res: Response,
@@ -68,13 +76,15 @@ export const validateCallLogInputMiddleware = (
     next();
   } catch (error) {
     if (error instanceof ApiError) {
+      // If the error is an instance of ApiError, send a custom error response
       return res.status(error.status).json(error.message);
     }
 
-    // Respond with the custom error
+    // If the error is not an instance of ApiError, send a generic bad request error
     const err = ApiError.badRequest();
     return res.status(err.status).json(err.message);
   }
 };
 
+// Export the callLogValidator function as the default export
 export default callLogValidator;
