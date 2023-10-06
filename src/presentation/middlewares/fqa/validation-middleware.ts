@@ -1,20 +1,16 @@
-// Import necessary modules and classes
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
-// Define the structure of the input for FQA (Frequently Asked Questions)
 interface FQAInput {
-  question: string;
-  answer: string;
+  question: string,
+  answer: string
 }
 
-// Define a validator function for FQA input
 const fqaValidator = (
   input: FQAInput,
   isUpdate: boolean = false
 ) => {
-  // Define a schema for FQA input using Joi
   const fqaSchema = Joi.object<FQAInput>({
     question: isUpdate
       ? Joi.string().optional().trim()
@@ -24,12 +20,10 @@ const fqaValidator = (
       : Joi.string().required().trim()
   });
 
-  // Validate the input against the schema
   const { error, value } = fqaSchema.validate(input, {
     abortEarly: false,
   });
 
-  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -41,10 +35,9 @@ const fqaValidator = (
     );
   }
 
-  return value; // Return the validated input
+  return value;
 };
 
-// Define a middleware for validating FQA input
 export const validateFQAInputMiddleware = (
   isUpdate: boolean = false
 ) => {
@@ -53,7 +46,7 @@ export const validateFQAInputMiddleware = (
       // Extract the request body
       const { body } = req;
 
-      // Validate the client's FQA input using the fqaValidator
+      // Validate the client fqa  input using the fqaValidator
       const validatedInput: FQAInput = fqaValidator(
         body,
         isUpdate
@@ -62,11 +55,16 @@ export const validateFQAInputMiddleware = (
       // Continue to the next middleware or route handler
       next();
     } catch (error: any) {
-      // Handle errors, e.g., respond with a custom error message
+      // if (error instanceof ApiError) {
+      //   return res.status(error.status).json(error.message);
+      // }
+
+      // Respond with the custom error
+      // const err = ApiError.badRequest();
       res.status(500).json({
         success: false,
         message: error.message
-      });
+      })
     }
   };
 };

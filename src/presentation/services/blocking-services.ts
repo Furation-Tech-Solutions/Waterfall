@@ -33,27 +33,25 @@ export class BlockingService {
     this.DeleteBlockingUsecase = DeleteBlockingUsecase;
   }
 
-  // Handler for creating a new blocking
   async createBlocking(req: Request, res: Response): Promise<void> {
     const blockingData: BlockingModel = BlockingMapper.toModel(req.body);
-    console.log(blockingData, "service-38"); // Logging blocking data
+    console.log(blockingData, "service-38");
 
     const newBlocking: Either<ErrorClass, BlockingEntity> =
-      await this.CreateBlockingUsecase.execute(blockingData);
+        await this.CreateBlockingUsecase.execute(blockingData);
 
-    console.log(blockingData, "service-43"); // Logging blocking data again
+    console.log(blockingData, "service-43");
 
     newBlocking.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: BlockingEntity) => {
-        const resData = BlockingMapper.toEntity(result, true);
-        return res.json(resData);
-      }
+        (error: ErrorClass) =>
+            res.status(error.status).json({ error: error.message }),
+        (result: BlockingEntity) => {
+            const resData = BlockingMapper.toEntity(result, true);
+            return res.json(resData);
+        }
     );
   }
 
-  // Handler for getting all blockings
   async getAllBlockings(req: Request, res: Response, next: NextFunction): Promise<void> {
     // Call the GetAllBlockingsUsecase to get all Blockings
     const blockings: Either<ErrorClass, BlockingEntity[]> = await this.GetAllBlockingsUsecase.execute();
@@ -61,17 +59,16 @@ export class BlockingService {
     blockings.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
       (result: BlockingEntity[]) => {
-        // Filter out blockings with del_status set to "Deleted"
-        // const nonDeletedBlockings = result.filter((blocking) => blocking.deleteStatus !== false);
+          // Filter out blockings with del_status set to "Deleted"
+          // const nonDeletedBlockings = result.filter((blocking) => blocking.deleteStatus !== false);
 
-        // Convert non-deleted blockings from an array of BlockingEntity to an array of plain JSON objects using blockingMapper
-        const responseData = blockings.map((blocking) => BlockingMapper.toEntity(blocking));
-        return res.json(responseData);
+          // Convert non-deleted blockings from an array of BlockingEntity to an array of plain JSON objects using blockingMapper
+          const responseData = blockings.map((blocking) => BlockingMapper.toEntity(blocking));
+          return res.json(responseData);
       }
   );
   }
 
-  // Handler for getting a blocking by ID
   async getBlockingById(req: Request, res: Response): Promise<void> {
     const blockingId: string = req.params.id;
 
@@ -91,7 +88,6 @@ export class BlockingService {
     );
   }
 
-  // Handler for updating a blocking by ID
   async updateBlocking(req: Request, res: Response): Promise<void> {
     const blockingId: string = req.params.id;
     const blockingData: BlockingModel = req.body;
@@ -129,7 +125,6 @@ export class BlockingService {
     );
   }
 
-  // Handler for deleting a blocking by ID
   async deleteBlocking(req: Request, res: Response): Promise<void> {
       const id: string = req.params.id;
     
