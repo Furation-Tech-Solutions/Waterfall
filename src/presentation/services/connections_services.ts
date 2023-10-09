@@ -141,6 +141,7 @@ export class ConnectionsServices {
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
             await this.getAllRequestsUsecase.execute();
 
+
         // Handle the result of the use case execution
         clientConnections.cata(
             (error: ErrorClass) =>

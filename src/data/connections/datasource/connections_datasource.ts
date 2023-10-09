@@ -71,7 +71,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     }
     async Allcon(): Promise<any[]> {
-        console.log("getting data");
         const connections = await Connections.findAll();
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
