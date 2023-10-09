@@ -3,8 +3,8 @@ export class ConnectionsModel {
   constructor(
     public fromId: number = 0,
     public toId: number = 0,
-    public connected: boolean = false,
-    public sentByMe: boolean = false
+    public connected: boolean = false
+
   ) { }
 }
 
@@ -14,8 +14,7 @@ export class ConnectionsEntity {
     public id: string | undefined = undefined, // Set a default value for id
     public fromId: number,
     public toId: number,
-    public connected: boolean,
-    public sentByMe: boolean,
+    public connected: boolean
   ) { }
 }
 
@@ -40,11 +39,7 @@ export class ConnectionMapper {
         connected:
           connectionData.connected !== undefined
             ? connectionData.connected
-            : existingConnection.connected,
-        sentByMe:
-          connectionData.sentByMe !== undefined
-            ? connectionData.sentByMe
-            : existingConnection.sentByMe,
+            : existingConnection.connected
       };
     } else {
       const connectionEntity: ConnectionsEntity = {
@@ -55,8 +50,7 @@ export class ConnectionMapper {
           : connectionData.id,
         fromId: connectionData.fromId,
         toId: connectionData.toId,
-        connected: connectionData.connected,
-        sentByMe: connectionData.sentByMe,
+        connected: connectionData.connected
       };
       return connectionEntity;
     }
@@ -66,8 +60,8 @@ export class ConnectionMapper {
     return {
       fromId: connection.fromId,
       toId: connection.toId,
-      connected: connection.connected,
-      sentByMe: connection.sentByMe,
+      connected: connection.connected
+
     };
   }
 }

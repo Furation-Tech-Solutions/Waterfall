@@ -6,7 +6,6 @@ interface ConnectionsInput {
   fromId: number;
   toId: number;
   connected: boolean;
-  sentByMe: boolean;
 }
 
 const connectionsValidator = (
@@ -35,14 +34,6 @@ const connectionsValidator = (
       }),
 
     connected: Joi.boolean().default(false),
-
-    sentByMe: isUpdate
-      ? Joi.boolean().optional().messages({
-        "any.required": "sentByMe is required",
-      })
-      : Joi.boolean().required().messages({
-        "any.required": "sentByMe is required",
-      }),
   });
 
   const { error, value } = connectionsSchema.validate(input, {

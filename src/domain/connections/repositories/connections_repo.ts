@@ -3,20 +3,17 @@ import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
 
 export interface ConnectionsRepository {
-    createConnections(
+    createRequest(
         connections: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    deleteConnections(id: string): Promise<Either<ErrorClass, void>>;
-    getConnectionsById(id: string): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    updateConnections(
+    deleteRequest(id: string): Promise<Either<ErrorClass, void>>;
+    getById(id: string): Promise<Either<ErrorClass, ConnectionsEntity>>;
+    updateRequest(
         id: string,
         data: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    getAllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-
-    // for connected realtors
-    // getConnectedConnectionsById(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-    getAllConnectionRequests(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-    getAllConnectedConnections(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    getAll(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    Allrequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
 
 }

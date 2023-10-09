@@ -4,6 +4,7 @@ import env from '@main/config/env';
 import { array, boolean, object, string } from "joi";
 import sequelize from "@main/sequelizeClient";
 
+
 const Connections = sequelize.define('Connections', {
   fromId: {
     type: DataTypes.INTEGER,
@@ -16,10 +17,6 @@ const Connections = sequelize.define('Connections', {
   connected: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
-  },
-  sentByMe: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
   },
 });
 
