@@ -1,6 +1,6 @@
 // Import necessary classes, interfaces, and dependencies
 import sequelize from "@main/sequelizeClient";
-import { Router } from "express"; // Correctly import Request and Response
+import { Router } from "express"; // Import the Router class from Express
 import { SavedJobService } from "@presentation/services/savedJobs-services";
 import { SavedJobDataSourceImpl } from "@data/savedJobs/datasources/savedJobs-data-sources";
 import { SavedJobRepositoryImpl } from "@data/savedJobs/repositories/savedJobs-repository-impl";
@@ -11,7 +11,7 @@ import { GetAllSavedJobs } from "@domain/savedJobs/usecases/get-all-savedJobs";
 import { UpdateSavedJob } from "@domain/savedJobs/usecases/update-savedJobs";
 import { validateSavedJobInputMiddleware } from "@presentation/middlewares/savedJobs/validation-middleware";
 
-// Create an instance of the SavedJobDataSourceImpl and pass the sequalize connection
+// Create an instance of the SavedJobDataSourceImpl and pass the sequelize connection
 const savedJobDataSource = new SavedJobDataSourceImpl(sequelize);
 
 // Create an instance of the SavedJobRepositoryImpl and pass the SavedJobDataSourceImpl
@@ -38,19 +38,28 @@ export const savedJobRouter = Router();
 
 // Route handling for creating a new Job
 savedJobRouter.post(
-  "/",
-  validateSavedJobInputMiddleware,
-  savedJobService.createSavedJob.bind(savedJobService)
+  "/", // Define the route URL
+  validateSavedJobInputMiddleware, // Apply input validation middleware
+  savedJobService.createSavedJob.bind(savedJobService) // Bind the createSavedJob method to handle the route
 );
 
-// Route handling for getting an SavedJob by ID
-savedJobRouter.get("/:id", savedJobService.getSavedJobById.bind(savedJobService));
+// Route handling for getting a SavedJob by ID
+savedJobRouter.get(
+  "/:id",
+  savedJobService.getSavedJobById.bind(savedJobService)
+);
 
-// Route handling for updating an SavedJob by ID
-savedJobRouter.put("/:id", savedJobService.updateSavedJob.bind(savedJobService));
+// Route handling for updating a SavedJob by ID
+savedJobRouter.put(
+  "/:id",
+  savedJobService.updateSavedJob.bind(savedJobService)
+);
 
-// Route handling for deleting an SavedJob by ID
-savedJobRouter.delete("/:id", savedJobService.deleteSavedJob.bind(savedJobService));
+// Route handling for deleting a SavedJob by ID
+savedJobRouter.delete(
+  "/:id",
+  savedJobService.deleteSavedJob.bind(savedJobService)
+);
 
 // Route handling for getting all SavedJobs
 savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));
