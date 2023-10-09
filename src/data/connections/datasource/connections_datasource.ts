@@ -10,8 +10,8 @@ export interface ConnectionsDataSource {
     deleteReq(id: string): Promise<void>;
     read(id: string): Promise<any | null>;
     getAll(): Promise<any[]>;
-    // getAllRequest(): Promise<any[]>;
-    // getAllconnected(): Promise<any[]>;
+    AllReq(): Promise<any[]>;
+    Allcon(): Promise<any[]>;
 
 }
 
@@ -64,23 +64,15 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
-    // async getAllRequest(): Promise<any[]> {
-    //     const connections = await Connections.findAll({
-    //         where: {
-    //             connected: false
-    //         }
-    //     });
-    //     console.log(connections, "line-73-ds");
-    //     return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
-    // }
-    // async getAllconnected(): Promise<any[]> {
-    //     const connections = await Connections.findAll({
-    //         where: {
-    //             connected: true
-    //         }
-    //     });
-    //     return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
-    // }
+    async AllReq(): Promise<any[]> {
+        const connections = await Connections.findAll();
+        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+
+    }
+    async Allcon(): Promise<any[]> {
+        const connections = await Connections.findAll();
+        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+    }
 
     async updateReq(id: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID

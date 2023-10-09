@@ -6,10 +6,10 @@ import { ConnectionsRepositoryImpl } from "@data/connections/repository/connecti
 import { CreateRequest } from "@domain/connections/usecases/create_request"; // Import Connections-related use cases
 import { DeleteRequest } from "@domain/connections/usecases/delete_Request";
 import { GetById } from "@domain/connections/usecases/get_by_id";
-// import { getAllConnectionRequests } from "@domain/connections/usecases/get_allConnected_Requests";
 import { UpdateRequest } from "@domain/connections/usecases/update_Request";
 import { GetAll } from "@domain/connections/usecases/get_all";
-// import { GetAllConnedctedConnetions } from "@domain/connections/usecases/get_all_connected_Connections";
+import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
+import { GetAllConnections } from "@domain/connections/usecases/get_all_Connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection
@@ -24,8 +24,8 @@ const deleteRequestsUsecase = new DeleteRequest(connectionsRepository);
 const getRequestsByIdUsecase = new GetById(connectionsRepository);
 const getAllRequestsUsecase = new GetAll(connectionsRepository);
 const updateRequestsUsecase = new UpdateRequest(connectionsRepository);
-// const getAllConnectionRequestUsecase = new getAllConnectionRequests(connectionsRepository);
-// const getAllConnectedConnectionstUsecase = new GetAllConnedctedConnetions(connectionsRepository);
+const getAllRequestUsecase = new GetAllRequests(connectionsRepository);
+const getAllConnectionstUsecase = new GetAllConnections(connectionsRepository);
 
 // Initialize connectionsServices and inject required dependencies
 const connectionsService = new ConnectionsServices(
@@ -33,9 +33,9 @@ const connectionsService = new ConnectionsServices(
     deleteRequestsUsecase,
     getRequestsByIdUsecase,
     getAllRequestsUsecase,
-    updateRequestsUsecase
-    // getAllConnectionRequestUsecase,
-    // getAllConnectedConnectionstUsecase
+    updateRequestsUsecase,
+    getAllRequestUsecase,
+    getAllConnectionstUsecase
 );
 
 // Create an Express router
@@ -72,7 +72,7 @@ connectionsRouter.put(
 
 
 // Route handling for getting all connection requests
-// connectionsRouter.get("/requests", connectionsService.getAllConnectionRequests.bind(connectionsService));
+connectionsRouter.get("/requests", connectionsService.AllRequests.bind(connectionsService));
 
 // Route handling for getting all connection requests
-// connectionsRouter.get("/connected", connectionsService.getAllConnectedConnections.bind(connectionsService));
+connectionsRouter.get("/connections", connectionsService.AllConnections.bind(connectionsService));
