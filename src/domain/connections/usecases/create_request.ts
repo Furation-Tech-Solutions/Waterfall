@@ -5,12 +5,12 @@ import { ConnectionsRepository } from "../repositories/connections_repo"; // Imp
 import { Either, Right, Left } from "monet";
 
 // Define the interface for the CreateConnections use case
-export interface CreateConnectionsUsecase {
+export interface CreateRequestUsecase {
     execute: (connectionsData: ConnectionsModel) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
 
 // Implement the CreateConnections use case
-export class CreateConnections implements CreateConnectionsUsecase {
+export class CreateRequest implements CreateRequestUsecase {
     private readonly connectionsRepository: ConnectionsRepository;
 
     // Constructor to initialize the ConnectionsRepository
@@ -22,6 +22,6 @@ export class CreateConnections implements CreateConnectionsUsecase {
     // This method takes ConnectionsModel data and returns a Promise with an Either result
     async execute(connectionsData: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
         // Delegate the creation of connections to the ConnectionsRepository
-        return await this.connectionsRepository.createConnections(connectionsData);
+        return await this.connectionsRepository.createRequest(connectionsData);
     }
 }

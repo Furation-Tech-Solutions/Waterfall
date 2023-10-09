@@ -5,13 +5,13 @@
 // import { Either, Right, Left } from "monet";
 
 // // Define the interface for the GetAllConnections use case
-// export interface GetAllConnectedConnectionsUsecase {
+// export interface GetAllConnectedRequestsUsecase {
 //   // Method to fetch all connections
 //   execute: () => Promise<Either<ErrorClass, ConnectionsEntity[]>>;
 // }
 
 // // Implement the GetAllConnections use case
-// export class GetAllConnedctedConnetions implements GetAllConnectedConnectionsUsecase {
+// export class getAllConnectionRequests implements GetAllConnectedRequestsUsecase {
 //   private readonly connectionsRepository: ConnectionsRepository;
 
 //   // Constructor to initialize the ConnectionsRepository
@@ -23,6 +23,6 @@
 //   // This method retrieves all connections and returns a Promise with an Either result
 //   async execute(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
 //     // Delegate the retrieval of all connections to the ConnectionsRepository
-//     return await this.connectionsRepository.getAllConnectedConnections();
+//     return await this.connectionsRepository.getAllConnectionRequests();
 //   }
 // }

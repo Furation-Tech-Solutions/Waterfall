@@ -3,24 +3,19 @@ import { ConnectionsEntity, ConnectionsModel } from "../entities/connections_ent
 import { ConnectionsRepository } from "../repositories/connections_repo"; // Import the ConnectionsRepository
 import { Either, Right, Left } from "monet";
 
-export interface UpdateConnectionsUsecase {
-  execute: (
-    id: string,
-    Data: ConnectionsEntity
-  ) => Promise<Either<ErrorClass, ConnectionsEntity>>;
+export interface GetByIdUsecase {
+  execute: (id: string) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
 
-export class UpdateConnections implements UpdateConnectionsUsecase {
+export class GetById implements GetByIdUsecase {
   private readonly connectionsRepository: ConnectionsRepository;
 
   constructor(connectionsRepository: ConnectionsRepository) {
     this.connectionsRepository = connectionsRepository;
   }
 
-  async execute(
-    id: string,
-    Data: ConnectionsEntity
-  ): Promise<Either<ErrorClass, ConnectionsEntity>> {
-    return await this.connectionsRepository.updateConnections(id, Data);
+  async execute(id: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    return await this.connectionsRepository.getById(id);
   }
 }
+
