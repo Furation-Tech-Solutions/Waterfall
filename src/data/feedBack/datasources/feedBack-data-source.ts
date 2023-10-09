@@ -17,11 +17,19 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   constructor(private db: Sequelize) { }
 
   async create(feedBack: any): Promise<any> {
-      console.log(feedBack, "datasouce-20");
-      
-      const createdFeedBack = await FeedBack.create(feedBack);
-      return createdFeedBack.toJSON();
-  }
+    console.log(feedBack, "datasource-20");
+    const existingFeedBack = await FeedBack.findOne({
+        where: {
+            jobId: feedBack.jobId
+        }
+    });
+    console.log(existingFeedBack, "datasource-26");
+    if (existingFeedBack) {
+        throw ApiError.feedBackGiven();
+    }
+    const createdFeedBack = await FeedBack.create(feedBack);
+    return createdFeedBack.toJSON();
+}
 
   async getAllFeedBacks(): Promise<any[]> {
       const feedBack = await FeedBack.findAll({});

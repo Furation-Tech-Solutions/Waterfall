@@ -42,6 +42,8 @@ export const TAX_TYPE_EXIST="tax type already exists";
 
 export const EMAIL_CONFLICT = "already exist";
 
+export const FEEDBACK_CONFLICT = "realtor already given the feedback";
+
 // export const FIRST_NAME_EXIST="User already exists"
 
 

@@ -12,16 +12,16 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
   }
 
   async createFeedBack(feedBack: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>> {
-      try {
-          const feedBacks = await this.feedBackDataSource.create(feedBack); // Use the feedBack data source
-          return Right<ErrorClass, FeedBackEntity>(feedBacks);
-      } catch (error:any) {
-          if (error instanceof ApiError && error.name === "badRequest") {
-              return Left<ErrorClass, FeedBackEntity>(ApiError.badRequest());
-          }
-          return Left<ErrorClass, FeedBackEntity>(ApiError.customError(400, error.message));
-      }
-  }
+    try {
+        const feedBacks = await this.feedBackDataSource.create(feedBack); // Use the feedBack data source
+        return Right<ErrorClass, FeedBackEntity>(feedBacks);
+    } catch (error:any) {
+        if (error instanceof ApiError && error.name === "feedBack_conflict") {
+            return Left<ErrorClass, FeedBackEntity>(ApiError.feedBackGiven());
+        }
+        return Left<ErrorClass, FeedBackEntity>(ApiError.customError(400, error.message));
+    }
+}
 
   async getFeedBacks(): Promise<Either<ErrorClass, FeedBackEntity[]>> {
       try {

@@ -58,9 +58,9 @@ export class FeedBackModel {
           id: includeId ? (feedBackData.id ? feedBackData.id : undefined) : feedBackData.id,
           fromRealtor: feedBackData.fromRealtor,
           toRealtor: feedBackData.toRealtor,
-          jobId: feedBackData.toRealtor,
-          rating: feedBackData.toRealtor,
-          description: feedBackData.toRealtor
+          jobId: feedBackData.jobId,
+          rating: feedBackData.rating,
+          description: feedBackData.description
         };
         return feedBackData;
       }
@@ -70,9 +70,9 @@ export class FeedBackModel {
       return {
         fromRealtor: feedBack.fromRealtor,
         toRealtor: feedBack.toRealtor,
-        jobId: feedBack.toRealtor,
-        rating: feedBack.toRealtor,
-        description: feedBack.toRealtor
+        jobId: feedBack.jobId,
+        rating: feedBack.rating,
+        description: feedBack.description
       };
     }
   }

@@ -181,6 +181,10 @@ class ApiError extends ErrorClass {
       "no user found"
     );
   }
+
+  static feedBackGiven(): ApiError {
+    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.FEEDBACK_CONFLICT, "feedBack_conflict");
+  }
 }
 
 export default ApiError;
