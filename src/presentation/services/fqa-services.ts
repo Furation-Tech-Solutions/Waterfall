@@ -33,14 +33,15 @@ export class FQAService {
     this.DeleteFQAUsecase = DeleteFQAUsecase;
   }
 
+  // Handler for creating a new FQA
   async createFQA(req: Request, res: Response): Promise<void> {
     const fqaData: FQAModel = FQAMapper.toModel(req.body);
-    console.log(fqaData, "service-38");
+    console.log(fqaData, "service-38"); // Logging FQA data
 
     const newFQA: Either<ErrorClass, FQAEntity> =
         await this.CreateFQAUsecase.execute(fqaData);
 
-    console.log(fqaData, "service-43");
+    console.log(fqaData, "service-43"); // Logging FQA data again
 
     newFQA.cata(
         (error: ErrorClass) =>
@@ -52,6 +53,7 @@ export class FQAService {
     );
   }
 
+  // Handler for getting all FQAs
   async getAllFQAs(req: Request, res: Response, next: NextFunction): Promise<void> {
     // Call the GetAllFQAsUsecase to get all FQAs
     const fqas: Either<ErrorClass, FQAEntity[]> = await this.GetAllFQAsUsecase.execute();
@@ -59,16 +61,17 @@ export class FQAService {
     fqas.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
       (result: FQAEntity[]) => {
-          // Filter out fqas with del_status set to "Deleted"
-          // const nonDeletedFQAs = result.filter((fqa) => fqa.deleteStatus !== false);
+        // Filter out FQAs with del_status set to "Deleted"
+        // const nonDeletedFQAs = result.filter((fqa) => fqa.deleteStatus !== false);
 
-          // Convert non-deleted fqas from an array of FQAEntity to an array of plain JSON objects using fqaMapper
-          const responseData = fqas.map((fqa) => FQAMapper.toEntity(fqa));
-          return res.json(responseData);
+        // Convert non-deleted FQAs from an array of FQAEntity to an array of plain JSON objects using fqaMapper
+        const responseData = fqas.map((fqa) => FQAMapper.toEntity(fqa));
+        return res.json(responseData);
       }
   );
   }
 
+  // Handler for getting FQA by ID
   async getFQAById(req: Request, res: Response): Promise<void> {
     const fqaId: string = req.params.id;
 
@@ -88,6 +91,7 @@ export class FQAService {
     );
   }
 
+  // Handler for updating FQA by ID
   async updateFQA(req: Request, res: Response): Promise<void> {
     const fqaId: string = req.params.id;
     const fqaData: FQAModel = req.body;
@@ -125,14 +129,15 @@ export class FQAService {
     );
   }
 
+  // Handler for deleting FQA by ID
   async deleteFQA(req: Request, res: Response): Promise<void> {
       const id: string = req.params.id;
     
-      // Execute the deleteBlock use case to delete a fqa by ID
-      const deleteBlock: Either<ErrorClass, void> 
+      // Execute the deleteFQA use case to delete an FQA by ID
+      const deleteFQA: Either<ErrorClass, void> 
         = await this.DeleteFQAUsecase.execute(id);
 
-      deleteBlock.cata(
+      deleteFQA.cata(
         (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
         (result: void) =>{
