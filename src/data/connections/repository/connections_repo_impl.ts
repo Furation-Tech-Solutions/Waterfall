@@ -14,6 +14,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
     async createRequest(data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
         try {
             const createdConnections = await this.connectionsDataSource.createReq(data); // Use the Connections data source
+
             return Right<ErrorClass, ConnectionsEntity>(createdConnections);
         } catch (error: any) {
             if (error instanceof ApiError && error.name === "conflict") {
@@ -26,6 +27,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
     async deleteRequest(id: string): Promise<Either<ErrorClass, void>> {
         try {
             const result = await this.connectionsDataSource.deleteReq(id); // Use the Connections data source
+
             return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {
@@ -34,7 +36,6 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
             return Left<ErrorClass, void>(ApiError.badRequest());
         }
     }
-
     async updateRequest(id: string, data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
         try {
             const updatedConnections = await this.connectionsDataSource.updateReq(id, data); // Use the Connections data source

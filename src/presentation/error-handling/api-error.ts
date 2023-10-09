@@ -82,7 +82,7 @@ class ApiError extends ErrorClass {
   }
 
   static emailExist(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
+    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.EMAIL_CONFLICT, "email_conflict");
   }
   static nameExist(): ApiError {
     return new ApiError(
@@ -174,8 +174,12 @@ class ApiError extends ErrorClass {
   static bookingRequestExists(): ApiError {
     return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
   }
-  static userNotFound():ApiError{
-    return new ApiError(HttpStatus.NOT_FOUND, ErrorMessage.NO_USERS_FOUND,"no user found");
+  static userNotFound(): ApiError {
+    return new ApiError(
+      HttpStatus.NOT_FOUND,
+      ErrorMessage.NO_USERS_FOUND,
+      "no user found"
+    );
   }
 }
 

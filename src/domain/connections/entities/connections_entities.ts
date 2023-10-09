@@ -4,6 +4,7 @@ export class ConnectionsModel {
     public fromId: number = 0,
     public toId: number = 0,
     public connected: boolean = false
+
   ) { }
 }
 
@@ -60,6 +61,7 @@ export class ConnectionMapper {
       fromId: connection.fromId,
       toId: connection.toId,
       connected: connection.connected
+
     };
   }
 }

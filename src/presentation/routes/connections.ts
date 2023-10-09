@@ -1,3 +1,4 @@
+
 import sequelize from "@main/sequalizeClient";
 import { Router } from "express";
 import { ConnectionsServices } from "@presentation/services/connections_services"; // Import the ConnectionsServices
@@ -76,3 +77,4 @@ connectionsRouter.put(
 
 // Route handling for getting all connection requests
 // connectionsRouter.get("/connected", connectionsService.getAllConnectedConnections.bind(connectionsService));
+
