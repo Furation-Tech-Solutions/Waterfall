@@ -8,7 +8,6 @@ const Blocking = sequelize.define('Blocking', {
   toRealtor: { type: DataTypes.STRING, allowNull: false  }
 });
 
-
 // Define the association between Blockings and Realtor
 // Blockings.belongsTo(Realtors, {
 //   foreignKey: 'fromRealtor', // The name of the foreign key column in Blockings
