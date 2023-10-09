@@ -154,17 +154,16 @@ export class ConnectionsServices {
             }
         );
     }
-
     // Handler for getting all connections
     async AllConnections(
         req: Request,
         res: Response,
-        next: NextFunction
     ): Promise<void> {
         // Execute the getAllConnections use case to retrieve all connections
+        console.log("all connection service: 165")
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
             await this.getAllConnectionsUsecase.execute();
-
+        console.log("all connection service: 168")
         // Handle the result of the use case execution
         clientConnections.cata(
             (error: ErrorClass) =>

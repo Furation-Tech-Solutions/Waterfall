@@ -72,6 +72,8 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
     }
 
     async AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+        console.log("all connection repositories");
+        
         try {
             const connections = await this.connectionsDataSource.Allcon(); // Use the connections data source
             return Right<ErrorClass, ConnectionsEntity[]>(connections);

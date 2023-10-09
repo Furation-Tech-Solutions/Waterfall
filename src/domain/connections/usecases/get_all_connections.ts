@@ -23,6 +23,7 @@ export class GetAllConnections implements GetAllConnectionsUsecase {
   // This method retrieves all connections and returns a Promise with an Either result
   async execute(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
     // Delegate the retrieval of all connections to the ConnectionsRepository
+    console.log("all connection usecase")
     return await this.connectionsRepository.AllConnections();
   }
 }
