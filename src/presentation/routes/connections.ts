@@ -1,4 +1,5 @@
-import sequelize from "@main/sequalizeClient";
+
+import sequelize from "@main/sequelizeClient";
 import { Router } from "express";
 import { ConnectionsServices } from "@presentation/services/connections_services"; // Import the ConnectionsServices
 import { ConnectionsDataSourceImpl } from "@data/connections/datasource/connections_datasource"; // Import the ConnectionsDataSourceImpl
@@ -9,7 +10,7 @@ import { GetById } from "@domain/connections/usecases/get_by_id";
 import { UpdateRequest } from "@domain/connections/usecases/update_Request";
 import { GetAll } from "@domain/connections/usecases/get_all";
 import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
-import { GetAllConnections } from "@domain/connections/usecases/get_all_Connections";
+import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection

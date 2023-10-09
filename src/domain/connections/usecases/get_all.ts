@@ -23,6 +23,6 @@ export class GetAll implements GetAllUsecase {
   // This method retrieves all connections and returns a Promise with an Either result
   async execute(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
     // Delegate the retrieval of all connections to the ConnectionsRepository
-    return await this.connectionsRepository.getAllRequests();
+    return await this.connectionsRepository.getAll();
   }
 }

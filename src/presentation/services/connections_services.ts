@@ -6,13 +6,14 @@ import {
     ConnectionMapper,
     ConnectionsModel,
 } from "@domain/connections/entities/connections_entities"; // Import Connections-related entities and mapper
+
 import { CreateRequestUsecase } from "@domain/connections/usecases/create_request"; // Import Connections-related use cases
 import { DeleteRequestUsecase } from "@domain/connections/usecases/delete_Request";
 import { GetByIdUsecase } from "@domain/connections/usecases/get_by_id";
 import { UpdateRequestUsecase } from "@domain/connections/usecases/update_Request";
 import { GetAllUsecase } from "@domain/connections/usecases/get_all";
+import { GetAllConnectionsUsecase } from "@domain/connections/usecases/get_all_connections";
 import { GetAllRequestsUsecase } from "@domain/connections/usecases/get_all_Requests";
-import { GetAllConnectionsUsecase } from "@domain/connections/usecases/get_all_Connections";
 import { Either } from "monet";
 
 // Define a class for handling Connections-related services
@@ -105,7 +106,6 @@ export class ConnectionsServices {
             }
         );
     }
-
 
     // Handler for getting all connections
     async getAll(

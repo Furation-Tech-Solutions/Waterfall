@@ -12,8 +12,8 @@ export interface ConnectionsRepository {
         id: string,
         data: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    getAllRequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-    AllRequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    getAll(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
+    Allrequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
     AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
 
 }

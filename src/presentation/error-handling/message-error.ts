@@ -16,7 +16,7 @@ export const UNAUTHORIZED = "Your not authorized";
 
 export const SERVICE_UNAVAILABLE = "service unavailable";
 
-export const CONFLICT = "email already exist";
+export const CONFLICT = "already exist";
 
 export const INTERNAL_SERVER_ERROR = "something went wrong";
 
@@ -39,6 +39,8 @@ export const ROLE_CONFLICT="role is already exist"
 export const NAME_EXIST="name already exists";
 
 export const TAX_TYPE_EXIST="tax type already exists";
+
+export const EMAIL_CONFLICT = "already exist";
 
 // export const FIRST_NAME_EXIST="User already exists"
 

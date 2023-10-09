@@ -46,6 +46,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         await Connections.destroy({
             where: {
                 id: id
+
             },
         });
     }
@@ -53,7 +54,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     async read(id: string): Promise<any | null> {
         const connections = await Connections.findOne({
             where: {
-                id: id,
+                id: id
             },
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning

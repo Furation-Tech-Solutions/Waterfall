@@ -2,7 +2,8 @@ import { strict } from "assert";
 import { DataTypes } from "sequelize";
 import env from '@main/config/env';
 import { array, boolean, object, string } from "joi";
-import sequelize from "@main/sequalizeClient";
+import sequelize from "@main/sequelizeClient";
+
 
 const Connections = sequelize.define('Connections', {
   fromId: {
@@ -17,7 +18,6 @@ const Connections = sequelize.define('Connections', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  
 });
 
 // Define associations if needed
