@@ -1,27 +1,29 @@
 import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
 
+// Define the structure of the input for Realtor
 interface RealtorInput {
   firstName: string;
   lastName: string;
   email: string;
-  contact: number,
-  DOB: string,
-  gender: string,
-  location: string,
-  about: string,
-  password: string,
-  profileImage: string,
-  countryCode: number,
-  deleteStatus: boolean
+  contact: number;
+  DOB: string;
+  gender: string;
+  location: string;
+  about: string;
+  password: string;
+  profileImage: string;
+  countryCode: number;
+  deleteStatus: boolean;
 }
 
+// Define a validator function for Realtor input
 const realtorValidator = (
   input: RealtorInput,
   isUpdate: boolean = false
 ) => {
+  // Define a schema for Realtor input using Joi
   const realtorSchema = Joi.object<RealtorInput>({
     firstName: isUpdate
       ? Joi.string().min(3).max(30).optional().trim().messages({
@@ -122,10 +124,12 @@ const realtorValidator = (
       : Joi.boolean().optional().default(false)
   });
 
+  // Validate the input against the schema
   const { error, value } = realtorSchema.validate(input, {
     abortEarly: false,
   });
 
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
@@ -137,9 +141,10 @@ const realtorValidator = (
     );
   }
 
-  return value;
+  return value; // Return the validated input
 };
 
+// Define a middleware for validating Realtor input
 export const validateRealtorInputMiddleware = (
   isUpdate: boolean = false
 ) => {
@@ -148,7 +153,7 @@ export const validateRealtorInputMiddleware = (
       // Extract the request body
       const { body } = req;
 
-      // Validate the client realtor  input using the realtorValidator
+      // Validate the client's Realtor input using the realtorValidator
       const validatedInput: RealtorInput = realtorValidator(
         body,
         isUpdate
@@ -157,16 +162,11 @@ export const validateRealtorInputMiddleware = (
       // Continue to the next middleware or route handler
       next();
     } catch (error: any) {
-      // if (error instanceof ApiError) {
-      //   return res.status(error.status).json(error.message);
-      // }
-
-      // Respond with the custom error
-      // const err = ApiError.badRequest();
+      // Handle errors, e.g., respond with a custom error message
       res.status(500).json({
         success: false,
         message: error.message
-      })
+      });
     }
   };
 };
