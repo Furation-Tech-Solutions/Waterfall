@@ -1,15 +1,16 @@
+
 import sequelize from "@main/sequelizeClient";
 import { Router } from "express";
 import { ConnectionsServices } from "@presentation/services/connections_services"; // Import the ConnectionsServices
 import { ConnectionsDataSourceImpl } from "@data/connections/datasource/connections_datasource"; // Import the ConnectionsDataSourceImpl
 import { ConnectionsRepositoryImpl } from "@data/connections/repository/connections_repo_impl"; // Import the ConnectionsRepositoryImpl
-import { CreateConnections } from "@domain/connections/usecases/create_connections"; // Import Connections-related use cases
-import { DeleteConnections } from "@domain/connections/usecases/delete_connections";
-import { GetConnectionsById } from "@domain/connections/usecases/get_by_id_connections";
+import { CreateRequest } from "@domain/connections/usecases/create_request"; // Import Connections-related use cases
+import { DeleteRequest } from "@domain/connections/usecases/delete_Request";
+import { GetById } from "@domain/connections/usecases/get_by_id";
+import { UpdateRequest } from "@domain/connections/usecases/update_Request";
+import { GetAll } from "@domain/connections/usecases/get_all";
+import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
 import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
-import { UpdateConnections } from "@domain/connections/usecases/update_connections";
-import { GetAllConnectionRequest } from "@domain/connections/usecases/get_all_requests";
-import { GetAllConnedctedConnetions } from "@domain/connections/usecases/get_all_connected_Connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection
@@ -19,23 +20,23 @@ const connectionsDataSource = new ConnectionsDataSourceImpl(sequelize);
 const connectionsRepository = new ConnectionsRepositoryImpl(connectionsDataSource);
 
 // Create instances of the required use cases and pass the connectionsRepositoryImpl
-const createConnectionsUsecase = new CreateConnections(connectionsRepository);
-const deleteConnectionsUsecase = new DeleteConnections(connectionsRepository);
-const getConnectionsByIdUsecase = new GetConnectionsById(connectionsRepository);
-const getAllConnectionsUsecase = new GetAllConnections(connectionsRepository);
-const updateConnectionsUsecase = new UpdateConnections(connectionsRepository);
-const GetAllConnectionRequestUsecase = new GetAllConnectionRequest(connectionsRepository);
-const GetAllConnectedConnectionstUsecase = new GetAllConnedctedConnetions(connectionsRepository);
+const createRequestsUsecase = new CreateRequest(connectionsRepository);
+const deleteRequestsUsecase = new DeleteRequest(connectionsRepository);
+const getRequestsByIdUsecase = new GetById(connectionsRepository);
+const getAllRequestsUsecase = new GetAll(connectionsRepository);
+const updateRequestsUsecase = new UpdateRequest(connectionsRepository);
+const getAllRequestUsecase = new GetAllRequests(connectionsRepository);
+const getAllConnectionstUsecase = new GetAllConnections(connectionsRepository);
 
 // Initialize connectionsServices and inject required dependencies
 const connectionsService = new ConnectionsServices(
-    createConnectionsUsecase,
-    deleteConnectionsUsecase,
-    getConnectionsByIdUsecase,
-    getAllConnectionsUsecase,
-    updateConnectionsUsecase,
-    GetAllConnectionRequestUsecase,
-    GetAllConnectedConnectionstUsecase
+    createRequestsUsecase,
+    deleteRequestsUsecase,
+    getRequestsByIdUsecase,
+    getAllRequestsUsecase,
+    updateRequestsUsecase,
+    getAllRequestUsecase,
+    getAllConnectionstUsecase
 );
 
 // Create an Express router
@@ -45,34 +46,34 @@ export const connectionsRouter = Router();
 connectionsRouter.post(
     "/",
     validateConnectionsInputMiddleware(false),
-    connectionsService.createConnections.bind(connectionsService)
+    connectionsService.createRequest.bind(connectionsService)
 );
 
 // Route handling for deleting a connections by ID
 connectionsRouter.delete(
     "/:id",
-    connectionsService.deleteConnections.bind(connectionsService)
+    connectionsService.deleteRequest.bind(connectionsService)
 );
 
-// Route handling for getting a connections by ID
+// Route handling for getting a requests by ID
 connectionsRouter.get(
     "/:id",
-    connectionsService.getConnectionsById.bind(connectionsService)
+    connectionsService.getById.bind(connectionsService)
 );
 
 // Route handling for getting all connections
-connectionsRouter.get("/", connectionsService.getAllConnections.bind(connectionsService));
+connectionsRouter.get("/", connectionsService.getAll.bind(connectionsService));
 
 // Route handling for updating a connections by ID
 connectionsRouter.put(
     "/:id",
     validateConnectionsInputMiddleware(true),
-    connectionsService.updateConnections.bind(connectionsService)
+    connectionsService.updateRequests.bind(connectionsService)
 );
 
 
 // Route handling for getting all connection requests
-connectionsRouter.get("/request/:id", connectionsService.getAllConnectionRequests.bind(connectionsService));
+connectionsRouter.get("/requests", connectionsService.AllRequests.bind(connectionsService));
 
 // Route handling for getting all connection requests
-connectionsRouter.get("/connected/:id", connectionsService.getAllConnectedConnections.bind(connectionsService));
+connectionsRouter.get("/connections", connectionsService.AllConnections.bind(connectionsService));

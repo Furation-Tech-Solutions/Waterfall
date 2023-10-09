@@ -5,12 +5,12 @@ import { ConnectionsRepository } from "../repositories/connections_repo"; // Imp
 import { Either, Right, Left } from "monet";
 
 // Define the interface for the DeleteConnections use case
-export interface DeleteConnectionsUsecase {
+export interface DeleteRequestUsecase {
     execute: (id: string) => Promise<Either<ErrorClass, void>>;
 }
 
 // Implement the DeleteConnections use case
-export class DeleteConnections implements DeleteConnectionsUsecase {
+export class DeleteRequest implements DeleteRequestUsecase {
     private readonly connectionsRepository: ConnectionsRepository;
 
     // Constructor to initialize the ConnectionsRepository
@@ -22,6 +22,6 @@ export class DeleteConnections implements DeleteConnectionsUsecase {
     // This method takes an ID and returns a Promise with an Either result
     async execute(id: string): Promise<Either<ErrorClass, void>> {
         // Delegate the deletion of connections to the ConnectionsRepository
-        return await this.connectionsRepository.deleteConnections(id);
+        return await this.connectionsRepository.deleteRequest(id);
     }
 }

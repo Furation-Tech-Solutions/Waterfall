@@ -5,13 +5,13 @@ import ApiError from "@presentation/error-handling/api-error";
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
-    create(connections: ConnectionsModel): Promise<any>;
-    update(id: string, data: ConnectionsModel): Promise<any>;
-    delete(id: string): Promise<void>;
+    createReq(connections: ConnectionsModel): Promise<any>;
+    updateReq(id: string, data: ConnectionsModel): Promise<any>;
+    deleteReq(id: string): Promise<void>;
     read(id: string): Promise<any | null>;
     getAll(): Promise<any[]>;
-    getAllRequest(id: string): Promise<any[]>;
-    getAllconnected(id: string): Promise<any[]>
+    AllReq(): Promise<any[]>;
+    Allcon(): Promise<any[]>;
 
 }
 
@@ -19,7 +19,7 @@ export interface ConnectionsDataSource {
 export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     constructor(private db: Sequelize) { }
 
-    async create(newConnection: any): Promise<any> {
+    async createReq(newConnection: any): Promise<any> {
 
         const existingConnection1 = await Connections.findOne({
             where: {
@@ -42,11 +42,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return createdConnections.toJSON();
     }
 
-    async delete(id: string): Promise<void> {
+    async deleteReq(id: string): Promise<void> {
         await Connections.destroy({
             where: {
-                id: id,
-                connected: false
+                id: id
+
             },
         });
     }
@@ -54,42 +54,28 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     async read(id: string): Promise<any | null> {
         const connections = await Connections.findOne({
             where: {
-                id: id,
-                connected: false
+                id: id
             },
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-        const connections = await Connections.findAll({
-            where: {
-                connected: false
-            }
-        });
+        const connections = await Connections.findAll();
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
-    async getAllRequest(id: string): Promise<any[]> {
-        const connections = await Connections.findAll({
-            where: {
-                toId: id,
-                connected: false
-            }
-        });
+    async AllReq(): Promise<any[]> {
+        const connections = await Connections.findAll();
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+
     }
-    async getAllconnected(id: string): Promise<any[]> {
-        const connections = await Connections.findAll({
-            where: {
-                toId: id,
-                connected: true
-            }
-        });
+    async Allcon(): Promise<any[]> {
+        const connections = await Connections.findAll();
         return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
-    async update(id: string, updatedData: ConnectionsModel): Promise<any> {
+    async updateReq(id: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID
         const connection = await Connections.findByPk(id);
 

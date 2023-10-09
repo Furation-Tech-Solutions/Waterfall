@@ -36,7 +36,6 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     // Retrieve all feedback entries
     async getAllFeedBacks(): Promise<any[]> {
         const feedBack = await FeedBack.findAll({});
-        
         return feedBack.map((feedBack: any) => feedBack.toJSON()); // Convert to plain JavaScript objects before returning
     }
 

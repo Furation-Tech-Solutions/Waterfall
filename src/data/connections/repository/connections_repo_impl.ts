@@ -11,9 +11,10 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         this.connectionsDataSource = connectionsDataSource;
     }
 
-    async createConnections(data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    async createRequest(data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
         try {
-            const createdConnections = await this.connectionsDataSource.create(data); // Use the Connections data source
+            const createdConnections = await this.connectionsDataSource.createReq(data); // Use the Connections data source
+
             return Right<ErrorClass, ConnectionsEntity>(createdConnections);
         } catch (error: any) {
             if (error instanceof ApiError && error.name === "conflict") {
@@ -23,9 +24,10 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         }
     }
 
-    async deleteConnections(id: string): Promise<Either<ErrorClass, void>> {
+    async deleteRequest(id: string): Promise<Either<ErrorClass, void>> {
         try {
-            const result = await this.connectionsDataSource.delete(id); // Use the Connections data source
+            const result = await this.connectionsDataSource.deleteReq(id); // Use the Connections data source
+
             return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {
@@ -34,10 +36,9 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
             return Left<ErrorClass, void>(ApiError.badRequest());
         }
     }
-
-    async updateConnections(id: string, data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    async updateRequest(id: string, data: ConnectionsModel): Promise<Either<ErrorClass, ConnectionsEntity>> {
         try {
-            const updatedConnections = await this.connectionsDataSource.update(id, data); // Use the Connections data source
+            const updatedConnections = await this.connectionsDataSource.updateReq(id, data); // Use the Connections data source
             return Right<ErrorClass, ConnectionsEntity>(updatedConnections);
         } catch (e) {
             if (e instanceof ApiError && e.name === "conflict") {
@@ -47,7 +48,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         }
     }
 
-    async getAllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+    async getAll(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
         try {
             const connections = await this.connectionsDataSource.getAll(); // Use the connections data source
             return Right<ErrorClass, ConnectionsEntity[]>(connections);
@@ -58,8 +59,31 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
             return Left<ErrorClass, ConnectionsEntity[]>(ApiError.badRequest());
         }
     }
+    async Allrequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+        try {
+            const connections = await this.connectionsDataSource.AllReq(); // Use the connections data source
+            return Right<ErrorClass, ConnectionsEntity[]>(connections);
+        } catch (e: any) {
+            if (e instanceof ApiError && e.name === "notfound") {
+                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
+            }
+            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.customError(400, e.message));
+        }
+    }
 
-    async getConnectionsById(id: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    async AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
+        try {
+            const connections = await this.connectionsDataSource.Allcon(); // Use the connections data source
+            return Right<ErrorClass, ConnectionsEntity[]>(connections);
+        } catch (e: any) {
+            if (e instanceof ApiError && e.name === "notfound") {
+                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
+            }
+            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.customError(400, e.message));
+        }
+    }
+
+    async getById(id: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
         try {
             const connections = await this.connectionsDataSource.read(id); // Use the connections data source
             return connections
@@ -72,30 +96,4 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
             return Left<ErrorClass, ConnectionsEntity>(ApiError.badRequest());
         }
     }
-
-    async getAllConnectionRequests(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
-        try {
-            const connections = await this.connectionsDataSource.getAllRequest(id); // Use the connections data source
-            return Right<ErrorClass, ConnectionsEntity[]>(connections);
-        } catch (e) {
-            if (e instanceof ApiError && e.name === "notfound") {
-                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
-            }
-            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.badRequest());
-        }
-    }
-
-    async getAllConnectedConnections(id: string): Promise<Either<ErrorClass, ConnectionsEntity[]>> {
-        try {
-            const connections = await this.connectionsDataSource.getAllconnected(id); // Use the connections data source
-            return Right<ErrorClass, ConnectionsEntity[]>(connections);
-        } catch (e) {
-            if (e instanceof ApiError && e.name === "notfound") {
-                return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
-            }
-            return Left<ErrorClass, ConnectionsEntity[]>(ApiError.badRequest());
-        }
-    }
-
-
 }
