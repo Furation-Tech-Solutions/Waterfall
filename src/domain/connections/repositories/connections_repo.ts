@@ -17,3 +17,5 @@ export interface ConnectionsRepository {
     AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
 
 }
+
+
