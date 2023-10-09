@@ -65,7 +65,7 @@ export class FeedBackService {
         // const nonDeletedFeedBacks = result.filter((feedback) => feedback.deleteStatus !== false);
 
         // Convert non-deleted feedbacks from an array of FeedBackEntity to an array of plain JSON objects using feedbackMapper
-        const responseData = feedBacks.map((feedback) => FeedBackMapper.toEntity(feedback));
+        const responseData = result.map((feedback) => FeedBackMapper.toEntity(feedback));
         return res.json(responseData);
       }
   );

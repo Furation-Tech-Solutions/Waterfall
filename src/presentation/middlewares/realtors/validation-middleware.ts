@@ -7,7 +7,7 @@ interface RealtorInput {
   firstName: string;
   lastName: string;
   email: string;
-  contact: number;
+  contact: string;
   DOB: string;
   gender: string;
   location: string;
@@ -56,12 +56,11 @@ const realtorValidator = (
         "any.required": "lastName is required",
       }),
     contact: isUpdate
-      ? Joi.number().optional().messages({
-        'number.base': 'Contact number must be a number',
+      ? Joi.string().optional().messages({
+        "string.max": "contact should have less than 10 number",
       })
-      : Joi.number().required().messages({
-        'any.required': 'Contact number is required',
-        'number.base': 'Contact number must be a number',
+      : Joi.string().required().messages({
+        "string.max": "contact should have less than 10 number",
       }),
     DOB: isUpdate
       ? Joi.string().optional().messages({

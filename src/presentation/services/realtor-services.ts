@@ -65,7 +65,7 @@ export class RealtorService {
         // const nonDeletedRealtors = result.filter((realtor) => realtor.deleteStatus !== false);
 
         // Convert non-deleted Realtors from an array of RealtorEntity to an array of plain JSON objects using realtorMapper
-        const responseData = realtors.map((realtor) => RealtorMapper.toEntity(realtor));
+        const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
         return res.json(responseData);
       }
   );
