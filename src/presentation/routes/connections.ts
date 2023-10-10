@@ -9,8 +9,8 @@ import { DeleteRequest } from "@domain/connections/usecases/delete_Request";
 import { GetById } from "@domain/connections/usecases/get_by_id";
 import { UpdateRequest } from "@domain/connections/usecases/update_Request";
 import { GetAll } from "@domain/connections/usecases/get_all";
-import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
-import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
+// import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
+// import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection
@@ -25,8 +25,8 @@ const deleteRequestsUsecase = new DeleteRequest(connectionsRepository);
 const getRequestsByIdUsecase = new GetById(connectionsRepository);
 const getAllRequestsUsecase = new GetAll(connectionsRepository);
 const updateRequestsUsecase = new UpdateRequest(connectionsRepository);
-const getAllRequestUsecase = new GetAllRequests(connectionsRepository);
-const getAllConnectionstUsecase = new GetAllConnections(connectionsRepository);
+// const getAllRequestUsecase = new GetAllRequests(connectionsRepository);
+// const getAllConnectionstUsecase = new GetAllConnections(connectionsRepository);
 
 // Initialize connectionsServices and inject required dependencies
 const connectionsService = new ConnectionsServices(
@@ -34,9 +34,9 @@ const connectionsService = new ConnectionsServices(
     deleteRequestsUsecase,
     getRequestsByIdUsecase,
     getAllRequestsUsecase,
-    updateRequestsUsecase,
-    getAllRequestUsecase,
-    getAllConnectionstUsecase
+    updateRequestsUsecase
+    // getAllRequestUsecase,
+    // getAllConnectionstUsecase
 );
 
 // Create an Express router
@@ -72,8 +72,8 @@ connectionsRouter.put(
 );
 
 
-// Route handling for getting all connection requests
-connectionsRouter.get("/requests", connectionsService.AllRequests.bind(connectionsService));
+// // Route handling for getting all connection requests
+// connectionsRouter.get("/requests", connectionsService.AllRequests.bind(connectionsService));
 
-// Route handling for getting all connection requests
-connectionsRouter.get("/connections", connectionsService.AllConnections.bind(connectionsService));
+// // Route handling for getting all connection requests
+// connectionsRouter.get("/connections", connectionsService.AllConnections.bind(connectionsService));
