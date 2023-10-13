@@ -12,8 +12,9 @@ export class RealtorModel {
     public password: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: boolean // You might want to provide a default value here
-  ) {}
+    public deleteStatus: boolean, // You might want to provide a default value here
+    public friends: string[] = []
+  ) { }
 }
 
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
@@ -31,8 +32,9 @@ export class RealtorEntity {
     public password: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: boolean
-  ) {}
+    public deleteStatus: boolean,
+    public friends: string[]
+  ) { }
 }
 
 // Define a RealtorMapper class to convert between RealtorData and RealtorEntity
@@ -82,7 +84,10 @@ export class RealtorMapper {
           : existingRealtor.countryCode,
         deleteStatus: realtorData.deleteStatus !== undefined
           ? realtorData.deleteStatus
-          : existingRealtor.deleteStatus
+          : existingRealtor.deleteStatus,
+        friends: realtorData.friends !== undefined
+          ? realtorData.friends
+          : existingRealtor.friends
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -99,7 +104,8 @@ export class RealtorMapper {
         password: realtorData.password,
         profileImage: realtorData.profileImage,
         countryCode: realtorData.countryCode,
-        deleteStatus: realtorData.deleteStatus
+        deleteStatus: realtorData.deleteStatus,
+        friends: realtorData.friends
       };
       return realtorEntity;
     }
@@ -119,7 +125,8 @@ export class RealtorMapper {
       password: realtor.password,
       profileImage: realtor.profileImage,
       countryCode: realtor.countryCode,
-      deleteStatus: realtor.deleteStatus
+      deleteStatus: realtor.deleteStatus,
+      friends: realtor.friends
     };
   }
 }
