@@ -15,8 +15,8 @@ const Realtors = sequelize.define('Realtors', {
   about: { type: DataTypes.STRING, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false, validate: { len: [5, 10] } },
   profileImage: { type: DataTypes.STRING, allowNull: false },
-  countryCode: { type: DataTypes.INTEGER, allowNull: false },
-  deleteStatus: { type: DataTypes.BOOLEAN }
+  countryCode: { type: DataTypes.INTEGER, allowNull: false, validate: { len: [0, 15] } },
+  deleteStatus: { type: DataTypes.BOOLEAN, defaultValue: false }
 });
 
 // An asynchronous self-invoking function for database synchronization
