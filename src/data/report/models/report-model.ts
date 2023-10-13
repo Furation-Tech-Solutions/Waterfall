@@ -47,7 +47,7 @@ const Report = sequelize.define("Report", {
 
 // Immediately invoked function to synchronize the Sequelize model with the database
 (async () => {
-  await sequelize.sync({ force: false }); // Set force: true to drop and recreate tables
+  await sequelize.sync({ force: false }); // Set force: false to drop and recreate tables
   // Code to run after synchronization can be added here
 })();
 

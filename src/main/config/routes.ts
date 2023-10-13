@@ -44,5 +44,6 @@ export default (app: Express): void => {
   app.use("/api/v1/reports", reportRouter);
   app.use("/api/v1/bugReports", bugReportRouter);
   app.use("/api/v1/supports", supportRouter);
+  app.use("/api/v1/callLogs", callLogRouter);
   app.use(router);
 };
