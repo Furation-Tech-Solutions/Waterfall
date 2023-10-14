@@ -1,17 +1,17 @@
 // Define a class for the BlockingModel, representing the structure of data sent in Express API requests
 export class BlockingModel {
   constructor(
-    public fromRealtor: string = "",
-    public toRealtor: string = ""
+    public fromRealtor: number = 0,
+    public toRealtor: number = 0
   ) {}
 }
 
 // Define a class for the BlockingEntity, representing data provided by the Blocking Repository and converted to an Express API response
 export class BlockingEntity {
   constructor(
-    public id: string | undefined = undefined, // Set a default value for id
-    public fromRealtor: string,
-    public toRealtor: string
+    public id: number | undefined = undefined, // Set a default value for id
+    public fromRealtor: number,
+    public toRealtor: number
   ) {}
 }
 

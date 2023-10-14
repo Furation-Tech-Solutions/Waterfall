@@ -2,22 +2,21 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+import Realtors from "@data/realtors/model/realtor-model";
+
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
   // Define a "realtor" field with UUID data type, which cannot be null
   realtor: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    // Optionally, you can define references to another model (Realtors)
-    // references: {
-    //   model: "Realtors", // Make sure this matches your "Realtors" model name
-    //   key: "id", // Adjust this key if necessary
-    // },
+    references: { model: Realtors, key: 'id' }
   },
   // Define a "to" field with STRING data type, which cannot be null
   to: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: Realtors, key: 'id' }
   },
   // Define a "description" field with STRING data type, which cannot be null
   // and includes validation for length between 1 and 1000 characters
@@ -43,6 +42,6 @@ const Support = sequelize.define("Support", {
     defaultValue: DataTypes.NOW,
   },
 });
-
+Realtors.hasMany(Support);
 // Export the "Support" model
 export default Support;

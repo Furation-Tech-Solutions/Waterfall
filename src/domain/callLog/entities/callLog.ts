@@ -1,7 +1,7 @@
 // Define a data transfer object (DTO) for Express API requests
 export class CallLogModel {
   constructor(
-    public jobApplicant: string = "",
+    public jobApplicant: number = 0,
     public logActivity: string = "",
     public logOutcome: string = ""
   ) {}
@@ -11,8 +11,8 @@ export class CallLogModel {
 // This class is used to convert data from the repository to Express API responses
 export class CallLogEntity {
   constructor(
-    public id: string | undefined = undefined,
-    public jobApplicant: string,
+    public id: number| undefined = undefined,
+    public jobApplicant: number,
     public logActivity: string,
     public logOutcome: string
   ) {}

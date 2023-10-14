@@ -25,7 +25,8 @@ try {
   //     console.error("Error syncing table:", error);
   //   }
   // }
-
+  // syncDatabase();
+  
   app.listen(env.port, () => {
     console.log(`${Message.SERVER_RUNNING} ${env.port}`);
   });

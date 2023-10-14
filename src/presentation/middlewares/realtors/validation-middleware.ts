@@ -7,7 +7,7 @@ interface RealtorInput {
   firstName: string;
   lastName: string;
   email: string;
-  contact: string;
+  contact: number;
   DOB: string;
   gender: string;
   location: string;
@@ -57,8 +57,8 @@ const realtorValidator = (
         "any.required": "lastName is required",
       }),
     contact: isUpdate
-      ? Joi.string().optional()
-      : Joi.string().required(),
+      ? Joi.number().optional()
+      : Joi.number().required(),
     DOB: isUpdate
       ? Joi.string().optional().messages({
         'string.empty': 'Date of birth cannot be empty',
