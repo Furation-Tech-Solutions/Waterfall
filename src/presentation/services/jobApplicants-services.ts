@@ -12,7 +12,6 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
-import { IRFilter } from "types/jobApplicant";
 
 // Create a class called JobApplicantService
 export class JobApplicantService {
@@ -88,21 +87,6 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const { jobStatus } = req.query;
-
-    const filter: IRFilter = {};
-    console.log(jobStatus);
-    if (jobStatus && typeof jobStatus === "string") {
-      // filter.jobStatus = jobStatus;
-     if (jobStatus === "Completed") {
-       // Set the filter to include only "Completed" status
-       filter.jobStatus = "Completed";
-     }
-    } else {
-      res.status(400).json({ error: "Invalid or missing jobStatus parameter" });
-      return;
-    }
-
     // Execute the get all job applicants use case and handle the result using Either
     const jobs: Either<ErrorClass, JobApplicantEntity[]> =
       await this.getAllJobApplicantsUsecase.execute();

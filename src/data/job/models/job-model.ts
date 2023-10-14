@@ -31,7 +31,7 @@ export const feeTypeEnum = {
 const Job = sequelize.define("Job", {
   // Define various fields of the "Job" model with their data types and constraints
   jobOwner: {
-    type: DataTypes.UUID, // Data type for jobOwner is UUID
+    type: DataTypes.INTEGER, // Data type for jobOwner is INTEGER
     allowNull: false, // It cannot be null
   },
   location: {
@@ -100,12 +100,6 @@ const Job = sequelize.define("Job", {
     allowNull: false, // It cannot be null
   },
 });
-
-// Asynchronous function for database synchronization
-(async () => {
-  await sequelize.sync({ force: false}); // Synchronize the model with the database (force: false means do not drop existing tables)
-  // Code here
-})();
 
 // Export the "Job" model as the default export of this module
 export default Job;

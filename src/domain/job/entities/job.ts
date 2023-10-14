@@ -1,7 +1,7 @@
 // Express API request DTO
 export class JobModel {
   constructor(
-    public jobOwner: string = "", // Owner of the job
+    public jobOwner: number = 0, // Owner of the job
     public location: string = "", // Location of the job
     public address: string = "", // Address of the job
     public date: Date = new Date(), // Date of the job
@@ -24,8 +24,8 @@ export class JobModel {
 // Job Entity provided by Job Repository is converted to Express API Response
 export class JobEntity {
   constructor(
-    public id: string | undefined = undefined, // Job ID (optional)
-    public jobOwner: string, // Owner of the job
+    public id: number | undefined = undefined, // Job ID (optional)
+    public jobOwner: number, // Owner of the job
     public location: string, // Location of the job
     public address: string, // Address of the job
     public date: Date, // Date of the job
