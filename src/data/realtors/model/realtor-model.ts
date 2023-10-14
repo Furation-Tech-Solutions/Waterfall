@@ -66,14 +66,14 @@ const Realtors = sequelize.define('Realtors', {
     defaultValue: false
   },
   friends: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
     defaultValue: []
   }
 });
 
 // (async () => {
 //   try {
-//     await sequelize.sync({ force: false });
+//     await sequelize.sync({ force: true });
 //     console.log("Database synchronized successfully");
 //   } catch (error) {
 //     console.error("Database synchronization error:", error);

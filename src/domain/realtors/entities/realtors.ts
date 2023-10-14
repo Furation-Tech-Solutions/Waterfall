@@ -13,14 +13,14 @@ export class RealtorModel {
     public profileImage: string = "",
     public countryCode: number = 0,
     public deleteStatus: boolean, // You might want to provide a default value here
-    public friends: string[] = []
+    public friends: number[] = []
   ) { }
 }
 
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
 export class RealtorEntity {
   constructor(
-    public id: string | undefined = undefined, // Set a default value for id
+    public id: number| undefined = undefined, // Set a default value for id
     public firstName: string,
     public lastName: string,
     public email: string,
@@ -33,7 +33,7 @@ export class RealtorEntity {
     public profileImage: string,
     public countryCode: number,
     public deleteStatus: boolean,
-    public friends: string[]
+    public friends: number[]
   ) { }
 }
 

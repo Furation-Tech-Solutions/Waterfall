@@ -2,6 +2,8 @@
 import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize library
 import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instance
 
+import Realtors from "@data/realtors/model/realtor-model";
+
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
   FROM1TO5: "1To5",
@@ -31,8 +33,9 @@ export const feeTypeEnum = {
 const Job = sequelize.define("Job", {
   // Define various fields of the "Job" model with their data types and constraints
   jobOwner: {
-    type: DataTypes.UUID, // Data type for jobOwner is UUID
+    type: DataTypes.INTEGER, // Data type for jobOwner is UUID
     allowNull: false, // It cannot be null
+    references: { model: Realtors, key: 'id' }
   },
   location: {
     type: DataTypes.STRING, // Data type for location is STRING
@@ -101,11 +104,7 @@ const Job = sequelize.define("Job", {
   },
 });
 
-// Asynchronous function for database synchronization
-// (async () => {
-//   await sequelize.sync({ force: false }); // Synchronize the model with the database ( means do not drop existing tables)
-//   // Code here
-// })();
+Realtors.hasMany(Job);
 
 // Export the "Job" model as the default export of this module
 export default Job;

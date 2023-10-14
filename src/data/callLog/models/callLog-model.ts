@@ -2,6 +2,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+import JobApplicants from "@data/jobApplicants/models/jobApplicants-models";
+
 // Define an enum for possible outcomes
 export const OutcomeEnum = {
   BUSY: "Busy",
@@ -16,8 +18,9 @@ export const OutcomeEnum = {
 const CallLog = sequelize.define("CallLog", {
   // Define the "jobApplicant" field with a UUID data type, which cannot be null
   jobApplicant: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: JobApplicants, key: 'id' }
   },
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
@@ -37,13 +40,7 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
-// Asynchronous self-invoking function for syncing the Sequelize model with the database
-// (async () => {
-//   // Sync the model with the database (create the table if it doesn't exist)
-//   await sequelize.sync({force: false });
-
-//   // Code to be executed after syncing (if needed) can be placed here
-// })();
+JobApplicants.hasMany(CallLog);
 
 // Export the CallLog model as the default export
 export default CallLog;

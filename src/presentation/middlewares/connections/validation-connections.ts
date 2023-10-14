@@ -14,21 +14,21 @@ const connectionsValidator = (
 ) => {
   const connectionsSchema = Joi.object<ConnectionsInput>({
     fromId: isUpdate
-      ? Joi.number().integer().optional().messages({
+      ? Joi.number().optional().messages({
         "number.integer": "fromId should be an integer",
         "any.required": "fromId is required",
       })
-      : Joi.number().integer().required().messages({
+      : Joi.number().required().messages({
         "number.integer": "fromId should be an integer",
         "any.required": "fromId is required",
       }),
 
     toId: isUpdate
-      ? Joi.number().integer().optional().messages({
+      ? Joi.number().optional().messages({
         "number.integer": "toId should be an integer",
         "any.required": "toId is required",
       })
-      : Joi.number().integer().required().messages({
+      : Joi.number().required().messages({
         "number.integer": "toId should be an integer",
         "any.required": "toId is required",
       }),

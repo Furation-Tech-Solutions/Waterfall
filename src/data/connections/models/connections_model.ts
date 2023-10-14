@@ -4,15 +4,19 @@ import env from '@main/config/env';
 import { array, boolean, object, string } from "joi";
 import sequelize from "@main/sequelizeClient";
 
+import Realtors from "@data/realtors/model/realtor-model";
+
 
 const Connections = sequelize.define('Connections', {
   fromId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: Realtors, key: 'id' }
   },
   toId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: Realtors, key: 'id' }
   },
   connected: {
     type: DataTypes.BOOLEAN,
@@ -20,12 +24,6 @@ const Connections = sequelize.define('Connections', {
   },
 });
 
-// Define associations if needed
-// Connections.hasMany(UserAccount, { foreignKey: 'updatedBy', as: 'UpdatedBy' });
-
-// (async () => {
-//   await sequelize.sync({force: false });
-//   // Code here
-// })();
+Realtors.hasMany(Connections);
 
 export default Connections;

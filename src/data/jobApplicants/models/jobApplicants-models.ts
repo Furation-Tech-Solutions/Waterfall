@@ -2,6 +2,9 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+import Realtors from "@data/realtors/model/realtor-model";
+import Jobs from "@data/job/models/job-model";
+
 // Define statusEnum to represent possible status values
 export const statusEnum = {
   ACCEPT: "Accept",
@@ -19,21 +22,15 @@ export const jobStatusEnum = {
 // Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    // references: {
-    //   model: "Job", // Make sure this matches your "Jobs" model name
-    //   key: "id", // Adjust this key if necessary
-    // },
+    references: { model: Jobs, key: 'id' }
   },
 
   applicant: {
-    type: DataTypes.UUID, // Assuming 'Realtor' is represented by UUID in PostgreSQL
+    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
-    // references: {
-    //   model: "Realtor", // Replace with the actual name of the 'Realtor' table
-    //   key: "id", // Replace with the actual primary key of the 'Realtor' table
-    // },
+    references: { model: Realtors, key: 'id' }
   },
   status: {
     type: DataTypes.STRING,
@@ -62,12 +59,8 @@ const JobApplicant = sequelize.define("JobApplicant", {
   },
 });
 
-// Immediately-invoked async function for database synchronization
-// (async () => {
-//   // Synchronize the database schema (force:false means it won't drop existing tables)
-//   await sequelize.sync({ force: false });
-//   // Code here
-// })();
+Realtors.hasMany(JobApplicant);
+Jobs.hasMany(JobApplicant);
 
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;
