@@ -38,11 +38,5 @@ const BugReport = sequelize.define("BugReport", {
   },
 });
 
-// Immediately invoke an asynchronous function to synchronize the Sequelize model with the database
-// (async () => {
-//   await sequelize.sync({force: false });
-//   // You can add code here to perform any additional actions after synchronization
-// })();
-
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;

@@ -37,13 +37,5 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
-// Asynchronous self-invoking function for syncing the Sequelize model with the database
-// (async () => {
-//   // Sync the model with the database (create the table if it doesn't exist)
-//   await sequelize.sync({force: false });
-
-//   // Code to be executed after syncing (if needed) can be placed here
-// })();
-
 // Export the CallLog model as the default export
 export default CallLog;

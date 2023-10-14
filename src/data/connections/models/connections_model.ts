@@ -20,12 +20,4 @@ const Connections = sequelize.define('Connections', {
   },
 });
 
-// Define associations if needed
-// Connections.hasMany(UserAccount, { foreignKey: 'updatedBy', as: 'UpdatedBy' });
-
-// (async () => {
-//   await sequelize.sync({force: false });
-//   // Code here
-// })();
-
 export default Connections;

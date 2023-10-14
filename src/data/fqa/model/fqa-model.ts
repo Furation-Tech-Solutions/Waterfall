@@ -8,13 +8,5 @@ const FQAs = sequelize.define('FQAs', {
   answer: { type: DataTypes.STRING, allowNull: false }
 });
 
-// An asynchronous self-invoking function for database synchronization
-// (async () => {
-//   await sequelize.sync({ force: false });
-
-//   // Code to be added here for further functionality
-
-// })();
-
 // Export the 'FQAs' model for use in other parts of the application
 export default FQAs;

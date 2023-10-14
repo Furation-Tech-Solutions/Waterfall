@@ -17,13 +17,5 @@ const SavedJob = sequelize.define("SavedJob", {
   },
 });
 
-// Use an immediately invoked async function to ensure the Sequelize model is synchronized with the database
-// (async () => {
-//   // Synchronize the model with the database ( means don't drop tables if they exist)
-//   await sequelize.sync({ force: false });
-
-//   // Code here (you can add code for further database operations if needed)
-// })();
-
 // Export the "SavedJob" model as the default export
 export default SavedJob;
