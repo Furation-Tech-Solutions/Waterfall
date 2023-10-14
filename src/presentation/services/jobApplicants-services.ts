@@ -99,12 +99,28 @@ export class JobApplicantService {
       (
         error: ErrorClass // Handle error case
       ) => res.status(error.status).json({ error: error.message }),
-      (jobApplicants: JobApplicantEntity[]) => {
+      (jobApplicants: JobApplicantEntity[]): any => {
+
+        const fiterStatus = req.query.jobStatus as string;
+
         // Handle success case
-        const resData = jobApplicants.map((jobApplicant: any) =>
+        let  responseData = jobApplicants.map((jobApplicant: any) =>
           JobApplicantMapper.toEntity(jobApplicant)
         );
-        return res.json(resData);
+        
+        if(fiterStatus){
+          console.log("fiterStatus", fiterStatus)
+          let  fiteredJob: string[] =  []
+          responseData = responseData.filter((jobApplicant: JobApplicantEntity) => {
+            if(jobApplicant.jobStatus === fiterStatus) {
+                fiteredJob.push(jobApplicant.job)
+            }
+            
+          });
+          return res.json(fiteredJob)
+        }else {
+          return res.json(responseData)
+        }
       }
     );
   }
