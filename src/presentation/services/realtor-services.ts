@@ -55,21 +55,61 @@ export class RealtorService {
 
   // Handler for getting all Realtors
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
-    // Call the GetAllRealtorsUsecase to get all Realtors
-    const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
-      
-    realtors.cata(
-      (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
-      (result: RealtorEntity[]) => {
-        // Filter out Realtors with del_status set to "Deleted"
-        // const nonDeletedRealtors = result.filter((realtor) => realtor.deleteStatus !== false);
-
-        // Convert non-deleted Realtors from an array of RealtorEntity to an array of plain JSON objects using realtorMapper
-        const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
-        return res.json(responseData);
-      }
-  );
+    try {
+      const { location, gender } = req.query;
+      const selectedLocation = new Location();
+  
+      const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
+  
+      realtors.cata(
+        (error: ErrorClass) => {
+          res.status(error.status).json({ error: error.message });
+        },
+        (realtors: RealtorEntity[]) => {
+          const filteredRealtors = realtors.filter((realtor) => {
+            const shiftRealtorLocation = new Location();
+  
+            if (shiftRealtorLocation < selectedLocation && realtor.gender === gender) {
+              return true;
+            }
+  
+            return false;
+          });
+  
+          // if (filteredRealtors && filteredRealtors.length > 0) {
+          //   const results: ShiftWithTimeSlots[] = [];
+  
+          //   for (const shift of filteredRealtors) {
+          //     const timeSlots: string[] = [];
+          //     const firstSeatingTime = new Date(`${selectedDate.toString().slice(0, 10)}T${shift.firstSeating}`);
+          //     const lastSeatingTime = new Date(`${selectedDate.toString().slice(0, 10)}T${shift.lastSeating}`);
+          //     const timeInterval = shift.timeInterval;
+  
+          //     while (firstSeatingTime <= lastSeatingTime) {
+          //       timeSlots.push(firstSeatingTime.toTimeString().slice(0, 8)); // Format as HH:mm
+  
+          //       firstSeatingTime.setMinutes(firstSeatingTime.getMinutes() + timeInterval);
+          //     }
+  
+          //     results.push({
+          //       _id: shift._id,
+          //       shiftName: shift.shiftName,
+          //       shiftCategory: shift.shiftCategory,
+          //       timeSlots,
+          //     });
+          //   }
+  
+          const responseData = filteredRealtors.map((realtor) => RealtorMapper.toEntity(realtor));
+          res.json(responseData);
+        }
+      );
+    } catch (error) {
+      // Handle unexpected errors
+      console.error("Error in getAllRealtors:", error);
+      res.status(500).json({ error: "An unexpected error occurred" });
+    }
   }
+  
 
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {

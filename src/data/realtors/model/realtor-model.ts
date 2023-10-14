@@ -9,7 +9,7 @@ const Realtors = sequelize.define('Realtors', {
   lastName: { type: DataTypes.STRING, allowNull: false, validate: { len: [3, 30] } },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   contact: { type: DataTypes.STRING, allowNull: false, unique: true },
-  DOB: { type: DataTypes.STRING, allowNull: false },
+  DOB: { type: DataTypes.REAL(10, 15), allowNull: false },
   gender: { type: DataTypes.STRING, allowNull: false },
   location: { type: DataTypes.STRING, allowNull: false },
   about: { type: DataTypes.STRING, allowNull: false },
