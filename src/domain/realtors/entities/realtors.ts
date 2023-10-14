@@ -20,7 +20,7 @@ export class RealtorModel {
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
 export class RealtorEntity {
   constructor(
-    public id: number| undefined = undefined, // Set a default value for id
+    public id: number | undefined = undefined, // Set a default value for id
     public firstName: string,
     public lastName: string,
     public email: string,

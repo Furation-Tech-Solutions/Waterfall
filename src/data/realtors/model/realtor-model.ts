@@ -71,16 +71,4 @@ const Realtors = sequelize.define('Realtors', {
   }
 });
 
-// (async () => {
-//   try {
-//     await sequelize.sync({ force: true });
-//     console.log("Database synchronized successfully");
-//   } catch (error) {
-//     console.error("Database synchronization error:", error);
-//   }
-
-//   // Additional functionality can be added here
-
-// })();
-
 export default Realtors;

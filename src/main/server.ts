@@ -16,18 +16,6 @@ try {
     throw ApiError.mongoError();
   }
 
-  // (async () => {
-  //   await sequelize.sync({ force: true });
-  //   // Code here
-  // })();
-
-  //   try {
-  //     await sequelize.authenticate();
-  //     console.log('Connection has been established successfully.');
-  // } catch (error) {
-  //     console.error('Unable to connect to the database:', error);
-  // }
-
   // Sync the model with the database
   // async function syncDatabase() {
   //   try {
@@ -37,10 +25,8 @@ try {
   //     console.error("Error syncing table:", error);
   //   }
   // }
-
-  // Call the syncDatabase function to create the table
   // syncDatabase();
-
+  
   app.listen(env.port, () => {
     console.log(`${Message.SERVER_RUNNING} ${env.port}`);
   });

@@ -105,6 +105,5 @@ const Job = sequelize.define("Job", {
 });
 
 Realtors.hasMany(Job);
-
 // Export the "Job" model as the default export of this module
 export default Job;

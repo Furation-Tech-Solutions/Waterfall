@@ -20,6 +20,5 @@ const FeedBacks = sequelize.define('FeedBacks', {
 
 Realtors.hasMany(FeedBacks);
 Jobs.hasMany(FeedBacks);
-
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;

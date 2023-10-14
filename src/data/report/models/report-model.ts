@@ -40,6 +40,5 @@ const Report = sequelize.define("Report", {
 });
 
 Realtors.hasMany(Report);
-
 // Export the "Report" model as the default export of this module
 export default Report;

@@ -42,7 +42,6 @@ const Support = sequelize.define("Support", {
     defaultValue: DataTypes.NOW,
   },
 });
-
-
+Realtors.hasMany(Support);
 // Export the "Support" model
 export default Support;
