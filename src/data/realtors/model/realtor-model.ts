@@ -20,12 +20,12 @@ const Realtors = sequelize.define('Realtors', {
 });
 
 // An asynchronous self-invoking function for database synchronization
-(async () => {
-  await sequelize.sync({ force: false });
+// (async () => {
+//   await sequelize.sync({ force: false });
   
-  // Code to be added here for further functionality
+//   // Code to be added here for further functionality
   
-})();
+// })();
 
 // Export the 'Realtors' model for use in other parts of the application
 export default Realtors;

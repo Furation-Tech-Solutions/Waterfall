@@ -8,6 +8,7 @@ import { UpdateJobUsecase } from "@domain/job/usecases/update-job";
 import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
+import { IRFilter } from "types/job";
 
 // Create a class for the JobService
 export class JobService {
