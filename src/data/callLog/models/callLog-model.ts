@@ -37,6 +37,5 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
-
 // Export the CallLog model as the default export
 export default CallLog;

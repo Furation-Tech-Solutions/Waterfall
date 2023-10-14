@@ -20,6 +20,5 @@ const Blocking = sequelize.define('Blocking', {
 //   targetKey: 'id' // The name of the target key column in Realtor
 // });
 
-
 // Export the 'Blocking' model for use in other parts of the application
 export default Blocking;

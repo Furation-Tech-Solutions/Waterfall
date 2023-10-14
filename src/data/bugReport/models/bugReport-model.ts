@@ -38,6 +38,5 @@ const BugReport = sequelize.define("BugReport", {
   },
 });
 
-
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;
