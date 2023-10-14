@@ -16,12 +16,12 @@ const FeedBacks = sequelize.define('FeedBacks', {
 });
 
 // An asynchronous self-invoking function for database synchronization
-(async () => {
-  await sequelize.sync({ force: false });
-  
-  // Code to be added here for further functionality
-  
-})();
+// (async () => {
+//   await sequelize.sync({ force: false });
+
+//   // Code to be added here for further functionality
+
+// })();
 
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;
