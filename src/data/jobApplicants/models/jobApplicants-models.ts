@@ -63,11 +63,11 @@ const JobApplicant = sequelize.define("JobApplicant", {
 });
 
 // Immediately-invoked async function for database synchronization
-(async () => {
-  // Synchronize the database schema (force:false means it won't drop existing tables)
-  await sequelize.sync({ force: false });
-  // Code here
-})();
+// (async () => {
+//   // Synchronize the database schema (force:false means it won't drop existing tables)
+//   await sequelize.sync({ force: false });
+//   // Code here
+// })();
 
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;

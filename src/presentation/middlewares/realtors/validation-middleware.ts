@@ -16,6 +16,7 @@ interface RealtorInput {
   profileImage: string;
   countryCode: number;
   deleteStatus: boolean;
+  friends: [];
 }
 
 // Define a validator function for Realtor input
@@ -116,7 +117,8 @@ const realtorValidator = (
       }),
     deleteStatus: isUpdate
       ? Joi.boolean().optional()
-      : Joi.boolean().optional().default(false)
+      : Joi.boolean().optional().default(false),
+    friends: Joi.array().items(Joi.string()).optional(),
   });
 
   // Validate the input against the schema

@@ -102,10 +102,10 @@ const Job = sequelize.define("Job", {
 });
 
 // Asynchronous function for database synchronization
-(async () => {
-  await sequelize.sync({ force: false}); // Synchronize the model with the database (force: false means do not drop existing tables)
-  // Code here
-})();
+// (async () => {
+//   await sequelize.sync({ force: false }); // Synchronize the model with the database ( means do not drop existing tables)
+//   // Code here
+// })();
 
 // Export the "Job" model as the default export of this module
 export default Job;
