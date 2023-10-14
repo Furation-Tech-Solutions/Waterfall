@@ -45,11 +45,5 @@ const Report = sequelize.define("Report", {
   },
 });
 
-// Immediately invoked function to synchronize the Sequelize model with the database
-// (async () => {
-//   await sequelize.sync({ force: false }); // Set  to drop and recreate tables
-//   // Code to run after synchronization can be added here
-// })();
-
 // Export the "Report" model as the default export of this module
 export default Report;

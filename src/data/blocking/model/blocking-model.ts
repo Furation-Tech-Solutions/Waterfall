@@ -20,13 +20,6 @@ const Blocking = sequelize.define('Blocking', {
 //   targetKey: 'id' // The name of the target key column in Realtor
 // });
 
-// (async () => {
-//   // Synchronize the Sequelize model with the database, and ensure tables are not dropped ()
-//   await sequelize.sync({ force: false });
-
-//   // Code to be added here for further functionality
-
-// })();
 
 // Export the 'Blocking' model for use in other parts of the application
 export default Blocking;
