@@ -4,9 +4,9 @@ import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
-  // Define a "realtor" field with UUID data type, which cannot be null
+  // Define a "realtor" field with INTEGER data type, which cannot be null
   realtor: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     // Optionally, you can define references to another model (Realtors)
     // references: {
@@ -45,10 +45,10 @@ const Support = sequelize.define("Support", {
 });
 
 // An immediately invoked function expression (IIFE) that synchronizes the model with the database
-(async () => {
-  await sequelize.sync({ force: false }); // Set "force" to true if you want to recreate the table
-  // Code inside the IIFE can be added here for any additional setup
-})();
+// (async () => {
+//   await sequelize.sync({ force: false }); // Set "force" to true if you want to recreate the table
+//   // Code inside the IIFE can be added here for any additional setup
+// })();
 
 // Export the "Support" model
 export default Support;

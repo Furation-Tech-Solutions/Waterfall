@@ -14,10 +14,9 @@ interface BugReportInput {
 const bugReportValidator = function (input: BugReportInput): BugReportInput {
   // Define a Joi schema for BugReportInput
   const bugReportSchema = Joi.object<BugReportInput>({
-    realtor: Joi.string().uuid().required().messages({
-      "string.base": "realtor must be a valid UUID",
+    realtor: Joi.string().required().messages({
+      "string.base": "realtor must be a valid INTEGER",
       "string.empty": "realtor is required",
-      "string.uuid": "realtor must be a valid UUID",
       "any.required": "realtor is required",
     }),
     description: Joi.string().required().max(1000).messages({

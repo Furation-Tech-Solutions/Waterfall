@@ -1,4 +1,4 @@
 // IRFilter.ts
 export interface IRFilter {
-  numberOfApplicants: string;
+  status: string;
 }

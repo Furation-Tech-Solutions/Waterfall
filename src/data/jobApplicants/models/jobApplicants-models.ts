@@ -19,7 +19,7 @@ export const jobStatusEnum = {
 // Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     // references: {
     //   model: "Job", // Make sure this matches your "Jobs" model name
@@ -28,7 +28,7 @@ const JobApplicant = sequelize.define("JobApplicant", {
   },
 
   applicant: {
-    type: DataTypes.UUID, // Assuming 'Realtor' is represented by UUID in PostgreSQL
+    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by INTEGER in PostgreSQL
     allowNull: false,
     // references: {
     //   model: "Realtor", // Replace with the actual name of the 'Realtor' table
@@ -63,11 +63,11 @@ const JobApplicant = sequelize.define("JobApplicant", {
 });
 
 // Immediately-invoked async function for database synchronization
-(async () => {
-  // Synchronize the database schema (force:false means it won't drop existing tables)
-  await sequelize.sync({ force: false });
-  // Code here
-})();
+// (async () => {
+//   // Synchronize the database schema (force:false means it won't drop existing tables)
+//   await sequelize.sync({ force: false });
+//   // Code here
+// })();
 
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;

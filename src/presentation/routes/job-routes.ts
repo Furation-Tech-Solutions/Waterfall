@@ -54,3 +54,4 @@ jobRouter.delete("/:id", jobService.deleteJob.bind(jobService)); // Route URL fo
 
 // Route handling for getting all Jobs
 jobRouter.get("/", jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
+

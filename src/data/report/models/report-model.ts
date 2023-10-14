@@ -4,9 +4,9 @@ import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model named "Report"
 const Report = sequelize.define("Report", {
-  // Define a field "fromRealtor" of type UUID, not nullable
+  // Define a field "fromRealtor" of type INTEGER, not nullable
   fromRealtor: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     // Uncomment and configure references if needed
     // references: {
@@ -15,9 +15,9 @@ const Report = sequelize.define("Report", {
     // },
   },
 
-  // Define a field "toRealtor" of type UUID, not nullable
+  // Define a field "toRealtor" of type INTEGER, not nullable
   toRealtor: {
-    type: DataTypes.UUID, // Assuming 'Realtor' is represented by UUID in PostgreSQL
+    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by INTEGER in PostgreSQL
     allowNull: false,
     // Uncomment and configure references if needed
     // references: {
@@ -46,10 +46,10 @@ const Report = sequelize.define("Report", {
 });
 
 // Immediately invoked function to synchronize the Sequelize model with the database
-(async () => {
-  await sequelize.sync({ force: false }); // Set force: false to drop and recreate tables
-  // Code to run after synchronization can be added here
-})();
+// (async () => {
+//   await sequelize.sync({ force: false }); // Set  to drop and recreate tables
+//   // Code to run after synchronization can be added here
+// })();
 
 // Export the "Report" model as the default export of this module
 export default Report;

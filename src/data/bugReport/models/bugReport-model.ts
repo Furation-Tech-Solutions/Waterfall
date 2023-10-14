@@ -4,9 +4,9 @@ import sequelize from "@main/sequelizeClient";
 
 // Define a Sequelize model called "BugReport"
 const BugReport = sequelize.define("BugReport", {
-  // Define a field "realtor" of type UUID and make it non-nullable
+  // Define a field "realtor" of type INTEGER and make it non-nullable
   realtor: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     // You can optionally add references to another model here if needed
   },
@@ -39,10 +39,10 @@ const BugReport = sequelize.define("BugReport", {
 });
 
 // Immediately invoke an asynchronous function to synchronize the Sequelize model with the database
-(async () => {
-  await sequelize.sync({ force: false });
-  // You can add code here to perform any additional actions after synchronization
-})();
+// (async () => {
+//   await sequelize.sync({force: false });
+//   // You can add code here to perform any additional actions after synchronization
+// })();
 
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;
