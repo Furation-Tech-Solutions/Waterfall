@@ -136,7 +136,7 @@ export class JobMapper {
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
       };
-      return jobEntity;
+      return jobData;
     }
   }
 

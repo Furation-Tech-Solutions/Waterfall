@@ -55,7 +55,7 @@ export class CallLogMapper {
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
       };
-      return callLogEntity;
+      return callLogData;
     }
   }
 

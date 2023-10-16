@@ -13,7 +13,8 @@ export class RealtorModel {
     public profileImage: string = "",
     public countryCode: number = 0,
     public deleteStatus: boolean, // You might want to provide a default value here
-    public friends: number[] = []
+    public friends: number[] = [],
+    public coordinates: { latitude: string; longitude: string } | null = null
   ) { }
 }
 
@@ -33,7 +34,8 @@ export class RealtorEntity {
     public profileImage: string,
     public countryCode: number,
     public deleteStatus: boolean,
-    public friends: number[]
+    public friends: number[],
+    public coordinates: { latitude: string; longitude: string } | null = null
   ) { }
 }
 
@@ -87,7 +89,10 @@ export class RealtorMapper {
           : existingRealtor.deleteStatus,
         friends: realtorData.friends !== undefined
           ? realtorData.friends
-          : existingRealtor.friends
+          : existingRealtor.friends,
+        coordinates: realtorData.coordinates !== undefined
+          ? realtorData.coordinates
+          : existingRealtor.coordinates
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -105,7 +110,8 @@ export class RealtorMapper {
         profileImage: realtorData.profileImage,
         countryCode: realtorData.countryCode,
         deleteStatus: realtorData.deleteStatus,
-        friends: realtorData.friends
+        friends: realtorData.friends,
+        coordinates: realtorData.coordinates || null
       };
       return realtorEntity;
     }
@@ -126,7 +132,8 @@ export class RealtorMapper {
       profileImage: realtor.profileImage,
       countryCode: realtor.countryCode,
       deleteStatus: realtor.deleteStatus,
-      friends: realtor.friends
+      friends: realtor.friends,
+      coordinates: realtor.coordinates
     };
   }
 }

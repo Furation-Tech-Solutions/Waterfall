@@ -11,6 +11,7 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { ShiftWithTimeSlots } from "types/availibility/schema-type";
 
 export class RealtorService {
   private readonly CreateRealtorUsecase: CreateRealtorUsecase;
@@ -57,7 +58,7 @@ export class RealtorService {
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
     // Call the GetAllRealtorsUsecase to get all Realtors
     const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
-      
+
     realtors.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
       (result: RealtorEntity[]) => {
@@ -68,8 +69,8 @@ export class RealtorService {
         const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
         return res.json(responseData);
       }
-  );
-  }  
+    );
+  }
 
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {

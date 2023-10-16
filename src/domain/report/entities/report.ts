@@ -61,7 +61,7 @@ export class ReportMapper {
         description: reportData.description,
         reportTimestamp: reportData.reportTimestamp,
       };
-      return reportEntity;
+      return reportData;
     }
   }
 
