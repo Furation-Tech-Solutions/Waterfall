@@ -33,11 +33,7 @@ const jobValidator = function (input: JobInput): JobInput {
   // Define a schema for validating the input using Joi
   const jobSchema = Joi.object<JobInput>({
     // Validate job owner
-    jobOwner: Joi.number().required().messages({
-      "string.base": "Job owner must be a number",
-      "string.empty": "Job owner is required",
-      "any.required": "Job owner is required",
-    }),
+    jobOwner: Joi.number().required(),
 
     // Validate location
     location: Joi.string().required().min(5).max(200).messages({

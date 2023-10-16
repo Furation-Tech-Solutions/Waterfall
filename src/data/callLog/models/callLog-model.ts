@@ -2,6 +2,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+import JobApplicants from "@data/jobApplicants/models/jobApplicants-models";
+
 // Define an enum for possible outcomes
 export const OutcomeEnum = {
   BUSY: "Busy",
@@ -18,6 +20,7 @@ const CallLog = sequelize.define("CallLog", {
   jobApplicant: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: JobApplicants, key: 'id' }
   },
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
@@ -37,5 +40,6 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
+JobApplicants.hasMany(CallLog);
 // Export the CallLog model as the default export
 export default CallLog;

@@ -9,7 +9,7 @@ export class FQAModel {
 // Define the FQA entity for data storage and API responses
 export class FQAEntity {
   constructor(
-    public id: string | undefined = undefined, // Set a default value for id
+    public id: number| undefined = undefined, // Set a default value for id
     public question: string,
     public answer: string
   ) {}

@@ -2,12 +2,15 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 
+import Realtors from "@data/realtors/model/realtor-model";
+
 // Define a Sequelize model called "BugReport"
 const BugReport = sequelize.define("BugReport", {
   // Define a field "realtor" of type INTEGER and make it non-nullable
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: Realtors, key: 'id' }
     // You can optionally add references to another model here if needed
   },
 
@@ -37,6 +40,8 @@ const BugReport = sequelize.define("BugReport", {
     defaultValue: DataTypes.NOW,
   },
 });
+
+Realtors.hasMany(BugReport);
 
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;

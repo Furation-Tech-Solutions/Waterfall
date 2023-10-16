@@ -6,7 +6,7 @@ import { OutcomeEnum } from "@data/callLog/models/callLog-model"; // Adjust the 
 
 // Define an interface for the expected input data
 interface CallLogInput {
-  jobApplicant: string;
+  jobApplicant: number;
   logActivity: string;
   logOutcome: string;
 }
@@ -15,12 +15,7 @@ interface CallLogInput {
 const callLogValidator = function (input: CallLogInput): CallLogInput {
   // Define a schema using Joi for validating the input
   const callLogSchema = Joi.object<CallLogInput>({
-    jobApplicant: Joi.string().required().uuid().messages({
-      "string.base": "jobApplicant must be a string",
-      "string.empty": "jobApplicant is required",
-      "string.hex": "Invalid jobApplicant format",
-      "any.required": "jobApplicant is required",
-    }),
+    jobApplicant: Joi.number().required(),
     logActivity: Joi.string().required().min(1).max(500).messages({
       "string.base": "Log activity must be a string",
       "string.empty": "Log activity is required",

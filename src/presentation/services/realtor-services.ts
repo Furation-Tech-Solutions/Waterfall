@@ -39,17 +39,17 @@ export class RealtorService {
     console.log(realtorData, "service-38"); // Logging Realtor data
 
     const newRealtor: Either<ErrorClass, RealtorEntity> =
-        await this.CreateRealtorUsecase.execute(realtorData);
+      await this.CreateRealtorUsecase.execute(realtorData);
 
     console.log(realtorData, "service-43"); // Logging Realtor data again
 
     newRealtor.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: RealtorEntity) => {
-            const resData = RealtorMapper.toEntity(result, true);
-            return res.json(resData);
-        }
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: RealtorEntity) => {
+        const resData = RealtorMapper.toEntity(result, true);
+        return res.json(resData);
+      }
     );
   }
 
@@ -69,25 +69,25 @@ export class RealtorService {
         return res.json(responseData);
       }
   );
-  }
+  }  
 
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {
     const realtorId: string = req.params.id;
 
     const realtor: Either<ErrorClass, RealtorEntity> =
-        await this.GetRealtorByIdUsecase.execute(realtorId);
+      await this.GetRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: RealtorEntity) => {
-            if (!result) {
-                return res.json({ message: "Realtor Name not found." });
-            }
-            const resData = RealtorMapper.toEntity(result);
-            return res.json(resData);
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: RealtorEntity) => {
+        if (!result) {
+          return res.json({ message: "Realtor Name not found." });
         }
+        const resData = RealtorMapper.toEntity(result);
+        return res.json(resData);
+      }
     );
   }
 
@@ -97,60 +97,60 @@ export class RealtorService {
     const realtorData: RealtorModel = req.body;
 
     const existingRealtor: Either<ErrorClass, RealtorEntity> =
-        await this.GetRealtorByIdUsecase.execute(realtorId);
+      await this.GetRealtorByIdUsecase.execute(realtorId);
 
     existingRealtor.cata(
-        (error: ErrorClass) => {
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (existingRealtorData: RealtorEntity) => {
+        const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
+          realtorData,
+          true,
+          existingRealtorData
+        );
+
+        const updatedRealtor: Either<ErrorClass, RealtorEntity> =
+          await this.UpdateRealtorUsecase.execute(
+            realtorId,
+            updatedRealtorEntity
+          );
+
+        updatedRealtor.cata(
+          (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
-        },
-        async (existingRealtorData: RealtorEntity) => {
-            const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
-                realtorData,
-                true,
-                existingRealtorData
-            );
-
-            const updatedRealtor: Either<ErrorClass, RealtorEntity> =
-                await this.UpdateRealtorUsecase.execute(
-                    realtorId,
-                    updatedRealtorEntity
-                );
-
-            updatedRealtor.cata(
-                (error: ErrorClass) => {
-                    res.status(error.status).json({ error: error.message });
-                },
-                (result: RealtorEntity) => {
-                    const resData = RealtorMapper.toEntity(result, true);
-                    res.json(resData);
-                }
-            );
-        }
+          },
+          (result: RealtorEntity) => {
+            const resData = RealtorMapper.toEntity(result, true);
+            res.json(resData);
+          }
+        );
+      }
     );
   }
 
   // Handler for deleting Realtor by ID
   async deleteRealtor(req: Request, res: Response): Promise<void> {
-      const id: string = req.params.id;
-    
-      const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
-        { deleteStatus: true },
-        true
-      );
-      
-      // Call the UpdateRealtorUsecase to update the Realtor
-      const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
-        id,
-        updatedRealtorEntity
-      );
+    const id: string = req.params.id;
 
-      updatedRealtor.cata(
-        (error: ErrorClass) =>
+    const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
+      { deleteStatus: true },
+      true
+    );
+
+    // Call the UpdateRealtorUsecase to update the Realtor
+    const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.UpdateRealtorUsecase.execute(
+      id,
+      updatedRealtorEntity
+    );
+
+    updatedRealtor.cata(
+      (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-        (result: RealtorEntity) =>{
-          const responseData = RealtorMapper.toModel(result);
-          return res.json(responseData)
-        }
-      )
+      (result: RealtorEntity) => {
+        const responseData = RealtorMapper.toModel(result);
+        return res.json(responseData)
+      }
+    )
   }
 }

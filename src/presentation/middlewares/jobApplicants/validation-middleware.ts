@@ -15,6 +15,7 @@ interface JobApplicantInput {
   agreement: boolean;
   jobStatus: string;
   appliedTimestamp: Date;
+  paymentStatus: boolean;
 }
 
 // Define a function for validating job applicant input
@@ -23,16 +24,8 @@ const jobApplicantValidator = function (
 ): JobApplicantInput {
   // Define a Joi schema for validating the input
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
-    job: Joi.number().required().messages({
-      "string.base": "Job must be a string",
-      "string.empty": "Job is required",
-      "any.required": "Job is required",
-    }),
-    applicant: Joi.number().required().messages({
-      "string.base": "Applicant must be a string",
-      "string.empty": "Applicant is required",
-      "any.required": "Applicant is required",
-    }),
+    job: Joi.number().required(),
+    applicant: Joi.number().required(),
     status: Joi.string()
       .valid(...Object.values(statusEnum))
       .required()
@@ -54,6 +47,10 @@ const jobApplicantValidator = function (
     appliedTimestamp: Joi.date().required().messages({
       "date.base": "Applied timestamp must be a valid date",
       "any.required": "Applied timestamp is required",
+    }),
+    paymentStatus: Joi.boolean().required().messages({
+      "boolean.base": "PaymentStatus must be a boolean",
+      "any.required": "PaymentStatus is required",
     }),
   });
 

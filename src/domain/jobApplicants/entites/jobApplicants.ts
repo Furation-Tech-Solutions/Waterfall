@@ -6,7 +6,8 @@ export class JobApplicantModel {
     public status: string = "Pending",
     public agreement: boolean = false,
     public jobStatus: string = "Pending",
-    public appliedTimestamp: Date = new Date()
+    public appliedTimestamp: Date = new Date(),
+    public paymentStatus: boolean = false
   ) {}
 }
 
@@ -19,7 +20,8 @@ export class JobApplicantEntity {
     public status: string,
     public agreement: boolean,
     public jobStatus: string,
-    public appliedTimestamp: Date
+    public appliedTimestamp: Date,
+    public paymentStatus: boolean
   ) {}
 }
 
@@ -59,6 +61,10 @@ export class JobApplicantMapper {
           jobApplicantData.appliedTimestamp !== undefined
             ? jobApplicantData.appliedTimestamp
             : existingJobApplicant.appliedTimestamp,
+        paymentStatus:
+          jobApplicantData.paymentStatus !== undefined
+            ? jobApplicantData.paymentStatus
+            : existingJobApplicant.paymentStatus,
       };
     } else {
       // If existingJobApplicant is not provided, create a new JobApplicantEntity using jobApplicantData
@@ -74,6 +80,7 @@ export class JobApplicantMapper {
         agreement: jobApplicantData.agreement,
         jobStatus: jobApplicantData.jobStatus,
         appliedTimestamp: jobApplicantData.appliedTimestamp,
+        paymentStatus: jobApplicantData.paymentStatus,
       };
       return jobApplicantEntity;
     }
@@ -89,6 +96,7 @@ export class JobApplicantMapper {
       agreement: jobApplicant.agreement,
       jobStatus: jobApplicant.jobStatus,
       appliedTimestamp: jobApplicant.appliedTimestamp,
+      paymentStatus: jobApplicant.paymentStatus,
     };
   }
 }
