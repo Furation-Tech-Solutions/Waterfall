@@ -11,7 +11,6 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
-import { ShiftWithTimeSlots } from "types/availibility/schema-type";
 
 export class RealtorService {
   private readonly CreateRealtorUsecase: CreateRealtorUsecase;
@@ -71,50 +70,6 @@ export class RealtorService {
       }
   );
   }  
-  // async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
-  //   try {
-  //     const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
-  //     const { location, gender } = req.query;
-  //     const selectedLocation = new Location(`${location}`);
-
-  //     realtors.cata(
-  //       (error: ErrorClass) => {res.status(error.status).json({ error: error.message })},
-  //       (realtors: RealtorEntity[]) => {
-  //         const filteredRealtors = realtors.filter((realtor) => {
-  //           const realtorLocation = new Location();
-
-  //           if (realtorLocation < selectedLocation && realtor.gender === gender) {
-  //             return true;
-  //           }
-
-  //           return false;
-  //         });
-
-  //         if (filteredRealtors && filteredRealtors.length > 0) {
-  //           const results: ShiftWithTimeSlots[] = [];
-
-  //           for (const realtor of filteredRealtors) {
-  //             const timeSlots: string[] = [];
-
-  //             results.push({
-  //               id: realtor.id,
-  //               location: realtor.location,
-  //               gender: realtor.gender,
-  //               timeSlots,
-  //             });
-  //           }
-
-  //           const responseData = filteredRealtors.map((realtor) => RealtorMapper.toEntity(realtor));
-  //           res.json(responseData);
-  //         }
-  //       });
-  //   } catch (error) {
-  //     // Handle unexpected errors
-  //     console.error("Error in getAllRealtors:", error);
-  //     res.status(500).json({ error: "An unexpected error occurred" });
-  //   }
-  // }
-
 
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {
