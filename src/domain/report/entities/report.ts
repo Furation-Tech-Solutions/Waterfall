@@ -1,8 +1,8 @@
 // Define a class for ReportModel, representing the data structure used for creating reports
 export class ReportModel {
   constructor(
-    public fromRealtor: string = "",
-    public toRealtor: string = "",
+    public fromRealtor: number = 0,
+    public toRealtor: number = 0,
     public description: string = "",
     public reportTimestamp: Date = new Date()
   ) {}
@@ -11,9 +11,9 @@ export class ReportModel {
 // Define a class for ReportEntity, representing the data structure used for storing reports in the database
 export class ReportEntity {
   constructor(
-    public id: string | undefined = undefined, // An optional unique identifier for the report
-    public fromRealtor: string, // The name of the reporting realtor
-    public toRealtor: string, // The name of the realtor being reported to
+    public id: number| undefined = undefined, // An optional unique identifier for the report
+    public fromRealtor: number, // The name of the reporting realtor
+    public toRealtor: number, // The name of the realtor being reported to
     public description: string, // The description or details of the report
     public reportTimestamp: Date // The timestamp when the report was created
   ) {}

@@ -10,7 +10,7 @@ import {
 
 // Define the structure of the expected input data
 interface JobInput {
-  jobOwner: string;
+  jobOwner: number;
   location: string;
   address: string;
   date: Date;
@@ -33,12 +33,7 @@ const jobValidator = function (input: JobInput): JobInput {
   // Define a schema for validating the input using Joi
   const jobSchema = Joi.object<JobInput>({
     // Validate job owner
-    jobOwner: Joi.string().required().uuid().messages({
-      "string.base": "Job owner must be a string",
-      "string.empty": "Job owner is required",
-      "string.uuid": "Invalid job owner format",
-      "any.required": "Job owner is required",
-    }),
+    jobOwner: Joi.number().required(),
 
     // Validate location
     location: Joi.string().required().min(5).max(200).messages({

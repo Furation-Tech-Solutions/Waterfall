@@ -1,8 +1,8 @@
 // Express API request DTO (Data Transfer Object) for Job Applicants
 export class JobApplicantModel {
   constructor(
-    public job: string = "",
-    public applicant: string = "",
+    public job: number = 0,
+    public applicant: number = 0,
     public status: string = "Pending",
     public agreement: boolean = false,
     public jobStatus: string = "Pending",
@@ -13,9 +13,9 @@ export class JobApplicantModel {
 // Job Applicant Entity provided by Job Applicant Repository is converted to Express API Response
 export class JobApplicantEntity {
   constructor(
-    public id: string | undefined = undefined,
-    public job: string,
-    public applicant: string,
+    public id: number| undefined = undefined,
+    public job: number,
+    public applicant: number,
     public status: string,
     public agreement: boolean,
     public jobStatus: string,

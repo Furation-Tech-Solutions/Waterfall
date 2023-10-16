@@ -1,17 +1,17 @@
 // Express API request DTO (Data Transfer Object) for SavedJobs
 export class SavedJobModel {
   constructor(
-    public Realtor: string = "", // Realtor name, default value is an empty string
-    public Job: string = "" // Job name, default value is an empty string
+    public Realtor: number = 0, // Realtor name, default value is an empty string
+    public Job: number = 0 // Job name, default value is an empty string
   ) {}
 }
 
 // SavedJobs Entity provided by SavedJobs Repository is converted to Express API Response
 export class SavedJobEntity {
   constructor(
-    public id: string | undefined = undefined, // Unique identifier for the saved job, initially undefined
-    public Realtor: string, // Realtor name
-    public Job: string // Job name
+    public id: number| undefined = undefined, // Unique identifier for the saved job, initially undefined
+    public Realtor: number, // Realtor name
+    public Job: number // Job name
   ) {}
 }
 

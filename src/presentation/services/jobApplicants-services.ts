@@ -110,7 +110,7 @@ export class JobApplicantService {
         
         if(fiterStatus){
           console.log("fiterStatus", fiterStatus)
-          let  fiteredJob: string[] =  []
+          let  fiteredJob: number[] =  []
           responseData = responseData.filter((jobApplicant: JobApplicantEntity) => {
             if(jobApplicant.jobStatus === fiterStatus) {
                 fiteredJob.push(jobApplicant.job)

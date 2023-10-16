@@ -5,8 +5,8 @@ import { Request, Response, NextFunction } from "express";
 
 // Define an interface to represent the expected input for report validation
 interface ReportInput {
-  fromRealtor: string;
-  toRealtor: string;
+  fromRealtor: number;
+  toRealtor: number;
   description: string;
   reportTimestamp?: Date; // Optional field, adjust as needed
 }
@@ -15,18 +15,8 @@ interface ReportInput {
 const reportValidator = function (input: ReportInput): ReportInput {
   // Define a Joi schema to validate the input
   const reportSchema = Joi.object<ReportInput>({
-    fromRealtor: Joi.string().required().uuid().messages({
-      "string.base": "From Realtor must be a string",
-      "string.empty": "From Realtor is required",
-      "string.hex": "Invalid From Realtor format",
-      "any.required": "From Realtor is required",
-    }),
-    toRealtor: Joi.string().required().uuid().messages({
-      "string.base": "To Realtor must be a string",
-      "string.empty": "To Realtor is required",
-      "string.hex": "Invalid To Realtor format",
-      "any.required": "To Realtor is required",
-    }),
+    fromRealtor: Joi.number().required(),
+    toRealtor: Joi.number().required(),
     description: Joi.string().required().min(1).max(1000).messages({
       "string.base": "Description must be a string",
       "string.empty": "Description is required",

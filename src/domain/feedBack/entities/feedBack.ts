@@ -1,9 +1,9 @@
 // Express API request populates the FeedBack Model
 export class FeedBackModel {
   constructor(
-    public fromRealtor: string = "",
-    public toRealtor: string = "",
-    public jobId: string = "",
+    public fromRealtor: number  = 0,
+    public toRealtor: number  = 0,
+    public jobId: number  = 0,
     public rating: number  = 0,
     public description: string = ""
   ) {}
@@ -12,10 +12,10 @@ export class FeedBackModel {
 // FeedBack Entity provided by FeedBack Repository is converted to Express API Response
 export class FeedBackEntity {
   constructor(
-    public id: string | undefined = undefined, // Set a default value for id
-    public fromRealtor: string,
-    public toRealtor: string,
-    public jobId: string,
+    public id: number| undefined = undefined, // Set a default value for id
+    public fromRealtor: number,
+    public toRealtor: number,
+    public jobId: number,
     public rating: number,
     public description: string
   ) {}

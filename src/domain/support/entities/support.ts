@@ -2,9 +2,9 @@
 export class SupportModel {
   constructor(
     // The name of the realtor associated with the support request
-    public realtor: string = "",
+    public realtor: number = 0,
     // The recipient of the support request
-    public to: string = "",
+    public to: number = 0,
     // A description of the support request
     public description: string = "",
     // An array of attachments (optional) related to the support request
@@ -16,11 +16,11 @@ export class SupportModel {
 export class SupportEntity {
   constructor(
     // The unique identifier for the support request (optional)
-    public id: string | undefined = undefined,
+    public id: number| undefined = undefined,
     // The name of the realtor associated with the support request
-    public realtor: string,
+    public realtor: number,
     // The recipient of the support request
-    public to: string,
+    public to: number,
     // A description of the support request
     public description: string,
     // An array of attachments (optional) related to the support request

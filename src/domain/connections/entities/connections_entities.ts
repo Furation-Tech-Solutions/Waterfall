@@ -11,7 +11,7 @@ export class ConnectionsModel {
 // ConnectionsEntity provided by Connections Repository is converted to Express API Response
 export class ConnectionsEntity {
   constructor(
-    public id: string | undefined = undefined, // Set a default value for id
+    public id: number| undefined = undefined, // Set a default value for id
     public fromId: number,
     public toId: number,
     public connected: boolean
