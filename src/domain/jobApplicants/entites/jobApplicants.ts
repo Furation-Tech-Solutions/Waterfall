@@ -75,7 +75,7 @@ export class JobApplicantMapper {
         jobStatus: jobApplicantData.jobStatus,
         appliedTimestamp: jobApplicantData.appliedTimestamp,
       };
-      return jobApplicantEntity;
+      return jobApplicantData;
     }
   }
 

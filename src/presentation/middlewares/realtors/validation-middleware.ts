@@ -17,6 +17,7 @@ interface RealtorInput {
   countryCode: number;
   deleteStatus: boolean;
   friends: [];
+  coordinates: { latitude: string; longitude: string } | null;
 }
 
 // Define a validator function for Realtor input
@@ -119,6 +120,20 @@ const realtorValidator = (
       ? Joi.boolean().optional()
       : Joi.boolean().optional().default(false),
     friends: Joi.array().items(Joi.number()).optional(),
+    coordinates: isUpdate
+      ? Joi.object({
+        latitude: Joi.string().optional(),
+        longitude: Joi.string().optional(),
+        }).optional().messages({
+        'string.empty': 'CountryCode cannot be empty',
+      })
+      : Joi.object({
+        latitude: Joi.string().required(),
+        longitude: Joi.string().required(),
+        }).required().messages({
+        'any.required': 'CountryCode is required',
+        'string.empty': 'CountryCode cannot be empty',
+      })
   });
 
   // Validate the input against the schema

@@ -46,7 +46,7 @@ export class SavedJobMapper {
         Realtor: savedJobData.Realtor, // Set Realtor from savedJobData
         Job: savedJobData.Job, // Set Job from savedJobData
       };
-      return savedJobEntity;
+      return savedJobData;
     }
   }
 

@@ -72,7 +72,7 @@ export class SupportMapper {
         attachments: supportData.attachments,
         timestamp: supportData.timestamp,
       };
-      return supportEntity;
+      return supportData;
     }
   }
 
