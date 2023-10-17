@@ -60,7 +60,8 @@ export class BugReportMapper {
         attachments: bugReportData.attachments,
         timestamp: bugReportData.timestamp,
       };
-      return bugReportEntity;
+      // return bugReportEntity;
+      return bugReportData;
     }
   }
 

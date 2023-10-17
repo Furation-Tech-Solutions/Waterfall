@@ -133,9 +133,17 @@ export class JobApplicantService {
     next: NextFunction
   ): Promise<void> {
     // Extract the filter parameters from the request query
-    const filterJobOwner = req.query.jobOwner as string;
+    const filterJobOwner = req.body.jobOwner as string;
     const filterJobStatus = req.query.jobStatus as string;
-    const filterPaymentStatus = req.query.paymnetStatus as string;
+    const filterPaymentStatus = req.query.paymentStatus as string;
+
+    const populate = await Jobs.findAll({
+      where: {
+        jobOwner: filterJobOwner,
+      },
+    });
+
+    console.log("======>", populate);
 
     // Execute the get all job applicants use case and handle the result using Either
     const jobs: Either<ErrorClass, JobApplicantEntity[]> =
@@ -170,14 +178,20 @@ export class JobApplicantService {
           );
         }
 
-        // Apply the jobStatus filter
-        if (filterPaymentStatus) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              return jobApplicant.jobStatus === filterPaymentStatus;
-            }
-          );
-        }
+        // Apply the PaymentStatus filter
+       if (filterPaymentStatus) {
+         responseData = responseData.filter(
+           (jobApplicant: JobApplicantEntity) => {
+             if (filterPaymentStatus === "true") {
+               // Return true if jobStatus is "Completed" (payment is true)
+               return jobApplicant.jobStatus === "Completed";
+             } else {
+               // Return true for other jobStatus values (payment is false)
+               return jobApplicant.jobStatus !== "Completed";
+             }
+           }
+         );
+       }
 
         return res.json(responseData);
       }
@@ -193,20 +207,20 @@ export class JobApplicantService {
   //   const filterJobOwner = req.query.jobOwner as string;
   //   const filterJobStatus = req.query.jobStatus as string;
 
-  //   try {
-  //     // Use Sequelize to fetch JobApplicants and include related User and Job data
-  //     const jobApplicants = await JobApplicant.findAll({
-  //       include: [
-  //         {
-  //           model: Jobs, // Include User data
-  //           as: "job", // Alias for the User data in the result
-  //         },
-  //         {
-  //           model: Realtors, // Include Job data
-  //           as: "realtor", // Alias for the Job data in the result
-  //         },
-  //       ],
-  //     });
+  // try {
+  //   // Use Sequelize to fetch JobApplicants and include related User and Job data
+  //   const jobApplicants = await JobApplicant.findAll({
+  //     include: [
+  //       {
+  //         model: Jobs, // Include User data
+  //         as: "job", // Alias for the User data in the result
+  //       },
+  //       {
+  //         model: Realtors, // Include Job data
+  //         as: "realtor", // Alias for the Job data in the result
+  //       },
+  //     ],
+  //   });
 
   //     // Filter data based on query parameters (if provided)
   //     let responseData = jobApplicants.map((jobApplicant: any) => {

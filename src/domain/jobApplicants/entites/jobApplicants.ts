@@ -82,7 +82,7 @@ export class JobApplicantMapper {
         appliedTimestamp: jobApplicantData.appliedTimestamp,
         paymentStatus: jobApplicantData.paymentStatus,
       };
-      return jobApplicantEntity;
+      return jobApplicantData;
     }
   }
 

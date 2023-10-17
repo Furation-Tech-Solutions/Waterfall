@@ -24,13 +24,13 @@ const JobApplicant = sequelize.define("JobApplicant", {
   job: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: Jobs, key: "id" },
+    references: { model: Jobs, key: 'id' }
   },
 
   applicant: {
     type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
-    references: { model: Realtors, key: "id" },
+    references: { model: Realtors, key: 'id' }
   },
   applicationStatus: {
     type: DataTypes.STRING,
