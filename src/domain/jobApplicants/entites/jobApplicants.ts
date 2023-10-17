@@ -3,7 +3,7 @@ export class JobApplicantModel {
   constructor(
     public job: number = 0,
     public applicant: number = 0,
-    public status: string = "Pending",
+    public applicationStatus: string = "Pending",
     public agreement: boolean = false,
     public jobStatus: string = "Pending",
     public appliedTimestamp: Date = new Date(),
@@ -17,7 +17,7 @@ export class JobApplicantEntity {
     public id: number | undefined = undefined,
     public job: number,
     public applicant: number,
-    public status: string,
+    public applicationStatus: string,
     public agreement: boolean,
     public jobStatus: string,
     public appliedTimestamp: Date,
@@ -45,10 +45,10 @@ export class JobApplicantMapper {
           jobApplicantData.applicant !== undefined
             ? jobApplicantData.applicant
             : existingJobApplicant.applicant,
-        status:
-          jobApplicantData.status !== undefined
-            ? jobApplicantData.status
-            : existingJobApplicant.status,
+        applicationStatus:
+          jobApplicantData.applicationStatus !== undefined
+            ? jobApplicantData.applicationStatus
+            : existingJobApplicant.applicationStatus,
         agreement:
           jobApplicantData.agreement !== undefined
             ? jobApplicantData.agreement
@@ -76,7 +76,7 @@ export class JobApplicantMapper {
           : jobApplicantData.id.toString(),
         job: jobApplicantData.job,
         applicant: jobApplicantData.applicant,
-        status: jobApplicantData.status,
+        applicationStatus: jobApplicantData.applicationStatus,
         agreement: jobApplicantData.agreement,
         jobStatus: jobApplicantData.jobStatus,
         appliedTimestamp: jobApplicantData.appliedTimestamp,
@@ -92,7 +92,7 @@ export class JobApplicantMapper {
       id: jobApplicant.id,
       job: jobApplicant.job,
       applicant: jobApplicant.applicant,
-      status: jobApplicant.status,
+      applicationStatus: jobApplicant.applicationStatus,
       agreement: jobApplicant.agreement,
       jobStatus: jobApplicant.jobStatus,
       appliedTimestamp: jobApplicant.appliedTimestamp,
