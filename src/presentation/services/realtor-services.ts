@@ -11,7 +11,6 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
-import { ShiftWithTimeSlots } from "types/availibility/schema-type";
 
 export class RealtorService {
   private readonly CreateRealtorUsecase: CreateRealtorUsecase;
@@ -62,10 +61,7 @@ export class RealtorService {
     realtors.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
       (result: RealtorEntity[]) => {
-        // Filter out Realtors with del_status set to "Deleted"
-        // const nonDeletedRealtors = result.filter((realtor) => realtor.deleteStatus !== false);
 
-        // Convert non-deleted Realtors from an array of RealtorEntity to an array of plain JSON objects using realtorMapper
         const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
         return res.json(responseData);
       }
@@ -75,6 +71,8 @@ export class RealtorService {
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {
     const realtorId: string = req.params.id;
+    const state = req.query.q as string;
+    const RealtorID = req.body.realtorID as number;
 
     const realtor: Either<ErrorClass, RealtorEntity> =
       await this.GetRealtorByIdUsecase.execute(realtorId);

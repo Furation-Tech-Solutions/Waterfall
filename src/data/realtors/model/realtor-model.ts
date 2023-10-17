@@ -1,6 +1,7 @@
 
-import { DataTypes } from "sequelize";
+import { BelongsTo, DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
+import Job from "@data/job/models/job-model"
 
 const Realtors = sequelize.define('Realtors', {
   firstName: {
@@ -69,26 +70,11 @@ const Realtors = sequelize.define('Realtors', {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     defaultValue: []
   },
-  // coordinates: {
-  //   type: DataTypes.JSON, // Store latitude and longitude as an object
-  //   allowNull: true, // Set to allowNull: true if coordinates are optional
-  // }
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
-    // validate: {
-    //   latitude: {
-    //     args: [/-?([0-8]?[0-9]|90(\.0*)?)$/], // Regular expression for latitude validation
-    //     msg: 'Latitude must be between -90 and 90 degrees.',
-    //   },
-    //   longitude: {
-    //     args: [/-?((1[0-7][0-9]|[0-9]?[0-9])|180(\.0*)?)$/], // Regular expression for longitude validation
-    //     msg: 'Longitude must be between -180 and 180 degrees.',
-    //   },
-    // },
   }
-  
-  
+
 });
 
 export default Realtors;

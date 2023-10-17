@@ -117,15 +117,29 @@ export class ConnectionsServices {
             (error: ErrorClass) =>
                 res.status(error.status).json({ error: error.message }), // Handle error case
             (result: ConnectionsEntity[]) => {
+
+                const state = req.query.q as string;
+                const RealtorID = req.body.realtorID as number;
+
                 // Handle success case
-                const responseData = result.map((connection) =>
+                let responseData = result.map((connection) =>
                     ConnectionMapper.toEntity(connection)
                 );
+
+                // Connection Requests
+                if (state === "requests") {
+                    let filteredData: ConnectionsEntity[] = [];
+                    responseData = responseData.filter((connection: ConnectionsEntity) => {
+                        if (connection.connected === false && connection.toId === RealtorID) {
+                            filteredData.push(connection);
+                        }
+                    });
+                    return res.json(filteredData);
+                }
                 return res.json(responseData);
             }
         );
     }
-
     // Handler for updating connections by ID
     async updateRequests(req: Request, res: Response): Promise<void> {
         const id: string = req.params.id;
