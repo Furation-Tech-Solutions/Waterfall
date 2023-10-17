@@ -4,6 +4,8 @@ import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize"
 
+import Realtors from "@data/realtors/model/realtor-model";
+
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
   create(blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
@@ -12,6 +14,19 @@ export interface BlockingDataSource {
   update(id: string, blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
   delete(id: string): Promise<void>;
 }
+
+// interface BlockingAttributes {
+//     id: number;
+//     fromRealtor: number;
+//     toRealtor: number;
+//   }
+
+//   // Define the Blocking model
+//   class Blocking extends Model<BlockingAttributes> implements BlockingAttributes {
+//     public id!: number;
+//     public fromRealtor!: number;
+//     public toRealtor!: number;
+//   }
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
@@ -43,11 +58,81 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   // Method to retrieve all blocking entries
   async getAllBlockings(): Promise<any[]> {
       // Fetch all blocking entries from the database
-      const blocking = await Blocking.findAll({});
+      const blocking = await Blocking.findAll({
+        where: {
+            fromRealtor: 1,
+        },
+      });
+    //   const blocking = await Blocking.findAll(sql`SELECT * FROM Blocking WHERE fromRealtor=1;`);
       
       // Convert the Sequelize model instances to plain JavaScript objects before returning
       return blocking.map((blocking: any) => blocking.toJSON());
   }
+
+// async getAllBlockings(): Promise<any[]> {
+//     // Fetch all blocking entries from the database and include related Realtors
+//     const blockings = await Blocking.findAll({
+//       include: [{
+//         model: Realtors,
+//         as: 'RealtorFrom', // You can specify an alias for the association
+//         attributes: ['id', 'firstName', 'lastName'], // Select the fields you want to retrieve
+//       }, {
+//         model: Realtors,
+//         as: 'RealtorTo', // You can specify an alias for the association
+//         attributes: ['id', 'firstName', 'lastName'], // Select the fields you want to retrieve
+//       }],
+//     });
+  
+//     // Convert the Sequelize model instances to plain JavaScript objects before returning
+//     return blockings.map((blocking: any) => {
+//       const blockingData = blocking.toJSON();
+//       return {
+//         fromRealtor: blockingData.fromRealtor.id,
+//         toRealtor: blockingData.toRealtor.id,
+//         // Include other Realtor data as needed
+//         fromRealtorFirstName: blockingData.RealtorFrom.firstName,
+//         toRealtorFirstName: blockingData.RealtorTo.firstName,
+//         // Include other Realtor fields as needed
+//         fromRealtorLastName: blockingData.RealtorFrom.lastName,
+//         toRealtorLastName: blockingData.RealtorTo.lastName,
+//       };
+//     });
+//   }
+  
+  
+// async getAllBlockings(): Promise<any[]> {
+//     try {
+//       // Fetch all blocking entries from the database
+//       const blockings = await Blocking.findAll({
+//         include: [
+//           {
+//             model: Realtors, // Assuming you have a Realtors model defined
+//             as: "fromRealtor", // Use the correct alias for the fromRealtor relationship
+//           },
+//           {
+//             model: Realtors, // Assuming you have a Realtors model defined
+//             as: "toRealtor", // Use the correct alias for the toRealtor relationship
+//           },
+//         ],
+//       });
+  
+//       // Convert the Sequelize model instances to plain JavaScript objects before returning
+//       const blockingData = blockings.map((blocking) => {
+//         return {
+//           id: blocking.id, // Access 'id' property from the model instance
+//           fromRealtor: blocking.fromRealtor.toJSON(), // Call .toJSON() on the fromRealtor instance
+//           toRealtor: blocking.toRealtor.toJSON(), // Call .toJSON() on the toRealtor instance
+//         };
+//       });
+  
+//       return blockingData;
+//     } catch (error) {
+//       // Handle any errors that may occur during the database query
+//       console.error("Error fetching blocking entries:", error);
+//       throw error; // You may want to handle the error more gracefully
+//     }
+//   }
+  
 
   // Method to read a blocking entry by ID
   async read(id: string): Promise<any | null> {

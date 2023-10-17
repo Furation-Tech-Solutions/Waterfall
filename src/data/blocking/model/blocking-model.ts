@@ -12,5 +12,6 @@ const Blocking = sequelize.define('Blocking', {
 
 Realtors.hasMany(Blocking);
 
+
 // Export the 'Blocking' model for use in other parts of the application
 export default Blocking;
