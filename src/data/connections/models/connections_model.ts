@@ -68,3 +68,4 @@ const Connections = sequelize.define('Connections', {
 // Realtors.hasMany(Connections, { foreignKey: 'toId', as: 'toConnections' });
 
 export default Connections;
+
