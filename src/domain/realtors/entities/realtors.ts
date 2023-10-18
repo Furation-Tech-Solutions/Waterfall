@@ -35,7 +35,8 @@ export class RealtorEntity {
     public countryCode: number,
     public deleteStatus: boolean,
     public friends: number[],
-    public coordinates: { latitude: string; longitude: string } | null = null
+    public coordinates: { latitude: string; longitude: string } | null = null,
+    public friendCount: number
   ) { }
 }
 
@@ -111,7 +112,8 @@ export class RealtorMapper {
         countryCode: realtorData.countryCode,
         deleteStatus: realtorData.deleteStatus,
         friends: realtorData.friends,
-        coordinates: realtorData.coordinates || null
+        coordinates: realtorData.coordinates || null,
+        friendCount: realtorData.friendCount
       };
       return realtorEntity;
     }
