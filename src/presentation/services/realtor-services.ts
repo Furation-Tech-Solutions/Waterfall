@@ -96,6 +96,8 @@ export class RealtorService {
   // Handler for getting Realtor by ID
   async getRealtorById(req: Request, res: Response): Promise<void> {
     const realtorId: string = req.params.id;
+    const state = req.query.q as string;
+    const RealtorID = req.body.realtorID as number;
 
     const realtor: Either<ErrorClass, RealtorEntity> =
       await this.GetRealtorByIdUsecase.execute(realtorId);
