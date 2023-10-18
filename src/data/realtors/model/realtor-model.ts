@@ -74,5 +74,5 @@ const Realtors = sequelize.define('Realtors', {
     allowNull: true, // Set to allowNull: true if coordinates are optional
   } 
 });
-
+//dsdsf
 export default Realtors;
