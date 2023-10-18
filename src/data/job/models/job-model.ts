@@ -103,6 +103,10 @@ const Job = sequelize.define("Job", {
     type: DataTypes.STRING, // Data type for deleteReason is STRING
     allowNull: false, // It cannot be null
   },
+  coordinates: {
+    type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
+    allowNull: true, // Set to allowNull: true if coordinates are optional
+  } 
 });
 
 Realtors.hasMany(Job);

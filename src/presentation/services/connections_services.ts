@@ -80,24 +80,56 @@ export class ConnectionsServices {
     // Handler for getting connections by ID
     async getById(req: Request, res: Response): Promise<void> {
         const id: string = req.params.id;
+        const Id: number = parseInt(id, 10);
 
         // Execute the getConnectionsById use case to retrieve a connection by ID
-        const connections: Either<ErrorClass, ConnectionsEntity> =
-            await this.getByIdUsecase.execute(id);
+        // const connections: Either<ErrorClass, ConnectionsEntity> =
+        //     await this.getByIdUsecase.execute(id);
+
+        // // Handle the result of the use case execution
+        // connections.cata(
+        //     (error: ErrorClass) =>
+        //         res.status(error.status).json({ error: error.message }), // Handle error case
+        //     (result: ConnectionsEntity) => {
+        //         // Handle success case
+        //         if (!result) {
+        //             return res.json({ message: "Connection not found." });
+        //         }
+        //         const resData = ConnectionMapper.toEntity(result);
+        //         return res.json(resData);
+        //     }
+        // );
+
+        // Execute the getAllConnections use case to retrieve all connections
+        const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
+            await this.getAllUsecase.execute();
 
         // Handle the result of the use case execution
-        connections.cata(
+        clientConnections.cata(
             (error: ErrorClass) =>
                 res.status(error.status).json({ error: error.message }), // Handle error case
-            (result: ConnectionsEntity) => {
+            (result: ConnectionsEntity[]) => {
+
+                const state = req.query.q as string;
+                // const RealtorID = req.body. as number;
+
                 // Handle success case
-                if (!result) {
-                    return res.json({ message: "Connection not found." });
+                let responseData = result.map((connection) =>
+                    ConnectionMapper.toEntity(connection)
+                );
+
+                // Connection Requests
+                if (state === "requests") {
+                    let filteredData: ConnectionsEntity[] = [];
+                    responseData = responseData.filter((connection: ConnectionsEntity) => {
+                        if (connection.connected === false && connection.toId === Id) {
+                            filteredData.push(connection);
+                        }
+                    });
+                    return res.json(filteredData);
                 }
 
-
-                const resData = ConnectionMapper.toEntity(result);
-                return res.json(resData);
+                return res.json(responseData);
             }
         );
     }

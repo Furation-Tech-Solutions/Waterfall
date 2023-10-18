@@ -2,6 +2,7 @@
 import { BelongsTo, DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 import Job from "@data/job/models/job-model"
+import Connections from "@data/connections/models/connections_model";
 
 const Realtors = sequelize.define('Realtors', {
   firstName: {
@@ -74,7 +75,22 @@ const Realtors = sequelize.define('Realtors', {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
   }
-
 });
+
+// Realtors.hasMany(Connections, { foreignKey: 'fromId', as: 'fromConnections' });
+// Realtors.hasMany(Connections, { foreignKey: 'toId', as: 'toConnections' });
+
+// Realtors.belongsToMany(Connections, { through: 'Connections', foreignKey: 'fromId', as: 'fromConnections' });
+// Realtors.belongsToMany(Connections, { through: 'Connections', foreignKey: 'toId', as: 'toConnections' });
+// Realtors.belongsToMany(Connections, {
+//   through: 'Connections',
+//   foreignKey: 'fromId',
+//   otherKey: 'toId',
+//   as: 'fromConnections',
+//   targetKey: 'toId', // Specify the data type of the targetKey
+// });
+
+
+
 
 export default Realtors;
