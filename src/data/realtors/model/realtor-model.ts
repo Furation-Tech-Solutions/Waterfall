@@ -1,5 +1,4 @@
-
-import { BelongsTo, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 import Job from "@data/job/models/job-model"
 import Connections from "@data/connections/models/connections_model";

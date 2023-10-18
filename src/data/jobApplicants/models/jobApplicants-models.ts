@@ -6,7 +6,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 import Jobs from "@data/job/models/job-model";
 
 // Define statusEnum to represent possible status values
-export const statusEnum = {
+export const applicationStatusEnum = {
   ACCEPT: "Accept",
   PENDING: "Pending",
   DECLINE: "Decline",
@@ -32,13 +32,13 @@ const JobApplicant = sequelize.define("JobApplicant", {
     allowNull: false,
     references: { model: Realtors, key: 'id' }
   },
-  status: {
+  applicationStatus: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: "Pending",
     validate: {
       isIn: {
-        args: [Object.values(statusEnum)],
+        args: [Object.values(applicationStatusEnum)],
         msg: "Invalid status",
       },
     },
@@ -56,6 +56,11 @@ const JobApplicant = sequelize.define("JobApplicant", {
   appliedTimestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+  },
+  paymentStatus: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
 });
 
