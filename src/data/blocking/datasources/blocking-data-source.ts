@@ -56,12 +56,43 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   }
 
   // Method to retrieve all blocking entries
-  async getAllBlockings(): Promise<any[]> {
-      // Fetch all blocking entries from the database
-      const blocking = await Blocking.findAll({});
+//   async getAllBlockings(): Promise<any[]> {
+//       // Fetch all blocking entries from the database
+//       const blocking = await Blocking.findAll({
+//         where: {
+//             fromRealtor: 1,
+//         },
+//       });
       
-      // Convert the Sequelize model instances to plain JavaScript objects before returning
-      return blocking.map((blocking: any) => blocking.toJSON());
+//       // Convert the Sequelize model instances to plain JavaScript objects before returning
+//       return blocking.map((blocking: any) => blocking.toJSON());
+//   }
+
+async getAllBlockings(): Promise<any[]> {
+    // Fetch all blocking entries from the database and include related Realtors
+    const blockings = await Blocking.findAll({
+      include: [{
+        model: Realtors,
+        as: 'RealtorFrom', // You can specify an alias for the association
+        attributes: ['id', 'firstName'], // Select the fields you want to retrieve
+      }, {
+        model: Realtors,
+        as: 'RealtorTo', // You can specify an alias for the association
+        attributes: ['id', 'firstName'], // Select the fields you want to retrieve
+      }],
+    });
+  
+    // Convert the Sequelize model instances to plain JavaScript objects before returning
+    return blockings.map((blocking: any) => {
+      const blockingData = blocking.toJSON();
+      return {
+        fromRealtor: blockingData.fromRealtor.id,
+        toRealtor: blockingData.toRealtor.id,
+        // Include other Realtor data as needed
+        fromRealtorFirstName: blockingData.RealtorFrom.firstName,
+        toRealtorFirstName: blockingData.RealtorTo.firstName,
+      };
+    });
   }
   
   // Method to read a blocking entry by ID
