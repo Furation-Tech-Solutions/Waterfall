@@ -64,41 +64,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       return blocking.map((blocking: any) => blocking.toJSON());
   }
   
-  
-// async getAllBlockings(): Promise<any[]> {
-//     try {
-//       // Fetch all blocking entries from the database
-//       const blockings = await Blocking.findAll({
-//         include: [
-//           {
-//             model: Realtors, // Assuming you have a Realtors model defined
-//             as: "fromRealtor", // Use the correct alias for the fromRealtor relationship
-//           },
-//           {
-//             model: Realtors, // Assuming you have a Realtors model defined
-//             as: "toRealtor", // Use the correct alias for the toRealtor relationship
-//           },
-//         ],
-//       });
-  
-//       // Convert the Sequelize model instances to plain JavaScript objects before returning
-//       const blockingData = blockings.map((blocking) => {
-//         return {
-//           id: blocking.id, // Access 'id' property from the model instance
-//           fromRealtor: blocking.fromRealtor.toJSON(), // Call .toJSON() on the fromRealtor instance
-//           toRealtor: blocking.toRealtor.toJSON(), // Call .toJSON() on the toRealtor instance
-//         };
-//       });
-  
-//       return blockingData;
-//     } catch (error) {
-//       // Handle any errors that may occur during the database query
-//       console.error("Error fetching blocking entries:", error);
-//       throw error; // You may want to handle the error more gracefully
-//     }
-//   }
-  
-
   // Method to read a blocking entry by ID
   async read(id: string): Promise<any | null> {
       // Find a blocking entry by its ID
