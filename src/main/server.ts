@@ -17,14 +17,14 @@ try {
   }
 
   // Sync the model with the database
-  async function syncDatabase() {
-    try {
-      await sequelize.sync({ force: true });
-      console.log("Table synchronized successfully.");
-    } catch (error) {
-      console.error("Error syncing table:", error);
-    }
-  }
+  // async function syncDatabase() {
+  //   try {
+  //     await sequelize.sync({ force: true });
+  //     console.log("Table synchronized successfully.");
+  //   } catch (error) {
+  //     console.error("Error syncing table:", error);
+  //   }
+  // }
   // syncDatabase();
   
   app.listen(env.port, () => {

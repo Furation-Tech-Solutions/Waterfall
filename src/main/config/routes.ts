@@ -15,6 +15,7 @@ import { type Express, Router } from "express";
 import { reportRouter } from "@presentation/routes/report-routes";
 import { bugReportRouter } from "@presentation/routes/bugReport-routes";
 import { supportRouter } from "@presentation/routes/support-routes";
+import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 
 // Export a function that sets up routes for the Express app
 export default (app: Express): void => {
@@ -45,5 +46,6 @@ export default (app: Express): void => {
   app.use("/api/v1/bugReports", bugReportRouter);
   app.use("/api/v1/supports", supportRouter);
   app.use("/api/v1/callLogs", callLogRouter);
+  app.use("/api/v1/notInteresteds", notInterestedRouter);
   app.use(router);
 };
