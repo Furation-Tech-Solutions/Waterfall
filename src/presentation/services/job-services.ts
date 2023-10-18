@@ -8,7 +8,7 @@ import { UpdateJobUsecase } from "@domain/job/usecases/update-job";
 import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
-// import { IRFilter } from "types/jobApplicant";
+import { emailConfig } from "./email";
 
 // Create a class for the JobService
 export class JobService {
@@ -157,7 +157,7 @@ export class JobService {
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute();
-
+      emailConfig()
     // Handle the result using Either's cata function
     jobs.cata(
       // If there's an error, send an error response

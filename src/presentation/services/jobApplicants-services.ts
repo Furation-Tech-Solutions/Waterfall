@@ -86,47 +86,7 @@ export class JobApplicantService {
     );
   }
 
-  // // Method to get all job applicants
-  // async getAllJobApplicants(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   // Execute the get all job applicants use case and handle the result using Either
-  //   const jobs: Either<ErrorClass, JobApplicantEntity[]> =
-  //     await this.getAllJobApplicantsUsecase.execute();
-
-  //   // Handle the result using cata function
-  //   jobs.cata(
-  //     (
-  //       error: ErrorClass // Handle error case
-  //     ) => res.status(error.status).json({ error: error.message }),
-  //     (jobApplicants: JobApplicantEntity[]): any => {
-  //       const fiterStatus = req.query.jobStatus as string;
-
-  //       // Handle success case
-  //       let responseData = jobApplicants.map((jobApplicant: any) =>
-  //         JobApplicantMapper.toEntity(jobApplicant)
-  //       );
-
-  //       if (fiterStatus) {
-  //         console.log("fiterStatus", fiterStatus);
-  //         let fiteredJob: number[] = [];
-  //         responseData = responseData.filter(
-  //           (jobApplicant: JobApplicantEntity) => {
-  //             if (jobApplicant.jobStatus === fiterStatus) {
-  //               fiteredJob.push(jobApplicant.job);
-  //             }
-  //           }
-  //         );
-  //         return res.json(fiteredJob);
-  //       } else {
-  //         return res.json(responseData);
-  //       }
-  //     }
-  //   );
-  // }
-
+ 
   async getAllJobApplicants(
     req: Request,
     res: Response,
@@ -136,14 +96,16 @@ export class JobApplicantService {
     const filterJobOwner = req.body.jobOwner as string;
     const filterJobStatus = req.query.jobStatus as string;
     const filterPaymentStatus = req.query.paymentStatus as string;
+      const loggedInUserId = req.body.loggedInUserId as string;
+      const agreement = req.body.agreement as string;
 
-    const populate = await Jobs.findAll({
-      where: {
-        jobOwner: filterJobOwner,
-      },
-    });
+    // const populate = await Jobs.findAll({
+    //   where: {
+    //     jobOwner: filterJobOwner,
+    //   },
+    // });
 
-    console.log("======>", populate);
+    // console.log("======>", populate);
 
     // Execute the get all job applicants use case and handle the result using Either
     const jobs: Either<ErrorClass, JobApplicantEntity[]> =
@@ -179,137 +141,38 @@ export class JobApplicantService {
         }
 
         // Apply the PaymentStatus filter
-       if (filterPaymentStatus) {
-         responseData = responseData.filter(
-           (jobApplicant: JobApplicantEntity) => {
-             if (filterPaymentStatus === "true") {
-               // Return true if jobStatus is "Completed" (payment is true)
-               return jobApplicant.jobStatus === "Completed";
-             } else {
-               // Return true for other jobStatus values (payment is false)
-               return jobApplicant.jobStatus !== "Completed";
-             }
-           }
-         );
-       }
+        if (filterPaymentStatus) {
+          responseData = responseData.filter(
+            (jobApplicant: JobApplicantEntity) => {
+              if (filterPaymentStatus === "true") {
+                // Return true if jobStatus is "Completed" (payment is true)
+                return jobApplicant.jobStatus === "Completed";
+              } else {
+                // Return true for other jobStatus values (payment is false)
+                return jobApplicant.jobStatus !== "Completed";
+              }
+            }
+          );
+        }
+
+        // // Apply the filter for applicants where loggedInUserId equals applicantId, agreement is true, and jobStatus is Pending
+
+        // if (agreement === true && filterJobStatus === "Pending") {
+        //   responseData = responseData.filter(
+        //     (jobApplicant: JobApplicantEntity) => {
+        //       return (
+        //         jobApplicant.applicant.toString() === loggedInUserId &&
+        //         jobApplicant.agreement === true &&
+        //         jobApplicant.jobStatus === "Pending"
+        //       );
+        //     }
+        //   );
+        // }
 
         return res.json(responseData);
       }
     );
   }
-
-  // async getAllJobApplicants(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   // Extract the filter parameters from the request query
-  //   const filterJobOwner = req.query.jobOwner as string;
-  //   const filterJobStatus = req.query.jobStatus as string;
-
-  // try {
-  //   // Use Sequelize to fetch JobApplicants and include related User and Job data
-  //   const jobApplicants = await JobApplicant.findAll({
-  //     include: [
-  //       {
-  //         model: Jobs, // Include User data
-  //         as: "job", // Alias for the User data in the result
-  //       },
-  //       {
-  //         model: Realtors, // Include Job data
-  //         as: "realtor", // Alias for the Job data in the result
-  //       },
-  //     ],
-  //   });
-
-  //     // Filter data based on query parameters (if provided)
-  //     let responseData = jobApplicants.map((jobApplicant: any) => {
-  //       const user = jobApplicant.get("realtor");
-  //       const job = jobApplicant.get("job");
-  //       const jobApplicantData = JobApplicantMapper.toEntity(jobApplicant);
-
-  //       return {
-  //         ...jobApplicantData,
-  //         user,
-  //         job,
-  //       };
-  //     });
-
-  //     // Apply the jobOwner filter
-  //     if (filterJobOwner) {
-  //       responseData = responseData.filter((jobApplicantData: any) => {
-  //         return jobApplicantData.user.id.toString() === filterJobOwner;
-  //       });
-  //     }
-
-  //     // Apply the jobStatus filter
-  //     if (filterJobStatus) {
-  //       responseData = responseData.filter((jobApplicantData: any) => {
-  //         return jobApplicantData.job.status === filterJobStatus;
-  //       });
-  //     }
-
-  //     return res.json(responseData);
-  //   } catch (error) {
-  //     // Handle any errors that occur during the query
-  //     return res.status(500).json({ error: error.message });
-  //   }
-  // }
-
-  // async getAllJobApplicants(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   // Extract the filter parameters from the request query
-  //   const filterJobOwner = req.query.jobOwner as string;
-  //   const filterJobStatus = req.query.jobStatus as string;
-  //   const filterPaymentStatus = req.query.paymentStatus as string;
-
-  //   try {
-  //     // Execute the get all job applicants use case and handle the result using Either
-  //     const jobs: Either<ErrorClass, JobApplicantEntity[]> =
-  //       await this.getAllJobApplicantsUsecase.execute();
-
-  //     // Handle the result using cata function
-  //     jobs.cata(
-  //       (error: ErrorClass) =>
-  //         res.status(error.status).json({ error: error.message }),
-  //       (jobApplicants: JobApplicantEntity[]) => {
-  //         // Handle success case
-  //         let responseData = jobApplicants.map((jobApplicant: any) =>
-  //           JobApplicantMapper.toEntity(jobApplicant)
-  //         );
-
-  //         // Apply the jobOwner filter
-  //         if (filterJobOwner) {
-  //           responseData = responseData.filter(
-  //             (jobApplicant: JobApplicantEntity) =>
-  //               jobApplicant.job.toString() === filterJobOwner
-  //           );
-  //         }
-
-  //         // Apply the jobStatus filter
-  //         if (filterJobStatus) {
-  //           responseData = responseData.filter(
-  //             (jobApplicant: JobApplicantEntity) =>
-  //               jobApplicant.jobStatus === filterJobStatus
-  //           );
-  //         }
-
-  //         // Apply the paymentStatus filter only if filterPaymentStatus is 'true'
-  //         if (filterPaymentStatus === "false") {
-  //           responseData = responseData.filter(
-  //             (jobApplicant: JobApplicantEntity) =>
-  //               jobApplicant.paymentStatus === filterPaymentStatus
-  //           );
-  //         }
-
-  //         return res.json(responseData);
-  //       }
-  //     );
-  //   } catch (e: any) {}
-  // }
 
   // Method to update a job applicant
   async updateJobApplicant(req: Request, res: Response): Promise<void> {
