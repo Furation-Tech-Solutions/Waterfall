@@ -152,6 +152,8 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+
+     
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute();

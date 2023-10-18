@@ -6,7 +6,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model called "BugReport"
 const BugReport = sequelize.define("BugReport", {
-  // Define a field "realtor" of type UUID and make it non-nullable
+  // Define a field "realtor" of type INTEGER and make it non-nullable
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,

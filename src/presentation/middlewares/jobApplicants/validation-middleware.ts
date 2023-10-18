@@ -3,7 +3,7 @@ import Joi, { ValidationErrorItem } from "joi"; // Import Joi for input validati
 import ApiError from "@presentation/error-handling/api-error"; // Import custom error class ApiError
 import { Request, Response, NextFunction } from "express"; // Import Express types
 import {
-  statusEnum,
+  applicationStatusEnum,
   jobStatusEnum,
 } from "@data/jobApplicants/models/jobApplicants-models"; // Import enums for status and jobStatus
 
@@ -11,10 +11,11 @@ import {
 interface JobApplicantInput {
   job: number;
   applicant: number;
-  status: string;
+  applicationStatus: string;
   agreement: boolean;
   jobStatus: string;
   appliedTimestamp: Date;
+  paymentStatus: boolean;
 }
 
 // Define a function for validating job applicant input
@@ -25,12 +26,12 @@ const jobApplicantValidator = function (
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
     job: Joi.number().required(),
     applicant: Joi.number().required(),
-    status: Joi.string()
-      .valid(...Object.values(statusEnum))
+    applicationStatus: Joi.string()
+      .valid(...Object.values(applicationStatusEnum))
       .required()
       .messages({
         "any.only": "Invalid status",
-        "any.required": "Status is required",
+        "any.required": "Application Status is required",
       }),
     agreement: Joi.boolean().required().messages({
       "boolean.base": "Agreement must be a boolean",
@@ -46,6 +47,10 @@ const jobApplicantValidator = function (
     appliedTimestamp: Joi.date().required().messages({
       "date.base": "Applied timestamp must be a valid date",
       "any.required": "Applied timestamp is required",
+    }),
+    paymentStatus: Joi.boolean().required().messages({
+      "boolean.base": "PaymentStatus must be a boolean",
+      "any.required": "PaymentStatus is required",
     }),
   });
 
