@@ -123,6 +123,7 @@ export class RealtorService {
   
 
 
+
   // Handler for updating Realtor by ID
   async updateRealtor(req: Request, res: Response): Promise<void> {
     const realtorId: string = req.params.id;
