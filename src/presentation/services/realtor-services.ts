@@ -55,15 +55,40 @@ export class RealtorService {
 
   // Handler for getting all Realtors
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
-    // Call the GetAllRealtorsUsecase to get all Realtors
-    const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
+    const realtorLocations: Either<ErrorClass, RealtorEntity[]> =
+      await this.GetAllRealtorsUsecase.execute();
 
-    realtors.cata(
+    realtorLocations.cata(
       (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
-      (result: RealtorEntity[]) => {
+      (realtors: RealtorEntity[]) => {
+        const filterLocation = req.query.location as string;
+        const filterGender = req.query.gender as string;
 
-        const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
-        return res.json(responseData);
+        let filteredRealtors: RealtorEntity[] = realtors;
+
+        if (filterLocation) {
+          // Case-insensitive location filter
+          filteredRealtors = filteredRealtors.filter((realtor: RealtorEntity) => {
+            return realtor.location.toLowerCase() === filterLocation.toLowerCase();
+          });
+        }
+
+        if (filterGender) {
+          // Case-insensitive gender filter
+          filteredRealtors = filteredRealtors.filter((realtor: RealtorEntity) => {
+            return realtor.gender.toLowerCase() === filterGender.toLowerCase();
+          });
+        }
+
+        // If no location or gender filter is provided, return all realtors
+        const realtorsWithFriendCount = filteredRealtors.map((realtor) => {
+          const friendCount = realtor.friends.length;
+          const resData = RealtorMapper.toEntity(realtor);
+          resData.friendCount = friendCount;
+          return resData;
+        });
+
+        return res.json(realtorsWithFriendCount);
       }
     );
   }
@@ -84,11 +109,22 @@ export class RealtorService {
         if (!result) {
           return res.json({ message: "Realtor Name not found." });
         }
+
+        // Count the number of friends
+        const friendCount = result.friends.length;
+
         const resData = RealtorMapper.toEntity(result);
+        // Add the friend count to the response data
+        resData.friendCount = friendCount;
+
         return res.json(resData);
       }
     );
   }
+
+  
+
+
 
   // Handler for updating Realtor by ID
   async updateRealtor(req: Request, res: Response): Promise<void> {
