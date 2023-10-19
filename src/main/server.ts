@@ -13,7 +13,7 @@ const postgressURL = env.postgressURL;
 
 try {
   if (postgressURL === undefined) {
-    throw ApiError.mongoError();
+    throw ApiError.SQLError();
   }
 
   // Sync the model with the database
@@ -27,9 +27,13 @@ try {
   // }
   // syncDatabase();
 
-  app.listen(env.port, () => {
-    console.log(`${Message.SERVER_RUNNING} ${env.port}`);
+  sequelize.sync().then(() => {
+    app.listen(env.port, () => {
+      console.log("Table synchronized successfully.");
+      console.log(`${Message.SERVER_RUNNING} ${env.port}`);
+    });
   });
+
 } catch (error) {
   console.log("error is this-", error, "error");
   if (error instanceof ApiError) {
