@@ -94,33 +94,113 @@ export class RealtorService {
   }
 
   // Handler for getting Realtor by ID
-  async getRealtorById(req: Request, res: Response): Promise<void> {
-    const realtorId: string = req.params.id;
+  // async getRealtorById(req: Request, res: Response): Promise<void> {
+  //   const realtorId: string = req.params.id;
 
-    const realtor: Either<ErrorClass, RealtorEntity> =
-      await this.GetRealtorByIdUsecase.execute(realtorId);
+  //   const realtor: Either<ErrorClass, RealtorEntity> =
+  //     await this.GetRealtorByIdUsecase.execute(realtorId);
 
-    realtor.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: RealtorEntity) => {
-        if (!result) {
-          return res.json({ message: "Realtor Name not found." });
-        }
+  //   realtor.cata(
+  //     (error: ErrorClass) =>
+  //       res.status(error.status).json({ error: error.message }),
+  //     (result: RealtorEntity) => {
+  //       if (!result) {
+  //         return res.json({ message: "Realtor Name not found." });
+  //       }
 
-        // Count the number of friends
-        const friendCount = result.friends.length;
+  //       // Count the number of friends
+  //       const friendCount = result.friends.length;
 
-        const resData = RealtorMapper.toEntity(result);
-        // Add the friend count to the response data
-        resData.friendCount = friendCount;
+  //       const resData = RealtorMapper.toEntity(result);
+  //       // Add the friend count to the response data
+  //       resData.friendCount = friendCount;
 
-        return res.json(resData);
+  //       return res.json(resData);
+  //     }
+  //   );
+  // } 
+
+
+//   async getRealtorById(req: Request, res: Response): Promise<void> {
+//     const realtorId: string = req.params.id;
+
+//     const realtor: Either<ErrorClass, RealtorEntity> = await this.GetRealtorByIdUsecase.execute(realtorId);
+
+//     realtor.cata(
+//       (error: ErrorClass) =>
+//         res.status(error.status).json({ error: error.message }),
+//       (result: RealtorEntity) => {
+//         if (!result) {
+//           return res.json({ message: "Realtor Name not found." });
+//         }
+
+//         // Assuming that 'friends' is an array in the RealtorEntity
+//         const friends = result.friends; // Define 'friends' here
+
+//         // Count the number of friends
+//         const friendCount = friends.length;
+
+//         // Find mutual friends
+//         const mutualFriends = friends.filter(friendId => {
+//           // Check if the friendId is not the requested realtor and also is a friend of the other realtor
+//           return friendId.toString() !== realtorId && friends.includes(friendId);
+//         });
+        
+
+//         const resData = RealtorMapper.toEntity(result);
+//         // Add the friend count and mutual friends to the response data
+//         resData.friendCount = friendCount;
+//         resData.mutualFriends = mutualFriends;
+
+//         return res.json(resData);
+//       }
+//     );
+// }
+
+async getRealtorById(req: Request, res: Response): Promise<void> {
+  const requesterRealtorId: string = req.params.id;
+  const targetRealtorId: string = req.query.id as string;
+
+  const requesterRealtor: Either<ErrorClass, RealtorEntity> = await this.GetRealtorByIdUsecase.execute(requesterRealtorId);
+  const targetRealtor: Either<ErrorClass, RealtorEntity> = await this.GetRealtorByIdUsecase.execute(targetRealtorId);
+
+  requesterRealtor.cata(
+    (error: ErrorClass) =>
+      res.status(error.status).json({ error: error.message }),
+    (requesterResult: RealtorEntity) => {
+      if (!requesterResult) {
+        return res.json({ message: "Requester Realtor not found." });
       }
-    );
-  }
 
-  
+      targetRealtor.cata(
+        (error: ErrorClass) =>
+          res.status(error.status).json({ error: error.message }),
+        (targetResult: RealtorEntity) => {
+          if (!targetResult) {
+            return res.json({ message: "Target Realtor not found." });
+          }
+
+          // Assuming that 'friends' is an array in the RealtorEntity
+          const requesterFriends = requesterResult.friends; // Define 'friends' here
+          const targetFriends = targetResult.friends; // Define 'friends' here
+
+          // Find mutual friends
+          const mutualFriends = requesterFriends.filter((friendId) => {
+            return friendId.toString() !== requesterRealtorId && targetFriends.includes(friendId);
+          });
+
+          const resData = RealtorMapper.toEntity(requesterResult);
+          // Add the friend count and mutual friends to the response data
+          resData.friendCount = requesterFriends.length;
+          resData.mutualFriends = mutualFriends;
+
+          return res.json(resData);
+        }
+      );
+    }
+  );
+}
+
 
 
 
