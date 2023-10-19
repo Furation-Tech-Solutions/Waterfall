@@ -88,17 +88,29 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         let num = parseInt(id);
         const connections = await Connections.findOne({
             where: {
-                id: num
+                id: num,
+                connected: false
             },
             include: [{
-                model: Realtors
-            }],
+                model: Realtors,
+                as: 'from', // Alias for the first association
+                foreignKey: 'fromId',
+            },
+            {
+                model: Realtors,
+                as: 'to', // Alias for the second association
+                foreignKey: 'toId',
+            },
+            ],
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-        // const connections = await Connections.findAll();
+
+        //    const state = req.query.q as string;
+        //         const RealtorID = req.body.realtorID as number;
+
         const data = await Connections.findAll({
             // include: [{
             //     model: Realtors,
