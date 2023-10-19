@@ -76,20 +76,10 @@ const Realtors = sequelize.define('Realtors', {
   }
 });
 
-// Realtors.hasMany(Connections, { foreignKey: 'fromId', as: 'fromConnections' });
-// Realtors.hasMany(Connections, { foreignKey: 'toId', as: 'toConnections' });
+// Connections.belongsTo(Realtors, { foreignKey: 'fromId'});
+// Connections.belongsTo(Realtors, { foreignKey: 'toId'});
 
-// Realtors.belongsToMany(Connections, { through: 'Connections', foreignKey: 'fromId', as: 'fromConnections' });
-// Realtors.belongsToMany(Connections, { through: 'Connections', foreignKey: 'toId', as: 'toConnections' });
-// Realtors.belongsToMany(Connections, {
-//   through: 'Connections',
-//   foreignKey: 'fromId',
-//   otherKey: 'toId',
-//   as: 'fromConnections',
-//   targetKey: 'toId', // Specify the data type of the targetKey
-// });
-
-
-
+// Realtors.hasMany(Connections, { foreignKey: 'fromId', as: "fromID" });
+// Realtors.hasMany(Connections, { foreignKey: 'toId', as: "toID" });
 
 export default Realtors;

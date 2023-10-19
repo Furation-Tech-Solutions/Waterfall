@@ -82,25 +82,6 @@ export class ConnectionsServices {
         const id: string = req.params.id;
         const Id: number = parseInt(id, 10);
 
-        // Execute the getConnectionsById use case to retrieve a connection by ID
-        // const connections: Either<ErrorClass, ConnectionsEntity> =
-        //     await this.getByIdUsecase.execute(id);
-
-        // // Handle the result of the use case execution
-        // connections.cata(
-        //     (error: ErrorClass) =>
-        //         res.status(error.status).json({ error: error.message }), // Handle error case
-        //     (result: ConnectionsEntity) => {
-        //         // Handle success case
-        //         if (!result) {
-        //             return res.json({ message: "Connection not found." });
-        //         }
-        //         const resData = ConnectionMapper.toEntity(result);
-        //         return res.json(resData);
-        //     }
-        // );
-
-        // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
             await this.getAllUsecase.execute();
 
@@ -143,7 +124,7 @@ export class ConnectionsServices {
         // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
             await this.getAllUsecase.execute();
-
+        console.log("======>", clientConnections);
         // Handle the result of the use case execution
         clientConnections.cata(
             (error: ErrorClass) =>
