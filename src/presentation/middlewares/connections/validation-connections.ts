@@ -18,7 +18,7 @@ const connectionsValidator = (
         "number.integer": "fromId should be an integer",
         "any.required": "fromId is required",
       })
-      : Joi.number().required().messages({
+      : Joi.number().optional().messages({
         "number.integer": "fromId should be an integer",
         "any.required": "fromId is required",
       }),
@@ -28,7 +28,7 @@ const connectionsValidator = (
         "number.integer": "toId should be an integer",
         "any.required": "toId is required",
       })
-      : Joi.number().required().messages({
+      : Joi.number().optional().messages({
         "number.integer": "toId should be an integer",
         "any.required": "toId is required",
       }),

@@ -66,10 +66,6 @@ const Realtors = sequelize.define('Realtors', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  friends: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
-    defaultValue: []
-  },
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
