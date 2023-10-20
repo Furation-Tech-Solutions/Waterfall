@@ -97,7 +97,7 @@ export class JobApplicantService {
     const filterJobStatus = req.query.jobStatus as string;
     const filterPaymentStatus = req.query.paymentStatus as string;
       const loggedInUserId = req.body.loggedInUserId as string;
-      const agreement = req.body.agreement as string;
+    const filterAgreement = req.query.agreement as string;
 
     // const populate = await Jobs.findAll({
     //   where: {
@@ -155,19 +155,25 @@ export class JobApplicantService {
           );
         }
 
-        // // Apply the filter for applicants where loggedInUserId equals applicantId, agreement is true, and jobStatus is Pending
+        // Apply the filter for upcoming tasks where agreement is true and jobStatus is Pending
+        if (filterAgreement) {
+          if (filterAgreement === "true") {
+            responseData = responseData.filter(
+              (jobApplicant: JobApplicantEntity) => {
+                return jobApplicant.agreement === true;
+              }
+            );
+          } else if (filterAgreement === "false") {
+            responseData = responseData.filter(
+              (jobApplicant: JobApplicantEntity) => {
+                return jobApplicant.agreement === false;
+              }
+            );
+          }
+        }
 
-        // if (agreement === true && filterJobStatus === "Pending") {
-        //   responseData = responseData.filter(
-        //     (jobApplicant: JobApplicantEntity) => {
-        //       return (
-        //         jobApplicant.applicant.toString() === loggedInUserId &&
-        //         jobApplicant.agreement === true &&
-        //         jobApplicant.jobStatus === "Pending"
-        //       );
-        //     }
-        //   );
-        // }
+        console.log("filterAgreement:", filterAgreement);
+        console.log("responseData length:", responseData.length);
 
         return res.json(responseData);
       }

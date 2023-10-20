@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
@@ -35,7 +36,7 @@ const Job = sequelize.define("Job", {
   jobOwner: {
     type: DataTypes.INTEGER, // Data type for jobOwner is UUID
     allowNull: false, // It cannot be null
-    references: { model: Realtors, key: 'id' }
+    references: { model: Realtors, key: "id" },
   },
   location: {
     type: DataTypes.STRING, // Data type for location is STRING
@@ -105,7 +106,15 @@ const Job = sequelize.define("Job", {
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
-  } 
+  },
+
+  jobApplicants:
+    {
+      type: DataTypes.ARRAY(DataTypes.INTEGER), // Data type for jobOwner is UUID
+      defaultValue:[],
+      // references: { model: JobApplicant, key: "id" },
+    }
+
 });
 
 Realtors.hasMany(Job);
