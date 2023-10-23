@@ -6,6 +6,7 @@ import { JobEntity, JobModel } from "@domain/job/entities/job";
 
 // Import the Job model from the relative path
 import Job from "..//models/job-model";
+import Realtors from "@data/realtors/model/realtor-model";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -65,8 +66,18 @@ export class JobDataSourceImpl implements JobDataSource {
   // Method to retrieve all job records
   async getAll(): Promise<JobEntity[]> {
     // Find all job records
-    const jobs = await Job.findAll({});
+    const jobs = await Job.findAll({
 
+      include: [
+        {
+          model: Realtors,
+          as: "owner",
+          foreignKey: "jobOwner",
+        },
+      ],
+    });
+
+    // return data.map((blocking: any) => blocking.toJSON());
     // Convert all job records to plain JavaScript objects and return them in an array
     return jobs.map((job: any) => job.toJSON());
   }

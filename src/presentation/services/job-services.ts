@@ -168,3 +168,27 @@ export class JobService {
     );
   }
 }
+
+  // // Method to get all jobs
+  // async getAllJobs(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+
+  //   // Execute the getAllJobs use case and get an Either result
+  //   const jobs: Either<ErrorClass, JobEntity[]> =
+  //     await this.getAllJobsUsecase.execute();
+  //     emailConfig()
+  //   // Handle the result using Either's cata function
+  //   jobs.cata(
+  //     // If there's an error, send an error response
+  //     (error: ErrorClass) =>
+  //       res.status(error.status).json({ error: error.message }),
+  //     // If successful, map the results to Entities and send them as a JSON response
+  //     (jobs: JobEntity[]) => {
+  //       const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+  //       return res.json(resData);
+  //     }
+  //   );
+  // }

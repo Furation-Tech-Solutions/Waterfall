@@ -2,6 +2,7 @@
 import { Sequelize } from "sequelize";
 import { SupportEntity, SupportModel } from "@domain/support/entities/support"; // Import the SupportModel
 import Support from "..//models/support-model"; // Import the Support model
+import Realtors from "@data/realtors/model/realtor-model";
 
 // Create SupportDataSource Interface
 export interface SupportDataSource {
@@ -53,7 +54,15 @@ export class SupportDataSourceImpl implements SupportDataSource {
   // Implement the "getAll" method to retrieve all SupportEntity records
   async getAll(): Promise<SupportEntity[]> {
     // Retrieve all SupportEntity records from the database
-    const support = await Support.findAll({});
+    const support = await Support.findAll({
+       include: [
+        {
+          model: Realtors,
+          as: "realtorData",
+          foreignKey: "realtor",
+        },
+       ]
+    });
 
     // Convert the SupportEntities to plain JavaScript objects before returning
     return support.map((support: any) => support.toJSON());
