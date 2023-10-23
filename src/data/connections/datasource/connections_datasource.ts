@@ -95,7 +95,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
     }
-
+  
     async getAll(id: string, query: string): Promise<any[]> {
         let loginId = parseInt(id);
         let q = query;
@@ -149,8 +149,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
         }
-
-
     }
 
     async updateReq(fromId: string, toId: string, updatedData: ConnectionsModel): Promise<any> {
