@@ -40,6 +40,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
         if (l) {
             const data = await Realtor.findAll({
+                offset: 3, limit: 3,
                 where: {
                     [Op.or]: [
                         {
