@@ -34,48 +34,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         return createdRealtor.toJSON();
     }
 
-    // Retrieve all Realtor entries
-    // async getAllRealtors(): Promise<any[]> {
-    //     const realtor = await Realtor.findAll({});
-    //     return realtor.map((realtor: any) => realtor.toJSON()); // Convert to plain JavaScript objects before returning
-    // }
-
-    // async getAllRealtors(query: string): Promise<any[]> {
-    //     let q = query;
-    //     console.log("=========>q", q);
-    //     // const location = q; // Extract the location from the parameter
-    //     if (q === "location") {
-    //         const data = await Realtor.findAll({
-    //             where: {
-    //                 location: location
-    //             }
-    //         });
-    //         return data.map(realtor => realtor.toJSON());
-    //     }
-    //     else {
-    //         // Return an appropriate value for the case when location is not provided
-    //         return [];
-    //     }
-    // }
-
-    // async getAllRealtors(query: string): Promise<any[]> {
-    //     let q = query;
-    //     console.log("=========>q", q);
-    //     // const realtor = await Realtor.findAll({});
-    //     if (q) {
-    //         const data = await Realtor.findAll({
-    //             where: {
-    //                 location: q
-    //             }
-    //         });
-    //         return data.map((realtor: any) => realtor.toJSON());
-    //     } else {
-    //         // Handle other cases when q is not "location"
-    //         const data = await Realtor.findAll({});
-    //         return data.map((realtor: any) => realtor.toJSON()); // You can return an empty array or another suitable value here.
-    //     }
-    // }
-
     async getAllRealtors(query: string): Promise<any[]> {
         let l = query ? query.toLowerCase() : null;
         console.log("=========>q", l);
