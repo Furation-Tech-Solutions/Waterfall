@@ -40,5 +40,16 @@ const Report = sequelize.define("Report", {
 });
 
 Realtors.hasMany(Report);
+Report.belongsTo(
+  Realtors,
+  {
+    foreignKey: "fromRealtor", // Use the correct attribute that links Job to Realtors
+    as: "from" // Optionally, you can specify an alias for this association
+  });
+
+  Report.belongsTo(Realtors, {
+    foreignKey: "toRealtor", // Use the correct attribute that links Job to Realtors
+    as: "to", // Optionally, you can specify an alias for this association
+  });
 // Export the "Report" model as the default export of this module
 export default Report;

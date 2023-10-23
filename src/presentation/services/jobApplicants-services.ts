@@ -86,99 +86,122 @@ export class JobApplicantService {
     );
   }
 
- 
+  // Method to get all jobApplicants
   async getAllJobApplicants(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    // Extract the filter parameters from the request query
-    const filterJobOwner = req.body.jobOwner as string;
-    const filterJobStatus = req.query.jobStatus as string;
-    const filterPaymentStatus = req.query.paymentStatus as string;
-      const loggedInUserId = req.body.loggedInUserId as string;
-    const filterAgreement = req.query.agreement as string;
-
-    // const populate = await Jobs.findAll({
-    //   where: {
-    //     jobOwner: filterJobOwner,
-    //   },
-    // });
-
-    // console.log("======>", populate);
-
-    // Execute the get all job applicants use case and handle the result using Either
-    const jobs: Either<ErrorClass, JobApplicantEntity[]> =
+    // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
+    const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
       await this.getAllJobApplicantsUsecase.execute();
 
-    // Handle the result using cata function
-    jobs.cata(
-      (
-        error: ErrorClass // Handle error case
-      ) => res.status(error.status).json({ error: error.message }),
-      (jobApplicants: JobApplicantEntity[]): any => {
-        // Handle success case
-        let responseData = jobApplicants.map((jobApplicant: any) =>
+    // Handle the result using the Either monad's cata method
+    jobApplicants.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (jobApplicants: JobApplicantEntity[]) => {
+        // Map jobApplicant entities to the desired format
+        const resData = jobApplicants.map((jobApplicant: any) =>
           JobApplicantMapper.toEntity(jobApplicant)
         );
-
-        // Apply the jobOwner filter
-        if (filterJobOwner) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              return jobApplicant.job.toString() === filterJobOwner;
-            }
-          );
-        }
-
-        // Apply the jobStatus filter
-        if (filterJobStatus) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              return jobApplicant.jobStatus === filterJobStatus;
-            }
-          );
-        }
-
-        // Apply the PaymentStatus filter
-        if (filterPaymentStatus) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              if (filterPaymentStatus === "true") {
-                // Return true if jobStatus is "Completed" (payment is true)
-                return jobApplicant.jobStatus === "Completed";
-              } else {
-                // Return true for other jobStatus values (payment is false)
-                return jobApplicant.jobStatus !== "Completed";
-              }
-            }
-          );
-        }
-
-        // Apply the filter for upcoming tasks where agreement is true and jobStatus is Pending
-        if (filterAgreement) {
-          if (filterAgreement === "true") {
-            responseData = responseData.filter(
-              (jobApplicant: JobApplicantEntity) => {
-                return jobApplicant.agreement === true;
-              }
-            );
-          } else if (filterAgreement === "false") {
-            responseData = responseData.filter(
-              (jobApplicant: JobApplicantEntity) => {
-                return jobApplicant.agreement === false;
-              }
-            );
-          }
-        }
-
-        console.log("filterAgreement:", filterAgreement);
-        console.log("responseData length:", responseData.length);
-
-        return res.json(responseData);
+        return res.json(resData);
       }
     );
   }
+
+  // async getAllJobApplicants(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   // Extract the filter parameters from the request query
+  //   const filterJobOwner = req.body.jobOwner as string;
+  //   const filterJobStatus = req.query.jobStatus as string;
+  //   const filterPaymentStatus = req.query.paymentStatus as string;
+  //     const loggedInUserId = req.body.loggedInUserId as string;
+  //   const filterAgreement = req.query.agreement as string;
+
+  //   // const populate = await Jobs.findAll({
+  //   //   where: {
+  //   //     jobOwner: filterJobOwner,
+  //   //   },
+  //   // });
+
+  //   // console.log("======>", populate);
+
+  //   // Execute the get all job applicants use case and handle the result using Either
+  //   const jobs: Either<ErrorClass, JobApplicantEntity[]> =
+  //     await this.getAllJobApplicantsUsecase.execute();
+
+  //   // Handle the result using cata function
+  //   jobs.cata(
+  //     (
+  //       error: ErrorClass // Handle error case
+  //     ) => res.status(error.status).json({ error: error.message }),
+  //     (jobApplicants: JobApplicantEntity[]): any => {
+  //       // Handle success case
+  //       let responseData = jobApplicants.map((jobApplicant: any) =>
+  //         JobApplicantMapper.toEntity(jobApplicant)
+  //       );
+
+  //       // Apply the jobOwner filter
+  //       if (filterJobOwner) {
+  //         responseData = responseData.filter(
+  //           (jobApplicant: JobApplicantEntity) => {
+  //             return jobApplicant.job.toString() === filterJobOwner;
+  //           }
+  //         );
+  //       }
+
+  //       // Apply the jobStatus filter
+  //       if (filterJobStatus) {
+  //         responseData = responseData.filter(
+  //           (jobApplicant: JobApplicantEntity) => {
+  //             return jobApplicant.jobStatus === filterJobStatus;
+  //           }
+  //         );
+  //       }
+
+  //       // Apply the PaymentStatus filter
+  //       if (filterPaymentStatus) {
+  //         responseData = responseData.filter(
+  //           (jobApplicant: JobApplicantEntity) => {
+  //             if (filterPaymentStatus === "true") {
+  //               // Return true if jobStatus is "Completed" (payment is true)
+  //               return jobApplicant.jobStatus === "Completed";
+  //             } else {
+  //               // Return true for other jobStatus values (payment is false)
+  //               return jobApplicant.jobStatus !== "Completed";
+  //             }
+  //           }
+  //         );
+  //       }
+
+  //       // Apply the filter for upcoming tasks where agreement is true and jobStatus is Pending
+  //       if (filterAgreement) {
+  //         if (filterAgreement === "true") {
+  //           responseData = responseData.filter(
+  //             (jobApplicant: JobApplicantEntity) => {
+  //               return jobApplicant.agreement === true;
+  //             }
+  //           );
+  //         } else if (filterAgreement === "false") {
+  //           responseData = responseData.filter(
+  //             (jobApplicant: JobApplicantEntity) => {
+  //               return jobApplicant.agreement === false;
+  //             }
+  //           );
+  //         }
+  //       }
+
+  //       console.log("filterAgreement:", filterAgreement);
+  //       console.log("responseData length:", responseData.length);
+
+  //       return res.json(responseData);
+  //     }
+  //   );
+  // }
 
   // Method to update a job applicant
   async updateJobApplicant(req: Request, res: Response): Promise<void> {

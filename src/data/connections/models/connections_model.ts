@@ -24,8 +24,17 @@ const Connections = sequelize.define('Connections', {
   },
 });
 
-Realtors.hasMany(Connections);
-Connections.belongsTo(Realtors, { foreignKey: 'fromId', as: 'fromRealtor' });
-Connections.belongsTo(Realtors, { foreignKey: 'toId', as: 'toRealtor' });
+Connections.belongsTo(Realtors, {
+    foreignKey: "fromId",
+    as: "from" // Alias for the first association
+});
+
+Connections.belongsTo(Realtors, {
+    foreignKey: "toId",
+    as: "to" // Alias for the second association
+});
+
+
 
 export default Connections;
+

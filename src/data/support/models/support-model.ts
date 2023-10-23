@@ -14,9 +14,8 @@ const Support = sequelize.define("Support", {
   },
   // Define a "to" field with STRING data type, which cannot be null
   to: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
-    references: { model: Realtors, key: 'id' }
   },
   // Define a "description" field with STRING data type, which cannot be null
   // and includes validation for length between 1 and 1000 characters
@@ -43,5 +42,9 @@ const Support = sequelize.define("Support", {
   },
 });
 Realtors.hasMany(Support);
+Support.belongsTo(Realtors, {
+  foreignKey: "realtor",
+  as: "realtorData",
+});
 // Export the "Support" model
 export default Support;

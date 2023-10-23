@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
+import Job from "@data/job/models/job-model";
+import Connections from "@data/connections/models/connections_model";
 
 const Realtors = sequelize.define('Realtors', {
   firstName: {
@@ -71,7 +73,16 @@ const Realtors = sequelize.define('Realtors', {
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
-  } 
+  }
 });
-//dsdsf
+// Realtors.hasMany(Job, 
+//   { 
+//     foreignKey: "jobOwner", 
+//     as: "jobs" 
+//   });
+
+// Realtors.belongsTo(Job,{
+//   foreignKey: "id"
+// })
+
 export default Realtors;

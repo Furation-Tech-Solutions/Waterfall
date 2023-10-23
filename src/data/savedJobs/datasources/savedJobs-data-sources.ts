@@ -5,6 +5,8 @@ import {
   SavedJobModel,
 } from "@domain/savedJobs/entities/savedJobs";
 import SavedJob from "@data/savedJobs/models/savedJobs-models";
+import Realtors from "@data/realtors/model/realtor-model";
+import Job from "@data/job/models/job-model";
 
 // Create a SavedJobDataSource Interface
 export interface SavedJobDataSource {
@@ -50,7 +52,20 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
 
   // Implement the "getAll" method to retrieve all SavedJobEntity records from the database
   async getAll(): Promise<SavedJobEntity[]> {
-    const savedJobs = await SavedJob.findAll({});
+    const savedJobs = await SavedJob.findAll({
+      include: [
+        {
+          model: Realtors,
+          as: "realtorData",
+          foreignKey: "Realtor",
+        },
+        {
+          model: Job,
+          as: "jobData",
+          foreignKey: "Job",
+        },
+      ],
+    });
     return savedJobs.map((savedJob: any) => savedJob.toJSON()); // Convert to plain JavaScript objects before returning
   }
 
