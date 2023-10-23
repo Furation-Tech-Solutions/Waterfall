@@ -94,7 +94,8 @@ export class ConnectionsServices {
                 if (!result) {
                     return res.json({ message: "Connection not found." });
                 }
-                
+
+
                 const resData = ConnectionMapper.toEntity(result);
                 return res.json(resData);
             }
@@ -107,9 +108,6 @@ export class ConnectionsServices {
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        const id: string = req.params.id;
-        const Id: number = parseInt(id, 10);
-
         // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
             await this.getAllUsecase.execute();
@@ -127,83 +125,6 @@ export class ConnectionsServices {
             }
         );
     }
-
-    // Handler for getting connections by ID
-    // async getById(req: Request, res: Response): Promise<void> {
-    //     const id: string = req.params.id;
-    //     const Id: number = parseInt(id, 10);
-
-    //     const clientConnections: Either<ErrorClass, ConnectionsEntity[]> = await this.getAllUsecase.execute();
-
-    //     // Handle the result of the use case execution
-    //     clientConnections.cata(
-    //         (error: ErrorClass) =>
-    //             res.status(error.status).json({ error: error.message }), // Handle error case
-    //         (result: ConnectionsEntity[]) => {
-
-    //             const state = req.query.q as string;
-    //             // const RealtorID = req.body. as number;
-
-    //             // Handle success case
-    //             let responseData = result.map((connection) =>
-    //                 ConnectionMapper.toEntity(connection)
-    //             );
-
-    //             // Connection Requests
-    //             if (state === "requests") {
-    //                 let filteredData: ConnectionsEntity[] = [];
-    //                 responseData = responseData.filter((connection: ConnectionsEntity) => {
-    //                     if (connection.connected === false && connection.toId === Id) {
-    //                         filteredData.push(connection);
-    //                     }
-    //                 });
-    //                 return res.json(filteredData);
-    //             }
-
-    //             return res.json(responseData);
-    //         }
-    //     );
-    // }
-
-    // // Handler for getting all connections
-    // async getAll(
-    //     req: Request,
-    //     res: Response,
-    //     next: NextFunction
-    // ): Promise<void> {
-    //     // Execute the getAllConnections use case to retrieve all connections
-    //     const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
-    //         await this.getAllUsecase.execute();
-    //     console.log("======>", clientConnections);
-    //     // Handle the result of the use case execution
-    //     clientConnections.cata(
-    //         (error: ErrorClass) =>
-    //             res.status(error.status).json({ error: error.message }), // Handle error case
-    //         (result: ConnectionsEntity[]) => {
-
-    //             const state = req.query.q as string;
-    //             const RealtorID = req.body.realtorID as number;
-
-    //             // Handle success case
-    //             let responseData = result.map((connection) =>
-    //                 ConnectionMapper.toEntity(connection)
-    //             );
-
-    //             // Connection Requests
-    //             if (state === "requests") {
-    //                 let filteredData: ConnectionsEntity[] = [];
-    //                 responseData = responseData.filter((connection: ConnectionsEntity) => {
-    //                     if (connection.connected === false && connection.toId === RealtorID) {
-    //                         filteredData.push(connection);
-    //                     }
-    //                 });
-    //                 return res.json(filteredData);
-    //             }
-    //             return res.json(responseData);
-    //         }
-    //     );
-    // }
-
 
     // Handler for updating connections by ID
     async updateRequests(req: Request, res: Response): Promise<void> {

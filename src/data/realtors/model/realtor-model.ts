@@ -1,7 +1,6 @@
+
 import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
-import Job from "@data/job/models/job-model"
-import Connections from "@data/connections/models/connections_model";
 
 const Realtors = sequelize.define('Realtors', {
   firstName: {
@@ -66,20 +65,10 @@ const Realtors = sequelize.define('Realtors', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  friends: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
-    defaultValue: []
-  },
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
-  }
+  } 
 });
-
-// Connections.belongsTo(Realtors, { foreignKey: 'fromId'});
-// Connections.belongsTo(Realtors, { foreignKey: 'toId'});
-
-// Realtors.hasMany(Connections, { foreignKey: 'fromId', as: "fromID" });
-// Realtors.hasMany(Connections, { foreignKey: 'toId', as: "toID" });
 
 export default Realtors;

@@ -6,14 +6,14 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model named "Report"
 const Report = sequelize.define("Report", {
-  // Define a field "fromRealtor" of type INTEGER, not nullable
+  // Define a field "fromRealtor" of type UUID, not nullable
   fromRealtor: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Realtors, key: 'id' }
   },
 
-  // Define a field "toRealtor" of type INTEGER, not nullable
+  // Define a field "toRealtor" of type UUID, not nullable
   toRealtor: {
     type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,

@@ -43,8 +43,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async deleteReq(id: string): Promise<void> {
         // Find the record by ID
-        let num = parseInt(id);
-        const connection: any = await Connections.findByPk(num);
+        const connection: any = await Connections.findByPk(id);
         // Update the record with the provided data
 
         const from: any = await Realtors.findByPk(connection.fromId);
@@ -85,55 +84,22 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     }
 
     async read(id: string): Promise<any | null> {
-        let num = parseInt(id);
         const connections = await Connections.findOne({
             where: {
-                id: num,
-                connected: false
+                id: id
             },
-            include: [{
-                model: Realtors,
-                as: 'from', // Alias for the first association
-                foreignKey: 'fromId',
-            },
-            {
-                model: Realtors,
-                as: 'to', // Alias for the second association
-                foreignKey: 'toId',
-            },
-            ],
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     async getAll(): Promise<any[]> {
-
-        //    const state = req.query.q as string;
-        //         const RealtorID = req.body.realtorID as number;
-
-        const data = await Connections.findAll({
-            // include: [{
-            //     model: Realtors,
-            // }],
-            include: [{
-                model: Realtors,
-                as: 'from', // Alias for the first association
-                foreignKey: 'fromId',
-            },
-            {
-                model: Realtors,
-                as: 'to', // Alias for the second association
-                foreignKey: 'toId',
-            },
-            ],
-        });
-        return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
+        const connections = await Connections.findAll();
+        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
     async updateReq(id: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID
-        let num = parseInt(id);
-        const connection: any = await Connections.findByPk(num);
+        const connection: any = await Connections.findByPk(id);
         // Update the record with the provided data
 
         await connection.update(updatedData);
@@ -162,4 +128,3 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
 
 }
-

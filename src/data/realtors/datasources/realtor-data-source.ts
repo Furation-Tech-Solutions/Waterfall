@@ -2,12 +2,13 @@
 import { RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { Sequelize } from "sequelize";
+import { Sequelize, Op } from "sequelize";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
     create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
-    getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+    // getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+    getAllRealtors(query: string): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
     read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
     update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
     delete(id: string): Promise<void>;
@@ -34,10 +35,96 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     // Retrieve all Realtor entries
-    async getAllRealtors(): Promise<any[]> {
-        const realtor = await Realtor.findAll({});
-        return realtor.map((realtor: any) => realtor.toJSON()); // Convert to plain JavaScript objects before returning
+    // async getAllRealtors(): Promise<any[]> {
+    //     const realtor = await Realtor.findAll({});
+    //     return realtor.map((realtor: any) => realtor.toJSON()); // Convert to plain JavaScript objects before returning
+    // }
+
+    // async getAllRealtors(query: string): Promise<any[]> {
+    //     let q = query;
+    //     console.log("=========>q", q);
+    //     // const location = q; // Extract the location from the parameter
+    //     if (q === "location") {
+    //         const data = await Realtor.findAll({
+    //             where: {
+    //                 location: location
+    //             }
+    //         });
+    //         return data.map(realtor => realtor.toJSON());
+    //     }
+    //     else {
+    //         // Return an appropriate value for the case when location is not provided
+    //         return [];
+    //     }
+    // }
+
+    // async getAllRealtors(query: string): Promise<any[]> {
+    //     let q = query;
+    //     console.log("=========>q", q);
+    //     // const realtor = await Realtor.findAll({});
+    //     if (q) {
+    //         const data = await Realtor.findAll({
+    //             where: {
+    //                 location: q
+    //             }
+    //         });
+    //         return data.map((realtor: any) => realtor.toJSON());
+    //     } else {
+    //         // Handle other cases when q is not "location"
+    //         const data = await Realtor.findAll({});
+    //         return data.map((realtor: any) => realtor.toJSON()); // You can return an empty array or another suitable value here.
+    //     }
+    // }
+
+    async getAllRealtors(query: string): Promise<any[]> {
+        let l = query ? query.toLowerCase() : null;
+        console.log("=========>q", l);
+
+        if (l) {
+            const data = await Realtor.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            location: {
+                                [Op.iLike]: `%${l}%`
+                            }
+                        },
+                        {
+                            gender: {
+                                [Op.iLike]: `%${l}%`
+                            }
+                        },
+                        {
+                            firstName: {
+                                [Op.iLike]: `%${l}%`,
+                            },
+                        },
+                        {
+                            lastName: {
+                                [Op.iLike]: `%${l}%`,
+                            },
+                        },
+                        {
+                            email: {
+                                [Op.iLike]: `%${l}%`,
+                            },
+                        },
+                        {
+                            contact: {
+                                [Op.iLike]: `%${l}%`,
+                            },
+                        }
+                    ]
+                }
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        } else {
+            // Handle other cases when q is not provided (e.g., return all records)
+            const data = await Realtor.findAll({});
+            return data.map((realtor: any) => realtor.toJSON());
+        }
     }
+
 
     // Retrieve a Realtor entry by its ID
     async read(id: string): Promise<any | null> {

@@ -55,6 +55,12 @@ export class FeedBackService {
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
+    
+    const id: string = req.params.id;
+    console.log("fhgfhgfhgfgffhhf",id);
+    
+    const Id: number = parseInt(id, 10);
+    
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> = await this.GetAllFeedBacksUsecase.execute();
       

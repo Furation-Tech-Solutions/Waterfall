@@ -55,6 +55,11 @@ export class BlockingService {
 
   // Handler for getting all blockings
   async getAllBlockings(req: Request, res: Response, next: NextFunction): Promise<void> {
+    
+    const id: string = req.params.id;
+    console.log("234234234234324",id);
+    const Id: number = parseInt(id, 10);
+
     // Call the GetAllBlockingsUsecase to get all Blockings
     const blockings: Either<ErrorClass, BlockingEntity[]> = await this.GetAllBlockingsUsecase.execute();
       
