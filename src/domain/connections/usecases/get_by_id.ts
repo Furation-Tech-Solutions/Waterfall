@@ -4,7 +4,7 @@ import { ConnectionsRepository } from "../repositories/connections_repo"; // Imp
 import { Either, Right, Left } from "monet";
 
 export interface GetByIdUsecase {
-  execute: (id: string) => Promise<Either<ErrorClass, ConnectionsEntity>>;
+  execute: (fromId: string, toId: string) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
 
 export class GetById implements GetByIdUsecase {
@@ -14,8 +14,8 @@ export class GetById implements GetByIdUsecase {
     this.connectionsRepository = connectionsRepository;
   }
 
-  async execute(id: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
-    return await this.connectionsRepository.getById(id);
+  async execute(fromId: string, toId: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    return await this.connectionsRepository.getById(fromId, toId);
   }
 }
 
