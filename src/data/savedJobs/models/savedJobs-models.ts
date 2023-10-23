@@ -6,14 +6,14 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model named "SavedJob"
 const SavedJob = sequelize.define("SavedJob", {
-  // Define a field "Realtor" with a data type of INTEGER (assuming it's equivalent to ObjectId in PostgreSQL)
+  // Define a field "Realtor" with a data type of UUID (assuming it's equivalent to ObjectId in PostgreSQL)
   Realtor: {
     type: DataTypes.INTEGER,
     allowNull: false, // The field cannot be null
     references: { model: Realtors, key: 'id' }
   },
 
-  // Define a field "Job" with a data type of INTEGER (assuming it's equivalent to ObjectId in PostgreSQL)
+  // Define a field "Job" with a data type of UUID (assuming it's equivalent to ObjectId in PostgreSQL)
   Job: {
     type: DataTypes.INTEGER,
     allowNull: false, // The field cannot be null

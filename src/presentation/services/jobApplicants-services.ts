@@ -12,9 +12,6 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
-import Realtors from "@data/realtors/model/realtor-model";
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
-import Jobs from "@data/job/models/job-model";
 
 // Create a class called JobApplicantService
 export class JobApplicantService {
@@ -32,6 +29,7 @@ export class JobApplicantService {
     getAllJobApplicantsUsecase: GetAllJobApplicantsUsecase,
     updateJobApplicantUsecase: UpdateJobApplicantUsecase,
     deleteJobApplicantUsecase: DeleteJobApplicantUsecase
+
   ) {
     this.createJobApplicantUsecase = createJobApplicantUsecase;
     this.getJobApplicantByIdUsecase = getJobApplicantByIdUsecase;
@@ -86,27 +84,12 @@ export class JobApplicantService {
     );
   }
 
- 
+  // Method to get all job applicants
   async getAllJobApplicants(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    // Extract the filter parameters from the request query
-    const filterJobOwner = req.body.jobOwner as string;
-    const filterJobStatus = req.query.jobStatus as string;
-    const filterPaymentStatus = req.query.paymentStatus as string;
-      const loggedInUserId = req.body.loggedInUserId as string;
-      const agreement = req.body.agreement as string;
-
-    // const populate = await Jobs.findAll({
-    //   where: {
-    //     jobOwner: filterJobOwner,
-    //   },
-    // });
-
-    // console.log("======>", populate);
-
     // Execute the get all job applicants use case and handle the result using Either
     const jobs: Either<ErrorClass, JobApplicantEntity[]> =
       await this.getAllJobApplicantsUsecase.execute();
@@ -117,59 +100,27 @@ export class JobApplicantService {
         error: ErrorClass // Handle error case
       ) => res.status(error.status).json({ error: error.message }),
       (jobApplicants: JobApplicantEntity[]): any => {
+
+        const fiterStatus = req.query.jobStatus as string;
+
         // Handle success case
-        let responseData = jobApplicants.map((jobApplicant: any) =>
+        let  responseData = jobApplicants.map((jobApplicant: any) =>
           JobApplicantMapper.toEntity(jobApplicant)
         );
-
-        // Apply the jobOwner filter
-        if (filterJobOwner) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              return jobApplicant.job.toString() === filterJobOwner;
+        
+        if(fiterStatus){
+          console.log("fiterStatus", fiterStatus)
+          let  fiteredJob: number[] =  []
+          responseData = responseData.filter((jobApplicant: JobApplicantEntity) => {
+            if(jobApplicant.jobStatus === fiterStatus) {
+                fiteredJob.push(jobApplicant.job)
             }
-          );
+            
+          });
+          return res.json(fiteredJob)
+        }else {
+          return res.json(responseData)
         }
-
-        // Apply the jobStatus filter
-        if (filterJobStatus) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              return jobApplicant.jobStatus === filterJobStatus;
-            }
-          );
-        }
-
-        // Apply the PaymentStatus filter
-        if (filterPaymentStatus) {
-          responseData = responseData.filter(
-            (jobApplicant: JobApplicantEntity) => {
-              if (filterPaymentStatus === "true") {
-                // Return true if jobStatus is "Completed" (payment is true)
-                return jobApplicant.jobStatus === "Completed";
-              } else {
-                // Return true for other jobStatus values (payment is false)
-                return jobApplicant.jobStatus !== "Completed";
-              }
-            }
-          );
-        }
-
-        // // Apply the filter for applicants where loggedInUserId equals applicantId, agreement is true, and jobStatus is Pending
-
-        // if (agreement === true && filterJobStatus === "Pending") {
-        //   responseData = responseData.filter(
-        //     (jobApplicant: JobApplicantEntity) => {
-        //       return (
-        //         jobApplicant.applicant.toString() === loggedInUserId &&
-        //         jobApplicant.agreement === true &&
-        //         jobApplicant.jobStatus === "Pending"
-        //       );
-        //     }
-        //   );
-        // }
-
-        return res.json(responseData);
       }
     );
   }

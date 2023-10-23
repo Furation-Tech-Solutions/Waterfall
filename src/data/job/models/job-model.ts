@@ -3,7 +3,6 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
-import { JobService } from "@presentation/services/job-services";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
@@ -110,6 +109,5 @@ const Job = sequelize.define("Job", {
 });
 
 Realtors.hasMany(Job);
-
 // Export the "Job" model as the default export of this module
 export default Job;

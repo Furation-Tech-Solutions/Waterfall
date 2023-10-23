@@ -107,7 +107,6 @@ export class ConnectionsServices {
                 if (!result) {
                     return res.json({ message: "Connection not found." });
                 }
-
                 const resData = ConnectionMapper.toEntity(result);
                 return res.json(resData);
             }

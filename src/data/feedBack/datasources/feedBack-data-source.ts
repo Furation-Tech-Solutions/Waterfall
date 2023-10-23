@@ -3,6 +3,8 @@ import { FeedBackModel } from "@domain/feedBack/entities/feedBack";
 import FeedBack from "../model/feedBack-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize";
+import Realtors from "@data/realtors/model/realtor-model";
+import Jobs from "@data/job/models/job-model";
 
 // Define the interface for the FeedBackDataSource
 export interface FeedBackDataSource {
@@ -35,8 +37,25 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
     // Retrieve all feedback entries
     async getAllFeedBacks(): Promise<any[]> {
-        const feedBack = await FeedBack.findAll({});
-        return feedBack.map((feedBack: any) => feedBack.toJSON()); // Convert to plain JavaScript objects before returning
+        const data = await FeedBack.findAll({
+            include: [{
+                model: Realtors,
+                as: 'from', // Alias for the first association
+                foreignKey: 'fromRealtor',
+            },
+            {
+                model: Realtors,
+                as: 'to', // Alias for the second association
+                foreignKey: 'toRealtor',
+            },
+            // {
+            //     model: Jobs,
+            //     as: 'job', // Alias for the third association
+            //     foreignKey: 'jobId',
+            // },
+            ],
+        });
+        return data.map((feedBack: any) => feedBack.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
     // Retrieve a feedback entry by its ID

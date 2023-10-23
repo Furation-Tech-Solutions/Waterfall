@@ -63,7 +63,7 @@ export class FeedBackMapper {
         rating: feedBackData.rating,
         description: feedBackData.description
       };
-      return feedBackEntity;
+      return feedBackData;
     }
   }
 

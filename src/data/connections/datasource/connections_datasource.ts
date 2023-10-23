@@ -42,6 +42,10 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return createdConnections.toJSON();
     }
 
+    async deleteReq(id: string): Promise<void> {
+        // Find the record by ID
+        const connection: any = await Connections.findByPk(id);
+        // Update the record with the provided data
     async deleteReq(fromId: string, toId: string): Promise<void> {
 
         let loginId = parseInt(fromId);
@@ -70,7 +74,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         }
 
     }
-
     async read(fromId: string, toId: string): Promise<any | null> {
         let loginId = parseInt(toId);
         let friendId = parseInt(fromId);
@@ -90,7 +93,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                 as: 'to', // Alias for the second association
                 foreignKey: 'toId',
             },
-            ],
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
@@ -191,4 +193,3 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
 
 }
-

@@ -11,6 +11,7 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import Realtor from "@data/realtors/model/realtor-model";
 
 export class RealtorService {
   private readonly CreateRealtorUsecase: CreateRealtorUsecase;
@@ -54,50 +55,48 @@ export class RealtorService {
   }
 
   // Handler for getting all Realtors
+  // async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
+  //   // Call the GetAllRealtorsUsecase to get all Realtors
+  //   const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute();
+
+  //   realtors.cata(
+  //     (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
+  //     (result: RealtorEntity[]) => {
+  //       // Filter out Realtors with del_status set to "Deleted"
+  //       // const nonDeletedRealtors = result.filter((realtor) => realtor.deleteStatus !== false);
+
+  //       // Convert non-deleted Realtors from an array of RealtorEntity to an array of plain JSON objects using realtorMapper
+  //       const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
+  //       return res.json(responseData);
+  //     }
+  //   );
+  // }
+
+
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const realtorLocations: Either<ErrorClass, RealtorEntity[]> =
-      await this.GetAllRealtorsUsecase.execute();
 
-    realtorLocations.cata(
-      (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
-      (realtors: RealtorEntity[]) => {
-        const filterLocation = req.query.location as string;
-        const filterGender = req.query.gender as string;
+    const query = req.query.q as string;
+    // const id: string = req.params.id;
+    console.log("-=-=-=-=-=-=-=->", query,);
+    
+    // Call the GetAllRealtorsUsecase to get all Realtors
+    const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute(query);
 
-        let filteredRealtors: RealtorEntity[] = realtors;
-
-        if (filterLocation) {
-          // Case-insensitive location filter
-          filteredRealtors = filteredRealtors.filter((realtor: RealtorEntity) => {
-            return realtor.location.toLowerCase() === filterLocation.toLowerCase();
-          });
-        }
-
-        if (filterGender) {
-          // Case-insensitive gender filter
-          filteredRealtors = filteredRealtors.filter((realtor: RealtorEntity) => {
-            return realtor.gender.toLowerCase() === filterGender.toLowerCase();
-          });
-        }
-
-        // If no location or gender filter is provided, return all realtors
-        const realtorsWithFriendCount = filteredRealtors.map((realtor) => {
-          const friendCount = realtor.friends.length;
-          const resData = RealtorMapper.toEntity(realtor);
-          resData.friendCount = friendCount;
-          return resData;
-        });
-
-        return res.json(realtorsWithFriendCount);
+    realtors.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      (result: RealtorEntity[]) => {
+        const responseData = result.map((realtor) => RealtorMapper.toEntity(realtor));
+        res.json(responseData);
       }
     );
-  }
+}
 
   // Handler for getting Realtor by ID
+  
   async getRealtorById(req: Request, res: Response): Promise<void> {
     const realtorId: string = req.params.id;
-    const state = req.query.q as string;
-    const RealtorID = req.body.realtorID as number;
 
     const realtor: Either<ErrorClass, RealtorEntity> =
       await this.GetRealtorByIdUsecase.execute(realtorId);
@@ -109,22 +108,11 @@ export class RealtorService {
         if (!result) {
           return res.json({ message: "Realtor Name not found." });
         }
-
-        // Count the number of friends
-        const friendCount = result.friends.length;
-
         const resData = RealtorMapper.toEntity(result);
-        // Add the friend count to the response data
-        resData.friendCount = friendCount;
-
         return res.json(resData);
       }
     );
   }
-
-  
-
-
 
   // Handler for updating Realtor by ID
   async updateRealtor(req: Request, res: Response): Promise<void> {
