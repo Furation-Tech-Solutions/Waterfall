@@ -12,9 +12,7 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
-import Realtors from "@data/realtors/model/realtor-model";
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
-import Jobs from "@data/job/models/job-model";
+
 
 // Create a class called JobApplicantService
 export class JobApplicantService {
@@ -43,6 +41,11 @@ export class JobApplicantService {
   // Method to create a new job applicant
   async createJobApplicant(req: Request, res: Response): Promise<void> {
     // Extract job applicant data from the request body and convert it to a model
+    // const id: string = req.params.id;
+    // let loginId: number = req.body.loginId;
+    // loginId = 1;
+    // req.body.fromId = loginId;
+    // req.body.toId = id;
     const jobApplicantData: JobApplicantModel = JobApplicantMapper.toModel(
       req.body
     );
@@ -92,6 +95,7 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    const query = req.query.q as string;
     // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
     const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
       await this.getAllJobApplicantsUsecase.execute();

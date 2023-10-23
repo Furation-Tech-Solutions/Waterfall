@@ -9,6 +9,9 @@ import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
 
+const currentDate = new Date();
+const nextDay = new Date();
+nextDay.setDate(nextDay.getDate() + 1);
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
@@ -58,81 +61,11 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   // Method to get all job applicants
   async getAll(): Promise<JobApplicantEntity[]> {
     // Find all job applicant records in the database
-    const jobApplicant = await JobApplicant.findAll({
-      include: [
-        {
-          model: Job,
-          as: "jobdata",
-          foreignKey: "job",
-        },
-        {
-          model: Realtors,
-          as: "applicantData",
-          foreignKey: "applicant",
-        },
-      ],
-    });
+    const jobApplicant = await JobApplicant.findAll({});
 
     // Convert the records to an array of plain JavaScript objects before returning
     return jobApplicant.map((jobA: any) => jobA.toJSON());
   }
-
-  // // Method to get all job applicants
-  // async getAll(applicantId:any): Promise<JobApplicantEntity[]> {
-  //   const conditions = {
-  //     applicant: applicantId,
-  //     agreement: true,
-  //     jobStatus: "Pending",
-  //   };
-  //   const currentDate = new Date();
-
-  //   // Find all job applicant records in the database
-  //   const jobApplicant = await JobApplicant.findAll({
-  //     attributes: ["*"],
-  //     where: { date: { [Op.gte]: currentDate } },
-  //     include: [
-  //       {
-  //         model: JobApplicant,
-  //         where: conditions,
-  //         required: true, // Inner join to enforce the conditions
-  //       },
-  //     ],
-  //   });
-
-  //   // Check if there are upcoming tasks
-  //   if (jobApplicant.length > 0) {
-  //     // Convert the records to an array of plain JavaScript objects before returning
-  //     return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
-  //   } else {
-  //     // Return a message or value to indicate that there are no upcoming tasks
-  //     return [];
-  //   }
-  // }
-
-  // // Method to get upcoming tasks for a particular realtor where agreement is true
-  // async getUpcomingTasksForRealtor(
-  //   applicantId: number
-  // ): Promise<JobApplicantEntity[]> {
-  //   // Find all job applicant records for the specified realtor where agreement is true
-  //   const jobApplicants = await JobApplicant.findAll({
-  //     where: {
-  //       applicant: applicantId, // This filters by the specified realtor's ID
-  //       agreement: true,
-  //       jobStatus: {
-  //         [Op.in]: [jobStatusEnum.PENDING, applicationStatusEnum.ACCEPT],
-  //       },
-  //     },
-  //   });
-
-  //   // Check if there are upcoming tasks
-  //   if (jobApplicants.length > 0) {
-  //     // Convert the records to an array of plain JavaScript objects before returning
-  //     return jobApplicants.map((jobApplicant: any) => jobApplicant.toJSON());
-  //   } else {
-  //     // Return a message or value to indicate that there are no upcoming tasks
-  //     return [];
-  //   }
-  // }
 
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
