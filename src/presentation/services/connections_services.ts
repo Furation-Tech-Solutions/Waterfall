@@ -66,7 +66,9 @@ export class ConnectionsServices {
     // Handler for deleting connections by ID
     async deleteRequest(req: Request, res: Response): Promise<void> {
         const toId: string = req.params.id;
-        const fromId: string = req.body.loginId;
+        let loginId: string = req.body.loginId;
+        loginId = "4";
+        const fromId: string = loginId;
 
         // Execute the deleteConnections use case to delete a connection by ID
         const deletedConnections: Either<ErrorClass, void> =
@@ -87,7 +89,7 @@ export class ConnectionsServices {
     async getById(req: Request, res: Response): Promise<void> {
 
         let fromId: string = req.body.loginId;
-        fromId = "1";
+        fromId = "6";
         const toId: string = req.params.id;
         // let loginId: number = req.body.loginId;
 
@@ -119,15 +121,12 @@ export class ConnectionsServices {
         next: NextFunction
     ): Promise<void> {
         const query = req.query.q as string;
-        const id: string = req.params.id;
-        // let loginId: number = req.body.loginId;
-        // loginId = 3;
-        // req.body.fromId = loginId;
-        // req.body.toId = id;
+        let loginId: string = req.body.loginId;
+        loginId = "6";
 
         // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
-            await this.getAllUsecase.execute(id, query);
+            await this.getAllUsecase.execute(loginId, query);
 
         // Handle the result of the use case execution
         clientConnections.cata(
@@ -145,13 +144,14 @@ export class ConnectionsServices {
 
     // Handler for updating connections by ID
     async updateRequests(req: Request, res: Response): Promise<void> {
-        const fromId: string = req.body.loginId;
-        const toId: string = req.params.id;
+        let toId: string = req.body.loginId;
+        toId = "4";
+        const fromId: string = req.params.id;
         const Data: ConnectionsModel = req.body;
-        const query = req.query.q as string;
+
         // Execute the getConnectionsById use case to retrieve existing connection data
         const existingConnections: Either<ErrorClass, ConnectionsEntity> =
-            await this.getByIdUsecase.execute(fromId, query);
+            await this.getByIdUsecase.execute(fromId, toId);
 
         // Handle the result of retrieving existing data
         existingConnections.cata(
