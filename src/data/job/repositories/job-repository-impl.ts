@@ -21,12 +21,9 @@ export class JobRepositoryImpl implements JobRepository {
     try {
       // Attempt to create a job using the data source
       const i = await this.dataSource.create(job);
-      
       // Return a Right monad with the created job on success
       return Right<ErrorClass, JobEntity>(i);
     } catch (error: any) {
-      console.log(error);
-      
       // Check if the error is an instance of ApiError and has a status of 401 (Unauthorized)
       if (error instanceof ApiError && error.status === 401) {
         // Return a Left monad with an unauthorized error

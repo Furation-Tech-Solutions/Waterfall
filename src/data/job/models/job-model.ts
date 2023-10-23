@@ -4,7 +4,6 @@ import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instan
 
 import Realtors from "@data/realtors/model/realtor-model";
 
-
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
   FROM1TO5: "1To5",

@@ -6,7 +6,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
-  // Define a "realtor" field with INTEGER data type, which cannot be null
+  // Define a "realtor" field with UUID data type, which cannot be null
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,

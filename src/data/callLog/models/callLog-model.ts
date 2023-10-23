@@ -17,7 +17,7 @@ export const OutcomeEnum = {
 
 // Define a Sequelize model called "CallLog"
 const CallLog = sequelize.define("CallLog", {
-  // Define the "jobApplicant" field with a INTEGER data type, which cannot be null
+  // Define the "jobApplicant" field with a UUID data type, which cannot be null
   jobApplicant: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -4,7 +4,7 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, { applicationStatusEnum, jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 

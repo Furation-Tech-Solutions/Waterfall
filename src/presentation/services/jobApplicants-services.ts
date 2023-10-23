@@ -13,7 +13,6 @@ import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
 
-
 // Create a class called JobApplicantService
 export class JobApplicantService {
   // Declare private properties to store use cases
@@ -30,6 +29,7 @@ export class JobApplicantService {
     getAllJobApplicantsUsecase: GetAllJobApplicantsUsecase,
     updateJobApplicantUsecase: UpdateJobApplicantUsecase,
     deleteJobApplicantUsecase: DeleteJobApplicantUsecase
+
   ) {
     this.createJobApplicantUsecase = createJobApplicantUsecase;
     this.getJobApplicantByIdUsecase = getJobApplicantByIdUsecase;
