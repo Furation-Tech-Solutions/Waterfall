@@ -6,16 +6,14 @@ export interface ConnectionsRepository {
     createRequest(
         connections: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    deleteRequest(id: string): Promise<Either<ErrorClass, void>>;
-    getById(id: string): Promise<Either<ErrorClass, ConnectionsEntity>>;
+    deleteRequest(fromId: string, toId: string): Promise<Either<ErrorClass, void>>;
+    getById(fromId: string, toId: string): Promise<Either<ErrorClass, ConnectionsEntity>>;
     updateRequest(
-        id: string,
+        fromId: string,
+        toId: string,
         data: ConnectionsModel
     ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-    getAll(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-    // Allrequests(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-    // AllConnections(): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
-
+    getAll(id: string, query: string): Promise<Either<ErrorClass, ConnectionsEntity[]>>;
 }
 
 

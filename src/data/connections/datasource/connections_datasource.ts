@@ -1,4 +1,4 @@
-import { Sequelize, where } from "sequelize"
+import { Op, Sequelize, where } from "sequelize"
 import { ConnectionsModel } from "@domain/connections/entities/connections_entities"; // Import the connectionsModel
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
@@ -7,10 +7,10 @@ import Realtors from "@data/realtors/model/realtor-model";
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
     createReq(connections: ConnectionsModel): Promise<any>;
-    updateReq(id: string, data: ConnectionsModel): Promise<any>;
-    deleteReq(id: string): Promise<void>;
-    read(id: string): Promise<any | null>;
-    getAll(): Promise<any[]>;
+    updateReq(fromId: string, toId: string, data: ConnectionsModel): Promise<any>;
+    deleteReq(fromId: string, toId: string): Promise<void>;
+    read(fromId: string, toId: string): Promise<any | null>;
+    getAll(fromId: string, toId: string): Promise<any[]>;
 
 }
 
@@ -20,21 +20,22 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async createReq(newConnection: any): Promise<any> {
 
-        const existingConnection1 = await Connections.findOne({
+        const existingConnection = await Connections.findOne({
             where: {
-                fromId: newConnection.fromId,
-                toId: newConnection.toId
+                [Op.or]: [
+                    {
+                        fromId: newConnection.fromId,
+                        toId: newConnection.toId
+                    },
+                    {
+                        fromId: newConnection.toId,
+                        toId: newConnection.fromId
+                    }
+                ]
             }
         });
 
-        const existingConnection2 = await Connections.findOne({
-            where: {
-                fromId: newConnection.toId,
-                toId: newConnection.fromId
-            }
-        });
-
-        if (existingConnection1 || existingConnection2) {
+        if (existingConnection) {
             throw ApiError.emailExist();
         }
         const createdConnections = await Connections.create(newConnection);
@@ -45,83 +46,147 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         // Find the record by ID
         const connection: any = await Connections.findByPk(id);
         // Update the record with the provided data
+    async deleteReq(fromId: string, toId: string): Promise<void> {
 
-        const from: any = await Realtors.findByPk(connection.fromId);
-        const to: any = await Realtors.findByPk(connection.toId);
+        let loginId = parseInt(fromId);
+        let friendId = parseInt(toId);
 
-        // from.friends.push(updatedData.toId);
-        for (let i = 0; i < from.friends.length; i++) {
-            if (from.friends[i] == connection.toId) {
-                from.friends.splice(i, 1);
+        // ============================================
+        // you need to pass two id, user and friend id
+
+        const deletedConnection = await Connections.destroy({
+            where: {
+                [Op.or]: [
+                    {
+                        fromId: loginId,
+                        toId: friendId
+                    },
+                    {
+                        fromId: friendId,
+                        toId: loginId
+                    }
+                ]
             }
+        });
+
+        if (deletedConnection == 0) {
+            // error
         }
 
-        await Realtors.update(from.dataValues, {
-            where: {
-                id: from.id,
-            }
-        });
-
-        for (let i = 0; i < to.friends.length; i++) {
-            if (to.friends[i] == connection.fromId) {
-                to.friends.splice(i, 1);
-            }
-        }
-
-        await Realtors.update(to.dataValues, {
-            where: {
-                id: to.id,
-            }
-        });
-
-
-
-        await Connections.destroy({
-            where: {
-                id: id
-            },
-        });
     }
+    async read(fromId: string, toId: string): Promise<any | null> {
+        let loginId = parseInt(toId);
+        let friendId = parseInt(fromId);
 
-    async read(id: string): Promise<any | null> {
         const connections = await Connections.findOne({
             where: {
-                id: id
+                fromId: loginId,
+                toId: friendId
+            },
+            include: [{
+                model: Realtors,
+                as: 'from', // Alias for the first association
+                foreignKey: 'fromId',
+            },
+            {
+                model: Realtors,
+                as: 'to', // Alias for the second association
+                foreignKey: 'toId',
             },
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
+
+    }
+  
+    async getAll(id: string, query: string): Promise<any[]> {
+        let loginId = parseInt(id);
+        let q = query;
+        console.log(query, loginId);
+        if (q === "connected") {
+            const data = await Connections.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            connected: true,
+                            toId: loginId,
+                        },
+                        {
+                            connected: true,
+                            fromId: loginId,
+                        }
+                    ]
+                },
+                include: [{
+                    model: Realtors,
+                    as: 'from', // Alias for the first association
+                    foreignKey: 'fromId',
+                },
+                {
+                    model: Realtors,
+                    as: 'to', // Alias for the second association
+                    foreignKey: 'toId',
+                },
+                ],
+            });
+            return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
+
+        }
+        else {
+            const data = await Connections.findAll({
+                where: {
+                    connected: false,
+                    toId: loginId,
+                },
+                include: [{
+                    model: Realtors,
+                    as: 'from', // Alias for the first association
+                    foreignKey: 'fromId',
+                },
+                {
+                    model: Realtors,
+                    as: 'to', // Alias for the second association
+                    foreignKey: 'toId',
+                },
+                ],
+            });
+            return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
+        }
     }
 
-    async getAll(): Promise<any[]> {
-        const connections = await Connections.findAll();
-        return connections.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning
-    }
-
-    async updateReq(id: string, updatedData: ConnectionsModel): Promise<any> {
+    async updateReq(fromId: string, toId: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID
-        const connection: any = await Connections.findByPk(id);
+        console.log("============>", fromId, toId);
+        let fromID = parseInt(fromId);
+        let toID = parseInt(toId);
+        const connection: any = await Connections.findOne({
+            // where: {
+            //     toId: toID,
+            //     fromId: fromID,
+            // }
+            where: {
+                [Op.or]: [
+                    {
+                        toId: fromID,
+                        fromId: toID,
+                    },
+                    {
+                        toId: toID,
+                        fromId: fromID,
+                    }
+                ]
+            },
+        });
         // Update the record with the provided data
 
         await connection.update(updatedData);
         await connection.save();
 
-        const from: any = await Realtors.findByPk(updatedData.fromId);
-        from.friends.push(updatedData.toId);
-        await Realtors.update(from.dataValues, {
+        const updatedConnections = await Connections.findOne({
             where: {
-                id: from.id,
+                toId: toID,
+                fromId: fromID,
             }
         });
-
-        const to: any = await Realtors.findByPk(updatedData.toId);
-        to.friends.push(updatedData.fromId);
-        await Realtors.update(to.dataValues, {
-            where: {
-                id: to.id,
-            }
-        });
-
-        const updatedConnections = await Connections.findByPk(id);
 
         return updatedConnections ? updatedConnections.toJSON() : null; // Convert to a plain JavaScript object before returning
     }

@@ -5,7 +5,8 @@ import { Either, Right, Left } from "monet";
 
 export interface UpdateRequestUsecase {
   execute: (
-    id: string,
+    fromId: string,
+    toId: string,
     Data: ConnectionsEntity
   ) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
@@ -18,9 +19,10 @@ export class UpdateRequest implements UpdateRequestUsecase {
   }
 
   async execute(
-    id: string,
+    fromId: string,
+    toId: string,
     Data: ConnectionsEntity
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
-    return await this.connectionsRepository.updateRequest(id, Data);
+    return await this.connectionsRepository.updateRequest(fromId, toId, Data);
   }
 }

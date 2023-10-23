@@ -44,7 +44,7 @@ export const connectionsRouter = Router();
 
 // Route handling for creating a new connections
 connectionsRouter.post(
-    "/",
+    "/:id",
     validateConnectionsInputMiddleware(false),
     connectionsService.createRequest.bind(connectionsService)
 );

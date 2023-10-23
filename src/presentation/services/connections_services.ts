@@ -1,5 +1,5 @@
 // Import necessary dependencies and types
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, query } from "express";
 import { ErrorClass } from "@presentation/error-handling/api-error";
 import {
     ConnectionsEntity,
@@ -40,6 +40,11 @@ export class ConnectionsServices {
     // Handler for creating new connections
     async createRequest(req: Request, res: Response): Promise<void> {
         // Extract data from the request body and map it to the ConnectionsModel
+        const id: string = req.params.id;
+        let loginId: number = req.body.loginId;
+        loginId = 1;
+        req.body.fromId = loginId;
+        req.body.toId = id;
         const Data: ConnectionsModel = ConnectionMapper.toModel(req.body);
 
         // Execute the createConnections use case to create a new connection
@@ -60,11 +65,14 @@ export class ConnectionsServices {
 
     // Handler for deleting connections by ID
     async deleteRequest(req: Request, res: Response): Promise<void> {
-        const id: string = req.params.id;
+        const toId: string = req.params.id;
+        let loginId: string = req.body.loginId;
+        loginId = "4";
+        const fromId: string = loginId;
 
         // Execute the deleteConnections use case to delete a connection by ID
         const deletedConnections: Either<ErrorClass, void> =
-            await this.deleteRequestUsecase.execute(id);
+            await this.deleteRequestUsecase.execute(fromId, toId);
 
         // Handle the result of the use case execution
         deletedConnections.cata(
@@ -79,11 +87,16 @@ export class ConnectionsServices {
 
     // Handler for getting connections by ID
     async getById(req: Request, res: Response): Promise<void> {
-        const id: string = req.params.id;
+
+        let fromId: string = req.body.loginId;
+        fromId = "6";
+        const toId: string = req.params.id;
+        // let loginId: number = req.body.loginId;
+
 
         // Execute the getConnectionsById use case to retrieve a connection by ID
         const connections: Either<ErrorClass, ConnectionsEntity> =
-            await this.getByIdUsecase.execute(id);
+            await this.getByIdUsecase.execute(fromId, toId);
 
         // Handle the result of the use case execution
         connections.cata(
@@ -94,8 +107,6 @@ export class ConnectionsServices {
                 if (!result) {
                     return res.json({ message: "Connection not found." });
                 }
-
-
                 const resData = ConnectionMapper.toEntity(result);
                 return res.json(resData);
             }
@@ -108,9 +119,13 @@ export class ConnectionsServices {
         res: Response,
         next: NextFunction
     ): Promise<void> {
+        const query = req.query.q as string;
+        let loginId: string = req.body.loginId;
+        loginId = "6";
+
         // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
-            await this.getAllUsecase.execute();
+            await this.getAllUsecase.execute(loginId, query);
 
         // Handle the result of the use case execution
         clientConnections.cata(
@@ -128,12 +143,14 @@ export class ConnectionsServices {
 
     // Handler for updating connections by ID
     async updateRequests(req: Request, res: Response): Promise<void> {
-        const id: string = req.params.id;
+        let toId: string = req.body.loginId;
+        toId = "4";
+        const fromId: string = req.params.id;
         const Data: ConnectionsModel = req.body;
 
         // Execute the getConnectionsById use case to retrieve existing connection data
         const existingConnections: Either<ErrorClass, ConnectionsEntity> =
-            await this.getByIdUsecase.execute(id);
+            await this.getByIdUsecase.execute(fromId, toId);
 
         // Handle the result of retrieving existing data
         existingConnections.cata(
@@ -151,7 +168,8 @@ export class ConnectionsServices {
                 // Execute the updateConnections use case to update the connection
                 const updatedConnections: Either<ErrorClass, ConnectionsEntity> =
                     await this.updateRequestUsecase.execute(
-                        id,
+                        fromId,
+                        toId,
                         updatedConnectionsEntity
                     );
 
