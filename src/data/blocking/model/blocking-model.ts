@@ -10,8 +10,16 @@ const Blocking = sequelize.define('Blocking', {
   toRealtor: { type: DataTypes.INTEGER, allowNull: false, references: { model: Realtors, key: 'id' } }
 });
 
-Realtors.hasMany(Blocking);
+// Realtors.hasMany(Blocking);
+Blocking.belongsTo(Realtors, {
+  foreignKey: "fromRealtor",
+  as: "from" // Alias for the first association
+});
 
+Blocking.belongsTo(Realtors, {
+  foreignKey: "toRealtor",
+  as: "to" // Alias for the second association
+});
 
 // Export the 'Blocking' model for use in other parts of the application
 export default Blocking;

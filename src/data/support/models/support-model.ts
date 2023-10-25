@@ -6,7 +6,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
-  // Define a "realtor" field with INTEGER data type, which cannot be null
+  // Define a "realtor" field with UUID data type, which cannot be null
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -14,9 +14,8 @@ const Support = sequelize.define("Support", {
   },
   // Define a "to" field with STRING data type, which cannot be null
   to: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
-    references: { model: Realtors, key: 'id' }
   },
   // Define a "description" field with STRING data type, which cannot be null
   // and includes validation for length between 1 and 1000 characters
@@ -43,5 +42,9 @@ const Support = sequelize.define("Support", {
   },
 });
 Realtors.hasMany(Support);
+Support.belongsTo(Realtors, {
+  foreignKey: "realtor",
+  as: "realtorData",
+});
 // Export the "Support" model
 export default Support;

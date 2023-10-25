@@ -1,11 +1,17 @@
 // Import necessary modules and dependencies
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import Job from "@data/job/models/job-model";
+import Realtors from "@data/realtors/model/realtor-model";
 
+
+const currentDate = new Date();
+const nextDay = new Date();
+nextDay.setDate(nextDay.getDate() + 1);
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {

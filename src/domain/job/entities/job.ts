@@ -25,7 +25,7 @@ export class JobModel {
 // Job Entity provided by Job Repository is converted to Express API Response
 export class JobEntity {
   constructor(
-    public id: number| undefined = undefined, // Job ID (optional)
+    public id: number | undefined = undefined, // Job ID (optional)
     public jobOwner: number, // Owner of the job
     public location: string, // Location of the job
     public address: string, // Address of the job
@@ -43,7 +43,7 @@ export class JobEntity {
     public applyBy: Date, // Application deadline
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string, // Reason for job deletion
-    public coordinates: { latitude: string; longitude: string } | null = null
+    public coordinates: { latitude: string; longitude: string } | null = null,
   ) {}
 }
 
@@ -140,7 +140,7 @@ export class JobMapper {
         applyBy: jobData.applyBy,
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
-        coordinates: jobData.coordinates || null
+        coordinates: jobData.coordinates || null,
       };
       return jobData;
     }
@@ -169,7 +169,7 @@ export class JobMapper {
       applyBy: job.applyBy,
       createdAt: job.createdAt,
       deleteReason: job.deleteReason,
-      coordinates: job.coordinates
+      coordinates: job.coordinates,
     };
   }
 }

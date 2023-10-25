@@ -9,6 +9,7 @@ import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
 
+
 // Create a class for the JobApplicantRepositoryImpl implementing the JobApplicantRepository interface
 export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   private readonly dataSource: JobApplicantDataSource;
@@ -62,7 +63,8 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   }
 
   // Method to retrieve all job applicants
-  async getJobApplicants(): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
+  async getJobApplicants(
+  ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     try {
       // Attempt to get all job applicants using the data source
       const response = await this.dataSource.getAll();

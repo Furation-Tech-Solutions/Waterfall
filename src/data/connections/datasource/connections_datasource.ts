@@ -41,7 +41,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         const createdConnections = await Connections.create(newConnection);
         return createdConnections.toJSON();
     }
-
     async deleteReq(fromId: string, toId: string): Promise<void> {
 
         let loginId = parseInt(fromId);
@@ -70,7 +69,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         }
 
     }
-
     async read(fromId: string, toId: string): Promise<any | null> {
         let loginId = parseInt(toId);
         let friendId = parseInt(fromId);
@@ -90,12 +88,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                 as: 'to', // Alias for the second association
                 foreignKey: 'toId',
             },
-            ],
+        ]
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
     }
-
+  
     async getAll(id: string, query: string): Promise<any[]> {
         let loginId = parseInt(id);
         let q = query;
@@ -149,8 +147,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
         }
-
-
     }
 
     async updateReq(fromId: string, toId: string, updatedData: ConnectionsModel): Promise<any> {
@@ -193,4 +189,3 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
 
 }
-
