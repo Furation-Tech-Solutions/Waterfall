@@ -19,7 +19,7 @@ const FeedBacks = sequelize.define('FeedBacks', {
 });
 
 // Realtors.hasMany(FeedBacks);
-// Jobs.hasMany(FeedBacks);
+Jobs.hasMany(FeedBacks);
 FeedBacks.belongsTo(Realtors, {
   foreignKey: "fromRealtor",
   as: "from" // Alias for the first association
@@ -30,9 +30,9 @@ FeedBacks.belongsTo(Realtors, {
   as: "to" // Alias for the second association
 });
 
-FeedBacks.belongsTo(Jobs, {
-  foreignKey: "jobId",
-  as: "job" // Alias for the second association
-});
+// FeedBacks.belongsTo(Jobs, {
+//   foreignKey: "jobId",
+//   as: "job" // Alias for the second association
+// });
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;
