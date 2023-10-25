@@ -41,11 +41,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         const createdConnections = await Connections.create(newConnection);
         return createdConnections.toJSON();
     }
-
-    // async deleteReq(id: string): Promise<void> {
-    //     // Find the record by ID
-    //     const connection: any = await Connections.findByPk(id);
-    //     // Update the record with the provided data
     async deleteReq(fromId: string, toId: string): Promise<void> {
 
         let loginId = parseInt(fromId);

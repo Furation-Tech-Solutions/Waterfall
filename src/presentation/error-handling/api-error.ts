@@ -100,7 +100,7 @@ class ApiError extends ErrorClass {
     );
   }
 
-  static mongoError(): ApiError {
+  static SQLError(): ApiError {
     return new ApiError(
       HttpStatus.INTERNAL_SERVER_ERROR,
       ErrorMessage.UNDEFINE_MESSAGE,

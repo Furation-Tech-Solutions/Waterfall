@@ -25,14 +25,14 @@ const JobApplicant = sequelize.define("JobApplicant", {
   job: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: Job, key: 'id' }
+    references: { model: Job, key: "id" },
   },
   applicant: {
     type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
-    references: { model: Realtors, key: 'id' }
+    references: { model: Realtors, key: "id" },
   },
-  status: {
+  applicantStatus: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: "Pending",
@@ -57,6 +57,11 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  paymentStatus: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  }
 });
 
 Realtors.hasMany(JobApplicant);
