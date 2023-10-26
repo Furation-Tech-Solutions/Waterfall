@@ -3,7 +3,7 @@ import Joi, { ValidationErrorItem } from "joi"; // Import Joi for input validati
 import ApiError from "@presentation/error-handling/api-error"; // Import custom error class ApiError
 import { Request, Response, NextFunction } from "express"; // Import Express types
 import {
-  statusEnum,
+  applicationStatusEnum,
   jobStatusEnum,
 } from "@data/jobApplicants/models/jobApplicants-models"; // Import enums for status and jobStatus
 
@@ -11,7 +11,7 @@ import {
 interface JobApplicantInput {
   job: number;
   applicant: number;
-  status: string;
+  applicantStatus: string;
   agreement: boolean;
   jobStatus: string;
   appliedTimestamp: Date;
@@ -25,12 +25,12 @@ const jobApplicantValidator = function (
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
     job: Joi.number().required(),
     applicant: Joi.number().required(),
-    status: Joi.string()
-      .valid(...Object.values(statusEnum))
+    applicantStatus: Joi.string()
+      .valid(...Object.values(applicationStatusEnum))
       .required()
       .messages({
-        "any.only": "Invalid status",
-        "any.required": "Status is required",
+        "any.only": "Invalid applicantStatus",
+        "any.required": "applicantStatus is required",
       }),
     agreement: Joi.boolean().required().messages({
       "boolean.base": "Agreement must be a boolean",

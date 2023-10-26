@@ -63,11 +63,11 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   }
 
   // Method to retrieve all job applicants
-  async getJobApplicants(
+  async getJobApplicants(query: object
   ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     try {
       // Attempt to get all job applicants using the data source
-      const response = await this.dataSource.getAll();
+      const response = await this.dataSource.getAll(query);
 
       // Return a Right Either indicating success with an array of job applicants
       return Right<ErrorClass, JobApplicantEntity[]>(response);

@@ -95,10 +95,10 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const query = req.query.q as string;
+    const query = req.query;
     // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
     const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
-      await this.getAllJobApplicantsUsecase.execute();
+      await this.getAllJobApplicantsUsecase.execute(query);
 
     // Handle the result using the Either monad's cata method
     jobApplicants.cata(

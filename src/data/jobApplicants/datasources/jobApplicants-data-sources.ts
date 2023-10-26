@@ -4,7 +4,7 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -25,15 +25,20 @@ export interface JobApplicantDataSource {
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(): Promise<JobApplicantEntity[]>;
+  getAll(query: object): Promise<any[]>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
 }
 
+interface JobApplicantQuery {
+  q?: string;
+  // Add other properties as needed
+}
+
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
@@ -59,12 +64,59 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   }
 
   // Method to get all job applicants
-  async getAll(): Promise<JobApplicantEntity[]> {
-    // Find all job applicant records in the database
-    const jobApplicant = await JobApplicant.findAll({});
+  // async getAll(): Promise<JobApplicantEntity[]> {
+  //   // Find all job applicant records in the database
+  //   const jobApplicant = await JobApplicant.findAll({});
 
-    // Convert the records to an array of plain JavaScript objects before returning
-    return jobApplicant.map((jobA: any) => jobA.toJSON());
+  //   // Convert the records to an array of plain JavaScript objects before returning
+  //   return jobApplicant.map((jobA: any) => jobA.toJSON());
+  // }
+
+  // async getAll(): Promise<JobApplicantEntity[]> {
+  //   // Find all job applicant records in the database
+  //   const jobApplicant = await JobApplicant.findAll({});
+
+  //   // Convert the records to an array of plain JavaScript objects before returning
+  //   return jobApplicant.map((jobA: any) => jobA.toJSON());
+  // }
+
+  async getAll(query: JobApplicantQuery): Promise<any[]> {
+    console.log("--",query);
+
+    // Find all job applicant records in the database
+    if (query.q == "active") { // Check if the query parameter is "active"
+      const data = await JobApplicant.findAll({
+        where: {
+          applicantStatus: "Pending", // Filter by applicantStatus
+          agreement: true, // Filter by agreement
+        }
+      });
+      console.log("---------->",data);
+      return data.map((jobA: any) => jobA.toJSON());
+    }
+    else if (query.q == "PaymentPending") { // Check if the query parameter is "active"
+      const data = await JobApplicant.findAll({
+        where: {
+          jobStatus: "JobCompleted", // Filter by applicantStatus
+          paymentStatus: false, // Filter by agreement
+        }
+      });
+      console.log("---------->",data);
+      return data.map((jobA: any) => jobA.toJSON());
+    }
+    else if (query.q == "Completed") { // Check if the query parameter is "active"
+      const data = await JobApplicant.findAll({
+        where: { // Filter by applicantStatus
+          paymentStatus: true, // Filter by agreement
+        }
+      });
+      console.log("---------->",data);
+      return data.map((jobA: any) => jobA.toJSON());
+    } else {
+      // Handle other cases when 'location' is not provided (e.g., return all records)
+      const data = await JobApplicant.findAll({});
+      return data.map((jobA: any) => jobA.toJSON());
+    }
   }
 
   // Method to update an existing job applicant by ID

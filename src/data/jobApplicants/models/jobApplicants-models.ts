@@ -6,16 +6,16 @@ import Realtors from "@data/realtors/model/realtor-model";
 import Jobs from "@data/job/models/job-model";
 import Job from "@data/job/models/job-model";
 
-// Define statusEnum to represent possible status values
-export const statusEnum = {
+// Define statusEnum to represent possible applicantStatus values
+export const applicationStatusEnum = {
   ACCEPT: "Accept",
   PENDING: "Pending",
   DECLINE: "Decline",
 };
 
-// Define jobStatusEnum to represent possible job status values
+// Define jobStatusEnum to represent possible job applicantStatus values
 export const jobStatusEnum = {
-  COMPLETED: "Completed",
+  JOBCOMPLETED: "JobCompleted",
   PENDING: "Pending",
   DECLINE: "Decline",
 };
@@ -38,8 +38,8 @@ const JobApplicant = sequelize.define("JobApplicant", {
     defaultValue: "Pending",
     validate: {
       isIn: {
-        args: [Object.values(statusEnum)],
-        msg: "Invalid status",
+        args: [Object.values(applicationStatusEnum)],
+        msg: "Invalid applicantStatus",
       },
     },
   },
