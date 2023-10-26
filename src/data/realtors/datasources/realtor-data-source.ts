@@ -47,7 +47,21 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     async getAllRealtors(query: RealtorQuery, page: number, limit: number): Promise<any[]> {
         console.log("=-=-=-=->",query);
         
-        if (query.location != undefined) {
+        
+        if (query.searchList != undefined && query.location != undefined) {
+            const data = await Realtor.findAll({
+                where: {
+                    firstName: {
+                        [Op.iLike]: `%${query.searchList}%`
+                    },
+                    location: {
+                        [Op.iLike]: `%${query.location}%`
+                    }
+                },
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        }
+        else if (query.location != undefined) {
             const data = await Realtor.findAll({
                 where: {
                     [Op.or]: [
@@ -76,16 +90,13 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
-        else if (query.searchList != undefined && query.location != undefined) {
+        else if (query.searchList != undefined) {
             const data = await Realtor.findAll({
                 where: {
                     [Op.or]: [
                         {
                             firstName: {
                                 [Op.iLike]: `%${query.searchList}%`,
-                            },
-                            location: {
-                                [Op.iLike]: `%${query.location}%`
                             }
                         },
                         {
@@ -104,7 +115,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                             },
                         }
                     ],
-                }
+                },
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
@@ -113,12 +124,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             const offset = (page - 1) * limit;
             const data = await Realtor.findAll({
                 offset: offset, // Offset based on the current page
-                limit: parseInt(query.limit.toString())
-            });
-            return data.map((realtor: any) => realtor.toJSON());
-        }
-        else if (query.limit != undefined) {
-            const data = await Realtor.findAll({
                 limit: parseInt(query.limit.toString())
             });
             return data.map((realtor: any) => realtor.toJSON());
