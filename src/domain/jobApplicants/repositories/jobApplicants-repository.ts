@@ -20,7 +20,10 @@ export interface JobApplicantRepository {
   ): Promise<Either<ErrorClass, JobApplicantEntity>>;
 
   // Method to get a list of job applicants
-  getJobApplicants(): Promise<Either<ErrorClass, JobApplicantEntity[]>>;
+  getJobApplicants(
+    id: string,
+    q: string
+  ): Promise<Either<ErrorClass, JobApplicantEntity[]>>;
 
   // Method to get a job applicant by ID
   getJobApplicantById(

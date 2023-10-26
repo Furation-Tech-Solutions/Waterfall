@@ -22,7 +22,6 @@ try {
       console.log(`${Message.SERVER_RUNNING} ${env.port}`);
     });
   });
-
 } catch (error) {
   console.log("error is this-", error, "error");
   if (error instanceof ApiError) {

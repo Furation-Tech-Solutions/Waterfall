@@ -7,7 +7,10 @@ import { Either } from "monet"; // Importing the Either class from the 'monet' l
 // Define an interface for the 'GetAllJobApplicants' use case
 export interface GetAllJobApplicantsUsecase {
   // Define a method 'execute' that returns a Promise of Either<ErrorClass, JobApplicantEntity[]>
-  execute: () => Promise<Either<ErrorClass, JobApplicantEntity[]>>;
+  execute: (
+    loginId: string,
+    q: string
+  ) => Promise<Either<ErrorClass, JobApplicantEntity[]>>;
 }
 
 // Define a class 'GetAllJobApplicants' that implements the 'GetAllJobApplicantsUsecase' interface
@@ -20,8 +23,14 @@ export class GetAllJobApplicants implements GetAllJobApplicantsUsecase {
   }
 
   // Implementation of the 'execute' method from the interface
-  async execute(): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
+  async execute(
+    loginId: string,
+    q: string
+  ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     // Call the 'getJobApplicants' method of the 'jobApplicantRepository' to retrieve job applicants
-    return await this.jobApplicantRepository.getJobApplicants();
+    return await this.jobApplicantRepository.getJobApplicants(
+      loginId,
+      q
+    );
   }
 }

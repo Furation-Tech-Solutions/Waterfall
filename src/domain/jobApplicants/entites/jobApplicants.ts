@@ -3,23 +3,25 @@ export class JobApplicantModel {
   constructor(
     public job: number = 0,
     public applicant: number = 0,
-    public status: string = "Pending",
+    public applicantStatus: string = "Pending",
     public agreement: boolean = false,
     public jobStatus: string = "Pending",
-    public appliedTimestamp: Date = new Date()
+    public appliedTimestamp: Date = new Date(),
+    public paymentStatus: boolean = false
   ) {}
 }
 
 // Job Applicant Entity provided by Job Applicant Repository is converted to Express API Response
 export class JobApplicantEntity {
   constructor(
-    public id: number| undefined = undefined,
+    public id: number | undefined = undefined,
     public job: number,
     public applicant: number,
-    public status: string,
+    public applicantStatus: string,
     public agreement: boolean,
     public jobStatus: string,
-    public appliedTimestamp: Date
+    public appliedTimestamp: Date,
+    public paymentStatus: boolean
   ) {}
 }
 
@@ -43,10 +45,10 @@ export class JobApplicantMapper {
           jobApplicantData.applicant !== undefined
             ? jobApplicantData.applicant
             : existingJobApplicant.applicant,
-        status:
-          jobApplicantData.status !== undefined
-            ? jobApplicantData.status
-            : existingJobApplicant.status,
+        applicantStatus:
+          jobApplicantData.applicantStatus !== undefined
+            ? jobApplicantData.applicantStatus
+            : existingJobApplicant.applicantStatus,
         agreement:
           jobApplicantData.agreement !== undefined
             ? jobApplicantData.agreement
@@ -59,6 +61,10 @@ export class JobApplicantMapper {
           jobApplicantData.appliedTimestamp !== undefined
             ? jobApplicantData.appliedTimestamp
             : existingJobApplicant.appliedTimestamp,
+        paymentStatus:
+          jobApplicantData.paymentStatus !== undefined
+            ? jobApplicantData.paymentStatus
+            : existingJobApplicant.paymentStatus,
       };
     } else {
       // If existingJobApplicant is not provided, create a new JobApplicantEntity using jobApplicantData
@@ -70,10 +76,11 @@ export class JobApplicantMapper {
           : jobApplicantData.id.toString(),
         job: jobApplicantData.job,
         applicant: jobApplicantData.applicant,
-        status: jobApplicantData.status,
+        applicantStatus: jobApplicantData.applicantStatus,
         agreement: jobApplicantData.agreement,
         jobStatus: jobApplicantData.jobStatus,
         appliedTimestamp: jobApplicantData.appliedTimestamp,
+        paymentStatus: jobApplicantData.paymentStatus,
       };
       return jobApplicantData;
     }
@@ -85,10 +92,11 @@ export class JobApplicantMapper {
       id: jobApplicant.id,
       job: jobApplicant.job,
       applicant: jobApplicant.applicant,
-      status: jobApplicant.status,
+      applicantStatus: jobApplicant.applicantStatus,
       agreement: jobApplicant.agreement,
       jobStatus: jobApplicant.jobStatus,
       appliedTimestamp: jobApplicant.appliedTimestamp,
+      paymentStatus: jobApplicant.paymentStatus,
     };
   }
 }
