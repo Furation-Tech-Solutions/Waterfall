@@ -9,7 +9,7 @@ export interface RealtorRepository {
   createRealtor(realtor: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>>;
 
   // Method to retrieve all Realtors
-  getRealtors(query: object): Promise<Either<ErrorClass, RealtorEntity[]>>;
+  getRealtors(query: object, page: number, limit: number): Promise<Either<ErrorClass, RealtorEntity[]>>;
 
   // Method to retrieve a Realtor by ID
   getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity>>;

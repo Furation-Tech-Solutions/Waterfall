@@ -9,7 +9,7 @@ import { IRFilter } from "types/realtor/filter-type";
 export interface RealtorDataSource {
     create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
     // getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
-    getAllRealtors(query: object): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+    getAllRealtors(query: object, page: number, limit: number): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
     read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
     update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
     delete(id: string): Promise<void>;
@@ -19,6 +19,8 @@ interface RealtorQuery {
     location?: string;
     gender?: string;
     searchList?: string;
+    page?: number;
+    limit?: number;
     // Add other properties as needed
   }
 
@@ -42,7 +44,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         return createdRealtor.toJSON();
     }
 
-    async getAllRealtors(query: RealtorQuery): Promise<any[]> {
+    async getAllRealtors(query: RealtorQuery, page: number, limit: number): Promise<any[]> {
         console.log("=-=-=-=->",query);
         
         if (query.location != undefined) {
@@ -52,7 +54,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                         {
                             location: {
                                 [Op.iLike]: `%${query.location}%`
-                            }
+                            },
                         }
                     ]
                 }
@@ -61,6 +63,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         }
         else if (query.gender != undefined) {
             const data = await Realtor.findAll({
+                limit: parseInt(limit.toString()),
                 where: {
                     [Op.or]: [
                         {
@@ -73,7 +76,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
-        else if (query.searchList != undefined) {
+        else if (query.searchList != undefined && query.location != undefined) {
             const data = await Realtor.findAll({
                 where: {
                     [Op.or]: [
@@ -81,6 +84,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                             firstName: {
                                 [Op.iLike]: `%${query.searchList}%`,
                             },
+                            location: {
+                                [Op.iLike]: `%${query.location}%`
+                            }
                         },
                         {
                             lastName: {
@@ -97,8 +103,23 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                                 [Op.iLike]: `%${query.searchList}%`,
                             },
                         }
-                    ]
+                    ],
                 }
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        }
+        else if (query.page != undefined && query.limit != undefined) {
+            let page = parseInt(query.page.toString())
+            const offset = (page - 1) * limit;
+            const data = await Realtor.findAll({
+                offset: offset, // Offset based on the current page
+                limit: parseInt(query.limit.toString())
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        }
+        else if (query.limit != undefined) {
+            const data = await Realtor.findAll({
+                limit: parseInt(query.limit.toString())
             });
             return data.map((realtor: any) => realtor.toJSON());
         } else {

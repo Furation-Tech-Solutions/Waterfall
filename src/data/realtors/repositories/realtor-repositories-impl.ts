@@ -40,9 +40,9 @@ export class RealtorRepositoryImpl implements RealtorRepository {
 //       }
 //   }
 
-async getRealtors(query: object): Promise<Either<ErrorClass, RealtorEntity[]>> {
+async getRealtors(query: object, page: number, limit: number): Promise<Either<ErrorClass, RealtorEntity[]>> {
     try {
-      const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+      const realtors = await this.realtorDataSource.getAllRealtors(query,page,limit); // Use the tag realtor data source
       return Right<ErrorClass, RealtorEntity[]>(realtors);
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {

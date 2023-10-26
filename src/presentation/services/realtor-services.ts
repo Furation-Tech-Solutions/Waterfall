@@ -56,9 +56,11 @@ export class RealtorService {
 // Handler for getting all Realtors
 async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
   const query = req.query;
+  const page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+  const limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
   console.log("-=-=-=-=-=-=-=->", query);
 
-  const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute(query);
+  const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute(query,page,limit);
 
   realtors.cata(
     (error: ErrorClass) => {
