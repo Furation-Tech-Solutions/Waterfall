@@ -6,7 +6,7 @@ import ErrorClass from "@presentation/error-handling/api-error";
 
 // Define an interface for the GetAllRealtorsUsecase
 export interface GetAllRealtorsUsecase {
-  execute: (q: string) => Promise<Either<ErrorClass, RealtorEntity[]>>;
+  execute: (query: object) => Promise<Either<ErrorClass, RealtorEntity[]>>;
 }
 
 // Implementation of the GetAllRealtors use case
@@ -19,8 +19,8 @@ export class GetAllRealtors implements GetAllRealtorsUsecase {
   }
 
   // Method to execute the use case and retrieve all Realtors
-  async execute(q: string): Promise<Either<ErrorClass, RealtorEntity[]>> {
+  async execute(query: object): Promise<Either<ErrorClass, RealtorEntity[]>> {
     // Call the repository's method to retrieve all Realtors and return the result
-    return await this.realtorRepository.getRealtors(q);
+    return await this.realtorRepository.getRealtors(query);
   }
 }
