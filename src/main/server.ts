@@ -15,15 +15,6 @@ try {
     throw ApiError.SQLError();
   }
 
-  // Sync the model with the database
-  async function syncDatabase() {
-    try {
-      await sequelize.sync({ alter: true });
-      console.log("Table synchronized successfully.");
-    } catch (error) {
-      console.error("Error syncing table:", error);
-    }
-  }
   // syncDatabase();
   sequelize.sync().then(() => {
     app.listen(env.port, () => {
