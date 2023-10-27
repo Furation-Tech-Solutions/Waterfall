@@ -15,6 +15,7 @@ interface JobApplicantInput {
   agreement: boolean;
   jobStatus: string;
   appliedTimestamp: Date;
+  paymentStatus: boolean;
 }
 
 // Define a function for validating job applicant input
@@ -46,6 +47,10 @@ const jobApplicantValidator = function (
     appliedTimestamp: Joi.date().required().messages({
       "date.base": "Applied timestamp must be a valid date",
       "any.required": "Applied timestamp is required",
+    }),
+    paymentStatus: Joi.boolean().required().messages({
+      "boolean.base": "paymentStatus must be a boolean",
+      "any.required": "paymentStatus is required",
     }),
   });
 
