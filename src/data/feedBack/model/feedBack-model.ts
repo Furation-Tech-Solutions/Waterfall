@@ -19,7 +19,7 @@ const FeedBacks = sequelize.define('FeedBacks', {
 });
 
 // Realtors.hasMany(FeedBacks);
-Jobs.hasMany(FeedBacks);
+// Jobs.hasMany(FeedBacks);
 FeedBacks.belongsTo(Realtors, {
   foreignKey: "fromRealtor",
   as: "from" // Alias for the first association

@@ -15,7 +15,7 @@ export interface JobRepository {
   updateJob(id: string, data: JobModel): Promise<Either<ErrorClass, JobEntity>>;
 
   // Define a method to retrieve a list of jobs and return an Either monad with either an ErrorClass or an array of JobEntities
-  getJobs(): Promise<Either<ErrorClass, JobEntity[]>>;
+  getJobs(ownerId: string): Promise<Either<ErrorClass, JobEntity[]>>;
 
   // Define a method to retrieve a job by its ID and return an Either monad with either an ErrorClass or a JobEntity
   getJobById(id: string): Promise<Either<ErrorClass, JobEntity>>;

@@ -23,7 +23,7 @@ export interface JobDataSource {
   read(id: string): Promise<JobEntity | null>;
 
   // Method to retrieve all job records
-  getAll(): Promise<JobEntity[]>;
+  getAll(ownerId: string): Promise<JobEntity[]>;
 }
 
 // Implementation of the JobDataSource interface
@@ -64,10 +64,29 @@ export class JobDataSourceImpl implements JobDataSource {
   }
 
   // Method to retrieve all job records
-  async getAll(): Promise<JobEntity[]> {
-    // Find all job records
-    const jobs = await Job.findAll({
+  // async getAll(): Promise<JobEntity[]> {
+  //   // Find all job records
+  //   const jobs = await Job.findAll({
 
+  //     include: [
+  //       {
+  //         model: Realtors,
+  //         as: "owner",
+  //         foreignKey: "jobOwner",
+  //       },
+  //     ],
+  //   });
+
+  //   // return data.map((blocking: any) => blocking.toJSON());
+  //   // Convert all job records to plain JavaScript objects and return them in an array
+  //   return jobs.map((job: any) => job.toJSON());
+  // }
+
+  async getAll(ownerId: string): Promise<JobEntity[]> {
+    const jobsData = await Job.findAndCountAll({
+      where: {
+        jobOwner: +ownerId, // Filter jobs by the owner's ID
+      },
       include: [
         {
           model: Realtors,
@@ -76,11 +95,15 @@ export class JobDataSourceImpl implements JobDataSource {
         },
       ],
     });
-
-    // return data.map((blocking: any) => blocking.toJSON());
-    // Convert all job records to plain JavaScript objects and return them in an array
+  
+    // Extract the rows from the result which contain the actual records
+    const jobs = jobsData.rows;
+  
+    // Return the found job records as an array of JobEntity objects
     return jobs.map((job: any) => job.toJSON());
   }
+  
+  
 
   // Method to update a job record by ID
   async update(id: string, updatedData: JobModel): Promise<any> {

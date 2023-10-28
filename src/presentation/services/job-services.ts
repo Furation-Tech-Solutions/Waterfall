@@ -147,13 +147,14 @@ export class JobService {
 
   // Method to get all jobs
   async getAllJobs(
+    ownerId: string,
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
-      await this.getAllJobsUsecase.execute();
+      await this.getAllJobsUsecase.execute(ownerId);
 
     // Handle the result using Either's cata function
     jobs.cata(

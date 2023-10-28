@@ -17,6 +17,8 @@ import { bugReportRouter } from "@presentation/routes/bugReport-routes";
 import { supportRouter } from "@presentation/routes/support-routes";
 import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 
+import { dashBoardRouter } from "@presentation/routes/dashborad-routes";
+
 // Export a function that sets up routes for the Express app
 export default (app: Express): void => {
   const router = Router();
@@ -48,4 +50,7 @@ export default (app: Express): void => {
   app.use("/api/v1/callLogs", callLogRouter);
   app.use("/api/v1/notInteresteds", notInterestedRouter); 
   app.use(router);
+
+
+  app.use("/api/v1/dashboard", dashBoardRouter);
 };
