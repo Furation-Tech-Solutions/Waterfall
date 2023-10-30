@@ -1,5 +1,6 @@
 export interface IRFilter {
     q?: string;
-    Location?: string;
+    location?: string;
     gender?: string;
+    searchList?: string;
   }

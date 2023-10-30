@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 import {
   NotInterestedEntity,
   NotInterestedModel,
-} from "@domain/notInterested/entities/notInterested";
+} from "@domain/notInterested/entities/notInterested_entities";
 import NotInterested from "@data/notInterested/model/notInterested-models";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
@@ -20,7 +20,7 @@ export interface NotInterestedDataSource {
 
 // Implement the NotInterested Data Source that communicates with the database
 export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new NotInterestedModel into the database
   async create(notInterested: any): Promise<NotInterestedEntity> {
@@ -45,6 +45,17 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
       where: {
         id: id,
       },
+      include: [{
+        model: Realtors,
+        as: 'realtorData', // Alias for the first association
+        foreignKey: 'realtor',
+      },
+      {
+        model: Job,
+        as: 'jobData', // Alias for the second association
+        foreignKey: 'job',
+      },
+      ]
       // include: 'tags', // You can include associations here if needed
     });
     return notInterested ? notInterested.toJSON() : null; // Convert to a plain JavaScript object before returning
@@ -53,18 +64,17 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
   // Implement the "getAll" method to retrieve all NotInterestedEntity records from the database
   async getAll(): Promise<NotInterestedEntity[]> {
     const notInteresteds = await NotInterested.findAll({
-      // include: [
-      //   {
-      //     model: Realtors,
-      //     as: "realtorData",
-      //     foreignKey: "realtor",
-      //   },
-      //   {
-      //     model: Job,
-      //     as: "jobData",
-      //     foreignKey: "job",
-      //   },
-      // ],
+      include: [{
+        model: Realtors,
+        as: 'realtorData', // Alias for the first association
+        foreignKey: 'realtor',
+      },
+      {
+        model: Job,
+        as: 'jobData', // Alias for the second association
+        foreignKey: 'job',
+      },
+      ]
     });
     return notInteresteds.map((notInterested: any) => notInterested.toJSON()); // Convert to plain JavaScript objects before returning
   }

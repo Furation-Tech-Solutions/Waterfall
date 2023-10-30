@@ -11,8 +11,6 @@ import Realtors from "@data/realtors/model/realtor-model";
 import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
 
-
-
 // const currentDate = new Date();
 // const nextDay = new Date();
 // nextDay.setDate(nextDay.getDate() + 1);
@@ -95,10 +93,12 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
   async getAll(id: string, q: string): Promise<any[]> {
     let loginId = parseInt(id);
+
     console.log("data source ", id, q);
 
     if (q === "upcomingTask") {
       {
+
         // console.log(typedQuery);
 
         const jobApplicant = await JobApplicant.findAll({
@@ -128,8 +128,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
+
     } else if (q === "jobAssigned") {
       {
+
         const jobApplicant = await JobApplicant.findAll({
           where: {
             agreement: true, // Now, it's a boolean
@@ -154,6 +156,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
+
     } else if (q === "jobResponse") {
       {
         const jobApplicant = await JobApplicant.findAll({
@@ -196,9 +199,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }
-  }
 
- 
+  }
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
     // Find the job applicant record in the database by ID

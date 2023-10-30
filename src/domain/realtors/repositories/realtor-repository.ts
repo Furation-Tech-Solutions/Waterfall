@@ -9,7 +9,7 @@ export interface RealtorRepository {
   createRealtor(realtor: RealtorModel): Promise<Either<ErrorClass, RealtorEntity>>;
 
   // Method to retrieve all Realtors
-  getRealtors(q: string): Promise<Either<ErrorClass, RealtorEntity[]>>;
+  getRealtors(query: object): Promise<Either<ErrorClass, RealtorEntity[]>>;
 
   // Method to retrieve a Realtor by ID
   getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity>>;
@@ -19,7 +19,4 @@ export interface RealtorRepository {
 
   // Method to delete a Realtor by ID
   deleteRealtor(id: string): Promise<Either<ErrorClass, void>>;
-
-  // Method to get a presigned URL for media (e.g., for uploading profile images)
-  getPresignedUrl(media: string): Promise<string>;
 }

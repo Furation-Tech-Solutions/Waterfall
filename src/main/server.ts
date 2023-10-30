@@ -14,7 +14,7 @@ try {
   if (postgressURL === undefined) {
     throw ApiError.SQLError();
   }
-//{force: true}
+v
   // syncDatabase();
   sequelize.sync().then(() => {
     app.listen(env.port, () => {
