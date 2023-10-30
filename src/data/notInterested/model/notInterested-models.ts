@@ -3,7 +3,6 @@ import { DataTypes } from "sequelize";
 import sequelize from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
-import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 
 // Define a Sequelize model named "NotInterested"
 const NotInterested = sequelize.define("NotInterested", {
@@ -20,19 +19,6 @@ const NotInterested = sequelize.define("NotInterested", {
     references: { model: Job, key: "id" },
   },
 });
-
-Realtors.hasMany(NotInterested);
-NotInterested.belongsTo(Realtors, {
-  foreignKey: "realtor",
-  as: "realtorData",
-});
-NotInterested.belongsTo(Job, {
-  foreignKey: "job",
-  as: "jobData",
-});
-
-// notInterestedRouter.belongsTo(realtor, { foreignKey: 'fromId', as: 'fromRealtor' });
-// Connections.belongsTo(Realtors, { foreignKey: 'toId', as: 'toRealtor' });
 
 // Export the "NotInterested" model as the default export
 export default NotInterested;

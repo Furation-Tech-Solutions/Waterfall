@@ -2,7 +2,6 @@
 import { Sequelize } from "sequelize";
 import { ReportEntity, ReportModel } from "@domain/report/entities/report";
 import Report from "@data/report/models/report-model";
-import Realtors from "@data/realtors/model/realtor-model";
 
 // Define the ReportDataSource interface
 export interface ReportDataSource {
@@ -56,18 +55,6 @@ export class ReportDataSourceImpl implements ReportDataSource {
   // Implement the "getAll" method to retrieve all reports from the database
   async getAll(): Promise<ReportEntity[]> {
     const reports = await Report.findAll({
-      include: [
-        {
-          model: Realtors,
-          as: "from",
-          foreignKey: "fromRealtor",
-        },
-        {
-          model: Realtors,
-          as: "to",
-          foreignKey: "toRealtor",
-        },
-      ],
     });
     return reports.map((report: any) => report.toJSON()); // Convert to plain JavaScript objects before returning
   }

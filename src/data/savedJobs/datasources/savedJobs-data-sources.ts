@@ -53,18 +53,6 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
   // Implement the "getAll" method to retrieve all SavedJobEntity records from the database
   async getAll(): Promise<SavedJobEntity[]> {
     const savedJobs = await SavedJob.findAll({
-      include: [
-        {
-          model: Realtors,
-          as: "realtorData",
-          foreignKey: "Realtor",
-        },
-        {
-          model: Job,
-          as: "jobData",
-          foreignKey: "Job",
-        },
-      ],
     });
     return savedJobs.map((savedJob: any) => savedJob.toJSON()); // Convert to plain JavaScript objects before returning
   }

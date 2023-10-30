@@ -2,7 +2,6 @@
 import { Sequelize } from "sequelize";
 import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog"; // Import the CallLogModel
 import CallLog from "@data/callLog/models/callLog-model";
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Create CallLogDataSource Interface
 export interface CallLogDataSource {
@@ -63,13 +62,6 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
   async getAll(): Promise<CallLogEntity[]> {
     // Retrieve all call log records from the database
     const callLog = await CallLog.findAll({
-      include: [
-        {
-          model: JobApplicant,
-          as: "jobApplicantData",
-          foreignKey: "jobApplicant",
-        },
-      ],
     });
 
     // Convert the retrieved call logs to an array of plain JavaScript objects before returning

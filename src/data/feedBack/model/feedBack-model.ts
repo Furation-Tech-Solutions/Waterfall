@@ -18,21 +18,5 @@ const FeedBacks = sequelize.define('FeedBacks', {
   description: { type: DataTypes.STRING, allowNull: false }
 });
 
-// Realtors.hasMany(FeedBacks);
-Jobs.hasMany(FeedBacks);
-FeedBacks.belongsTo(Realtors, {
-  foreignKey: "fromRealtor",
-  as: "from" // Alias for the first association
-});
-
-FeedBacks.belongsTo(Realtors, {
-  foreignKey: "toRealtor",
-  as: "to" // Alias for the second association
-});
-
-// FeedBacks.belongsTo(Jobs, {
-//   foreignKey: "jobId",
-//   as: "job" // Alias for the second association
-// });
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;

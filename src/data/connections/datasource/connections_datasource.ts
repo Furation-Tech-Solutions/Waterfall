@@ -2,7 +2,6 @@ import { Op, Sequelize, where } from "sequelize"
 import { ConnectionsModel } from "@domain/connections/entities/connections_entities"; // Import the connectionsModel
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
-import Realtors from "@data/realtors/model/realtor-model";
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
@@ -78,17 +77,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                 fromId: loginId,
                 toId: friendId
             },
-            include: [{
-                model: Realtors,
-                as: 'from', // Alias for the first association
-                foreignKey: 'fromId',
-            },
-            {
-                model: Realtors,
-                as: 'to', // Alias for the second association
-                foreignKey: 'toId',
-            },
-        ]
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
@@ -112,17 +100,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                         }
                     ]
                 },
-                include: [{
-                    model: Realtors,
-                    as: 'from', // Alias for the first association
-                    foreignKey: 'fromId',
-                },
-                {
-                    model: Realtors,
-                    as: 'to', // Alias for the second association
-                    foreignKey: 'toId',
-                },
-                ],
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
 
@@ -133,17 +110,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                     connected: false,
                     toId: loginId,
                 },
-                include: [{
-                    model: Realtors,
-                    as: 'from', // Alias for the first association
-                    foreignKey: 'fromId',
-                },
-                {
-                    model: Realtors,
-                    as: 'to', // Alias for the second association
-                    foreignKey: 'toId',
-                },
-                ],
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
         }

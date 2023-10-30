@@ -22,16 +22,5 @@ const SavedJob = sequelize.define("SavedJob", {
   },
 });
 
-Realtors.hasMany(SavedJob);
-SavedJob.belongsTo(Realtors, {
-  foreignKey: "Realtor", 
-  as: "realtorData", 
-});
-
-SavedJob.belongsTo(Job, {
-  foreignKey: "Job", 
-  as: "jobData", 
-});
-
 // Export the "SavedJob" model as the default export
 export default SavedJob;

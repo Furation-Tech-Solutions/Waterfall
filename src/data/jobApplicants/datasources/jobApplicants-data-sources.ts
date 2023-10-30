@@ -6,7 +6,6 @@ import {
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
 import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
-import Realtors from "@data/realtors/model/realtor-model";
 // import { JobStatusEnum } from "types/jobApplicant/upcomingTaskInterface";
 import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
@@ -35,7 +34,7 @@ export interface JobApplicantDataSource {
 
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
@@ -68,14 +67,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     }
   }
 
-  // // Method to create a new job applicant
-  // async create(jobApplicant: any): Promise<any> {
-  //   // Create a new job applicant record in the database
-  //   const createdJobApplicant = await JobApplicant.create(jobApplicant);
-
-  //   // Convert the created record to a plain JavaScript object and return it
-  //   return createdJobApplicant.toJSON();
-  // }
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {
@@ -107,23 +98,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             jobStatus: "Pending",
             applicant: loginId,
           },
-          include: [
-            {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              //  where: {
-              //    date: {
-              //      [Op.gte]: currentDate,
-              //      [Op.lt]: nextDay,
-              //    },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -137,21 +111,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             agreement: true, // Now, it's a boolean
             jobStatus: "Pending",
           },
-          include: [
-            {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -163,39 +122,12 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           where: {
             applicantStatus: "Pending",
           },
-          include: [
-            {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
     } else {
       const jobApplicant = await JobApplicant.findAll({
-        include: [
-          {
-            model: Job,
-            as: "jobdata",
-            foreignKey: "job",
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
-          },
-        ],
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }

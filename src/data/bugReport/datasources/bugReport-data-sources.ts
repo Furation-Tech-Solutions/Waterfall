@@ -5,7 +5,6 @@ import {
   BugReportModel,
 } from "@domain/bugReport/entities/bugReport"; // Import the BugReportModel
 import BugReport from "@data/bugReport/models/bugReport-model";
-import Realtors from "@data/realtors/model/realtor-model";
 
 // Create an interface for the BugReportDataSource
 export interface BugReportDataSource {
@@ -57,13 +56,6 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
   async getAll(): Promise<BugReportEntity[]> {
     // Retrieve all records from the BugReport table
     const bugReport = await BugReport.findAll({
-      include: [
-        {
-          model: Realtors,
-          as: "realtorData",
-          foreignKey: "realtor",
-        },
-      ],
     });
 
     return bugReport.map((bugReport: any) => bugReport.toJSON()); // Convert to plain JavaScript objects before returning

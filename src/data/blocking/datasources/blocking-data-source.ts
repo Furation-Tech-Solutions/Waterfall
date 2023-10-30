@@ -3,7 +3,6 @@ import { BlockingModel } from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize"
-import Realtors from "@data/realtors/model/realtor-model";
 
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
@@ -45,17 +44,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     async getAllBlockings(): Promise<any[]> {
         // Fetch all blocking entries from the database
         const data = await Blocking.findAll({
-            include: [{
-                model: Realtors,
-                as: 'from', // Alias for the first association
-                foreignKey: 'fromRealtor',
-            },
-            {
-                model: Realtors,
-                as: 'to', // Alias for the second association
-                foreignKey: 'toRealtor',
-            },
-            ],
         });
 
         // Convert the Sequelize model instances to plain JavaScript objects before returning
