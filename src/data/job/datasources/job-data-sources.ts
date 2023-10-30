@@ -1,5 +1,5 @@
 // Import the Sequelize library for working with databases
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
 // Import the JobEntity and JobModel from the job module
 import { JobEntity, JobModel } from "@domain/job/entities/job";
@@ -7,6 +7,7 @@ import { JobEntity, JobModel } from "@domain/job/entities/job";
 // Import the Job model from the relative path
 import Job from "..//models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -23,7 +24,7 @@ export interface JobDataSource {
   read(id: string): Promise<JobEntity | null>;
 
   // Method to retrieve all job records
-  getAll(): Promise<JobEntity[]>;
+  getAll(id: string, q: string): Promise<JobEntity[]>;
 }
 
 // Implementation of the JobDataSource interface
@@ -54,6 +55,12 @@ export class JobDataSourceImpl implements JobDataSource {
   async read(id: string): Promise<JobEntity | null> {
     // Find a job record where the ID matches the provided ID
     const job = await Job.findOne({
+      include: [
+        {
+          model: JobApplicant, // Include the JobApplicant model
+          as: "applicants", // Use the alias you defined in the association
+        },
+      ],
       where: {
         id: id,
       },
@@ -63,24 +70,116 @@ export class JobDataSourceImpl implements JobDataSource {
     return job ? job.toJSON() : null;
   }
 
-  // Method to retrieve all job records
-  async getAll(): Promise<JobEntity[]> {
-    // Find all job records
-    const jobs = await Job.findAll({
+  // // Method to retrieve all job records with expired dates and jobApplicants.agreement = true
+  // async getAll(id: string,q: string): Promise<JobEntity[]> {
+  //   let loginId = parseInt(id);
+  //   if (q === "expired") {
+  //      console.log("data source ", id, q);
+  //     const currentDate = new Date(); // Current date
+  //     currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
 
-      include: [
-        {
-          model: Realtors,
-          as: "owner",
-          foreignKey: "jobOwner",
-        },
-      ],
-    });
+  //     const jobs = await Job.findAll({
+  //       where: {
+  //         date: {
+  //           [Op.lt]: currentDate, // Check if the date is in the past
+  //         },
+  //       },
+  //       include: [
+  //           {
+  //             model: Realtors,
+  //             as: "owner",
+  //             foreignKey: "jobOwner",
+  //           },
 
-    // return data.map((blocking: any) => blocking.toJSON());
-    // Convert all job records to plain JavaScript objects and return them in an array
-    return jobs.map((job: any) => job.toJSON());
+  //         {
+  //           model: JobApplicant,
+  //           where: {
+  //             agreement: true, // Use the correct way to filter by jobOwner
+  //             applicant: loginId,
+  //           },
+  //         },
+  //       ],
+  //     });
+
+  //     return jobs.map((job: any) => job.toJSON());
+  //   } else {
+  //     // Handle other cases or provide a default logic
+  //     const jobs = await Job.findAll({
+  //       include: [
+  //         {
+  //           model: Realtors,
+  //           as: "owner",
+  //           foreignKey: "jobOwner",
+  //         },
+  //       ],
+  //     });
+
+  //     return jobs.map((job: any) => job.toJSON());
+  //   }
+  // }
+
+  // Method to retrieve all job records with expired dates and jobApplicants.agreement = true
+  async getAll(id: string, q: string): Promise<JobEntity[]> {
+    let loginId = parseInt(id);
+    console.log("data source ", id, q);
+    if (q === "expired") {
+      const currentDate = new Date(); // Current date
+      currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+      console.log(currentDate);
+
+      const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            where: {
+              agreement: true,
+              applicant: loginId,
+            },
+          },
+        ],
+      });
+
+
+
+      return jobs.map((job: any) => job.toJSON());
+    } else {
+      // Handle other cases or provide a default logic
+      const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+        ],
+      });
+
+      return jobs.map((job: any) => job.toJSON());
+    }
   }
+
+  // // Method to retrieve all job records
+  // async getAll(): Promise<JobEntity[]> {
+  //   // Find all job records
+  //   const jobs = await Job.findAll({
+  //     include: [
+  //       {
+  //         model: Realtors,
+  //         as: "owner",
+  //         foreignKey: "jobOwner",
+  //       },
+  //     ],
+  //   });
+
+  //   // return data.map((blocking: any) => blocking.toJSON());
+  //   // Convert all job records to plain JavaScript objects and return them in an array
+  //   return jobs.map((job: any) => job.toJSON());
+  // }
 
   // Method to update a job record by ID
   async update(id: string, updatedData: JobModel): Promise<any> {

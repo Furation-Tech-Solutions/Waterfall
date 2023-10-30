@@ -7,7 +7,7 @@ import Jobs from "@data/job/models/job-model";
 import Job from "@data/job/models/job-model";
 
 // Define statusEnum to represent possible status values
-export const statusEnum = {
+export const applicationStatusEnum = {
   ACCEPT: "Accept",
   PENDING: "Pending",
   DECLINE: "Decline",
@@ -15,7 +15,7 @@ export const statusEnum = {
 
 // Define jobStatusEnum to represent possible job status values
 export const jobStatusEnum = {
-  COMPLETED: "Completed",
+  JOBCOMPLETED: "JobCompleted",
   PENDING: "Pending",
   DECLINE: "Decline",
 };
@@ -26,11 +26,13 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Job, key: "id" },
+
   },
   applicant: {
     type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" },
+
   },
   applicantStatus: {
     type: DataTypes.STRING,
@@ -38,7 +40,7 @@ const JobApplicant = sequelize.define("JobApplicant", {
     defaultValue: "Pending",
     validate: {
       isIn: {
-        args: [Object.values(statusEnum)],
+        args: [Object.values(applicationStatusEnum)],
         msg: "Invalid status",
       },
     },
@@ -61,7 +63,7 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
-  }
+  },
 });
 
 Realtors.hasMany(JobApplicant);
@@ -69,10 +71,14 @@ JobApplicant.belongsTo(Realtors, {
   foreignKey: "applicant",
   as: "applicantData", // Optionally, you can specify an alias for this association
 });
+// ...
+
+
 Jobs.hasMany(JobApplicant);
 JobApplicant.belongsTo(Job, {
   foreignKey: "job", 
-  as: "jobdata" // Optionally, you can specify an alias for this association
+  as: "jobdata", // Optionally, you can specify an alias for this association
+  
 });
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;

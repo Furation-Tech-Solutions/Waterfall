@@ -151,9 +151,12 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    let loginId: string = req.body.loginId;
+    loginId = "2";
+    const q = req.query.q as string;
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
-      await this.getAllJobsUsecase.execute();
+      await this.getAllJobsUsecase.execute(loginId, q);
 
     // Handle the result using Either's cata function
     jobs.cata(

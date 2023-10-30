@@ -3,7 +3,7 @@ import Joi, { ValidationErrorItem } from "joi"; // Import Joi for input validati
 import ApiError from "@presentation/error-handling/api-error"; // Import custom error class ApiError
 import { Request, Response, NextFunction } from "express"; // Import Express types
 import {
-  statusEnum,
+  applicationStatusEnum,
   jobStatusEnum,
 } from "@data/jobApplicants/models/jobApplicants-models"; // Import enums for status and jobStatus
 
@@ -27,7 +27,7 @@ const jobApplicantValidator = function (
     job: Joi.number().required(),
     applicant: Joi.number().required(),
     applicantStatus: Joi.string()
-      .valid(...Object.values(statusEnum))
+      .valid(...Object.values(applicationStatusEnum))
       .required()
       .messages({
         "any.only": "Invalid applicantStatus",

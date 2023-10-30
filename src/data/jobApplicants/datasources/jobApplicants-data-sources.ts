@@ -13,9 +13,9 @@ import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
 
 
-const currentDate = new Date();
-const nextDay = new Date();
-nextDay.setDate(nextDay.getDate() + 1);
+// const currentDate = new Date();
+// const nextDay = new Date();
+// nextDay.setDate(nextDay.getDate() + 1);
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
@@ -41,12 +41,43 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
-    // Create a new job applicant record in the database
-    const createdJobApplicant = await JobApplicant.create(jobApplicant);
+    try {
+      // Create a new job applicant record in the database
+      const createdJobApplicant = await JobApplicant.create(jobApplicant);
 
-    // Convert the created record to a plain JavaScript object and return it
-    return createdJobApplicant.toJSON();
+      // Retrieve the associated Job based on jobApplicant's job ID
+      const job: any = await Job.findByPk(jobApplicant.job);
+
+      if (job) {
+        // Add the created job applicant to the job's jobApplicants array
+        job.jobApplicants.push(createdJobApplicant.toJSON());
+
+        // Update the Job record with the new jobApplicants array
+        await Job.update(
+          { jobApplicants: job.jobApplicants },
+          {
+            where: {
+              id: job.id,
+            },
+          }
+        );
+      }
+
+      return createdJobApplicant.toJSON();
+    } catch (error) {
+      // Handle any potential errors, e.g., validation errors or database issues
+      throw error;
+    }
   }
+
+  // // Method to create a new job applicant
+  // async create(jobApplicant: any): Promise<any> {
+  //   // Create a new job applicant record in the database
+  //   const createdJobApplicant = await JobApplicant.create(jobApplicant);
+
+  //   // Convert the created record to a plain JavaScript object and return it
+  //   return createdJobApplicant.toJSON();
+  // }
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {
@@ -64,12 +95,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
   async getAll(id: string, q: string): Promise<any[]> {
     let loginId = parseInt(id);
-    // let ownerId = parseInt(id);
-    // const typedQuery = query as Query;
-    // const isAgreementTrue = // No need to convert, it's already a boolean
-console.log("data source " , id , q);
+    console.log("data source ", id, q);
 
-    if (q === "upcomingTask") {{
+    if (q === "upcomingTask") {
+      {
         // console.log(typedQuery);
 
         const jobApplicant = await JobApplicant.findAll({
@@ -99,12 +128,37 @@ console.log("data source " , id , q);
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    } else if (q === "jobAssigned") {{
-
+    } else if (q === "jobAssigned") {
+      {
         const jobApplicant = await JobApplicant.findAll({
           where: {
             agreement: true, // Now, it's a boolean
             jobStatus: "Pending",
+          },
+          include: [
+            {
+              model: Job,
+              as: "jobdata",
+              foreignKey: "job",
+              where: {
+                jobOwner: loginId, // Use the correct way to filter by jobOwner
+              },
+            },
+            {
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicant",
+            },
+          ],
+        });
+
+        return jobApplicant.map((jobA: any) => jobA.toJSON());
+      }
+    } else if (q === "jobResponse") {
+      {
+        const jobApplicant = await JobApplicant.findAll({
+          where: {
+            applicantStatus: "Pending",
           },
           include: [
             {
@@ -142,95 +196,9 @@ console.log("data source " , id , q);
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }
-    
   }
 
-  // async getAll(id: string, query: object): Promise<any[]> {
-  //   let loginId = parseInt(id);
-  //   let ownerId = parseInt(id);
-  //   const typedQuery = query as Query;
-  //   // const isAgreementTrue = // No need to convert, it's already a boolean
-
-  //  if (typedQuery.jobStatus === "Pending" && typedQuery.agreement===true) {
-  //   console.log(typedQuery);
-
-  //    const jobApplicant = await JobApplicant.findAll({
-  //      where: {
-  //        agreement: true, // Now, it's a boolean
-  //        jobStatus: "Pending",
-  //        applicant: loginId,
-  //      },
-  //      include: [
-  //        {
-  //          model: Job,
-  //          as: "jobdata",
-  //          foreignKey: "job",
-  //         //  where: {
-  //         //    date: {
-  //         //      [Op.gte]: currentDate,
-  //         //      [Op.lt]: nextDay,
-  //         //    },
-  //         //  },
-  //        },
-  //        {
-  //          model: Realtors,
-  //          as: "applicantData",
-  //          foreignKey: "applicant",
-  //        },
-  //      ],
-  //    });
-
-  //    return jobApplicant.map((jobA: any) => jobA.toJSON());
-  //  }
-  //  else if (typedQuery.jobStatus === "Pending" && typedQuery.agreement === true) {
-  //    console.log(typedQuery);
-
-  //    const jobApplicant = await JobApplicant.findAll({
-  //      where: {
-  //        agreement: true, // Now, it's a boolean
-  //        jobStatus: "Pending",
-  //        jobdata: { jobOwner: ownerId },
-  //      },
-  //      include: [
-  //        {
-  //          model: Job,
-  //          as: "jobdata",
-  //          foreignKey: "job",
-  //          //  where: {
-  //          //    date: {
-  //          //      [Op.gte]: currentDate,
-  //          //      [Op.lt]: nextDay,
-  //          //    },
-  //          //  },
-  //        },
-  //        {
-  //          model: Realtors,
-  //          as: "applicantData",
-  //          foreignKey: "applicant",
-  //        },
-  //      ],
-  //    });
-
-  //    return jobApplicant.map((jobA: any) => jobA.toJSON());
-  //  } else {
-  //    const jobApplicant = await JobApplicant.findAll({
-  //      include: [
-  //        {
-  //          model: Job,
-  //          as: "jobdata",
-  //          foreignKey: "job",
-  //        },
-  //        {
-  //          model: Realtors,
-  //          as: "applicantData",
-  //          foreignKey: "applicant",
-  //        },
-  //      ],
-  //    });
-  //    return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
-  //  }
-  // }
-
+ 
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
     // Find the job applicant record in the database by ID
@@ -247,6 +215,7 @@ console.log("data source " , id , q);
     // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
     return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
   }
+
   // Method to delete a jobApplicant record by ID
   async delete(id: string): Promise<void> {
     // Delete the jobApplicant record where the ID matches the provided ID

@@ -75,10 +75,12 @@ export class JobRepositoryImpl implements JobRepository {
   }
 
   // Method to retrieve all jobs
-  async getJobs(): Promise<Either<ErrorClass, JobEntity[]>> {
+  async getJobs(
+    id: string, q: string
+  ): Promise<Either<ErrorClass, JobEntity[]>> {
     try {
       // Attempt to retrieve all jobs using the data source
-      const response = await this.dataSource.getAll();
+      const response = await this.dataSource.getAll( id, q);
       // Return a Right monad with an array of job entities on success
       return Right<ErrorClass, JobEntity[]>(response);
     } catch (error: any) {
