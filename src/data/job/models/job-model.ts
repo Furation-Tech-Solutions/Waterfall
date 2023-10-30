@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import sequelize from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
@@ -107,13 +108,12 @@ const Job = sequelize.define("Job", {
     allowNull: true, // Set to allowNull: true if coordinates are optional
   },
 
-  // jobApplicants:
-  //   {
-  //     type: DataTypes.ARRAY(DataTypes.INTEGER), // Data type for jobOwner is UUID
-  //     defaultValue:[],
-  //     // references: { model: JobApplicant, key: "id" },
-  //   }
-
+  jobApplicants: {
+    type: DataTypes.ARRAY(DataTypes.JSONB), // Use JSONB to store an array of JobApplicant objects
+    allowNull: true, // Set to true if jobApplicants are optional
+    defaultValue: [],
+    onDelete: "CASCADE",
+  },
 });
 Realtors.hasMany(Job);
 Job.belongsTo(Realtors, {
@@ -135,6 +135,14 @@ Job.belongsTo(Realtors, {
 //   foreignKey: "jobApplicants",
 //   as: "applicants",
 // });
+// Define the association with JobApplicant
+// // Job.hasMany(JobApplicant, { foreignKey: "job" });
+// Job.hasOne(JobApplicant);
+// // JobApplicant.belongsTo(Job);
+// JobApplicant.hasMany(Job);
+// ...
+// Job.hasMany(JobApplicant, { as: "jobApplicantsdata", foreignKey: "jobApplicants" });
+
 
 // Export the "Job" model as the default export of this module
 export default Job;
