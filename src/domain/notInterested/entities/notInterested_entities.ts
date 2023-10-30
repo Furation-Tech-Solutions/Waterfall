@@ -2,8 +2,10 @@
 export class NotInterestedModel {
   constructor(
     public realtor: number = 0, // Realtor name, default value is an empty string
-    public job: number = 0 // Job name, default value is an empty string
-  ) {}
+    public job: number = 0, // Job name, default value is an empty string
+    public jobData: {} = {},
+    public realtorData: {} = {},
+  ) { }
 }
 
 // NotInterested Entity provided by NotInterested Repository is converted to Express API Response
@@ -11,8 +13,10 @@ export class NotInterestedEntity {
   constructor(
     public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
     public realtor: number, // Realtor name
-    public job: number // Job name
-  ) {}
+    public job: number, // Job name
+    public jobData: {},
+    public realtorData: {},
+  ) { }
 }
 
 export class NotInterestedMapper {
@@ -40,11 +44,13 @@ export class NotInterestedMapper {
       const notInterestedEntity: NotInterestedEntity = {
         id: includeId
           ? notInterestedData.id
-            ? notInterestedData.id.toString()
+            ? notInterestedData.id
             : undefined
-          : notInterestedData.id, // Set the ID if includeId is true
+          : notInterestedData.id,// Set the ID if includeId is true
         realtor: notInterestedData.realtor, // Set Realtor from notInterestedData
         job: notInterestedData.job, // Set Job from notInterestedData
+        jobData: notInterestedData.jobData,
+        realtorData: notInterestedData.realtorData,
       };
       return notInterestedEntity;
     }
@@ -56,6 +62,8 @@ export class NotInterestedMapper {
       id: notInterested.id, // Extract and include the ID
       realtor: notInterested.realtor, // Extract and include Realtor
       job: notInterested.job, // Extract and include Job
+      jobData: notInterested.jobData,
+      realtorData: notInterested.realtorData,
     };
   }
 }

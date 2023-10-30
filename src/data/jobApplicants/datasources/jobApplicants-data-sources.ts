@@ -4,14 +4,13 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, {
+  jobStatusEnum,
+} from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 // import { JobStatusEnum } from "types/jobApplicant/upcomingTaskInterface";
 import { Query } from "types/jobApplicant/upcomingTaskInterface";
-
-
-
 
 // const currentDate = new Date();
 // const nextDay = new Date();
@@ -95,6 +94,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
   async getAll(id: string, q: string): Promise<any[]> {
     let loginId = parseInt(id);
+
     console.log("data source ", id, q);
 
     if (q === "upcomingTask") {
@@ -197,8 +197,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }
   }
-
- 
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
     // Find the job applicant record in the database by ID

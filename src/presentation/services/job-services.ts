@@ -154,9 +154,11 @@ export class JobService {
     let loginId: string = req.body.loginId;
     loginId = "2";
     const q = req.query.q as string;
+    const sort = req.query.sort as string;
+
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
-      await this.getAllJobsUsecase.execute(loginId, q);
+      await this.getAllJobsUsecase.execute(loginId, q, sort);
 
     // Handle the result using Either's cata function
     jobs.cata(
@@ -171,6 +173,8 @@ export class JobService {
     );
   }
 }
+
+
 
   // // Method to get all jobs
   // async getAllJobs(
@@ -194,4 +198,3 @@ export class JobService {
   //       return res.json(resData);
   //     }
   //   );
-  // }

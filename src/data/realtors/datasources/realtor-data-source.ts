@@ -3,16 +3,24 @@ import { RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op } from "sequelize";
+import { IRFilter } from "types/realtor/filter-type";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
     create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
     // getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
-    getAllRealtors(query: string): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+    getAllRealtors(query: object): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
     read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
     update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
     delete(id: string): Promise<void>;
 }
+
+interface RealtorQuery {
+    location?: string;
+    gender?: string;
+    searchList?: string;
+    // Add other properties as needed
+  }
 
 // Realtor Data Source communicates with the database
 export class RealtorDataSourceImpl implements RealtorDataSource {
@@ -34,43 +42,59 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         return createdRealtor.toJSON();
     }
 
-    async getAllRealtors(query: string): Promise<any[]> {
-        let l = query ? query.toLowerCase() : null;
-        console.log("=========>q", l);
-
-        if (l) {
+    async getAllRealtors(query: RealtorQuery): Promise<any[]> {
+        console.log("=-=-=-=->",query);
+        
+        if (query.location != undefined) {
             const data = await Realtor.findAll({
-                offset: 3, limit: 3,
                 where: {
                     [Op.or]: [
                         {
                             location: {
-                                [Op.iLike]: `%${l}%`
+                                [Op.iLike]: `%${query.location}%`
                             }
-                        },
+                        }
+                    ]
+                }
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        }
+        else if (query.gender != undefined) {
+            const data = await Realtor.findAll({
+                where: {
+                    [Op.or]: [
                         {
                             gender: {
-                                [Op.iLike]: `%${l}%`
+                                [Op.iLike]: `%${query.gender}%`
                             }
-                        },
+                        }
+                    ]
+                }
+            });
+            return data.map((realtor: any) => realtor.toJSON());
+        }
+        else if (query.searchList != undefined) {
+            const data = await Realtor.findAll({
+                where: {
+                    [Op.or]: [
                         {
                             firstName: {
-                                [Op.iLike]: `%${l}%`,
+                                [Op.iLike]: `%${query.searchList}%`,
                             },
                         },
                         {
                             lastName: {
-                                [Op.iLike]: `%${l}%`,
+                                [Op.iLike]: `%${query.searchList}%`,
                             },
                         },
                         {
                             email: {
-                                [Op.iLike]: `%${l}%`,
+                                [Op.iLike]: `%${query.searchList}%`,
                             },
                         },
                         {
                             contact: {
-                                [Op.iLike]: `%${l}%`,
+                                [Op.iLike]: `%${query.searchList}%`,
                             },
                         }
                     ]
@@ -78,7 +102,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         } else {
-            // Handle other cases when q is not provided (e.g., return all records)
+            // Handle other cases when 'location' is not provided (e.g., return all records)
             const data = await Realtor.findAll({});
             return data.map((realtor: any) => realtor.toJSON());
         }

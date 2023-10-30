@@ -63,7 +63,9 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
-  },
+
+  }
+
 });
 
 Realtors.hasMany(JobApplicant);
