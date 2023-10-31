@@ -1,6 +1,6 @@
 // Import the necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
@@ -17,6 +17,10 @@ const FeedBacks = sequelize.define('FeedBacks', {
   },
   description: { type: DataTypes.STRING, allowNull: false }
 });
+
+FeedBacks.belongsTo(Realtors, { foreignKey: 'fromRealtor', as: 'fromRealtorData' });
+FeedBacks.belongsTo(Realtors, { foreignKey: 'toRealtor', as: 'toRealtorData' });
+FeedBacks.belongsTo(Job, { foreignKey: 'jobId', as: 'JobData' });
 
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;

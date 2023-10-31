@@ -39,19 +39,19 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
         const data = await FeedBack.findAll({
             include: [{
                 model: Realtors,
-                as: 'from', // Alias for the first association
+                as: 'fromRealtorData', // Alias for the first association
                 foreignKey: 'fromRealtor',
             },
             {
                 model: Realtors,
-                as: 'to', // Alias for the second association
+                as: 'toRealtorData', // Alias for the second association
                 foreignKey: 'toRealtor',
             },
-            // {
-            //     model: Jobs,
-            //     as: 'job', // Alias for the third association
-            //     foreignKey: 'jobId',
-            // },
+            {
+                model: Jobs,
+                as: 'JobData', // Alias for the third association
+                foreignKey: 'jobId',
+            },
             ],
         });
         return data.map((feedBack: any) => feedBack.toJSON()); // Convert to plain JavaScript objects before returning
@@ -63,6 +63,22 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
             where: {
                 id: id,
             },
+            include: [{
+                model: Realtors,
+                as: 'fromRealtorData', // Alias for the first association
+                foreignKey: 'fromRealtor',
+            },
+            {
+                model: Realtors,
+                as: 'toRealtorData', // Alias for the second association
+                foreignKey: 'toRealtor',
+            },
+            {
+                model: Jobs,
+                as: 'JobData', // Alias for the third association
+                foreignKey: 'jobId',
+            },
+            ],
             // include: 'tags', // Replace 'tags' with the actual name of your association
         });
         return feedBack ? feedBack.toJSON() : null; // Convert to a plain JavaScript object before returning

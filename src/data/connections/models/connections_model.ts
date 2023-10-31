@@ -24,7 +24,6 @@ const Connections = sequelize.define('Connections', {
   },
 });
 
-// Realtors.hasMany(Connections);
 Connections.belongsTo(Realtors, { foreignKey: 'fromId', as: 'fromRealtor' });
 Connections.belongsTo(Realtors, { foreignKey: 'toId', as: 'toRealtor' });
 
