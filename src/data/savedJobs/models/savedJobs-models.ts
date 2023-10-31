@@ -22,5 +22,15 @@ const SavedJob = sequelize.define("SavedJob", {
   },
 });
 
+SavedJob.belongsTo(Job, {
+  foreignKey: "Job",
+  as: "jobData",
+});
+
+SavedJob.belongsTo(Realtors, {
+  foreignKey: "Realtor",
+  as: "realtorData",
+})
+
 // Export the "SavedJob" model as the default export
 export default SavedJob;

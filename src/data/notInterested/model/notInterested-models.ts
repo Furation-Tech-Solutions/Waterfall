@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 
@@ -19,6 +19,16 @@ const NotInterested = sequelize.define("NotInterested", {
     references: { model: Job, key: "id" },
   },
 });
+
+NotInterested.belongsTo(Job, {
+  foreignKey: "job",
+  as: "jobData",
+});
+
+NotInterested.belongsTo(Realtors, {
+  foreignKey: "realtor",
+  as: "realtorData",
+})
 
 // Export the "NotInterested" model as the default export
 export default NotInterested;

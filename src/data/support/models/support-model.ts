@@ -41,7 +41,7 @@ const Support = sequelize.define("Support", {
     defaultValue: DataTypes.NOW,
   },
 });
-Realtors.hasMany(Support);
+
 Support.belongsTo(Realtors, {
   foreignKey: "realtor",
   as: "realtorData",

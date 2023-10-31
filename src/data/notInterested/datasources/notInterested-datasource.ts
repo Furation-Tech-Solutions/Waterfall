@@ -5,6 +5,8 @@ import {
   NotInterestedModel,
 } from "@domain/notInterested/entities/notInterested_entities";
 import NotInterested from "@data/notInterested/model/notInterested-models";
+import Realtors from "@data/realtors/model/realtor-model";
+import Job from "@data/job/models/job-model";
 
 
 // Create a NotInterestedDataSource Interface
@@ -43,6 +45,18 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
     const notInterested = await NotInterested.findOne({
       where: {
         id: id,
+        include: [
+          {
+            model: Realtors,
+            foreignKey: "applicant",
+            as: "realtorData",
+          },
+          {
+            model: Job,
+            foreignKey: "job",
+            as: "jobData",
+          }
+        ]
       },
       // include: 'tags', // You can include associations here if needed
     });
@@ -52,6 +66,18 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
   // Implement the "getAll" method to retrieve all NotInterestedEntity records from the database
   async getAll(): Promise<NotInterestedEntity[]> {
     const notInteresteds = await NotInterested.findAll({
+      include: [
+        {
+          model: Realtors,
+          foreignKey: "applicant",
+          as: "realtorData",
+        },
+        {
+          model: Job,
+          foreignKey: "job",
+          as: "jobData",
+        }
+      ]
     });
     return notInteresteds.map((notInterested: any) => notInterested.toJSON()); // Convert to plain JavaScript objects before returning
   }
