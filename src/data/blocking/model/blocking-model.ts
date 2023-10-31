@@ -1,6 +1,6 @@
 // Import the necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -10,7 +10,16 @@ const Blocking = sequelize.define('Blocking', {
   toRealtor: { type: DataTypes.INTEGER, allowNull: false, references: { model: Realtors, key: 'id' } }
 });
 
+Blocking.belongsTo(Realtors, {
+  foreignKey: "fromRealtor",
+  as: "fromRealtorData"
+});
 
+Blocking.belongsTo(Realtors, {
+  foreignKey: "toRealtor",
+  as: "toRealtorData"
+});
 
 // Export the 'Blocking' model for use in other parts of the application
 export default Blocking;
+

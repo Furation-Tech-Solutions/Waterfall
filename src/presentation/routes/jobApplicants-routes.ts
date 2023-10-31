@@ -1,5 +1,5 @@
 // Import necessary classes, interfaces, and dependencies
-import sequelize from "@main/sequelizeClient"; // Import the Sequelize instance for database connection
+import {sequelize} from "@main/sequelizeClient"; // Import the Sequelize instance for database connection
 import { Router } from "express"; // Import the Express Router class for creating routes
 import { JobApplicantService } from "@presentation/services/jobApplicants-services"; // Import the JobApplicantService for handling business logic
 import { JobApplicantDataSourceImpl } from "@data/jobApplicants/datasources/jobApplicants-data-sources"; // Import the data source for job applicants

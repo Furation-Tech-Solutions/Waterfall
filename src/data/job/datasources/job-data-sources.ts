@@ -9,6 +9,7 @@ import Job from "..//models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
+
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
   // Method to create a new job record
@@ -67,11 +68,10 @@ export class JobDataSourceImpl implements JobDataSource {
   // Method to retrieve all job records with expired dates and jobApplicants.agreement = true
   async getAll(id: string, q: string): Promise<JobEntity[]> {
     let loginId = parseInt(id);
-    console.log("data source ", id, q);
+
     if (q === "expired") {
       const currentDate = new Date(); // Current date
       currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
-      console.log(currentDate);
 
       const jobs = await Job.findAll({
       });
@@ -80,10 +80,20 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
     } else {
-      // Handle other cases or provide a default logic
+      // Handle other cases with the default ordering
       const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+        ],
       });
-
       return jobs.map((job: any) => job.toJSON());
     }
   }

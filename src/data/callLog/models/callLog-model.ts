@@ -1,6 +1,6 @@
 // Import Sequelize data types and the sequelize client
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import {sequelize} from "@main/sequelizeClient";
 
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 

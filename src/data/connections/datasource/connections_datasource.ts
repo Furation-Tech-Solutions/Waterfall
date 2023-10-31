@@ -2,6 +2,7 @@ import { Op, Sequelize, where } from "sequelize"
 import { ConnectionsModel } from "@domain/connections/entities/connections_entities"; // Import the connectionsModel
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
+import Realtors from "@data/realtors/model/realtor-model";
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
@@ -77,15 +78,24 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                 fromId: loginId,
                 toId: friendId
             },
+            include: [{
+                model: Realtors,
+                as: 'fromRealtor', // Alias for the first association
+                foreignKey: 'fromId',
+            },
+            {
+                model: Realtors,
+                as: 'toRealtor', // Alias for the second association
+                foreignKey: 'toId',
+            },]
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
     }
-  
+
     async getAll(id: string, query: string): Promise<any[]> {
         let loginId = parseInt(id);
         let q = query;
-        console.log(query, loginId);
         if (q === "connected") {
             const data = await Connections.findAll({
                 where: {
@@ -100,6 +110,16 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                         }
                     ]
                 },
+                include: [{
+                    model: Realtors,
+                    as: 'fromRealtor', // Alias for the first association
+                    foreignKey: 'fromId',
+                },
+                {
+                    model: Realtors,
+                    as: 'toRealtor', // Alias for the second association
+                    foreignKey: 'toId',
+                },]
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
 
@@ -110,6 +130,16 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                     connected: false,
                     toId: loginId,
                 },
+                include: [{
+                    model: Realtors,
+                    as: 'fromRealtor', // Alias for the first association
+                    foreignKey: 'fromId',
+                },
+                {
+                    model: Realtors,
+                    as: 'toRealtor', // Alias for the second association
+                    foreignKey: 'toId',
+                },]
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
         }
@@ -117,7 +147,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async updateReq(fromId: string, toId: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID
-        console.log("============>", fromId, toId);
         let fromID = parseInt(fromId);
         let toID = parseInt(toId);
         const connection: any = await Connections.findOne({

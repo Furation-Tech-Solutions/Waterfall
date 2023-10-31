@@ -45,21 +45,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Retrieve the associated Job based on jobApplicant's job ID
       const job: any = await Job.findByPk(jobApplicant.job);
 
-      if (job) {
-        // Add the created job applicant to the job's jobApplicants array
-        job.jobApplicants.push(createdJobApplicant.toJSON());
-
-        // Update the Job record with the new jobApplicants array
-        await Job.update(
-          { jobApplicants: job.jobApplicants },
-          {
-            where: {
-              id: job.id,
-            },
-          }
-        );
-      }
-
       return createdJobApplicant.toJSON();
     } catch (error) {
       // Handle any potential errors, e.g., validation errors or database issues
@@ -85,12 +70,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   async getAll(id: string, q: string): Promise<any[]> {
     let loginId = parseInt(id);
 
-    console.log("data source ", id, q);
 
     if (q === "upcomingTask") {
       {
-
-        // console.log(typedQuery);
 
         const jobApplicant = await JobApplicant.findAll({
           where: {

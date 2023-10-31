@@ -123,7 +123,6 @@ export class JobApplicantService {
   // ): Promise<void> {
   //   const query = req.query as {};
   //   let a = req.query
-  //   console.log(a);
   //   let loginId: string = req.body.loginId;
   //   loginId = "1";
   //   // Execute the getAllJobApplicantsUsecase to retrieve all job applicants

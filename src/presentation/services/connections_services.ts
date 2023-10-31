@@ -67,7 +67,7 @@ export class ConnectionsServices {
     async deleteRequest(req: Request, res: Response): Promise<void> {
         const toId: string = req.params.id;
         let loginId: string = req.body.loginId;
-        loginId = "4";
+        loginId = "1";
         const fromId: string = loginId;
 
         // Execute the deleteConnections use case to delete a connection by ID
@@ -121,7 +121,7 @@ export class ConnectionsServices {
     ): Promise<void> {
         const query = req.query.q as string;
         let loginId: string = req.body.loginId;
-        loginId = "6";
+        loginId = "2";
 
         // Execute the getAllConnections use case to retrieve all connections
         const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
@@ -144,7 +144,7 @@ export class ConnectionsServices {
     // Handler for updating connections by ID
     async updateRequests(req: Request, res: Response): Promise<void> {
         let toId: string = req.body.loginId;
-        toId = "4";
+        toId = "1";
         const fromId: string = req.params.id;
         const Data: ConnectionsModel = req.body;
 

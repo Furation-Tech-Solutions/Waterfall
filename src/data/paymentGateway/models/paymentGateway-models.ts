@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import {sequelize} from "@main/sequelizeClient";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 

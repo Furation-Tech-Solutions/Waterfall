@@ -21,13 +21,12 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
     // Create a new feedback entry
     async create(feedBack: any): Promise<any> {
-        console.log(feedBack, "datasource-20");
+
         const existingFeedBack = await FeedBack.findOne({
             where: {
                 jobId: feedBack.jobId
             }
         });
-        console.log(existingFeedBack, "datasource-26");
         if (existingFeedBack) {
             throw ApiError.feedBackGiven();
         }

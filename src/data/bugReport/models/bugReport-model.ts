@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -40,6 +40,13 @@ const BugReport = sequelize.define("BugReport", {
     defaultValue: DataTypes.NOW,
   },
 });
+
+BugReport.belongsTo(Realtors, {
+  foreignKey: "realtor",
+  as: "RealtorData"
+});
+
+
 
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;

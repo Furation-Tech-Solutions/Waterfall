@@ -3,6 +3,8 @@ import { BlockingModel } from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize"
+import Realtors from "@data/realtors/model/realtor-model";
+
 
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
@@ -19,7 +21,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // Method to create a new blocking entry
     async create(blocking: any): Promise<any> {
-        console.log(blocking, "datasouce-20");
 
         // Check if a blocking entry with the same 'fromRealtor' and 'toRealtor' already exists
         const existingBlockor = await Blocking.findOne({
@@ -28,7 +29,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
                 toRealtor: blocking.toRealtor
             }
         });
-        console.log(existingBlockor, "datasouce-26");
+
 
         // If a matching entry exists, throw an error
         if (existingBlockor) {
@@ -44,6 +45,19 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     async getAllBlockings(): Promise<any[]> {
         // Fetch all blocking entries from the database
         const data = await Blocking.findAll({
+            include: [
+                {
+                    model: Realtors,
+                    as: "fromRealtorData",
+                    foreignKey: "fromRealtor",
+                },
+                {
+                    model: Realtors,
+                    as: "toRealtorData",
+                    foreignKey: "toRealtor",
+                },
+            ],
+
         });
 
         // Convert the Sequelize model instances to plain JavaScript objects before returning
@@ -57,6 +71,19 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
             where: {
                 id: id,
             },
+            include: [
+                {
+                    model: Realtors,
+                    as: "fromRealtorData",
+                    foreignKey: "fromRealtor",
+                },
+                {
+                    model: Realtors,
+                    as: "toRealtorData",
+                    foreignKey: "toRealtor",
+                },
+            ],
+
             // include: 'tags', // You can uncomment this line if there are associations to include
         });
 
