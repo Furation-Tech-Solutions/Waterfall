@@ -3,7 +3,7 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {

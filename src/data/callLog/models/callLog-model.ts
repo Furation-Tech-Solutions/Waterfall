@@ -1,6 +1,6 @@
 // Import Sequelize data types and the sequelize client
 import { DataTypes } from "sequelize";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
@@ -38,6 +38,11 @@ const CallLog = sequelize.define("CallLog", {
     type: DataTypes.ENUM(...Object.values(OutcomeEnum)),
     allowNull: false,
   },
+});
+
+CallLog.belongsTo(JobApplicant, {
+  foreignKey: "jobApplicant",
+  as: "jobApplicantData"
 });
 
 // Export the CallLog model as the default export
