@@ -1,4 +1,5 @@
 // Import necessary modules and classes
+import { JobQuery } from "@data/job/datasources/job-data-sources";
 import { JobEntity } from "@domain/job/entities/job"; // Importing the JobEntity class from a specific module
 import { JobRepository } from "@domain/job/repositories/job-repository"; // Importing the JobRepository class from a specific module
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Importing the ErrorClass class from a specific module
@@ -6,11 +7,7 @@ import { Either } from "monet"; // Importing the Either class from the "monet" l
 
 // Define an interface for the GetAllJobs use case
 export interface GetAllJobsUsecase {
-  execute: (
-    loginId: string,
-    q: string,
-    sort: string
-  ) => Promise<Either<ErrorClass, JobEntity[]>>; // A method named "execute" that returns a Promise of Either type
+  execute: (query: JobQuery) => Promise<Either<ErrorClass, JobEntity[]>>; // A method named "execute" that returns a Promise of Either type
 }
 
 // Implement the GetAllJobs class that implements the GetAllJobsUsecase interface
@@ -23,11 +20,7 @@ export class GetAllJobs implements GetAllJobsUsecase {
   }
 
   // Implementation of the "execute" method defined in the interface
-  async execute(
-    loginId: string,
-    q: string,
-    sort: string
-  ): Promise<Either<ErrorClass, JobEntity[]>> {
-    return await this.jobRepository.getJobs(loginId, q, sort); // Invoke the "getJobs" method of jobRepository and return its result
+  async execute(query: JobQuery): Promise<Either<ErrorClass, JobEntity[]>> {
+    return await this.jobRepository.getJobs(query); // Invoke the "getJobs" method of jobRepository and return its result
   }
 }

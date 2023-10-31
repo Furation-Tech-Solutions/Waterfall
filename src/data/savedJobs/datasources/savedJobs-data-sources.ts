@@ -15,7 +15,13 @@ export interface SavedJobDataSource {
   update(id: string, savedJob: SavedJobModel): Promise<any>;
   delete(id: string): Promise<void>;
   read(id: string): Promise<SavedJobEntity | null>;
-  getAll(): Promise<SavedJobEntity[]>;
+  getAll(query: SavedJobQuery): Promise<SavedJobEntity[]>;
+}
+
+// Define a SavedJobQuery object to encapsulate parameters
+export interface SavedJobQuery {
+  page: number;
+  limit: number;
 }
 
 // Implement the SavedJob Data Source that communicates with the database
@@ -51,7 +57,12 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
   }
 
   // Implement the "getAll" method to retrieve all SavedJobEntity records from the database
-  async getAll(): Promise<SavedJobEntity[]> {
+  async getAll(query: SavedJobQuery): Promise<SavedJobEntity[]> {
+
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+
+    const offset = (currentPage - 1) * itemsPerPage;
     const savedJobs = await SavedJob.findAll({
       include: [
         {
@@ -65,6 +76,8 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           foreignKey: "Job",
         },
       ],
+      limit: itemsPerPage, // Limit the number of results per page
+      offset: offset, // Calculate the offset based on the current page
     });
     return savedJobs.map((savedJob: any) => savedJob.toJSON()); // Convert to plain JavaScript objects before returning
   }

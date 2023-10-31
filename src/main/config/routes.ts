@@ -41,8 +41,6 @@ export default (app: Express): void => {
   app.use("/api/v1/savedJobs", savedJobRouter);
   app.use("/api/v1/connections", connectionsRouter);
   app.use("/api/v1/feedbacks", feedBackRouter);
-
-  // Use the main router for the Express app
   app.use("/api/v1/reports", reportRouter);
   app.use("/api/v1/bugReports", bugReportRouter);
   app.use("/api/v1/supports", supportRouter);

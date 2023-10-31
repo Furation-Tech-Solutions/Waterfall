@@ -10,8 +10,16 @@ export interface ConnectionsDataSource {
     updateReq(fromId: string, toId: string, data: ConnectionsModel): Promise<any>;
     deleteReq(fromId: string, toId: string): Promise<void>;
     read(fromId: string, toId: string): Promise<any | null>;
-    getAll(fromId: string, toId: string): Promise<any[]>;
+    getAll(query: ConnectionQuery): Promise<any[]>;
 
+}
+
+// Define a ConnectionQuery object to encapsulate parameters
+export interface ConnectionQuery {
+  id: string;
+  filter: string;
+  page: number;
+  limit: number;
 }
 
 // Connections Data Source communicates with the database
@@ -94,56 +102,68 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     }
   
-    async getAll(id: string, query: string): Promise<any[]> {
-        let loginId = parseInt(id);
-        let q = query;
-        console.log(query, loginId);
+    async getAll(query: ConnectionQuery): Promise<any[]> {
+        let loginId = parseInt(query.id);
+        let q = query.filter;
+        const currentPage = query.page || 1; // Default to page 1
+        const itemsPerPage = query.limit || 10; // Default to 10 items per page
+
+        const offset = (currentPage - 1) * itemsPerPage;
+
         if (q === "connected") {
             const data = await Connections.findAll({
-                where: {
-                    [Op.or]: [
-                        {
-                            connected: true,
-                            toId: loginId,
-                        },
-                        {
-                            connected: true,
-                            fromId: loginId,
-                        }
-                    ]
-                },
-                include: [{
-                    model: Realtors,
-                    as: 'from', // Alias for the first association
-                    foreignKey: 'fromId',
+              where: {
+                [Op.or]: [
+                  {
+                    connected: true,
+                    toId: loginId,
+                  },
+                  {
+                    connected: true,
+                    fromId: loginId,
+                  },
+                ],
+                limit: itemsPerPage, // Limit the number of results per page
+                offset: offset, // Calculate the offset based on the current page
+              },
+              include: [
+                {
+                  model: Realtors,
+                  as: "fromRealtor", // Alias for the first association
+                  foreignKey: "fromId",
                 },
                 {
-                    model: Realtors,
-                    as: 'to', // Alias for the second association
-                    foreignKey: 'toId',
+                  model: Realtors,
+                  as: "toRealtor", // Alias for the second association
+                  foreignKey: "toId",
                 },
-                ],
+              ],
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
 
         }
         else {
             const data = await Connections.findAll({
-                where: {
-                    connected: false,
-                    toId: loginId,
-                },
-                include: [{
-                    model: Realtors,
-                    as: 'from', // Alias for the first association
-                    foreignKey: 'fromId',
+              where: {
+                connected: false,
+                toId: loginId,
+              },
+              include: [
+                {
+                  model: Realtors,
+                  as: "from", // Alias for the first association
+                  foreignKey: "fromId",
                 },
                 {
-                    model: Realtors,
-                    as: 'to', // Alias for the second association
-                    foreignKey: 'toId',
+                  model: Realtors,
+                  as: "to", // Alias for the second association
+                  foreignKey: "toId",
                 },
-                ],
+              ],
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
         }

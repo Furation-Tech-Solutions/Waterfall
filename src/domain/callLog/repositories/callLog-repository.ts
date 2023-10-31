@@ -2,6 +2,7 @@
 import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog";
 import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
+import { CallLogQuery } from "@data/callLog/datasources/callLog-data-sources";
 
 // Define an interface for the CallLogRepository
 export interface CallLogRepository {
@@ -20,7 +21,9 @@ export interface CallLogRepository {
   ): Promise<Either<ErrorClass, CallLogEntity>>;
 
   // Method to retrieve all CallLog entries
-  getCallLogs(): Promise<Either<ErrorClass, CallLogEntity[]>>;
+  getCallLogs(
+    query: CallLogQuery
+  ): Promise<Either<ErrorClass, CallLogEntity[]>>;
 
   // Method to retrieve a specific CallLog entry by its ID
   getCallLogById(id: string): Promise<Either<ErrorClass, CallLogEntity>>;

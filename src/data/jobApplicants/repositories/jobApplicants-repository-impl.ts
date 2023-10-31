@@ -4,7 +4,7 @@ import {
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants";
 import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository";
-import { JobApplicantDataSource } from "@data/jobApplicants/datasources/jobApplicants-data-sources";
+import { JobApplicantDataSource, JobApplicantQuery } from "@data/jobApplicants/datasources/jobApplicants-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -64,12 +64,11 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
 
   // Method to retrieve all job applicants
   async getJobApplicants(
-    id: string,
-    q: string
+    query: JobApplicantQuery
   ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     try {
       // Attempt to get all job applicants using the data source
-      const response = await this.dataSource.getAll(id, q);
+      const response = await this.dataSource.getAll(query);
 
       // Return a Right Either indicating success with an array of job applicants
       return Right<ErrorClass, JobApplicantEntity[]>(response);

@@ -88,18 +88,21 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-
     let loginId: string = req.body.loginId;
     loginId = "1";
-    const q = req.query.q as string  ;
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
     // Convert the agreement query parameter to a boolean
     // const isAgreementTrue = query.agreement === "true"; // This ensures that "agreement" is parsed as a boolean
-    
-  
+
     // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
     const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
-      await this.getAllJobApplicantsUsecase.execute(loginId, q);
+      await this.getAllJobApplicantsUsecase.execute(query);
 
     // Handle the result using the Either monad's cata method
     jobApplicants.cata(

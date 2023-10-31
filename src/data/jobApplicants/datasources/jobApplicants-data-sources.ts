@@ -28,10 +28,18 @@ export interface JobApplicantDataSource {
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(id: string, q: string): Promise<any[]>;
+  getAll(query: JobApplicantQuery): Promise<any[]>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
+}
+
+// Define a JobApplicantQuery object to encapsulate parameters
+export interface JobApplicantQuery {
+  id: string;
+  q: string;
+  page: number;
+  limit: number;
 }
 
 // jobApplicant Data Source communicates with the database
@@ -92,12 +100,14 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return jobApplicant ? jobApplicant.toJSON() : null;
   }
 
-  async getAll(id: string, q: string): Promise<any[]> {
-    let loginId = parseInt(id);
+  async getAll(query: JobApplicantQuery): Promise<any[]> {
+    let loginId = parseInt(query.id);
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
-    console.log("data source ", id, q);
+    const offset = (currentPage - 1) * itemsPerPage;
 
-    if (q === "upcomingTask") {
+    if (query.q === "upcomingTask") {
       {
         // console.log(typedQuery);
 
@@ -124,11 +134,13 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               foreignKey: "applicant",
             },
           ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    } else if (q === "jobAssigned") {
+    } else if (query.q === "jobAssigned") {
       {
         const jobApplicant = await JobApplicant.findAll({
           where: {
@@ -150,11 +162,13 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               foreignKey: "applicant",
             },
           ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    } else if (q === "jobResponse") {
+    } else if (query.q === "jobResponse") {
       {
         const jobApplicant = await JobApplicant.findAll({
           where: {
@@ -175,6 +189,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               foreignKey: "applicant",
             },
           ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -193,6 +209,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             foreignKey: "applicant",
           },
         ],
+        limit: itemsPerPage, // Limit the number of results per page
+        offset: offset, // Calculate the offset based on the current page
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }

@@ -148,9 +148,14 @@ export class SavedJobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
     // Execute the getAllSavedJobsUsecase and handle the result using Either
     const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
-      await this.getAllSavedJobsUsecase.execute();
+      await this.getAllSavedJobsUsecase.execute(query);
 
     // Handle the result and send a JSON response
     savedJobs.cata(

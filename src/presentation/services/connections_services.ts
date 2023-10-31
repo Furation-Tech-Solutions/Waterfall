@@ -119,26 +119,31 @@ export class ConnectionsServices {
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        const query = req.query.q as string;
-        let loginId: string = req.body.loginId;
-        loginId = "6";
+      let loginId: string = req.body.loginId;
+      loginId = "1";
+      const query: any = {}; // Create an empty query object
 
-        // Execute the getAllConnections use case to retrieve all connections
-        const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
-            await this.getAllUsecase.execute(loginId, query);
+      // Assign values to properties of the query object
+      query.q = req.query.q as string;
+      query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+      query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
-        // Handle the result of the use case execution
-        clientConnections.cata(
-            (error: ErrorClass) =>
-                res.status(error.status).json({ error: error.message }), // Handle error case
-            (result: ConnectionsEntity[]) => {
-                // Handle success case
-                const responseData = result.map((connection) =>
-                    ConnectionMapper.toEntity(connection)
-                );
-                return res.json(responseData);
-            }
-        );
+      // Execute the getAllConnections use case to retrieve all connections
+      const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
+        await this.getAllUsecase.execute(query);
+
+      // Handle the result of the use case execution
+      clientConnections.cata(
+        (error: ErrorClass) =>
+          res.status(error.status).json({ error: error.message }), // Handle error case
+        (result: ConnectionsEntity[]) => {
+          // Handle success case
+          const responseData = result.map((connection) =>
+            ConnectionMapper.toEntity(connection)
+          );
+          return res.json(responseData);
+        }
+      );
     }
 
     // Handler for updating connections by ID

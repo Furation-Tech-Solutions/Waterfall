@@ -153,12 +153,16 @@ export class JobService {
   ): Promise<void> {
     let loginId: string = req.body.loginId;
     loginId = "2";
-    const q = req.query.q as string;
-    const sort = req.query.sort as string;
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
-      await this.getAllJobsUsecase.execute(loginId, q, sort);
+      await this.getAllJobsUsecase.execute(query);
 
     // Handle the result using Either's cata function
     jobs.cata(
@@ -172,9 +176,6 @@ export class JobService {
       }
     );
   }
-}
-
-
 
   // // Method to get all jobs
   // async getAllJobs(
@@ -182,11 +183,17 @@ export class JobService {
   //   res: Response,
   //   next: NextFunction
   // ): Promise<void> {
+  //   let loginId: string = req.body.loginId;
+  //   loginId = "2";
+  //   const query: any = {}; // Create an empty query object
+  //   const query.q = req.query.q as string;
+  //   const query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+  //   const query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
   //   // Execute the getAllJobs use case and get an Either result
   //   const jobs: Either<ErrorClass, JobEntity[]> =
-  //     await this.getAllJobsUsecase.execute();
-  //     emailConfig()
+  //     await this.getAllJobsUsecase.execute(query);
+
   //   // Handle the result using Either's cata function
   //   jobs.cata(
   //     // If there's an error, send an error response
@@ -198,3 +205,5 @@ export class JobService {
   //       return res.json(resData);
   //     }
   //   );
+  // }
+}
