@@ -76,5 +76,11 @@ JobApplicant.belongsTo(Job, {
   as: "jobData",
 });
 
+JobApplicant.belongsTo(Realtors, {
+  foreignKey: "applicant",
+  as: "applicantData",
+})
+
+
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;
