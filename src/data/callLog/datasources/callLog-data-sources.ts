@@ -4,6 +4,7 @@ import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog"; 
 import CallLog from "@data/callLog/models/callLog-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
+
 // Create CallLogDataSource Interface
 export interface CallLogDataSource {
   // Method to create a new call log
@@ -24,7 +25,7 @@ export interface CallLogDataSource {
 
 // CallLog Data Source communicates with the database
 export class CallLogDataSourceImpl implements CallLogDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new call log
   async create(callLog: any): Promise<CallLogEntity> {
@@ -52,6 +53,13 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: JobApplicant,
+          foreignKey: "jobApplicant",
+          as: "jobApplicantData"
+        },
+      ],
       // include: 'tags', // Replace 'tags' with the actual name of your association if needed
     });
 
@@ -66,8 +74,8 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
       include: [
         {
           model: JobApplicant,
-          as: "jobApplicantData",
           foreignKey: "jobApplicant",
+          as: "jobApplicantData"
         },
       ],
     });

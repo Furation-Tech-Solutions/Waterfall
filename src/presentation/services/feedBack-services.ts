@@ -36,12 +36,9 @@ export class FeedBackService {
   // Handler for creating a new feedback
   async createFeedBack(req: Request, res: Response): Promise<void> {
     const feedBackData: FeedBackModel = FeedBackMapper.toModel(req.body);
-    console.log(feedBackData, "service-38"); // Logging feedback data
 
     const newFeedBack: Either<ErrorClass, FeedBackEntity> =
         await this.CreateFeedBackUsecase.execute(feedBackData);
-
-    console.log(feedBackData, "service-43"); // Logging feedback data again
 
     newFeedBack.cata(
         (error: ErrorClass) =>
@@ -57,7 +54,6 @@ export class FeedBackService {
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
     
     const id: string = req.params.id;
-    console.log("fhgfhgfhgfgffhhf",id);
     
     const Id: number = parseInt(id, 10);
     

@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
@@ -33,5 +33,16 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
     allowNull: false,
   },
 });
+
+PaymentGateway.belongsTo(Job, {
+  foreignKey: "jobId",
+  as: "jobData",
+});
+
+PaymentGateway.belongsTo(JobApplicant, {
+  foreignKey: "jobApplicantId",
+  as: "jobApplicantData",
+});
+
 
 export default PaymentGateway;

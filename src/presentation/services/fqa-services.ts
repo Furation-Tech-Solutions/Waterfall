@@ -36,12 +36,10 @@ export class FQAService {
   // Handler for creating a new FQA
   async createFQA(req: Request, res: Response): Promise<void> {
     const fqaData: FQAModel = FQAMapper.toModel(req.body);
-    console.log(fqaData, "service-38"); // Logging FQA data
 
     const newFQA: Either<ErrorClass, FQAEntity> =
         await this.CreateFQAUsecase.execute(fqaData);
 
-    console.log(fqaData, "service-43"); // Logging FQA data again
 
     newFQA.cata(
         (error: ErrorClass) =>

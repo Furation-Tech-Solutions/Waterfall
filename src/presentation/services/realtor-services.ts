@@ -36,12 +36,9 @@ export class RealtorService {
   // Handler for creating a new Realtor
   async createRealtor(req: Request, res: Response): Promise<void> {
     const realtorData: RealtorModel = RealtorMapper.toModel(req.body);
-    console.log(realtorData, "service-38"); // Logging Realtor data
 
     const newRealtor: Either<ErrorClass, RealtorEntity> =
       await this.CreateRealtorUsecase.execute(realtorData);
-
-    console.log(realtorData, "service-43"); // Logging Realtor data again
 
     newRealtor.cata(
       (error: ErrorClass) =>
@@ -56,7 +53,6 @@ export class RealtorService {
 // Handler for getting all Realtors
 async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
   const query = req.query;
-  console.log("-=-=-=-=-=-=-=->", query);
 
   const realtors: Either<ErrorClass, RealtorEntity[]> = await this.GetAllRealtorsUsecase.execute(query);
 

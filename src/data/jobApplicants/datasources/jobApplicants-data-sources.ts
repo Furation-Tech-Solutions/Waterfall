@@ -10,11 +10,6 @@ import Realtors from "@data/realtors/model/realtor-model";
 // import { JobStatusEnum } from "types/jobApplicant/upcomingTaskInterface";
 import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
-
-// const currentDate = new Date();
-// const nextDay = new Date();
-// nextDay.setDate(nextDay.getDate() + 1);
-
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
   // Method to create a new job applicant
@@ -35,7 +30,7 @@ export interface JobApplicantDataSource {
 
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
@@ -46,21 +41,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Retrieve the associated Job based on jobApplicant's job ID
       const job: any = await Job.findByPk(jobApplicant.job);
 
-      if (job) {
-        // Add the created job applicant to the job's jobApplicants array
-        job.jobApplicants.push(createdJobApplicant.toJSON());
-
-        // Update the Job record with the new jobApplicants array
-        await Job.update(
-          { jobApplicants: job.jobApplicants },
-          {
-            where: {
-              id: job.id,
-            },
-          }
-        );
-      }
-
       return createdJobApplicant.toJSON();
     } catch (error) {
       // Handle any potential errors, e.g., validation errors or database issues
@@ -68,14 +48,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     }
   }
 
-  // // Method to create a new job applicant
-  // async create(jobApplicant: any): Promise<any> {
-  //   // Create a new job applicant record in the database
-  //   const createdJobApplicant = await JobApplicant.create(jobApplicant);
-
-  //   // Convert the created record to a plain JavaScript object and return it
-  //   return createdJobApplicant.toJSON();
-  // }
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {
@@ -84,6 +56,18 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          foreignKey: "applicant",
+          as: "applicantData",
+        },
+        {
+          model: Job,
+          foreignKey: "job",
+          as: "jobData",
+        }
+      ]
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
 
@@ -94,12 +78,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   async getAll(id: string, q: string): Promise<any[]> {
     let loginId = parseInt(id);
 
-    console.log("data source ", id, q);
 
     if (q === "upcomingTask") {
       {
-
-        // console.log(typedQuery);
 
         const jobApplicant = await JobApplicant.findAll({
           where: {
@@ -109,21 +90,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              //  where: {
-              //    date: {
-              //      [Op.gte]: currentDate,
-              //      [Op.lt]: nextDay,
-              //    },
+              model: Realtors,
+              foreignKey: "applicant",
+              as: "applicantData",
             },
             {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
+              model: Job,
+              foreignKey: "job",
+              as: "jobData",
+            }
+          ]
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -139,19 +115,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
-              },
+              model: Realtors,
+              foreignKey: "applicant",
+              as: "applicantData",
             },
             {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
+              model: Job,
+              foreignKey: "job",
+              as: "jobData",
+            }
+          ]
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -165,19 +138,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Job,
-              as: "jobdata",
-              foreignKey: "job",
-              where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
-              },
+              model: Realtors,
+              foreignKey: "applicant",
+              as: "applicantData",
             },
             {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
-            },
-          ],
+              model: Job,
+              foreignKey: "job",
+              as: "jobData",
+            }
+          ]
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -186,16 +156,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       const jobApplicant = await JobApplicant.findAll({
         include: [
           {
-            model: Job,
-            as: "jobdata",
-            foreignKey: "job",
+            model: Realtors,
+            foreignKey: "applicant",
+            as: "applicantData",
           },
           {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
-          },
-        ],
+            model: Job,
+            foreignKey: "job",
+            as: "jobData",
+          }
+        ]
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }

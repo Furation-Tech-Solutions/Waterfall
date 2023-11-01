@@ -1,8 +1,7 @@
 // Import Sequelize data types and the sequelize client
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
-import JobApplicants from "@data/jobApplicants/models/jobApplicants-models";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Define an enum for possible outcomes
@@ -21,7 +20,7 @@ const CallLog = sequelize.define("CallLog", {
   jobApplicant: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: JobApplicants, key: 'id' }
+    references: { model: JobApplicant, key: 'id' }
   },
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
@@ -41,10 +40,10 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
-JobApplicant.hasMany(CallLog);
 CallLog.belongsTo(JobApplicant, {
-  foreignKey: "jobApplicant", // Use the correct attribute that links Job to Realtors
-  as: "jobApplicantData", // Optionally, you can specify an alias for this association
+  foreignKey: "jobApplicant",
+  as: "jobApplicantData"
 });
+
 // Export the CallLog model as the default export
 export default CallLog;

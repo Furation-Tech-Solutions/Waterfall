@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -41,7 +41,7 @@ const Support = sequelize.define("Support", {
     defaultValue: DataTypes.NOW,
   },
 });
-Realtors.hasMany(Support);
+
 Support.belongsTo(Realtors, {
   foreignKey: "realtor",
   as: "realtorData",

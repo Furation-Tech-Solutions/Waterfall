@@ -1,9 +1,8 @@
 // Import necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
-import Jobs from "@data/job/models/job-model";
 import Job from "@data/job/models/job-model";
 
 // Define statusEnum to represent possible status values
@@ -68,19 +67,20 @@ const JobApplicant = sequelize.define("JobApplicant", {
 
 });
 
-Realtors.hasMany(JobApplicant);
+Job.hasMany(JobApplicant, {
+  foreignKey: "job",
+  as: "applicantsData",
+});
+JobApplicant.belongsTo(Job, {
+  foreignKey: "job",
+  as: "jobData",
+});
+
 JobApplicant.belongsTo(Realtors, {
   foreignKey: "applicant",
-  as: "applicantData", // Optionally, you can specify an alias for this association
-});
-// ...
+  as: "applicantData",
+})
 
 
-Jobs.hasMany(JobApplicant);
-JobApplicant.belongsTo(Job, {
-  foreignKey: "job", 
-  as: "jobdata", // Optionally, you can specify an alias for this association
-  
-});
 // Export the "JobApplicant" model as the default export
 export default JobApplicant;

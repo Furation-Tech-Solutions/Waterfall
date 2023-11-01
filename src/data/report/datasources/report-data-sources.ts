@@ -24,7 +24,7 @@ export interface ReportDataSource {
 
 // Implementation of the ReportDataSource interface
 export class ReportDataSourceImpl implements ReportDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to add a new report to the database
   async create(report: any): Promise<ReportEntity> {
@@ -48,6 +48,17 @@ export class ReportDataSourceImpl implements ReportDataSource {
       where: {
         id: id,
       },
+      include: [{
+        model: Realtors,
+        as: 'fromRealtorData', // Alias for the first association
+        foreignKey: 'fromRealtor',
+      },
+      {
+        model: Realtors,
+        as: 'toRealtorData', // Alias for the second association
+        foreignKey: 'toRealtor',
+      },
+      ],
       // You can include associations here if needed
     });
     return report ? report.toJSON() : null; // Convert to a plain JavaScript object before returning
@@ -56,17 +67,16 @@ export class ReportDataSourceImpl implements ReportDataSource {
   // Implement the "getAll" method to retrieve all reports from the database
   async getAll(): Promise<ReportEntity[]> {
     const reports = await Report.findAll({
-      include: [
-        {
-          model: Realtors,
-          as: "from",
-          foreignKey: "fromRealtor",
-        },
-        {
-          model: Realtors,
-          as: "to",
-          foreignKey: "toRealtor",
-        },
+      include: [{
+        model: Realtors,
+        as: 'fromRealtorData', // Alias for the first association
+        foreignKey: 'fromRealtor',
+      },
+      {
+        model: Realtors,
+        as: 'toRealtorData', // Alias for the second association
+        foreignKey: 'toRealtor',
+      },
       ],
     });
     return reports.map((report: any) => report.toJSON()); // Convert to plain JavaScript objects before returning

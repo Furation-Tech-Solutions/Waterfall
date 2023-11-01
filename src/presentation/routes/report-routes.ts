@@ -1,5 +1,5 @@
 // Import necessary classes, interfaces, and dependencies
-import sequelize from "@main/sequelizeClient";
+import {sequelize} from "@main/sequelizeClient";
 import { Router, Request, Response } from "express"; // Import the Router class and Request/Response types from Express
 import { ReportService } from "@presentation/services/report-services";
 import { ReportDataSourceImpl } from "@data/report/datasources/report-data-sources";

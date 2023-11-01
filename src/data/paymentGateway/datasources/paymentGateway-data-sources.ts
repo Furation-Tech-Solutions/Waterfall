@@ -3,6 +3,8 @@ import { Sequelize } from "sequelize";
 import { PaymentGatewayEntity, PaymentGatewayModel } from "@domain/paymentGateway/entities/paymentGateway"; // Import the PaymentGatewayModel
 import PaymentGateway from "@data/paymentGateway/models/paymentGateway-models"; // Import the PaymentGateway model
 import Realtors from "@data/realtors/model/realtor-model";
+import Job from "@data/job/models/job-model";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 
 // Create PaymentGatewayDataSource Interface
@@ -17,7 +19,7 @@ export interface PaymentGatewayDataSource {
 
 // PaymentGateway Data Source communicates with the database
 export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new PaymentGatewayEntity
   async create(paymentGateway: any): Promise<PaymentGatewayEntity> {
@@ -45,6 +47,18 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: JobApplicant,
+          foreignKey: "jobApplicantId",
+          as: "jobApplicantData",
+        },
+        {
+          model: Job,
+          foreignKey: "jobId",
+          as: "jobData",
+        }
+      ]
       // include: 'tags', // You can include associations here if needed
     });
 
@@ -55,7 +69,20 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
   // Implement the "getAll" method to retrieve all PaymentGatewayEntity records
   async getAll(): Promise<PaymentGatewayEntity[]> {
     // Retrieve all PaymentGatewayEntity records from the database
-    const paymentGateway = await PaymentGateway.findAll({});
+    const paymentGateway = await PaymentGateway.findAll({
+      include: [
+        {
+          model: JobApplicant,
+          foreignKey: "jobApplicantId",
+          as: "jobApplicantData",
+        },
+        {
+          model: Job,
+          foreignKey: "jobId",
+          as: "jobData",
+        }
+      ]
+    });
 
     // Convert the PaymentGatewayEntities to plain JavaScript objects before returning
     return paymentGateway.map((paymentGateway: any) => paymentGateway.toJSON());

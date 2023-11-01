@@ -7,6 +7,7 @@ import {
 import BugReport from "@data/bugReport/models/bugReport-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
+
 // Create an interface for the BugReportDataSource
 export interface BugReportDataSource {
   // Define methods for data operations with promises
@@ -19,7 +20,7 @@ export interface BugReportDataSource {
 
 // Implementation of the BugReportDataSource interface
 export class BugReportDataSourceImpl implements BugReportDataSource {
-  constructor(private db: Sequelize) {} // Constructor that accepts a Sequelize instance
+  constructor(private db: Sequelize) { } // Constructor that accepts a Sequelize instance
 
   // Method to create a new bug report in the database
   async create(bugReport: any): Promise<BugReportEntity> {
@@ -46,6 +47,13 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          foreignKey: "realtor",
+          as: "RealtorData"
+        },
+      ],
       // You can uncomment the "include" option if there are associations to load
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
@@ -60,8 +68,8 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorData",
           foreignKey: "realtor",
+          as: "RealtorData"
         },
       ],
     });

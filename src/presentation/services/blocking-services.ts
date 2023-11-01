@@ -36,12 +36,9 @@ export class BlockingService {
   // Handler for creating a new blocking
   async createBlocking(req: Request, res: Response): Promise<void> {
     const blockingData: BlockingModel = BlockingMapper.toModel(req.body);
-    console.log(blockingData, "service-38"); // Logging blocking data
 
     const newBlocking: Either<ErrorClass, BlockingEntity> =
       await this.CreateBlockingUsecase.execute(blockingData);
-
-    console.log(blockingData, "service-43"); // Logging blocking data again
 
     newBlocking.cata(
       (error: ErrorClass) =>
@@ -57,7 +54,6 @@ export class BlockingService {
   async getAllBlockings(req: Request, res: Response, next: NextFunction): Promise<void> {
     
     const id: string = req.params.id;
-    console.log("234234234234324",id);
     const Id: number = parseInt(id, 10);
 
     // Call the GetAllBlockingsUsecase to get all Blockings

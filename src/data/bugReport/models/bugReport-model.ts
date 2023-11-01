@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -41,11 +41,11 @@ const BugReport = sequelize.define("BugReport", {
   },
 });
 
-Realtors.hasMany(BugReport);
 BugReport.belongsTo(Realtors, {
-  foreignKey: "realtor", // Use the correct attribute that links Job to Realtors
-  as: "realtorData", // Optionally, you can specify an alias for this association
+  foreignKey: "realtor",
+  as: "RealtorData"
 });
+
 
 
 // Export the "BugReport" model for use in other parts of the application

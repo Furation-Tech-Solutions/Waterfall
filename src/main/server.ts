@@ -3,7 +3,7 @@ import setupApp from "@main/config/app";
 import env from "@main/config/env";
 import ApiError from "@presentation/error-handling/api-error";
 import * as Message from "@presentation/error-handling/message-error";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 const app = setupApp();
 
