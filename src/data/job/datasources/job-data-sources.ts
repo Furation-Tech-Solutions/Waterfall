@@ -29,7 +29,7 @@ export interface JobDataSource {
 
 // Define a JobQuery object to encapsulate parameters
 export interface JobQuery {
-  id: string;
+  id: number;
   q: string;
   page: number;
   limit: number;
@@ -38,7 +38,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -48,7 +48,7 @@ export class JobDataSourceImpl implements JobDataSource {
     // Return the created job as a plain JavaScript object
     return createdJob.toJSON();
   }
-
+ 
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
     // Delete the job record where the ID matches the provided ID
@@ -63,33 +63,94 @@ export class JobDataSourceImpl implements JobDataSource {
   async read(id: string): Promise<JobEntity | null> {
     // Find a job record where the ID matches the provided ID
     const job = await Job.findOne({
-      include: [
-        {
-          model: JobApplicant, // Include the JobApplicant model
-          as: "applicants", // Use the alias you defined in the association
-        },
-      ],
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          as: "owner",
+          foreignKey: "jobOwner",
+        },
+        {
+          model: JobApplicant,
+          as: "applicantsData",
+        },
+      ],
     });
 
     // If a job record is found, convert it to a plain JavaScript object and return it, otherwise return null
     return job ? job.toJSON() : null;
   }
 
-
   // Method to retrieve all job records with pagination
+  // async getAll(query: JobQuery): Promise<JobEntity[]> {
+  //   let loginId = parseInt(query.id);
+  //   const currentPage = query.page || 1; // Default to page 1
+  //   const itemsPerPage = query.limit || 10; // Default to 10 items per page
+
+  //   const offset = (currentPage - 1) * itemsPerPage;
+
+  //   if (query.q === "expired") {
+  //     const currentDate = new Date(); // Current date
+  //     currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+
+  //     const jobs = await Job.findAll({
+  //       include: [
+  //         {
+  //           model: Realtors,
+  //           as: "owner",
+  //           foreignKey: "jobOwner",
+  //         },
+  //         {
+  //           model: JobApplicant,
+  //           as: "applicantsData",
+  //           where: {
+  //             agreement: true,
+  //             applicant: loginId,
+  //           },
+  //         },
+  //       ],
+  //       limit: itemsPerPage, // Limit the number of results per page
+  //       offset: offset, // Calculate the offset based on the current page
+  //     });
+
+  //     return jobs.map((job: any) => job.toJSON());
+  //   } else {
+  //     // Handle other cases or provide default logic
+  //     const jobs = await Job.findAll({
+  //       include: [
+  //         {
+  //           model: Realtors,
+  //           as: "owner",
+  //           foreignKey: "jobOwner",
+  //         },
+  //         {
+  //           model: JobApplicant,
+  //           as: "applicantsData"
+  //         },
+  //       ],
+  //       limit: itemsPerPage, // Limit the number of results per page
+  //       offset: offset, // Calculate the offset based on the current page
+  //     });
+
+  //     return jobs.map((job: any) => job.toJSON());
+  //   }
+  // }
   async getAll(query: JobQuery): Promise<JobEntity[]> {
-    let loginId = parseInt(query.id);
+    let loginId = query.id;
+    console.log(loginId, "loginID");
+    
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
-
     const offset = (currentPage - 1) * itemsPerPage;
 
     if (query.q === "expired") {
       const currentDate = new Date(); // Current date
+      console.log(currentDate, "currentDate");
       currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+      
+      
 
       const jobs = await Job.findAll({
         include: [
@@ -100,8 +161,40 @@ export class JobDataSourceImpl implements JobDataSource {
           },
           {
             model: JobApplicant,
+            as: "applicantsData",
             where: {
               agreement: true,
+              applicant: loginId,
+            },
+          },
+        ],
+        where: {
+          date: {
+            [Op.lt]: currentDate, // Filter jobs where the date is in the past
+          },
+        },
+        limit: itemsPerPage, // Limit the number of results per page
+        offset: offset, // Calculate the offset based on the current page
+      });
+      
+
+      return jobs.map((job: any) => job.toJSON());
+    }   else if (query.q === "jobCompleted") {
+
+      const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              jobStatus: "JobCompleted",
+              agreement: true,
+              paymentStatus: true,
               applicant: loginId,
             },
           },
@@ -111,7 +204,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
 
       return jobs.map((job: any) => job.toJSON());
-    } else {
+    }else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         include: [
@@ -119,6 +212,10 @@ export class JobDataSourceImpl implements JobDataSource {
             model: Realtors,
             as: "owner",
             foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
           },
         ],
         limit: itemsPerPage, // Limit the number of results per page

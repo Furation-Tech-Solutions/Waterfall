@@ -10,7 +10,6 @@ import JobApplicant, {
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 // import { JobStatusEnum } from "types/jobApplicant/upcomingTaskInterface";
-import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {

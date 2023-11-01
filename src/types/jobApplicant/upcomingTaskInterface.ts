@@ -6,9 +6,4 @@ export enum JobStatusEnum {
   DECLINE = "Decline",
 }
 
-// upcomingTaskInterface.ts
-export interface Query {
-  jobStatus: string; // Update the type as needed
-  agreement: boolean;
-}
 

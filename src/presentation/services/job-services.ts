@@ -151,7 +151,9 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId: string = req.body.loginId;
+    // let loginId = req.body.loginId; // Assuming loginId is a number, no need to explicitly cast it to string
+    // loginId = "1";
+    let loginId = req.body.loginId; // Assuming loginId is a number, no need to explicitly cast it to string
     loginId = "2";
     const query: any = {}; // Create an empty query object
 
@@ -159,6 +161,8 @@ export class JobService {
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.id = parseInt(loginId, 10);
+; // Set the parsed loginId
 
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
