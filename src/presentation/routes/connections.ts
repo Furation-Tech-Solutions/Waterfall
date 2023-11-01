@@ -25,8 +25,6 @@ const deleteRequestsUsecase = new DeleteRequest(connectionsRepository);
 const getRequestsByIdUsecase = new GetById(connectionsRepository);
 const getAllRequestsUsecase = new GetAll(connectionsRepository);
 const updateRequestsUsecase = new UpdateRequest(connectionsRepository);
-// const getAllRequestUsecase = new GetAllRequests(connectionsRepository);
-// const getAllConnectionstUsecase = new GetAllConnections(connectionsRepository);
 
 // Initialize connectionsServices and inject required dependencies
 const connectionsService = new ConnectionsServices(
@@ -35,8 +33,6 @@ const connectionsService = new ConnectionsServices(
     getRequestsByIdUsecase,
     getAllRequestsUsecase,
     updateRequestsUsecase
-    // getAllRequestUsecase,
-    // getAllConnectionstUsecase
 );
 
 // Create an Express router
@@ -44,7 +40,7 @@ export const connectionsRouter = Router();
 
 // Route handling for creating a new connections
 connectionsRouter.post(
-    "/:id",
+    "/",
     validateConnectionsInputMiddleware(false),
     connectionsService.createRequest.bind(connectionsService)
 );
