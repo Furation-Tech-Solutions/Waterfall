@@ -19,13 +19,12 @@ export class FQADataSourceImpl implements FQADataSource {
 
     // Create a new FQA (Frequently Asked Question) entry
     async create(fqa: any): Promise<any> {
-        console.log(fqa, "datasource-20");
+
         const existingFQA = await FQA.findOne({
             where: {
                 question: fqa.question
             }
         });
-        console.log(existingFQA, "datasource-26");
         if (existingFQA) {
             throw ApiError.questionExist();
         }

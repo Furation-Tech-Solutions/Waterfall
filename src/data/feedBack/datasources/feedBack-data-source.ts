@@ -8,11 +8,11 @@ import Jobs from "@data/job/models/job-model";
 
 // Define the interface for the FeedBackDataSource
 export interface FeedBackDataSource {
-    create(feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
-    getAllFeedBacks(query: FeedbackQuery): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
-    read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
-    update(id: string, feedBack: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
-    delete(id: string): Promise<void>;
+  create(feedBack: any): Promise<any>; // Return type should be Promise of FeedBackEntity
+  getAllFeedBacks(query: FeedbackQuery): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
+  read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
+  update(id: string, updatedData: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
+  delete(id: string): Promise<void>;
 }
 
 // Define a FeebackQuery object to encapsulate parameters
@@ -27,16 +27,15 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
   // Create a new feedback entry
   async create(feedBack: any): Promise<any> {
-    console.log(feedBack, "datasource-20");
     const existingFeedBack = await FeedBack.findOne({
       where: {
         jobId: feedBack.jobId,
       },
     });
-    console.log(existingFeedBack, "datasource-26");
     if (existingFeedBack) {
       throw ApiError.feedBackGiven();
     }
+
     const createdFeedBack = await FeedBack.create(feedBack);
     return createdFeedBack.toJSON();
   }
@@ -77,6 +76,23 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          as: "fromRealtorData", // Alias for the first association
+          foreignKey: "fromRealtor",
+        },
+        {
+          model: Realtors,
+          as: "toRealtorData", // Alias for the second association
+          foreignKey: "toRealtor",
+        },
+        {
+          model: Jobs,
+          as: "JobData", // Alias for the third association
+          foreignKey: "jobId",
+        },
+      ],
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
     return feedBack ? feedBack.toJSON() : null; // Convert to a plain JavaScript object before returning

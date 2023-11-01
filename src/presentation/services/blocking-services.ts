@@ -36,12 +36,9 @@ export class BlockingService {
   // Handler for creating a new blocking
   async createBlocking(req: Request, res: Response): Promise<void> {
     const blockingData: BlockingModel = BlockingMapper.toModel(req.body);
-    console.log(blockingData, "service-38"); // Logging blocking data
 
     const newBlocking: Either<ErrorClass, BlockingEntity> =
       await this.CreateBlockingUsecase.execute(blockingData);
-
-    console.log(blockingData, "service-43"); // Logging blocking data again
 
     newBlocking.cata(
       (error: ErrorClass) =>

@@ -88,15 +88,14 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             },
             include: [{
                 model: Realtors,
-                as: 'from', // Alias for the first association
+                as: 'fromRealtor', // Alias for the first association
                 foreignKey: 'fromId',
             },
             {
                 model: Realtors,
-                as: 'to', // Alias for the second association
+                as: 'toRealtor', // Alias for the second association
                 foreignKey: 'toId',
-            },
-        ]
+            },]
         });
         return connections ? connections.toJSON() : null; // Convert to a plain JavaScript object before returning
 
@@ -171,7 +170,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async updateReq(fromId: string, toId: string, updatedData: ConnectionsModel): Promise<any> {
         // Find the record by ID
-        console.log("============>", fromId, toId);
         let fromID = parseInt(fromId);
         let toID = parseInt(toId);
         const connection: any = await Connections.findOne({

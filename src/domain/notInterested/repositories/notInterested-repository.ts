@@ -13,7 +13,7 @@ import { NotInterestedQuery } from "@data/notInterested/datasources/notIntereste
     createNotInterested(
       notInterested: NotInterestedModel // Accepts a 'NotInterestedModel' as a parameter
     ): Promise<Either<ErrorClass, NotInterestedEntity>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'NotInterestedEntity'
-
+  
     // Method to update an existing NotInterested record by ID
     updateNotInterested(
       id: string, // Accepts a string 'id' parameter for identifying the record

@@ -5,18 +5,18 @@ export class BugReportModel {
     public description: string = "",
     public attachments: string[] | null = null,
     public timestamp: Date = new Date()
-  ) {}
+  ) { }
 }
 
 // Bug Report Entity provided by Bug Report Repository is converted to Express API Response
 export class BugReportEntity {
   constructor(
-    public id: number| undefined = undefined,
+    public id: number | undefined = undefined,
     public realtor: number, // Replace with the appropriate data type if needed
     public description: string,
     public attachments: string[] | null,
     public timestamp: Date
-  ) {}
+  ) { }
 }
 
 export class BugReportMapper {

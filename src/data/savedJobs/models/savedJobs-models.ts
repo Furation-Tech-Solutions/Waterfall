@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
@@ -22,16 +22,15 @@ const SavedJob = sequelize.define("SavedJob", {
   },
 });
 
-Realtors.hasMany(SavedJob);
-SavedJob.belongsTo(Realtors, {
-  foreignKey: "Realtor", 
-  as: "realtorData", 
+SavedJob.belongsTo(Job, {
+  foreignKey: "Job",
+  as: "jobData",
 });
 
-SavedJob.belongsTo(Job, {
-  foreignKey: "Job", 
-  as: "jobData", 
-});
+SavedJob.belongsTo(Realtors, {
+  foreignKey: "Realtor",
+  as: "realtorData",
+})
 
 // Export the "SavedJob" model as the default export
 export default SavedJob;

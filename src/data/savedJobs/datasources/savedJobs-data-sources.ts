@@ -26,7 +26,7 @@ export interface SavedJobQuery {
 
 // Implement the SavedJob Data Source that communicates with the database
 export class SavedJobDataSourceImpl implements SavedJobDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new SavedJobModel into the database
   async create(savedJob: any): Promise<SavedJobEntity> {
@@ -51,6 +51,18 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          foreignKey: "Realtor",
+          as: "realtorData",
+        },
+        {
+          model: Job,
+          foreignKey: "Job",
+          as: "jobData",
+        }
+      ]
       // include: 'tags', // You can include associations here if needed
     });
     return savedJob ? savedJob.toJSON() : null; // Convert to a plain JavaScript object before returning

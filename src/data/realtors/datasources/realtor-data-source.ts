@@ -28,13 +28,11 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
     // Create a new Realtor entry
     async create(realtor: any): Promise<any> {
-        console.log(realtor, "datasource-20");
         const existingRealtors = await Realtor.findOne({
             where: {
                 email: realtor.email
             }
         });
-        console.log(existingRealtors, "datasource-26");
         if (existingRealtors) {
             throw ApiError.realtorExist();
         }
@@ -43,7 +41,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     async getAllRealtors(query: RealtorQuery): Promise<any[]> {
-        console.log("=-=-=-=->",query);
         
         if (query.location != undefined) {
             const data = await Realtor.findAll({

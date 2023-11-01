@@ -1,5 +1,8 @@
+import { sequelize } from "@main/sequelizeClient";
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+// import { db } from "@main/sequelizeClient";
+
+// console.log(db, "db in real");
 
 const Realtors = sequelize.define("Realtors", {
   firstName: {

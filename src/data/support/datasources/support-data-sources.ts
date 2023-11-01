@@ -4,6 +4,7 @@ import { SupportEntity, SupportModel } from "@domain/support/entities/support"; 
 import Support from "..//models/support-model"; // Import the Support model
 import Realtors from "@data/realtors/model/realtor-model";
 
+
 // Create SupportDataSource Interface
 export interface SupportDataSource {
   // Define methods for data operations on Support entities
@@ -16,7 +17,7 @@ export interface SupportDataSource {
 
 // Support Data Source communicates with the database
 export class SupportDataSourceImpl implements SupportDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new SupportEntity
   async create(support: any): Promise<SupportEntity> {
@@ -44,6 +45,13 @@ export class SupportDataSourceImpl implements SupportDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          foreignKey: "realtor",
+          as: "realtorData",
+        },
+      ]
       // include: 'tags', // You can include associations here if needed
     });
 
@@ -55,13 +63,13 @@ export class SupportDataSourceImpl implements SupportDataSource {
   async getAll(): Promise<SupportEntity[]> {
     // Retrieve all SupportEntity records from the database
     const support = await Support.findAll({
-       include: [
+      include: [
         {
           model: Realtors,
-          as: "realtorData",
           foreignKey: "realtor",
+          as: "realtorData",
         },
-       ]
+      ]
     });
 
     // Convert the SupportEntities to plain JavaScript objects before returning

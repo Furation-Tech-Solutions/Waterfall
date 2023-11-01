@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import { DataTypes } from "sequelize";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -39,17 +39,8 @@ const Report = sequelize.define("Report", {
   },
 });
 
-Realtors.hasMany(Report);
-Report.belongsTo(
-  Realtors,
-  {
-    foreignKey: "fromRealtor", // Use the correct attribute that links Job to Realtors
-    as: "from" // Optionally, you can specify an alias for this association
-  });
+Report.belongsTo(Realtors, { foreignKey: 'fromRealtor', as: 'fromRealtorData' });
+Report.belongsTo(Realtors, { foreignKey: 'toRealtor', as: 'toRealtorData' });
 
-  Report.belongsTo(Realtors, {
-    foreignKey: "toRealtor", // Use the correct attribute that links Job to Realtors
-    as: "to", // Optionally, you can specify an alias for this association
-  });
 // Export the "Report" model as the default export of this module
 export default Report;

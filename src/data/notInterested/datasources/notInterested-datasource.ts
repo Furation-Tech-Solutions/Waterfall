@@ -8,6 +8,7 @@ import NotInterested from "@data/notInterested/model/notInterested-models";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 
+
 // Create a NotInterestedDataSource Interface
 export interface NotInterestedDataSource {
   // Define methods for data source operations
@@ -26,7 +27,7 @@ export interface NotInterestedQuery {
 
 // Implement the NotInterested Data Source that communicates with the database
 export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new NotInterestedModel into the database
   async create(notInterested: any): Promise<NotInterestedEntity> {
@@ -50,6 +51,18 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
     const notInterested = await NotInterested.findOne({
       where: {
         id: id,
+        include: [
+          {
+            model: Realtors,
+            foreignKey: "applicant",
+            as: "realtorData",
+          },
+          {
+            model: Job,
+            foreignKey: "job",
+            as: "jobData",
+          }
+        ]
       },
       include: [
         {

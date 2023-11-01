@@ -2,7 +2,7 @@
 import { BlockingModel } from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { Sequelize } from "sequelize"
+import { Sequelize } from "sequelize";
 import Realtors from "@data/realtors/model/realtor-model";
 
 // Define an interface for the BlockingDataSource
@@ -26,8 +26,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
   // Method to create a new blocking entry
   async create(blocking: any): Promise<any> {
-    console.log(blocking, "datasouce-20");
-
     // Check if a blocking entry with the same 'fromRealtor' and 'toRealtor' already exists
     const existingBlockor = await Blocking.findOne({
       where: {
@@ -35,7 +33,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
         toRealtor: blocking.toRealtor,
       },
     });
-    console.log(existingBlockor, "datasouce-26");
 
     // If a matching entry exists, throw an error
     if (existingBlockor) {
@@ -51,10 +48,10 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   async getAllBlockings(query: BlockQuery): Promise<any[]> {
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
-        
+
     const offset = (currentPage - 1) * itemsPerPage;
 
- // Fetch all blocking entries from the database
+    // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
       include: [
         {
@@ -83,6 +80,19 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: Realtors,
+          as: "fromRealtorData",
+          foreignKey: "fromRealtor",
+        },
+        {
+          model: Realtors,
+          as: "toRealtorData",
+          foreignKey: "toRealtor",
+        },
+      ],
+
       // include: 'tags', // You can uncomment this line if there are associations to include
     });
 

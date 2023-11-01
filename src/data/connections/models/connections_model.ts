@@ -2,10 +2,10 @@ import { strict } from "assert";
 import { DataTypes } from "sequelize";
 import env from '@main/config/env';
 import { array, boolean, object, string } from "joi";
-import sequelize from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
 import Realtors from "@data/realtors/model/realtor-model";
-
+import { connections } from "mongoose";
 
 const Connections = sequelize.define('Connections', {
   fromId: {
@@ -24,7 +24,6 @@ const Connections = sequelize.define('Connections', {
   },
 });
 
-Realtors.hasMany(Connections);
 Connections.belongsTo(Realtors, { foreignKey: 'fromId', as: 'fromRealtor' });
 Connections.belongsTo(Realtors, { foreignKey: 'toId', as: 'toRealtor' });
 

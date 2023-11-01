@@ -13,12 +13,12 @@ import {
   export class NotInterestedRepositoryImpl implements NotInterestedRepository {
     // Define a private member "dataSource" of type NotInterestedDataSource
     private readonly dataSource: NotInterestedDataSource;
-
+  
     // Constructor that accepts a "dataSource" parameter and sets it as a member
     constructor(dataSource: NotInterestedDataSource) {
       this.dataSource = dataSource;
     }
-
+  
     // Implement the "createNotInterested" method defined in the NotInterestedRepository interface
     async createNotInterested(
       notInterested: NotInterestedModel
@@ -29,20 +29,20 @@ import {
         return Right<ErrorClass, NotInterestedEntity>(i);
       } catch (error: any) {
         console.log(error);
-
+  
         // Handle error cases:
         // If the error is an unauthorized ApiError with a status code of 401, return it as Left
         if (error instanceof ApiError && error.status === 401) {
           return Left<ErrorClass, NotInterestedEntity>(ApiError.unAuthorized());
         }
-
+  
         // Otherwise, return a custom error with a BAD_REQUEST status and the error message as Left
         return Left<ErrorClass, NotInterestedEntity>(
           ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
         );
       }
     }
-
+  
     // Implement the "deleteNotInterested" method defined in the NotInterestedRepository interface
     async deleteNotInterested(id: string): Promise<Either<ErrorClass, void>> {
       try {
@@ -56,7 +56,7 @@ import {
         );
       }
     }
-
+  
     // Implement the "updateNotInterested" method defined in the NotInterestedRepository interface
     async updateNotInterested(
       id: string,
@@ -88,14 +88,14 @@ import {
         if (error instanceof ApiError && error.status === 404) {
           return Left<ErrorClass, NotInterestedEntity[]>(ApiError.notFound());
         }
-
+  
         // Otherwise, return a custom error with a BAD_REQUEST status and the error message as Left
         return Left<ErrorClass, NotInterestedEntity[]>(
           ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
         );
       }
     }
-
+  
     // Implement the "getNotInterestedById" method defined in the NotInterestedRepository interface
     async getNotInterestedById(
       id: string
@@ -103,12 +103,12 @@ import {
       try {
         // Retrieve the saved job with the given ID using the "dataSource"
         const response = await this.dataSource.read(id);
-
+  
         // If the response is null, return a not-found ApiError as Left
         if (response === null) {
           return Left<ErrorClass, NotInterestedEntity>(ApiError.notFound());
         }
-
+  
         // Otherwise, return the saved job as Right
         return Right<ErrorClass, NotInterestedEntity>(response);
       } catch (error: any) {
