@@ -3,24 +3,24 @@ import { RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op } from "sequelize";
-import { IRFilter } from "types/realtor/filter-type";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
-    create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
-    // getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
-    getAllRealtors(query: object): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
-    read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
-    update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
-    delete(id: string): Promise<void>;
+  create(realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
+  // getAllRealtors(): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+  getAllRealtors(query: RealtorQuery): Promise<any[]>; // Return type should be Promise of an array of RealtorEntity
+  read(id: string): Promise<any | null>; // Return type should be Promise of RealtorEntity or null
+  update(id: string, realtor: RealtorModel): Promise<any>; // Return type should be Promise of RealtorEntity
+  delete(id: string): Promise<void>;
 }
 
-interface RealtorQuery {
-    location?: string;
-    gender?: string;
-    searchList?: string;
-    // Add other properties as needed
-  }
+export interface RealtorQuery {
+  location?: string;
+  gender?: string;
+  searchList?: string;
+  page: number;
+  limit: number;
+}
 
 // Realtor Data Source communicates with the database
 export class RealtorDataSourceImpl implements RealtorDataSource {
@@ -41,6 +41,10 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     async getAllRealtors(query: RealtorQuery): Promise<any[]> {
+
+         const currentPage = query.page || 1; // Default to page 1
+         const itemsPerPage = query.limit || 10; // Default to 10 items per page
+         const offset = (currentPage - 1) * itemsPerPage;
         
         if (query.location != undefined) {
             const data = await Realtor.findAll({
@@ -52,7 +56,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                             }
                         }
                     ]
-                }
+                },
+                limit: itemsPerPage, // Limit the number of results per page
+                offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
@@ -66,7 +72,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                             }
                         }
                     ]
-                }
+                },
+                limit: itemsPerPage, // Limit the number of results per page
+                offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
@@ -95,14 +103,22 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                             },
                         }
                     ]
-                }
+                },
+                limit: itemsPerPage, // Limit the number of results per page
+                offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
         } else {
             // Handle other cases when 'location' is not provided (e.g., return all records)
-            const data = await Realtor.findAll({});
+            const data = await Realtor.findAll({
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
+            });
+            
             return data.map((realtor: any) => realtor.toJSON());
+            
         }
+        
     }
 
 
