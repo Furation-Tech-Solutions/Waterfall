@@ -151,12 +151,22 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId: string = req.body.loginId;
-    loginId = "2";
-    const q = req.query.q as string;
+    let loginId = req.body.loginId;
+    loginId = "2"; // You've manually set loginId to "2"
+
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
+
     // Execute the getAllJobs use case and get an Either result
     const jobs: Either<ErrorClass, JobEntity[]> =
-      await this.getAllJobsUsecase.execute(loginId, q);
+      await this.getAllJobsUsecase.execute(query);
 
     // Handle the result using Either's cata function
     jobs.cata(
@@ -171,27 +181,3 @@ export class JobService {
     );
   }
 }
-
-  // // Method to get all jobs
-  // async getAllJobs(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-
-  //   // Execute the getAllJobs use case and get an Either result
-  //   const jobs: Either<ErrorClass, JobEntity[]> =
-  //     await this.getAllJobsUsecase.execute();
-  //     emailConfig()
-  //   // Handle the result using Either's cata function
-  //   jobs.cata(
-  //     // If there's an error, send an error response
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     // If successful, map the results to Entities and send them as a JSON response
-  //     (jobs: JobEntity[]) => {
-  //       const resData = jobs.map((job: any) => JobMapper.toEntity(job));
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }

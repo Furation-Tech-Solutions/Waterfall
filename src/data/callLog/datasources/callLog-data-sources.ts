@@ -20,7 +20,13 @@ export interface CallLogDataSource {
   read(id: string): Promise<CallLogEntity | null>;
 
   // Method to retrieve all call logs
-  getAll(): Promise<CallLogEntity[]>;
+  getAll(query: CallLogQuery): Promise<CallLogEntity[]>;
+}
+
+// Define a CallLogQuery object to encapsulate parameters
+export interface CallLogQuery {
+  page: number;
+  limit: number;
 }
 
 // CallLog Data Source communicates with the database
@@ -68,7 +74,13 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
   }
 
   // Method to retrieve all call logs
-  async getAll(): Promise<CallLogEntity[]> {
+  async getAll(query: CallLogQuery): Promise<CallLogEntity[]> {
+
+     const currentPage = query.page || 1; // Default to page 1
+     const itemsPerPage = query.limit || 10; // Default to 10 items per page
+
+     const offset = (currentPage - 1) * itemsPerPage;
+
     // Retrieve all call log records from the database
     const callLog = await CallLog.findAll({
       include: [
@@ -78,6 +90,8 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
           as: "jobApplicantData"
         },
       ],
+      limit: itemsPerPage, // Limit the number of results per page
+      offset: offset, // Calculate the offset based on the current page
     });
 
     // Convert the retrieved call logs to an array of plain JavaScript objects before returning

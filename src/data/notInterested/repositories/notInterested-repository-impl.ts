@@ -4,7 +4,7 @@ import {
     NotInterestedModel,
   } from "@domain/notInterested/entities/notInterested_entities";
   import { NotInterestedRepository } from "@domain/notInterested/repositories/notInterested-repository";
-  import { NotInterestedDataSource } from "@data/notInterested/datasources/notInterested-datasource";
+  import { NotInterestedDataSource, NotInterestedQuery } from "@data/notInterested/datasources/notInterested-datasource";
   import { Either, Left, Right } from "monet";
   import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
   import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -28,7 +28,6 @@ import {
         const i = await this.dataSource.create(notInterested);
         return Right<ErrorClass, NotInterestedEntity>(i);
       } catch (error: any) {
-        console.log(error);
   
         // Handle error cases:
         // If the error is an unauthorized ApiError with a status code of 401, return it as Left
@@ -73,12 +72,14 @@ import {
         );
       }
     }
-  
+
     // Implement the "getNotInteresteds" method defined in the NotInterestedRepository interface
-    async getNotInteresteds(): Promise<Either<ErrorClass, NotInterestedEntity[]>> {
+    async getNotInteresteds(
+      query: NotInterestedQuery
+    ): Promise<Either<ErrorClass, NotInterestedEntity[]>> {
       try {
         // Retrieve all saved jobs using the "dataSource" and return them as Right
-        const response = await this.dataSource.getAll();
+        const response = await this.dataSource.getAll(query);
         return Right<ErrorClass, NotInterestedEntity[]>(response);
       } catch (error: any) {
         // Handle error cases:

@@ -4,11 +4,12 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, { jobStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, {
+  jobStatusEnum,
+} from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 // import { JobStatusEnum } from "types/jobApplicant/upcomingTaskInterface";
-import { Query } from "types/jobApplicant/upcomingTaskInterface";
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
@@ -22,10 +23,18 @@ export interface JobApplicantDataSource {
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(id: string, q: string): Promise<any[]>;
+  getAll(query: JobApplicantQuery): Promise<any[]>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
+}
+
+// Define a JobApplicantQuery object to encapsulate parameters
+export interface JobApplicantQuery {
+  id: string;
+  q: string;
+  page: number;
+  limit: number;
 }
 
 // jobApplicant Data Source communicates with the database
@@ -75,11 +84,14 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return jobApplicant ? jobApplicant.toJSON() : null;
   }
 
-  async getAll(id: string, q: string): Promise<any[]> {
-    let loginId = parseInt(id);
+  async getAll(query: JobApplicantQuery): Promise<any[]> {
+    let loginId = parseInt(query.id);
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
+    const offset = (currentPage - 1) * itemsPerPage;
 
-    if (q === "upcomingTask") {
+    if (query.q === "upcomingTask") {
       {
 
         const jobApplicant = await JobApplicant.findAll({
@@ -90,24 +102,29 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Realtors,
-              foreignKey: "applicant",
-              as: "applicantData",
+              model: Job,
+              as: "jobdata",
+              foreignKey: "job",
+              //  where: {
+              //    date: {
+              //      [Op.gte]: currentDate,
+              //      [Op.lt]: nextDay,
+              //    },
             },
             {
-              model: Job,
-              foreignKey: "job",
-              as: "jobData",
-            }
-          ]
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicant",
+            },
+          ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-
-    } else if (q === "jobAssigned") {
+    } else if (query.q === "jobAssigned") {
       {
-
         const jobApplicant = await JobApplicant.findAll({
           where: {
             agreement: true, // Now, it's a boolean
@@ -115,22 +132,26 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Realtors,
-              foreignKey: "applicant",
-              as: "applicantData",
+              model: Job,
+              as: "jobdata",
+              foreignKey: "job",
+              where: {
+                jobOwner: loginId, // Use the correct way to filter by jobOwner
+              },
             },
             {
-              model: Job,
-              foreignKey: "job",
-              as: "jobData",
-            }
-          ]
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicant",
+            },
+          ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-
-    } else if (q === "jobResponse") {
+    } else if (query.q === "jobResponse") {
       {
         const jobApplicant = await JobApplicant.findAll({
           where: {
@@ -138,16 +159,21 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           include: [
             {
-              model: Realtors,
-              foreignKey: "applicant",
-              as: "applicantData",
+              model: Job,
+              as: "jobdata",
+              foreignKey: "job",
+              where: {
+                jobOwner: loginId, // Use the correct way to filter by jobOwner
+              },
             },
             {
-              model: Job,
-              foreignKey: "job",
-              as: "jobData",
-            }
-          ]
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicant",
+            },
+          ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
         });
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
@@ -156,20 +182,21 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       const jobApplicant = await JobApplicant.findAll({
         include: [
           {
-            model: Realtors,
-            foreignKey: "applicant",
-            as: "applicantData",
+            model: Job,
+            as: "jobdata",
+            foreignKey: "job",
           },
           {
-            model: Job,
-            foreignKey: "job",
-            as: "jobData",
-          }
-        ]
+            model: Realtors,
+            as: "applicantData",
+            foreignKey: "applicant",
+          },
+        ],
+        limit: itemsPerPage, // Limit the number of results per page
+        offset: offset, // Calculate the offset based on the current page
       });
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }
-
   }
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {

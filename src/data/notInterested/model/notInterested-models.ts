@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
+import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 
 // Define a Sequelize model named "NotInterested"
 const NotInterested = sequelize.define("NotInterested", {

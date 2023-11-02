@@ -5,6 +5,7 @@ import {
 } from "@domain/savedJobs/entities/savedJobs"; // Importing from the specified path
 import { Either } from "monet"; // Importing the 'Either' type from the 'monet' library
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Importing the 'ErrorClass' class from the specified path
+import { SavedJobQuery } from "@data/savedJobs/datasources/savedJobs-data-sources";
 
 // Definition of the SavedJobRepository interface
 export interface SavedJobRepository {
@@ -20,7 +21,9 @@ export interface SavedJobRepository {
   ): Promise<Either<ErrorClass, SavedJobEntity>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'SavedJobEntity'
 
   // Method to fetch all SavedJob records
-  getSavedJobs(): Promise<Either<ErrorClass, SavedJobEntity[]>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or an array of 'SavedJobEntity' objects
+  getSavedJobs(
+    query: SavedJobQuery
+  ): Promise<Either<ErrorClass, SavedJobEntity[]>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or an array of 'SavedJobEntity' objects
 
   // Method to fetch a SavedJob record by its ID
   getSavedJobById(id: string): Promise<Either<ErrorClass, SavedJobEntity>>; // Accepts a string 'id' parameter and returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'SavedJobEntity'

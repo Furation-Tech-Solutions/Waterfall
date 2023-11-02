@@ -5,6 +5,7 @@ import {
 } from "@domain/jobApplicants/entites/jobApplicants";
 import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
+import { JobApplicantQuery } from "@data/jobApplicants/datasources/jobApplicants-data-sources";
 
 // Defining an interface for the JobApplicantRepository
 export interface JobApplicantRepository {
@@ -21,8 +22,7 @@ export interface JobApplicantRepository {
 
   // Method to get a list of job applicants
   getJobApplicants(
-    id: string,
-    q: string
+    query: JobApplicantQuery
   ): Promise<Either<ErrorClass, JobApplicantEntity[]>>;
 
   // Method to get a job applicant by ID

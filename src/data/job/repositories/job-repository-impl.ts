@@ -1,7 +1,7 @@
 // Import necessary modules and dependencies
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import { JobRepository } from "@domain/job/repositories/job-repository";
-import { JobDataSource } from "@data/job/datasources/job-data-sources";
+import { JobDataSource, JobQuery } from "@data/job/datasources/job-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -75,12 +75,10 @@ export class JobRepositoryImpl implements JobRepository {
   }
 
   // Method to retrieve all jobs
-  async getJobs(
-    id: string, q: string
-  ): Promise<Either<ErrorClass, JobEntity[]>> {
+  async getJobs(query: JobQuery): Promise<Either<ErrorClass, JobEntity[]>> {
     try {
       // Attempt to retrieve all jobs using the data source
-      const response = await this.dataSource.getAll( id, q);
+      const response = await this.dataSource.getAll(query);
       // Return a Right monad with an array of job entities on success
       return Right<ErrorClass, JobEntity[]>(response);
     } catch (error: any) {

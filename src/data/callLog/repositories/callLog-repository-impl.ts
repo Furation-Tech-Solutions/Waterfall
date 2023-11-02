@@ -1,7 +1,7 @@
 // Import necessary modules and dependencies
 import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog";
 import { CallLogRepository } from "@domain/callLog/repositories/callLog-repository";
-import { CallLogDataSource } from "@data/callLog/datasources/callLog-data-sources";
+import { CallLogDataSource, CallLogQuery } from "@data/callLog/datasources/callLog-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -72,10 +72,12 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   }
 
   // Method to retrieve all call logs
-  async getCallLogs(): Promise<Either<ErrorClass, CallLogEntity[]>> {
+  async getCallLogs(
+    query: CallLogQuery
+  ): Promise<Either<ErrorClass, CallLogEntity[]>> {
     try {
       // Call the data source's getAll method and await the result
-      const response = await this.dataSource.getAll();
+      const response = await this.dataSource.getAll(query);
       // Return a Right with an array of CallLogEntity objects on success
       return Right<ErrorClass, CallLogEntity[]>(response);
     } catch (error: any) {

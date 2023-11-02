@@ -4,7 +4,7 @@ import {
   SavedJobModel,
 } from "@domain/savedJobs/entities/savedJobs";
 import { SavedJobRepository } from "@domain/savedJobs/repositories/savedJob-repository";
-import { SavedJobDataSource } from "@data/savedJobs/datasources/savedJobs-data-sources";
+import { SavedJobDataSource, SavedJobQuery } from "@data/savedJobs/datasources/savedJobs-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -28,7 +28,6 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
       const i = await this.dataSource.create(savedJob);
       return Right<ErrorClass, SavedJobEntity>(i);
     } catch (error: any) {
-      console.log(error);
 
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left
@@ -75,10 +74,12 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   }
 
   // Implement the "getSavedJobs" method defined in the SavedJobRepository interface
-  async getSavedJobs(): Promise<Either<ErrorClass, SavedJobEntity[]>> {
+  async getSavedJobs(
+    query: SavedJobQuery
+  ): Promise<Either<ErrorClass, SavedJobEntity[]>> {
     try {
       // Retrieve all saved jobs using the "dataSource" and return them as Right
-      const response = await this.dataSource.getAll();
+      const response = await this.dataSource.getAll(query);
       return Right<ErrorClass, SavedJobEntity[]>(response);
     } catch (error: any) {
       // Handle error cases:

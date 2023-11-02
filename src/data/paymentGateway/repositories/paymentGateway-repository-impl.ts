@@ -25,7 +25,6 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
       const i = await this.dataSource.create(paymentGateway);
       return Right<ErrorClass, PaymentGatewayEntity>(i);
     } catch (error: any) {
-      console.log(error);
 
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left
