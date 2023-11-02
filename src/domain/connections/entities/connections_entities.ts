@@ -17,8 +17,8 @@ export class ConnectionsEntity {
     public toId: number,
     public connected: boolean,
     public fromRealtor: {},
-    public toRealtor: {},
-  ) { }
+    public toRealtor: {}
+  ) {}
 }
 
 /* ConnectionsMapper provided by Connections Repository is converted to Express API Response */
@@ -43,7 +43,6 @@ export class ConnectionMapper {
           connectionData.connected !== undefined
             ? connectionData.connected
             : existingConnection.connected,
-
       };
     } else {
       const connectionEntity: ConnectionsEntity = {
@@ -56,7 +55,7 @@ export class ConnectionMapper {
         toId: connectionData.toId,
         connected: connectionData.connected,
         toRealtor: connectionData.toRealtor,
-        fromRealtor: connectionData.fromRealtor
+        fromRealtor: connectionData.fromRealtor,
       };
       return connectionEntity;
     }
