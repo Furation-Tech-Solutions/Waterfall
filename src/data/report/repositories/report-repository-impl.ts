@@ -25,7 +25,6 @@ export class ReportRepositoryImpl implements ReportRepository {
       const i = await this.dataSource.create(report);
       return Right<ErrorClass, ReportEntity>(i);
     } catch (error: any) {
-      console.log(error);
 
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left

@@ -50,26 +50,31 @@ export class BlockingService {
     );
   }
 
-  // Handler for getting all blockings
+  // Handle for getting all blockings
   async getAllBlockings(req: Request, res: Response, next: NextFunction): Promise<void> {
-    
-    const id: string = req.params.id;
-    const Id: number = parseInt(id, 10);
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
     // Call the GetAllBlockingsUsecase to get all Blockings
-    const blockings: Either<ErrorClass, BlockingEntity[]> = await this.GetAllBlockingsUsecase.execute();
-      
+    const blockings: Either<ErrorClass, BlockingEntity[]> =
+      await this.GetAllBlockingsUsecase.execute(query);
     blockings.cata(
-      (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
       (result: BlockingEntity[]) => {
         // Filter out blockings with del_status set to "Deleted"
         // const nonDeletedBlockings = result.filter((blocking) => blocking.deleteStatus !== false);
 
         // Convert non-deleted blockings from an array of BlockingEntity to an array of plain JSON objects using blockingMapper
-        const responseData = blockings.map((blocking) => BlockingMapper.toEntity(blocking));
+        const responseData = blockings.map((blocking) =>
+          BlockingMapper.toEntity(blocking)
+        );
         return res.json(responseData);
       }
-  );
+    );
   }
 
   // Handler for getting a blocking by ID

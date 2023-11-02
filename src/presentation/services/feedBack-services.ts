@@ -52,25 +52,32 @@ export class FeedBackService {
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    
     const id: string = req.params.id;
     
     const Id: number = parseInt(id, 10);
-    
+    const query: any = {}; // Create an empty query object
+
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
-    const feedBacks: Either<ErrorClass, FeedBackEntity[]> = await this.GetAllFeedBacksUsecase.execute();
-      
+    const feedBacks: Either<ErrorClass, FeedBackEntity[]> =
+      await this.GetAllFeedBacksUsecase.execute(query);
+
     feedBacks.cata(
-      (error: ErrorClass) => res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
       (result: FeedBackEntity[]) => {
         // Filter out feedbacks with del_status set to "Deleted"
         // const nonDeletedFeedBacks = result.filter((feedback) => feedback.deleteStatus !== false);
 
         // Convert non-deleted feedbacks from an array of FeedBackEntity to an array of plain JSON objects using feedbackMapper
-        const responseData = result.map((feedback) => FeedBackMapper.toEntity(feedback));
+        const responseData = result.map((feedback) =>
+          FeedBackMapper.toEntity(feedback)
+        );
         return res.json(responseData);
       }
-  );
+    );
   }
 
   // Handler for getting feedback by ID

@@ -16,7 +16,13 @@ export interface NotInterestedDataSource {
   update(id: string, notInterested: NotInterestedModel): Promise<any>;
   delete(id: string): Promise<void>;
   read(id: string): Promise<NotInterestedEntity | null>;
-  getAll(): Promise<NotInterestedEntity[]>;
+  getAll(query: NotInterestedQuery): Promise<NotInterestedEntity[]>;
+}
+
+// Define a NotInterestedQuery object to encapsulate parameters
+export interface NotInterestedQuery {
+  page: number;
+  limit: number;
 }
 
 // Implement the NotInterested Data Source that communicates with the database
@@ -58,26 +64,46 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
           }
         ]
       },
+      include: [
+        {
+          model: Realtors,
+          as: "realtorData", // Alias for the first association
+          foreignKey: "realtor",
+        },
+        {
+          model: Job,
+          as: "jobData", // Alias for the second association
+          foreignKey: "job",
+        },
+      ],
       // include: 'tags', // You can include associations here if needed
     });
     return notInterested ? notInterested.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
   // Implement the "getAll" method to retrieve all NotInterestedEntity records from the database
-  async getAll(): Promise<NotInterestedEntity[]> {
+  async getAll(query: NotInterestedQuery): Promise<NotInterestedEntity[]> {
+
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+
+    const offset = (currentPage - 1) * itemsPerPage;
+
     const notInteresteds = await NotInterested.findAll({
       include: [
         {
           model: Realtors,
-          foreignKey: "applicant",
-          as: "realtorData",
+          as: "realtorData", // Alias for the first association
+          foreignKey: "realtor",
         },
         {
           model: Job,
+          as: "jobData", // Alias for the second association
           foreignKey: "job",
-          as: "jobData",
-        }
-      ]
+        },
+      ],
+      limit: itemsPerPage, // Limit the number of results per page
+      offset: offset, // Calculate the offset based on the current page
     });
     return notInteresteds.map((notInterested: any) => notInterested.toJSON()); // Convert to plain JavaScript objects before returning
   }

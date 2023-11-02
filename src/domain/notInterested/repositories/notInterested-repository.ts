@@ -5,6 +5,7 @@ import {
   } from "@domain/notInterested/entities/notInterested_entities"; // Importing from the specified path
   import { Either } from "monet"; // Importing the 'Either' type from the 'monet' library
   import { ErrorClass } from "@presentation/error-handling/api-error"; // Importing the 'ErrorClass' class from the specified path
+import { NotInterestedQuery } from "@data/notInterested/datasources/notInterested-datasource";
   
   // Definition of the NotInterestedRepository interface
   export interface NotInterestedRepository {
@@ -18,13 +19,17 @@ import {
       id: string, // Accepts a string 'id' parameter for identifying the record
       data: NotInterestedModel // Accepts a 'NotInterestedModel' as the data to update
     ): Promise<Either<ErrorClass, NotInterestedEntity>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'NotInterestedEntity'
-  
+
     // Method to fetch all NotInterested records
-    getNotInteresteds(): Promise<Either<ErrorClass, NotInterestedEntity[]>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or an array of 'NotInterestedEntity' objects
-  
+    getNotInteresteds(
+      query: NotInterestedQuery
+    ): Promise<Either<ErrorClass, NotInterestedEntity[]>>; // Returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or an array of 'NotInterestedEntity' objects
+
     // Method to fetch a NotInterested record by its ID
-    getNotInterestedById(id: string): Promise<Either<ErrorClass, NotInterestedEntity>>; // Accepts a string 'id' parameter and returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'NotInterestedEntity'
-  
+    getNotInterestedById(
+      id: string
+    ): Promise<Either<ErrorClass, NotInterestedEntity>>; // Accepts a string 'id' parameter and returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'NotInterestedEntity'
+
     // Method to delete a NotInterested record by its ID
     deleteNotInterested(id: string): Promise<Either<ErrorClass, void>>; // Accepts a string 'id' parameter and returns a Promise that resolves to an 'Either' type containing 'ErrorClass' or 'void' (indicating successful deletion)
   }

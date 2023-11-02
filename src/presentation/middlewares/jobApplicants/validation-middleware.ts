@@ -28,7 +28,6 @@ const jobApplicantValidator = function (
     applicant: Joi.number().required(),
     applicantStatus: Joi.string()
       .valid(...Object.values(applicationStatusEnum))
-
       .required()
       .messages({
         "any.only": "Invalid applicantStatus",

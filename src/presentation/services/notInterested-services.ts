@@ -148,9 +148,15 @@ export class NotInterestedService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+
     // Execute the getAllNotInterestedsUsecase and handle the result using Either
     const notInteresteds: Either<ErrorClass, NotInterestedEntity[]> =
-      await this.getAllNotInterestedsUsecase.execute();
+      await this.getAllNotInterestedsUsecase.execute(query);
 
     // Handle the result and send a JSON response
     notInteresteds.cata(

@@ -1,4 +1,5 @@
 // Import necessary modules and classes from external dependencies and local files
+import { JobApplicantQuery } from "@data/jobApplicants/datasources/jobApplicants-data-sources";
 import { JobApplicantEntity } from "@domain/jobApplicants/entites/jobApplicants"; // Importing the JobApplicantEntity class
 import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository"; // Importing the JobApplicantRepository class
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Importing the ErrorClass class
@@ -8,8 +9,7 @@ import { Either } from "monet"; // Importing the Either class from the 'monet' l
 export interface GetAllJobApplicantsUsecase {
   // Define a method 'execute' that returns a Promise of Either<ErrorClass, JobApplicantEntity[]>
   execute: (
-    loginId: string,
-    q: string
+    query: JobApplicantQuery
   ) => Promise<Either<ErrorClass, JobApplicantEntity[]>>;
 }
 
@@ -24,13 +24,9 @@ export class GetAllJobApplicants implements GetAllJobApplicantsUsecase {
 
   // Implementation of the 'execute' method from the interface
   async execute(
-    loginId: string,
-    q: string
+    query: JobApplicantQuery
   ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     // Call the 'getJobApplicants' method of the 'jobApplicantRepository' to retrieve job applicants
-    return await this.jobApplicantRepository.getJobApplicants(
-      loginId,
-      q
-    );
+    return await this.jobApplicantRepository.getJobApplicants(query);
   }
 }

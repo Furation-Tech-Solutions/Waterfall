@@ -1,7 +1,7 @@
 // Import necessary modules and dependencies
 import { RealtorModel, RealtorEntity } from "@domain/realtors/entities/realtors";
 import { RealtorRepository } from "@domain/realtors/repositories/realtor-repository";
-import { RealtorDataSource } from "@data/realtors/datasources/realtor-data-source";
+import { RealtorDataSource, RealtorQuery } from "@data/realtors/datasources/realtor-data-source";
 import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
@@ -40,7 +40,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
 //       }
 //   }
 
-async getRealtors(query: object): Promise<Either<ErrorClass, RealtorEntity[]>> {
+async getRealtors(query: RealtorQuery): Promise<Either<ErrorClass, RealtorEntity[]>> {
     try {
       const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
       return Right<ErrorClass, RealtorEntity[]>(realtors);

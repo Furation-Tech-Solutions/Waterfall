@@ -1,4 +1,5 @@
 // Import necessary dependencies and modules
+import { SavedJobQuery } from "@data/savedJobs/datasources/savedJobs-data-sources";
 import { SavedJobEntity } from "@domain/savedJobs/entities/savedJobs";
 import { SavedJobRepository } from "@domain/savedJobs/repositories/savedJob-repository";
 import { ErrorClass } from "@presentation/error-handling/api-error";
@@ -8,7 +9,9 @@ import { Either } from "monet";
 export interface GetAllSavedJobsUsecase {
   // Define a method called "execute" that returns a Promise
   // It returns an Either type which represents a result that can be either an Error or an array of SavedJobEntity objects
-  execute: () => Promise<Either<ErrorClass, SavedJobEntity[]>>;
+  execute: (
+    query: SavedJobQuery
+  ) => Promise<Either<ErrorClass, SavedJobEntity[]>>;
 }
 
 // Implement the GetAllSavedJobs use case
@@ -22,8 +25,10 @@ export class GetAllSavedJobs implements GetAllSavedJobsUsecase {
   }
 
   // Implementation of the "execute" method defined in the interface
-  async execute(): Promise<Either<ErrorClass, SavedJobEntity[]>> {
+  async execute(
+    query: SavedJobQuery
+  ): Promise<Either<ErrorClass, SavedJobEntity[]>> {
     // Call the "getSavedJobs" method of the savedJobRepository to fetch saved jobs data
-    return await this.savedJobRepository.getSavedJobs();
+    return await this.savedJobRepository.getSavedJobs(query);
   }
 }

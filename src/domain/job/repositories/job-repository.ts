@@ -2,6 +2,7 @@
 import { JobEntity, JobModel } from "@domain/job/entities/job"; // Import the JobEntity and JobModel from the specified location
 import { Either } from "monet"; // Import the Either type from the "monet" library
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Import the ErrorClass from the specified location
+import { JobQuery } from "@data/job/datasources/job-data-sources";
 
 // Define the interface for the JobRepository
 export interface JobRepository {
@@ -15,7 +16,7 @@ export interface JobRepository {
   updateJob(id: string, data: JobModel): Promise<Either<ErrorClass, JobEntity>>;
 
   // Define a method to retrieve a list of jobs and return an Either monad with either an ErrorClass or an array of JobEntities
-  getJobs(id: string, q: string | undefined): Promise<Either<ErrorClass, JobEntity[]>>;
+  getJobs(query: JobQuery): Promise<Either<ErrorClass, JobEntity[]>>;
 
   // Define a method to retrieve a job by its ID and return an Either monad with either an ErrorClass or a JobEntity
   getJobById(id: string): Promise<Either<ErrorClass, JobEntity>>;

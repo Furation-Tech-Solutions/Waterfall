@@ -1,4 +1,5 @@
 // Import necessary modules and dependencies
+import { CallLogQuery } from "@data/callLog/datasources/callLog-data-sources";
 import { CallLogEntity } from "@domain/callLog/entities/callLog";
 import { CallLogRepository } from "@domain/callLog/repositories/callLog-repository";
 import { ErrorClass } from "@presentation/error-handling/api-error";
@@ -7,7 +8,9 @@ import { Either } from "monet";
 // Define an interface for the GetAllCallLogsUsecase
 export interface GetAllCallLogsUsecase {
   // Define a method called execute that returns a Promise of Either
-  execute: () => Promise<Either<ErrorClass, CallLogEntity[]>>;
+  execute: (
+    query: CallLogQuery
+  ) => Promise<Either<ErrorClass, CallLogEntity[]>>;
 }
 
 // Create a class GetAllCallLogs that implements the GetAllCallLogsUsecase interface
@@ -21,8 +24,10 @@ export class GetAllCallLogs implements GetAllCallLogsUsecase {
   }
 
   // Implementation of the execute method
-  async execute(): Promise<Either<ErrorClass, CallLogEntity[]>> {
+  async execute(
+    query: CallLogQuery
+  ): Promise<Either<ErrorClass, CallLogEntity[]>> {
     // Call the getCallLogs method of the CallLogRepository and return the result
-    return await this.callLogRepository.getCallLogs();
+    return await this.callLogRepository.getCallLogs(query);
   }
 }
