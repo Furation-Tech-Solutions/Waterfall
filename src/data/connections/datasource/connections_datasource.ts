@@ -133,7 +133,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                 //     }
                 // ]
                 // },
-                //-------------------------------------------
                 include: [{
                     model: Realtors,
                     as: 'fromRealtor', // Alias for the first association
@@ -144,67 +143,61 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
                     as: 'toRealtor', // Alias for the second association
                     foreignKey: 'toId',
                 },]
+                //-------------------------------------------
+
             });
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
 
         } else if (query.q === "mutualfriends") {
-            let friendId = query.toId;
+            const friendId: number = query.toId;
 
             const findFriendIds = async (id: number) => {
-
                 const data = await Connections.findAll({
                     where: {
-                        [Op.or]: [
-                            {
-                                connected: true,
-                                toId: id,
-                            },
-                            {
-                                connected: true,
-                                fromId: id,
-                            },
-                        ]
+                        connected: true,
+                        [Op.or]: [{ toId: id }, { fromId: id }],
                     },
                 });
-                // Extract and filter the friend IDs that are not equal to 1
-                const friendIds = data.map((friend: any) => (friend.fromId === id ? friend.toId : friend.fromId));
 
-                // Filter out null values if needed
-                const filteredFriendIds = friendIds.filter((id) => id !== null);    
+                const friendIds: number[] = data.map((friend: any) =>
+                    friend.fromId === id ? friend.toId : friend.fromId
+                ).filter((id: number | null) => id !== null);
 
-                // console.log(filteredFriendIds);
-
-                return filteredFriendIds;
+                return friendIds;
             };
 
-            const myFriends = await findFriendIds(loginID);
-            const otherFriends = await findFriendIds(friendId);
-            // console.log(myFriends, "myfriends");
-            // console.log(otherFriends, "otherFriends");
-            // Find the common numbers
-            const commonFriends = myFriends.filter(id => otherFriends.includes(id));
-            // console.log(commonFriends, "commonFriends");
+            const [myFriends, otherFriends] = await Promise.all([
+                findFriendIds(loginID),
+                findFriendIds(friendId),
+            ]);
 
-            //------------------------------------------------------------------------------------------------------------
-            const data = await Connections.findAll({
-                where: {
-                    [Op.or]: [
-                        {
-                            connected: true,
-                            toId: loginID,
-                        },
-                        {
-                            connected: true,
-                            fromId: loginID,
-                        },
-                    ]
-                },
-            });
+            const commonFriends: number[] = myFriends.filter((id: number) =>
+                otherFriends.includes(id)
+            );
 
-            return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
+            const friendsArray: any[] = await Promise.all(
+                commonFriends.map(async (commonFriendId: number) => {
+                    const data: any = await Connections.findByPk(commonFriendId, {
+                        include: [
+                            {
+                                model: Realtors,
+                                as: 'fromRealtor',
+                                foreignKey: 'fromId',
+                            },
+                            {
+                                model: Realtors,
+                                as: 'toRealtor',
+                                foreignKey: 'toId',
+                            },
+                        ],
+                    });
+                    return data?.dataValues;
+                })
+            );
 
-
+            return friendsArray.filter(Boolean); // Filter out null/undefined values before returning
         }
+
         else {
             const data = await Connections.findAll({
                 // where: {
