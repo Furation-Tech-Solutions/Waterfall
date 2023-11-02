@@ -93,7 +93,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
     if (query.q === "upcomingTask") {
       {
-        // console.log(typedQuery);
 
         const jobApplicant = await JobApplicant.findAll({
           where: {

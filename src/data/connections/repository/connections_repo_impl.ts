@@ -76,7 +76,6 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, ConnectionsEntity[]>(ApiError.notFound());
       }
-      console.log(e);
 
       // Return a Left monad with a custom error and the error message
       return Left<ErrorClass, ConnectionsEntity[]>(

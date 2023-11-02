@@ -29,7 +29,6 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       // Return a Right Either indicating success with the created job applicant
       return Right<ErrorClass, JobApplicantEntity>(i);
     } catch (error: any) {
-      console.log(error);
 
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 401) {

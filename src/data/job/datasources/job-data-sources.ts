@@ -1,10 +1,6 @@
-// Import the Sequelize library for working with databases
+// Import necessary modules and dependencies
 import { Op, Sequelize } from "sequelize";
-
-// Import the JobEntity and JobModel from the job module
 import { JobEntity, JobModel } from "@domain/job/entities/job";
-
-// Import the Job model from the relative path
 import Job from "..//models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
@@ -33,6 +29,8 @@ export interface JobQuery {
   q: string;
   page: number;
   limit: number;
+  year?: number; // Optional year
+  month?: number;
 }
 
 // Implementation of the JobDataSource interface
@@ -48,7 +46,7 @@ export class JobDataSourceImpl implements JobDataSource {
     // Return the created job as a plain JavaScript object
     return createdJob.toJSON();
   }
- 
+
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
     // Delete the job record where the ID matches the provided ID
@@ -83,82 +81,37 @@ export class JobDataSourceImpl implements JobDataSource {
     return job ? job.toJSON() : null;
   }
 
-  // Method to retrieve all job records with pagination
-  // async getAll(query: JobQuery): Promise<JobEntity[]> {
-  //   let loginId = parseInt(query.id);
-  //   const currentPage = query.page || 1; // Default to page 1
-  //   const itemsPerPage = query.limit || 10; // Default to 10 items per page
-
-  //   const offset = (currentPage - 1) * itemsPerPage;
-
-  //   if (query.q === "expired") {
-  //     const currentDate = new Date(); // Current date
-  //     currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
-
-  //     const jobs = await Job.findAll({
-  //       include: [
-  //         {
-  //           model: Realtors,
-  //           as: "owner",
-  //           foreignKey: "jobOwner",
-  //         },
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             agreement: true,
-  //             applicant: loginId,
-  //           },
-  //         },
-  //       ],
-  //       limit: itemsPerPage, // Limit the number of results per page
-  //       offset: offset, // Calculate the offset based on the current page
-  //     });
-
-  //     return jobs.map((job: any) => job.toJSON());
-  //   } else {
-  //     // Handle other cases or provide default logic
-  //     const jobs = await Job.findAll({
-  //       include: [
-  //         {
-  //           model: Realtors,
-  //           as: "owner",
-  //           foreignKey: "jobOwner",
-  //         },
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData"
-  //         },
-  //       ],
-  //       limit: itemsPerPage, // Limit the number of results per page
-  //       offset: offset, // Calculate the offset based on the current page
-  //     });
-
-  //     return jobs.map((job: any) => job.toJSON());
-  //   }
-  // }
+  // Method to retrieve a list of job records
   async getAll(query: JobQuery): Promise<JobEntity[]> {
+
+
     let loginId = query.id;
-    console.log(loginId, "loginID");
-    
+
+
     const currentPage = query.page || 1; // Default to page 1
+    
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
 
+    // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
-      const currentDate = new Date(); // Current date
-      console.log(currentDate, "currentDate");
-      currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
-      
-      
 
+
+      const currentDate = new Date(); // Current date
+      currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+
+      // Fetch jobs that are expired
       const jobs = await Job.findAll({
+
+        
         include: [
+
           {
             model: Realtors,
             as: "owner",
             foreignKey: "jobOwner",
           },
+
           {
             model: JobApplicant,
             as: "applicantsData",
@@ -167,27 +120,38 @@ export class JobDataSourceImpl implements JobDataSource {
               applicant: loginId,
             },
           },
+
         ],
+
         where: {
+
           date: {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
           },
+
         },
+
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
+
       });
-      
 
       return jobs.map((job: any) => job.toJSON());
-    }   else if (query.q === "jobCompleted") {
 
+
+    } else if (query.q === "jobCompleted") {
+      
+      // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
             foreignKey: "jobOwner",
           },
+
           {
             model: JobApplicant,
             as: "applicantsData",
@@ -198,16 +162,38 @@ export class JobDataSourceImpl implements JobDataSource {
               applicant: loginId,
             },
           },
+
         ],
+
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
+
       });
 
       return jobs.map((job: any) => job.toJSON());
-    }else {
-      // Handle other cases or provide default logic
+
+
+    } else if (query.year && query.month) {
+
+      // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
+        where: {
+
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+              query.month
+            ),
+          ],
+
+        },
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -217,32 +203,43 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
           },
+
         ],
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
+
+        limit: itemsPerPage,
+        offset: offset,
+
+      });
+      return jobs.map((job: any) => job.toJSON());
+
+
+    } else {
+      // Handle other cases or provide default logic
+      const jobs = await Job.findAll({
+
+        include: [
+
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+
+        ],
+
+        limit: itemsPerPage,
+        offset: offset,
+
       });
 
       return jobs.map((job: any) => job.toJSON());
     }
   }
-
-  // // Method to retrieve all job records
-  // async getAll(): Promise<JobEntity[]> {
-  //   // Find all job records
-  //   const jobs = await Job.findAll({
-  //     include: [
-  //       {
-  //         model: Realtors,
-  //         as: "owner",
-  //         foreignKey: "jobOwner",
-  //       },
-  //     ],
-  //   });
-
-  //   // return data.map((blocking: any) => blocking.toJSON());
-  //   // Convert all job records to plain JavaScript objects and return them in an array
-  //   return jobs.map((job: any) => job.toJSON());
-  // }
 
   // Method to update a job record by ID
   async update(id: string, updatedData: JobModel): Promise<any> {
@@ -261,3 +258,4 @@ export class JobDataSourceImpl implements JobDataSource {
     return updatedJob ? updatedJob.toJSON() : null;
   }
 }
+
