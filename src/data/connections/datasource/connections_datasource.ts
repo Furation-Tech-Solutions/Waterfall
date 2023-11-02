@@ -112,6 +112,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     async getAll(loginId: string, query: Query): Promise<any[]> {
         let loginID = parseInt(loginId);
+        // loginID = 1;
 
         if (query.q === "connected") {
             const data = await Connections.findAll({
@@ -149,56 +150,59 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         } else if (query.q === "mutualfriends") {
             let friendId = query.toId;
 
+            const findFriendIds = async (id: number) => {
+
+                const data = await Connections.findAll({
+                    where: {
+                        [Op.or]: [
+                            {
+                                connected: true,
+                                toId: id,
+                            },
+                            {
+                                connected: true,
+                                fromId: id,
+                            },
+                        ]
+                    },
+                });
+                // Extract and filter the friend IDs that are not equal to 1
+                const friendIds = data.map((friend: any) => (friend.fromId === id ? friend.toId : friend.fromId));
+
+                // Filter out null values if needed
+                const filteredFriendIds = friendIds.filter((id) => id !== null);    
+
+                // console.log(filteredFriendIds);
+
+                return filteredFriendIds;
+            };
+
+            const myFriends = await findFriendIds(loginID);
+            const otherFriends = await findFriendIds(friendId);
+            // console.log(myFriends, "myfriends");
+            // console.log(otherFriends, "otherFriends");
+            // Find the common numbers
+            const commonFriends = myFriends.filter(id => otherFriends.includes(id));
+            // console.log(commonFriends, "commonFriends");
+
+            //------------------------------------------------------------------------------------------------------------
             const data = await Connections.findAll({
                 where: {
                     [Op.or]: [
                         {
                             connected: true,
-                            toId: 1,
+                            toId: loginID,
                         },
                         {
                             connected: true,
-                            fromId: 1,
+                            fromId: loginID,
                         },
-                        {
-                            connected: true,
-                            toId: friendId
-                        },
-                        {
-                            connected: true,
-                            fromId: friendId
-                        }
                     ]
                 },
             });
-            console.log(data, "data");
-            // Extract and filter the friend IDs that are not equal to 1
-            // const friendIds = data.map((friend: any) => (friend.fromId === 1 ? friend.toId : friend.fromId));
-
-            const friendIds = data.map((friend: any) => {
-                if (friend.fromId === 1) {
-                    return friend.toId;
-                } else if (friend.fromId === friendId) {
-                    return friend.toId;
-                } else if (friend.toId === 1) {
-                    return friend.fromId;
-                } else if (friend.toId === friendId) {
-                    return friend.fromId;
-                }
-                else {
-                    // You can choose to handle other cases here if needed
-                    return null; // For example, return null for cases that don't match the conditions
-                }
-            });
-
-            // Filter out null values if needed
-            const filteredFriendIds = friendIds.filter((id) => id !== null);
-
-            console.log(filteredFriendIds);
-
-            console.log(friendIds); // Array of friend IDs that are not equal to 1
 
             return data.map((connection: any) => connection.toJSON()); // Convert to plain JavaScript objects before returning 
+
 
         }
         else {
