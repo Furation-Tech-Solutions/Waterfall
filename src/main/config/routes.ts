@@ -1,5 +1,5 @@
+import { type Express, Router } from "express";
 // Import necessary routers for different routes
-
 import { callLogRouter } from "@presentation/routes/callLog-routes";
 import { realtorRouter } from "@presentation/routes/realtor-routes";
 import { blockingRouter } from "@presentation/routes/blocking-routes";
@@ -9,14 +9,12 @@ import { jobApplicantRouter } from "@presentation/routes/jobApplicants-routes";
 import { savedJobRouter } from "@presentation/routes/savedJobs-routes";
 import { connectionsRouter } from "@presentation/routes/connections";
 import { feedBackRouter } from "@presentation/routes/feedBack-routes";
-
-// Import Express and Router types
-import { type Express, Router } from "express";
 import { reportRouter } from "@presentation/routes/report-routes";
 import { bugReportRouter } from "@presentation/routes/bugReport-routes";
 import { supportRouter } from "@presentation/routes/support-routes";
 import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 import { paymentGatewayRouter } from "@presentation/routes/paymentGateway-routes";
+import { messagesRouter } from "@presentation/routes/messages-routes";
 
 
 
@@ -48,7 +46,8 @@ export default (app: Express): void => {
   app.use("/api/v1/supports", supportRouter);
   app.use("/api/v1/callLogs", callLogRouter);
   app.use("/api/v1/paymentGateways", paymentGatewayRouter);
-  app.use("/api/v1/notInteresteds", notInterestedRouter); 
+  app.use("/api/v1/notInteresteds", notInterestedRouter);
+  app.use("/api/v1/messages", messagesRouter);
 
   app.use(router);
 };
