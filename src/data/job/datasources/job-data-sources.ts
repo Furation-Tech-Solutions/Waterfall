@@ -83,6 +83,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
   // Method to retrieve a list of job records
   async getAll(query: JobQuery): Promise<JobEntity[]> {
+
     let loginId = query.id;
 
     const currentPage = query.page || 1; // Default to page 1
@@ -92,12 +93,15 @@ export class JobDataSourceImpl implements JobDataSource {
 
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
+
       const currentDate = new Date(); // Current date
       currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
 
       // Fetch jobs that are expired
       const jobs = await Job.findAll({
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -119,6 +123,7 @@ export class JobDataSourceImpl implements JobDataSource {
           date: {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
           },
+
         },
 
         limit: itemsPerPage, // Limit the number of results per page
@@ -167,6 +172,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
+
       });
       console.log("recommendedJobs:", recommendedJobs);
 
@@ -188,6 +194,7 @@ export class JobDataSourceImpl implements JobDataSource {
         },
 
         include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -198,15 +205,60 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
           },
         ],
+
 
         limit: itemsPerPage,
         offset: offset,
       });
       return jobs.map((job: any) => job.toJSON());
+
+
+    } else if (query.year && query.month) {
+
+      // Fetch jobs that match the specified year and month
+      const jobs = await Job.findAll({
+        where: {
+
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+              query.month
+            ),
+          ],
+
+        },
+
+        include: [
+
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+
+        ],
+
+        limit: itemsPerPage,
+        offset: offset,
+
+      });
+      return jobs.map((job: any) => job.toJSON());
+
+
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -217,10 +269,12 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
           },
+
         ],
 
         limit: itemsPerPage,
         offset: offset,
+
       });
 
       return jobs.map((job: any) => job.toJSON());
@@ -244,3 +298,4 @@ export class JobDataSourceImpl implements JobDataSource {
     return updatedJob ? updatedJob.toJSON() : null;
   }
 }
+
