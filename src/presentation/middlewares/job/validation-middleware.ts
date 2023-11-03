@@ -27,6 +27,7 @@ interface JobInput {
   applyBy: Date;
   deleteReason: string;
   coordinates: { latitude: string; longitude: string } | null;
+  liveStatus: boolean;
 }
 
 // Create a function for validating the job input
@@ -152,12 +153,18 @@ const jobValidator = function (input: JobInput): JobInput {
       "any.required": "Delete reason is required",
     }),
     coordinates: Joi.object({
-        latitude: Joi.string().required(),
-        longitude: Joi.string().required(),
-        }).required().messages({
-        'any.required': 'CountryCode is required',
-        'string.empty': 'CountryCode cannot be empty',
-      })
+      latitude: Joi.string().required(),
+      longitude: Joi.string().required(),
+    })
+      .required()
+      .messages({
+        "any.required": "CountryCode is required",
+        "string.empty": "CountryCode cannot be empty",
+      }),
+    liveStatus: Joi.boolean().required().messages({
+      "boolean.base": "liveStatus must be a boolean",
+      "any.required": "liveStatus is required",
+    }),
   });
 
   // Validate the input against the defined schema
