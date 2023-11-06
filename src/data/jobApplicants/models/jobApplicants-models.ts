@@ -18,7 +18,7 @@ export const jobStatusEnum = {
   PENDING: "Pending",
   DECLINE: "Decline",
 };
-
+ 
 // Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {

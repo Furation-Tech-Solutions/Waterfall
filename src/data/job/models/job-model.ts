@@ -108,6 +108,11 @@ const Job = sequelize.define("Job", {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
   },
+  liveStatus: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 Job.belongsTo(Realtors, {

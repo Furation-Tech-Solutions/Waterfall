@@ -18,7 +18,8 @@ export class JobModel {
     public applyBy: Date = new Date(), // Application deadline
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string = "" ,// Reason for job deletion
-    public coordinates: { latitude: string; longitude: string } | null = null
+    public coordinates: { latitude: string; longitude: string } | null = null,
+    public liveStatus: boolean = false
   ) {}
 }
 
@@ -44,6 +45,7 @@ export class JobEntity {
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string, // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
+    public liveStatus: boolean,
   ) {}
 }
 
@@ -113,6 +115,9 @@ export class JobMapper {
             : existingJob.deleteReason,
           coordinates: jobData.coordinates !== undefined
             ? jobData.coordinates
+            : existingJob.coordinates,
+          liveStatus: jobData.coordinates !== undefined
+            ? jobData.coordinates
             : existingJob.coordinates
       };
     } else {
@@ -141,6 +146,7 @@ export class JobMapper {
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
         coordinates: jobData.coordinates || null,
+        liveStatus:jobData.liveStatus,
       };
       return jobData;
     }
@@ -170,6 +176,7 @@ export class JobMapper {
       createdAt: job.createdAt,
       deleteReason: job.deleteReason,
       coordinates: job.coordinates,
+      liveStatus: job.liveStatus,
     };
   }
 }
