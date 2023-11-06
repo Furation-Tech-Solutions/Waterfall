@@ -1,7 +1,11 @@
 // Import necessary modules and dependencies
 import { Op, Sequelize } from "sequelize";
+
+// Import the JobEntity and JobModel from the job module
 import { JobEntity, JobModel } from "@domain/job/entities/job";
-import Job from "@data/job/models/job-model";
+
+// Import the Job model from the relative path
+import Job from "..//models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
@@ -242,3 +246,4 @@ export class JobDataSourceImpl implements JobDataSource {
     return updatedJob ? updatedJob.toJSON() : null;
   }
 }
+
