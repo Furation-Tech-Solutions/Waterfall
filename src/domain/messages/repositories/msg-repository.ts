@@ -4,7 +4,7 @@ import {
 } from "../entities/msg"; // Import theConnectionsEntity and ConnectionsModel classes
 import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
-import { Query } from "@data/connections/datasource/connections_datasource";
+import { Query } from "@data/messages/datasources/msg-datasource";
 
 export interface MessagesRepository {
   // Method to create a message entity
