@@ -6,12 +6,12 @@ import Realtors from "@data/realtors/model/realtor-model";
 // Define a Sequelize model called 'Message' with three fields: 'sender', 'receiver', and 'message'
 const Message = sequelize.define('Message', {
   sender: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Realtors, key: "id" },
   },
   receiver: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Realtors, key: "id" },
   },

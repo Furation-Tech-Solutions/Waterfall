@@ -1,9 +1,11 @@
 // Define a class for the MessageModel, representing the structure of data sent in Express API requests
 export class MessageModel {
   constructor(
-    public sender: string = '',
-    public receiver: string = '',
-    public message: string = ''
+    public sender: number = 0,
+    public receiver: number = 0,
+    public message: string = '',
+    public senderData: {} = {},
+    public ReceiverData: {} = {},
   ) { }
 }
 
@@ -13,7 +15,9 @@ export class MessageEntity {
     public id: number | undefined = undefined, // Set a default value for id
     public sender: string,
     public receiver: string,
-    public message: string
+    public message: string,
+    public senderData: {},
+    public ReceiverData: {},
   ) { }
 }
 
@@ -38,7 +42,9 @@ export class MessageMapper {
         id: includeId ? (messageData.id ? messageData.id : undefined) : messageData.id,
         sender: messageData.sender,
         receiver: messageData.receiver,
-        message: messageData.message
+        message: messageData.message,
+        senderData:messageData.senderData,
+        ReceiverData:messageData.ReceiverData
       };
       return messageEntity;
     }
@@ -49,7 +55,9 @@ export class MessageMapper {
     return {
       sender: message.sender,
       receiver: message.receiver,
-      message: message.message
+      message: message.message,
+      senderData: message.senderData,
+      ReceiverData: message.ReceiverData
     };
   }
 }
