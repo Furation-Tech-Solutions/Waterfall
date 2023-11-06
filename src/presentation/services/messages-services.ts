@@ -13,6 +13,7 @@ import { GetByIdMessageUsecase } from "@domain/messages/usecases/get-msg-by-id";
 import { UpdateMessageUsecase } from "@domain/messages/usecases/update-msg";
 import { GetAllMessageUsecase } from "@domain/messages/usecases/get-all-msg";
 import { Either } from "monet";
+import { Query } from "@data/messages/datasources/msg-datasource";
 
 // Define a class for handling Messages-related services
 export class MessagesServices {
@@ -130,13 +131,14 @@ export class MessagesServices {
 
     let loginId = req.body.fromId;
 
-    const query: any = {}; // Create an empty query object
+    const query: Query = {}; // Create an empty query object
 
     // Assign values to properties of the query object
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
-    query.toId = req.query.toId;
+    query.toId = parseInt(req.query.toId as string, 10);
+    query.searchList = req.query.search as string;
     console.log(query);
     // Execute the getAllMessages use case to retrieve all Messages
     const clientMessages: Either<ErrorClass, MessageEntity[]> =

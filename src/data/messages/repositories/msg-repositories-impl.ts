@@ -41,8 +41,11 @@ export class MessagesRepositoryImpl implements MessagesRepository {
       const result = await this.messageDataSource.deleteMsg(loginId, id); // Use the messages data source
 
       return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
-    } catch (e: any) {
-      return Left<ErrorClass, void>(ApiError.customError(400, e.message));
+    } catch (e) {
+      if (e instanceof ApiError && e.name === "notfound") {
+        return Left<ErrorClass, void>(ApiError.notFound());
+      }
+      return Left<ErrorClass, void>(ApiError.badRequest());
     }
   }
 
@@ -73,11 +76,12 @@ export class MessagesRepositoryImpl implements MessagesRepository {
         query
       ); // Use the messages data source
       return Right<ErrorClass, MessageEntity[]>(messages);
-    } catch (e) {
+    } catch (e: any) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, MessageEntity[]>(ApiError.notFound());
+      } else {
+        return Left<ErrorClass, []>(ApiError.customError(400, e.message));
       }
-      return Left<ErrorClass, MessageEntity[]>(ApiError.badRequest());
     }
   }
 

@@ -6,10 +6,11 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
-    q: string;
-    page: number;
-    limit: number;
-    toId: number;
+    q?: string;
+    page?: number;
+    limit?: number;
+    toId?: number;
+    searchList?: string;
 }
 
 // Create MessageDataSource Interface
@@ -68,34 +69,95 @@ export class messagesDataSourceImpl implements MessageDataSource {
 
     async getAll(loginId: string, query: Query): Promise<any[]> {
         let loginID = parseInt(loginId);
-        // loginID = 1;
 
-        const currentPage = query.page || 1; // Default to page 1
-        console.log(query);
-
-
-        const itemsPerPage = query.limit || 10; // Default to 10 items per page
+        const currentPage = query.page || 1;
+        const itemsPerPage = query.limit || 10;
         const offset = (currentPage - 1) * itemsPerPage;
 
-        const data = await Message.findAll({
-            // where: {
-            // },
-            include: [
-                {
-                    model: Realtors,
-                    as: "senderData", // Alias for the first association
-                    foreignKey: "sender",
-                },
-                {
-                    model: Realtors,
-                    as: "ReceiverData", // Alias for the second association
-                    foreignKey: "receiver",
-                },
-            ],
-            limit: itemsPerPage, // Limit the number of results per page
-            offset: offset, // Calculate the offset based on the current page
-        });
-        return data.map((msg: any) => msg.toJSON()); // Convert to plain JavaScript objects before returning
+        if (query.searchList) {
+
+            const data = await Message.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            message: {
+                                [Op.iLike]: `%${query.searchList}%`,
+                            },
+                        },
+                    ],
+                }, // Apply search condition if searchList is provided
+                include: [
+                    {
+                        model: Realtors,
+                        as: "senderData",
+                        foreignKey: "sender",
+                    },
+                    {
+                        model: Realtors,
+                        as: "ReceiverData",
+                        foreignKey: "receiver",
+                    },
+                ],
+                limit: itemsPerPage,
+                offset: offset,
+            });
+
+            if (data.length > 0) {
+                return data.map((msg: any) => msg.toJSON());
+            }
+            const data1 = await Message.findAll({
+                include: [
+                    {
+                        model: Realtors,
+                        as: "senderData",
+                        foreignKey: "sender",
+                        where: {
+                            [Op.or]: [
+                                {
+                                    firstName: {
+                                        [Op.iLike]: `%${query.searchList}%`,
+                                    },
+                                },
+                                {
+                                    lastName: {
+                                        [Op.iLike]: `%${query.searchList}%`,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        model: Realtors,
+                        as: "ReceiverData",
+                        foreignKey: "receiver",
+                    },
+                ],
+                limit: itemsPerPage,
+                offset: offset,
+            });
+
+            return data1.map((msg: any) => msg.toJSON());
+
+
+        } else {
+            const data = await Message.findAll({
+                include: [
+                    {
+                        model: Realtors,
+                        as: "senderData",
+                        foreignKey: "sender",
+                    },
+                    {
+                        model: Realtors,
+                        as: "ReceiverData",
+                        foreignKey: "receiver",
+                    },
+                ],
+                limit: itemsPerPage,
+                offset: offset,
+            });
+            return data.map((msg: any) => msg.toJSON());
+        }
     }
 
     async updateMsg(

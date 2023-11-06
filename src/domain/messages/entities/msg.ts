@@ -13,8 +13,8 @@ export class MessageModel {
 export class MessageEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public sender: string,
-    public receiver: string,
+    public sender: number,
+    public receiver: number,
     public message: string,
     public senderData: {},
     public ReceiverData: {},
@@ -43,8 +43,8 @@ export class MessageMapper {
         sender: messageData.sender,
         receiver: messageData.receiver,
         message: messageData.message,
-        senderData:messageData.senderData,
-        ReceiverData:messageData.ReceiverData
+        senderData: messageData.senderData,
+        ReceiverData: messageData.ReceiverData
       };
       return messageEntity;
     }
