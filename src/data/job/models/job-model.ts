@@ -113,6 +113,11 @@ const Job = sequelize.define("Job", {
     allowNull: false,
     defaultValue: false,
   },
+  urgentRequirement: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 Job.belongsTo(Realtors, {

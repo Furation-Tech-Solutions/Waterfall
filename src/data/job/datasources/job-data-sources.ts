@@ -150,8 +150,6 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      console.log("completedJobTypes:", completedJobTypes);
-      
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({

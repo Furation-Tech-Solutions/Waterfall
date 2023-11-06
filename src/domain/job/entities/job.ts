@@ -17,9 +17,10 @@ export class JobModel {
     public attachments: string[] = [], // Job attachments
     public applyBy: Date = new Date(), // Application deadline
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
-    public deleteReason: string = "" ,// Reason for job deletion
+    public deleteReason: string = "", // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
-    public liveStatus: boolean = false
+    public liveStatus: boolean = false,
+    public urgentRequirement: boolean = false
   ) {}
 }
 
@@ -46,6 +47,7 @@ export class JobEntity {
     public deleteReason: string, // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean,
+    public urgentRequirement: boolean
   ) {}
 }
 
@@ -113,12 +115,18 @@ export class JobMapper {
           jobData.deleteReason !== undefined
             ? jobData.deleteReason
             : existingJob.deleteReason,
-          coordinates: jobData.coordinates !== undefined
+        coordinates:
+          jobData.coordinates !== undefined
             ? jobData.coordinates
             : existingJob.coordinates,
-          liveStatus: jobData.coordinates !== undefined
-            ? jobData.coordinates
-            : existingJob.coordinates
+        liveStatus:
+          jobData.liveStatus !== undefined
+            ? jobData.liveStatus
+            : existingJob.liveStatus,
+        urgentRequirement:
+          jobData.urgentRequirement !== undefined
+            ? jobData.urgentRequirement
+            : existingJob.urgentRequirement,
       };
     } else {
       // If an existingJob is not provided, create a new JobEntity using jobData
@@ -146,7 +154,8 @@ export class JobMapper {
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
         coordinates: jobData.coordinates || null,
-        liveStatus:jobData.liveStatus,
+        liveStatus: jobData.liveStatus,
+        urgentRequirement: jobData.urgentRequirement,
       };
       return jobData;
     }
@@ -177,6 +186,7 @@ export class JobMapper {
       deleteReason: job.deleteReason,
       coordinates: job.coordinates,
       liveStatus: job.liveStatus,
+      urgentRequirement: job.urgentRequirement,
     };
   }
 }
