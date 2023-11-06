@@ -3,9 +3,7 @@ import { Op, Sequelize } from "sequelize";
 
 // Import the JobEntity and JobModel from the job module
 import { JobEntity, JobModel } from "@domain/job/entities/job";
-
-// Import the Job model from the relative path
-import Job from "..//models/job-model";
+import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
@@ -101,7 +99,9 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // Fetch jobs that are expired
       const jobs = await Job.findAll({
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -169,6 +169,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
+
       });
       console.log("recommendedJobs:", recommendedJobs);
 
@@ -190,6 +191,46 @@ export class JobDataSourceImpl implements JobDataSource {
         },
 
         include: [
+
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+        ],
+
+
+        limit: itemsPerPage,
+        offset: offset,
+      });
+      return jobs.map((job: any) => job.toJSON());
+
+
+    } else if (query.year && query.month) {
+
+      // Fetch jobs that match the specified year and month
+      const jobs = await Job.findAll({
+        where: {
+
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+              query.month
+            ),
+          ],
+
+        },
+
+        include: [
+
           {
             model: Realtors,
             as: "owner",
@@ -203,12 +244,17 @@ export class JobDataSourceImpl implements JobDataSource {
 
         limit: itemsPerPage,
         offset: offset,
+
       });
       return jobs.map((job: any) => job.toJSON());
+
+
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
+
         include: [
+
           {
             model: Realtors,
             as: "owner",
