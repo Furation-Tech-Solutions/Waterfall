@@ -16,6 +16,7 @@ export const applicationStatusEnum = {
 export const jobStatusEnum = {
   JOBCOMPLETED: "JobCompleted",
   PENDING: "Pending",
+  // ACCEPTED:"Accepted",
   DECLINE: "Decline",
 };
  
