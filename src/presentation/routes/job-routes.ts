@@ -1,5 +1,5 @@
 // Import necessary classes, interfaces, and dependencies
-import {sequelize} from "@main/sequelizeClient"; // Importing the Sequelize connection
+import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize connection
 import { Router } from "express"; // Importing the Express Router class
 import { JobService } from "@presentation/services/job-services"; // Importing the JobService class
 import { JobDataSourceImpl } from "@data/job/datasources/job-data-sources"; // Importing the JobDataSourceImpl class
@@ -9,6 +9,8 @@ import { DeleteJob } from "@domain/job/usecases/delete-job"; // Importing the De
 import { GetJobById } from "@domain/job/usecases/get-job-by-id"; // Importing the GetJobById use case
 import { GetAllJobs } from "@domain/job/usecases/get-all-jobs"; // Importing the GetAllJobs use case
 import { UpdateJob } from "@domain/job/usecases/update-job"; // Importing the UpdateJob use case
+import { GettotalJobPostedCount } from "@domain/job/usecases/get-total-posted-jobs"
+import { GettotalReqAcceptedCount } from "@domain/job/usecases/get-total-req-accepted"
 import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware"; // Importing a middleware for job input validation
 
 // Create an instance of the JobDataSourceImpl and pass the Sequelize connection
@@ -23,6 +25,8 @@ const deleteJobUsecase = new DeleteJob(jobRepository);
 const getJobByIdUsecase = new GetJobById(jobRepository);
 const updateJobUsecase = new UpdateJob(jobRepository);
 const getAllJobUsecase = new GetAllJobs(jobRepository);
+const gettotalJobPostedCountUsecase = new GettotalJobPostedCount(jobRepository);
+const gettotalReqAcceptedCountUsecase = new GettotalReqAcceptedCount(jobRepository);
 
 // Initialize JobService and inject required dependencies
 const jobService = new JobService(
@@ -30,7 +34,9 @@ const jobService = new JobService(
   deleteJobUsecase,
   getJobByIdUsecase,
   updateJobUsecase,
-  getAllJobUsecase
+  getAllJobUsecase,
+  gettotalJobPostedCountUsecase,
+  gettotalReqAcceptedCountUsecase
 );
 
 // Create an Express router
@@ -43,6 +49,15 @@ jobRouter.post(
   jobService.createJob.bind(jobService) // Handling function for creating a new job
 );
 
+// Route handling for getting all Jobs
+jobRouter.get("/", jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
+
+// Route handling for getting the total feedback count
+jobRouter.get("/posted/count", jobService.getTotalJobPostedCount.bind(jobService));
+
+// Route handling for getting the total feedback count
+jobRouter.get("/accepted/count", jobService.getTotalRequestAcceptedCount.bind(jobService));
+
 // Route handling for getting a Job by ID
 jobRouter.get("/:id", jobService.getJobById.bind(jobService)); // Route URL for getting a job by ID
 
@@ -52,6 +67,4 @@ jobRouter.put("/:id", jobService.updateJob.bind(jobService)); // Route URL for u
 // Route handling for deleting a Job by ID
 jobRouter.delete("/:id", jobService.deleteJob.bind(jobService)); // Route URL for deleting a job by ID
 
-// Route handling for getting all Jobs
-jobRouter.get("/", jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
 

@@ -9,6 +9,8 @@ import { GetAllFeedBacksUsecase } from "@domain/feedBack/usecases/get-all-feedBa
 import { GetFeedBackByIdUsecase } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBackUsecase } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack";
+import { GetFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
+import { GetGivenFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-given-feedBacks-Count";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -18,19 +20,25 @@ export class FeedBackService {
   private readonly GetFeedBackByIdUsecase: GetFeedBackByIdUsecase;
   private readonly UpdateFeedBackUsecase: UpdateFeedBackUsecase;
   private readonly DeleteFeedBackUsecase: DeleteFeedBackUsecase;
+  private readonly GetFeedbackCountUsecase: GetFeedbackCountUsecase;
+  private readonly GetGivenFeedbackCountUsecase: GetGivenFeedbackCountUsecase;
 
   constructor(
     CreateFeedBackUsecase: CreateFeedBackUsecase,
     GetAllFeedBacksUsecase: GetAllFeedBacksUsecase,
     GetFeedBackByIdUsecase: GetFeedBackByIdUsecase,
     UpdateFeedBackUsecase: UpdateFeedBackUsecase,
-    DeleteFeedBackUsecase: DeleteFeedBackUsecase
+    DeleteFeedBackUsecase: DeleteFeedBackUsecase,
+    GetFeedbackCountUsecase: GetFeedbackCountUsecase,
+    GetGivenFeedbackCountUsecase: GetGivenFeedbackCountUsecase
   ) {
     this.CreateFeedBackUsecase = CreateFeedBackUsecase;
     this.GetAllFeedBacksUsecase = GetAllFeedBacksUsecase;
     this.GetFeedBackByIdUsecase = GetFeedBackByIdUsecase;
     this.UpdateFeedBackUsecase = UpdateFeedBackUsecase;
     this.DeleteFeedBackUsecase = DeleteFeedBackUsecase;
+    this.GetFeedbackCountUsecase = GetFeedbackCountUsecase;
+    this.GetGivenFeedbackCountUsecase = GetGivenFeedbackCountUsecase;
   }
 
   // Handler for creating a new feedback
@@ -38,22 +46,22 @@ export class FeedBackService {
     const feedBackData: FeedBackModel = FeedBackMapper.toModel(req.body);
 
     const newFeedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.CreateFeedBackUsecase.execute(feedBackData);
+      await this.CreateFeedBackUsecase.execute(feedBackData);
 
     newFeedBack.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: FeedBackEntity) => {
-            const resData = FeedBackMapper.toEntity(result, true);
-            return res.json(resData);
-        }
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: FeedBackEntity) => {
+        const resData = FeedBackMapper.toEntity(result, true);
+        return res.json(resData);
+      }
     );
   }
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
     const id: string = req.params.id;
-    
+
     const Id: number = parseInt(id, 10);
     const query: any = {}; // Create an empty query object
 
@@ -85,18 +93,18 @@ export class FeedBackService {
     const feedBackId: string = req.params.id;
 
     const feedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.GetFeedBackByIdUsecase.execute(feedBackId);
+      await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     feedBack.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: FeedBackEntity) => {
-            if (!result) {
-                return res.json({ message: "FeedBack Name not found." });
-            }
-            const resData = FeedBackMapper.toEntity(result);
-            return res.json(resData);
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: FeedBackEntity) => {
+        if (!result) {
+          return res.json({ message: "FeedBack Name not found." });
         }
+        const resData = FeedBackMapper.toEntity(result);
+        return res.json(resData);
+      }
     );
   }
 
@@ -106,52 +114,80 @@ export class FeedBackService {
     const feedBackData: FeedBackModel = req.body;
 
     const existingFeedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.GetFeedBackByIdUsecase.execute(feedBackId);
+      await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     existingFeedBack.cata(
-        (error: ErrorClass) => {
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (existingFeedBackData: FeedBackEntity) => {
+        const updatedFeedBackEntity: FeedBackEntity = FeedBackMapper.toEntity(
+          feedBackData,
+          true,
+          existingFeedBackData
+        );
+
+        const updatedFeedBack: Either<ErrorClass, FeedBackEntity> =
+          await this.UpdateFeedBackUsecase.execute(
+            feedBackId,
+            updatedFeedBackEntity
+          );
+
+        updatedFeedBack.cata(
+          (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
-        },
-        async (existingFeedBackData: FeedBackEntity) => {
-            const updatedFeedBackEntity: FeedBackEntity = FeedBackMapper.toEntity(
-                feedBackData,
-                true,
-                existingFeedBackData
-            );
-
-            const updatedFeedBack: Either<ErrorClass, FeedBackEntity> =
-                await this.UpdateFeedBackUsecase.execute(
-                    feedBackId,
-                    updatedFeedBackEntity
-                );
-
-            updatedFeedBack.cata(
-                (error: ErrorClass) => {
-                    res.status(error.status).json({ error: error.message });
-                },
-                (result: FeedBackEntity) => {
-                    const resData = FeedBackMapper.toEntity(result, true);
-                    res.json(resData);
-                }
-            );
-        }
+          },
+          (result: FeedBackEntity) => {
+            const resData = FeedBackMapper.toEntity(result, true);
+            res.json(resData);
+          }
+        );
+      }
     );
   }
 
   // Handler for deleting feedback by ID
   async deleteFeedBack(req: Request, res: Response): Promise<void> {
-      const id: string = req.params.id;
-    
-      // Execute the deleteFeedBack use case to delete a feedback by ID
-      const deleteFeedBack: Either<ErrorClass, void> 
-        = await this.DeleteFeedBackUsecase.execute(id);
+    const id: string = req.params.id;
 
-      deleteFeedBack.cata(
-        (error: ErrorClass) =>
+    // Execute the deleteFeedBack use case to delete a feedback by ID
+    const deleteFeedBack: Either<ErrorClass, void>
+      = await this.DeleteFeedBackUsecase.execute(id);
+
+    deleteFeedBack.cata(
+      (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-        (result: void) =>{
-          return res.json({ message: "FeedBack deleted successfully." })
-        }
-      )
+      (result: void) => {
+        return res.json({ message: "FeedBack deleted successfully." })
+      }
+    )
+  }
+
+  async getFeedbackCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    id = id || "1";
+    const count: Either<ErrorClass, number> = await this.GetFeedbackCountUsecase.execute(id);
+    count.cata(
+      (error: ErrorClass) =>
+
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
+  }
+
+  async getGivenFeedbackCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    id = id || "1";
+    const count: Either<ErrorClass, number> = await this.GetGivenFeedbackCountUsecase.execute(id);
+    count.cata(
+      (error: ErrorClass) =>
+
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
   }
 }

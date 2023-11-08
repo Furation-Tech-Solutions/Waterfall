@@ -13,6 +13,8 @@ export interface FeedBackDataSource {
   read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
   update(id: string, updatedData: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
   delete(id: string): Promise<void>;
+  Count(id: string): Promise<number>;
+  Count1(id: string): Promise<number>;
 }
 
 // Define a FeebackQuery object to encapsulate parameters
@@ -23,7 +25,7 @@ export interface FeedbackQuery {
 
 // FeedBack Data Source communicates with the database
 export class FeedBackDataSourceImpl implements FeedBackDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Create a new feedback entry
   async create(feedBack: any): Promise<any> {
@@ -121,4 +123,23 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       },
     });
   }
+
+  async Count(id: string): Promise<number> {
+    const count = await FeedBack.count({
+      where: {
+        fromRealtor: id,
+      },
+    });
+    return count;
+  }
+
+  async Count1(id: string): Promise<number> {
+    const count = await FeedBack.count({
+      where: {
+        toRealtor: id,
+      },
+    });
+    return count;
+  }
+
 }

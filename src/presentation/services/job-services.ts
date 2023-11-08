@@ -6,6 +6,8 @@ import { DeleteJobUsecase } from "@domain/job/usecases/delete-job";
 import { GetJobByIdUsecase } from "@domain/job/usecases/get-job-by-id";
 import { UpdateJobUsecase } from "@domain/job/usecases/update-job";
 import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
+import { GettotalJobPostedCountUsecase } from "@domain/job/usecases/get-total-posted-jobs";
+import { GettotalReqAcceptedCountUsecase } from "@domain/job/usecases/get-total-req-accepted";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
@@ -17,6 +19,8 @@ export class JobService {
   private readonly getJobByIdUsecase: GetJobByIdUsecase;
   private readonly updateJobUsecase: UpdateJobUsecase;
   private readonly getAllJobsUsecase: GetAllJobsUsecase;
+  private readonly gettotalJobPostedCountUsecase: GettotalJobPostedCountUsecase;
+  private readonly gettotalReqAcceptedCountUsecase: GettotalReqAcceptedCountUsecase;
 
   // Constructor to initialize use case instances
   constructor(
@@ -24,13 +28,17 @@ export class JobService {
     deleteJobUsecase: DeleteJobUsecase,
     getJobByIdUsecase: GetJobByIdUsecase,
     updateJobUsecase: UpdateJobUsecase,
-    getAllJobsUsecase: GetAllJobsUsecase
+    getAllJobsUsecase: GetAllJobsUsecase,
+    gettotalJobPostedCountUsecase: GettotalJobPostedCountUsecase,
+    gettotalReqAcceptedCountUsecase: GettotalReqAcceptedCountUsecase
   ) {
     this.createJobUsecase = createJobUsecase;
     this.deleteJobUsecase = deleteJobUsecase;
     this.getJobByIdUsecase = getJobByIdUsecase;
     this.updateJobUsecase = updateJobUsecase;
     this.getAllJobsUsecase = getAllJobsUsecase;
+    this.gettotalJobPostedCountUsecase = gettotalJobPostedCountUsecase,
+      this.gettotalReqAcceptedCountUsecase = gettotalReqAcceptedCountUsecase
   }
 
   // Method to create a new job
@@ -179,5 +187,33 @@ export class JobService {
         return res.json(resData);
       }
     );
+  }
+
+  // Method to get total job posted count
+  async getTotalJobPostedCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    id = id || "1";
+    const count: Either<ErrorClass, number> = await this.gettotalJobPostedCountUsecase.execute(id);
+    count.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
+  }
+
+  // Method to get total request accepted count
+  async getTotalRequestAcceptedCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    id = id || "1";
+    const count: Either<ErrorClass, number> = await this.gettotalReqAcceptedCountUsecase.execute(id);
+    count.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
   }
 }

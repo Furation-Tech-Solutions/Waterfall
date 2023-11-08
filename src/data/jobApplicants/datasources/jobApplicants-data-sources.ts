@@ -183,7 +183,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
           },
           {

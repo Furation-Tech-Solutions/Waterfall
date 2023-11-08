@@ -21,6 +21,12 @@ export interface JobDataSource {
 
   // Method to retrieve all job records
   getAll(query: JobQuery): Promise<JobEntity[]>;
+
+  // Method to retrieve a total job posted count
+  getTotalPostedJobs(id: string): Promise<number>;
+
+  // Method to retrieve a total request accepted count
+  getTotalRequestAccepted(id: string): Promise<number>;
 }
 
 // Define a JobQuery object to encapsulate parameters
@@ -36,7 +42,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -156,7 +162,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
       console.log("completedJobTypes:", completedJobTypes);
-      
+
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
@@ -211,48 +217,6 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return jobs.map((job: any) => job.toJSON());
-
-
-    } else if (query.year && query.month) {
-
-      // Fetch jobs that match the specified year and month
-      const jobs = await Job.findAll({
-        where: {
-
-          [Op.and]: [
-            Sequelize.where(
-              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-              query.year
-            ),
-            Sequelize.where(
-              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-              query.month
-            ),
-          ],
-
-        },
-
-        include: [
-
-          {
-            model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
-          },
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-          },
-
-        ],
-
-        limit: itemsPerPage,
-        offset: offset,
-
-      });
-      return jobs.map((job: any) => job.toJSON());
-
-
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
@@ -297,5 +261,35 @@ export class JobDataSourceImpl implements JobDataSource {
     // If the updated job record is found, convert it to a plain JavaScript object and return it, otherwise return null
     return updatedJob ? updatedJob.toJSON() : null;
   }
+
+  // Method to retrieve the total number of posted jobs
+  async getTotalPostedJobs(id: string): Promise<number> {
+    const count = await Job.count({
+      where: {
+        jobOwner: id,
+      },
+    });
+    return count;
+  }
+
+  // Method to retrieve the total number of request accepted jobs
+  async getTotalRequestAccepted(id: string): Promise<number> {
+    const count = await Job.count({
+      where: {
+        jobOwner: id,
+      },
+      include: [
+        {
+          model: JobApplicant,
+          as: "applicantsData",
+          where: {
+            applicantStatus: "Accept",
+          },
+        },
+      ]
+    });
+    return count;
+  }
+
 }
 

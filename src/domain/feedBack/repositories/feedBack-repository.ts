@@ -26,4 +26,10 @@ export interface FeedBackRepository {
 
   // Delete a feedback by ID
   deleteFeedBack(id: string): Promise<Either<ErrorClass, void>>;
+
+  // Get the total count of feedbacks
+  getFeedbackCount(id: string): Promise<Either<ErrorClass, number>>;
+
+  // Get the total count of feedbacks
+  getGivenFeedbackCount(id: string): Promise<Either<ErrorClass, number>>;
 }

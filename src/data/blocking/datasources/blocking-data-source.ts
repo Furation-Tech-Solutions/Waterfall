@@ -22,7 +22,7 @@ export interface BlockQuery {
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new blocking entry
   async create(blocking: any): Promise<any> {

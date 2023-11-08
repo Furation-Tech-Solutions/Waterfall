@@ -91,4 +91,26 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       return Left<ErrorClass, void>(ApiError.badRequest());
     }
   }
+
+  async getFeedbackCount(id: string): Promise<Either<ErrorClass, number>> {
+    try {
+      const count = await this.feedBackDataSource.Count(id); // Use the tag feedBack data source
+      return Right<ErrorClass, number>(count); // Return Right if the deletion was successful
+    } catch (error: any) {
+      return Left<ErrorClass, number>(
+        ApiError.customError(400, error.message)
+      );
+    }
+  }
+
+  async getGivenFeedbackCount(id: string): Promise<Either<ErrorClass, number>> {
+    try {
+      const count = await this.feedBackDataSource.Count1(id); // Use the tag feedBack data source
+      return Right<ErrorClass, number>(count); // Return Right if the deletion was successful
+    } catch (error: any) {
+      return Left<ErrorClass, number>(
+        ApiError.customError(400, error.message)
+      );
+    }
+  }
 }
