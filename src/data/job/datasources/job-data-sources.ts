@@ -1,5 +1,7 @@
 // Import necessary modules and dependencies
 import { Op, Sequelize } from "sequelize";
+
+// Import the JobEntity and JobModel from the job module
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -83,7 +85,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
   // Method to retrieve a list of job records
   async getAll(query: JobQuery): Promise<JobEntity[]> {
-
+    //---------------------------------------------------------------------------------------------------------
     let loginId = query.id;
 
     const currentPage = query.page || 1; // Default to page 1
@@ -91,9 +93,9 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
 
+    //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
-
       const currentDate = new Date(); // Current date
       currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
 
@@ -123,7 +125,6 @@ export class JobDataSourceImpl implements JobDataSource {
           date: {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
           },
-
         },
 
         limit: itemsPerPage, // Limit the number of results per page
@@ -131,6 +132,9 @@ export class JobDataSourceImpl implements JobDataSource {
       });
 
       return jobs.map((job: any) => job.toJSON());
+
+      //-----------------------------------------------------------------------------------------------------------
+
     } else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -155,8 +159,8 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      console.log("completedJobTypes:", completedJobTypes);
-      
+
+      //-----------------------------------------------------------------------------------------------------------
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
@@ -177,6 +181,8 @@ export class JobDataSourceImpl implements JobDataSource {
       console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
+
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
@@ -212,6 +218,8 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       return jobs.map((job: any) => job.toJSON());
 
+      //----------------------------------------------------------------------------------------------------------------------------
+
 
     } else if (query.year && query.month) {
 
@@ -243,7 +251,6 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
           },
-
         ],
 
         limit: itemsPerPage,
@@ -251,7 +258,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       });
       return jobs.map((job: any) => job.toJSON());
-
+ //-------------------------------------------------------------------------------------------------------------------------------------------
 
     } else {
       // Handle other cases or provide default logic
@@ -269,12 +276,10 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
           },
-
         ],
 
         limit: itemsPerPage,
         offset: offset,
-
       });
 
       return jobs.map((job: any) => job.toJSON());
