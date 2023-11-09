@@ -16,7 +16,7 @@ export const OutcomeEnum = {
 
 // Define a Sequelize model called "CallLog"
 const CallLog = sequelize.define("CallLog", {
-  // Define the "jobApplicant" field with a UUID data type, which cannot be null
+  // Define the "jobApplicant" field with a INTEGER data type, which cannot be null and references the 'id' of the JobApplicant model
   jobApplicant: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -40,6 +40,7 @@ const CallLog = sequelize.define("CallLog", {
   },
 });
 
+// Define an association between CallLog and JobApplicant models, specifying the foreign key and alias
 CallLog.belongsTo(JobApplicant, {
   foreignKey: "jobApplicant",
   as: "jobApplicantData"

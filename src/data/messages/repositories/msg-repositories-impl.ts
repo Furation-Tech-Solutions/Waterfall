@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import {
   MessageEntity,
   MessageModel,
@@ -11,12 +12,15 @@ import { Either, Right, Left } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { string } from "joi";
 
+// Implementation of the MessagesRepository interface
 export class MessagesRepositoryImpl implements MessagesRepository {
   private readonly messageDataSource: MessageDataSource;
+
   constructor(messageDataSource: MessageDataSource) {
     this.messageDataSource = messageDataSource;
   }
 
+  // Create a new message entry
   async createMessage(
     data: MessageModel
   ): Promise<Either<ErrorClass, MessageEntity>> {
@@ -33,12 +37,16 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     }
   }
 
+  // Delete a message entry by ID
   async deleteMessage(
     loginId: string,
     id: string
   ): Promise<Either<ErrorClass, void>> {
     try {
-      const result = await this.messageDataSource.deleteMsg(loginId, id); // Use the messages data source
+      const result = await this.messageDataSource.deleteMsg(
+        loginId,
+        id
+      ); // Use the messages data source
 
       return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
     } catch (e) {
@@ -49,6 +57,7 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     }
   }
 
+  // Update a message entry by ID
   async updateMessage(
     loginId: string,
     id: string,
@@ -66,6 +75,7 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     }
   }
 
+  // Retrieve all message entries
   async getAllMessages(
     loginId: string,
     query: Query
@@ -85,12 +95,16 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     }
   }
 
+  // Retrieve a message entry by its ID
   async getMessageById(
     loginId: string,
     id: string
   ): Promise<Either<ErrorClass, MessageEntity>> {
     try {
-      const messages = await this.messageDataSource.read(loginId, id); // Use the messages data source
+      const messages = await this.messageDataSource.read(
+        loginId,
+        id
+      ); // Use the messages data source
       return messages
         ? Right<ErrorClass, MessageEntity>(messages)
         : Left<ErrorClass, MessageEntity>(ApiError.notFound());

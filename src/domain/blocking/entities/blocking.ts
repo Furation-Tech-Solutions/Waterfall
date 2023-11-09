@@ -3,7 +3,7 @@ export class BlockingModel {
   constructor(
     public fromRealtor: number = 0,
     public toRealtor: number = 0
-  ) {}
+  ) { }
 }
 
 // Define a class for the BlockingEntity, representing data provided by the Blocking Repository and converted to an Express API response
@@ -12,11 +12,12 @@ export class BlockingEntity {
     public id: number | undefined = undefined, // Set a default value for id
     public fromRealtor: number,
     public toRealtor: number
-  ) {}
+  ) { }
 }
 
 // Define a BlockingMapper class to handle the mapping between BlockingModel and BlockingEntity
 export class BlockingMapper {
+  // Convert raw data (blockingData) to a BlockingEntity
   static toEntity(
     blockingData: any,
     includeId?: boolean,
@@ -27,13 +28,13 @@ export class BlockingMapper {
       return {
         ...existingBlocking,
         fromRealtor:
-          blockingData.fromRealtor !== undefined 
-          ? blockingData.fromRealtor 
-          : existingBlocking.fromRealtor,
+          blockingData.fromRealtor !== undefined
+            ? blockingData.fromRealtor
+            : existingBlocking.fromRealtor,
         toRealtor:
-          blockingData.toRealtor !== undefined 
-          ? blockingData.toRealtor 
-          : existingBlocking.toRealtor
+          blockingData.toRealtor !== undefined
+            ? blockingData.toRealtor
+            : existingBlocking.toRealtor
       };
     } else {
       // If existingBlocking is not provided, create a new BlockingEntity using blockingData
@@ -42,7 +43,7 @@ export class BlockingMapper {
         fromRealtor: blockingData.fromRealtor,
         toRealtor: blockingData.toRealtor
       };
-      return blockingData;
+      return blockingEntity;
     }
   }
 

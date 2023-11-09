@@ -19,46 +19,52 @@ export class FQADataSourceImpl implements FQADataSource {
 
     // Create a new FQA (Frequently Asked Question) entry
     async create(fqa: any): Promise<any> {
-
+        // Check if the question already exists
         const existingFQA = await FQA.findOne({
             where: {
                 question: fqa.question
             }
         });
+
         if (existingFQA) {
             throw ApiError.questionExist();
         }
+
+        // Create a new FQA entry
         const createdFQA = await FQA.create(fqa);
         return createdFQA.toJSON();
     }
 
     // Retrieve all FQA entries
     async getAllFQAs(): Promise<any[]> {
+        // Retrieve all FQA entries from the database
         const fqa = await FQA.findAll({});
         return fqa.map((fqa: any) => fqa.toJSON()); // Convert to plain JavaScript objects before returning
     }
 
     // Retrieve an FQA entry by its ID
     async read(id: string): Promise<any | null> {
+        // Find the FQA entry by ID
         const fqa = await FQA.findOne({
             where: {
                 id: id,
             },
-            // include: 'tags', // Replace 'tags' with the actual name of your association
         });
+
         return fqa ? fqa.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     // Update an FQA entry by ID
     async update(id: string, updatedData: FQAModel): Promise<any> {
-        // Find the record by ID
+        // Find the FQA record by ID
         const fqa = await FQA.findByPk(id);
 
-        // Update the record with the provided data
+        // Update the FQA record with the provided data
         if (fqa) {
             await fqa.update(updatedData);
         }
-        // Fetch the updated record
+
+        // Fetch the updated FQA record
         const updatedFQA = await FQA.findByPk(id);
 
         return updatedFQA ? updatedFQA.toJSON() : null; // Convert to a plain JavaScript object before returning
@@ -66,6 +72,7 @@ export class FQADataSourceImpl implements FQADataSource {
 
     // Delete an FQA entry by ID
     async delete(id: string): Promise<void> {
+        // Delete the FQA entry from the database
         await FQA.destroy({
             where: {
                 id: id,

@@ -6,7 +6,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model called "BugReport"
 const BugReport = sequelize.define("BugReport", {
-  // Define a field "realtor" of type UUID and make it non-nullable
+  // Define a field "realtor" of type INTEGER and make it non-nullable
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -41,12 +41,11 @@ const BugReport = sequelize.define("BugReport", {
   },
 });
 
+// Establish an association between the "BugReport" model and the "Realtors" model
 BugReport.belongsTo(Realtors, {
   foreignKey: "realtor",
-  as: "RealtorData"
+  as: "RealtorData" // Alias for the association to distinguish from the actual foreign key
 });
-
-
 
 // Export the "BugReport" model for use in other parts of the application
 export default BugReport;
