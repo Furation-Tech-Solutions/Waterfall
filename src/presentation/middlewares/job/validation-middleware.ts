@@ -162,7 +162,7 @@ const jobValidator = function (input: JobInput): JobInput {
         "any.required": "CountryCode is required",
         "string.empty": "CountryCode cannot be empty",
       }),
-    liveStatus: Joi.boolean().required().messages({
+    liveStatus: Joi.boolean().optional().messages({
       "boolean.base": "liveStatus must be a boolean",
       "any.required": "liveStatus is required",
     }),

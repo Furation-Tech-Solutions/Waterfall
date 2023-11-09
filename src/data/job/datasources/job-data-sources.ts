@@ -1,7 +1,5 @@
 // Import necessary modules and dependencies
-import { Op, Sequelize } from "sequelize";
-
-// Import the JobEntity and JobModel from the job module
+import { Op, Sequelize, where } from "sequelize";
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -23,6 +21,10 @@ export interface JobDataSource {
 
   // Method to retrieve all job records
   getAll(query: JobQuery): Promise<JobEntity[]>;
+
+  // Method to retrieve a total job posted count
+  counts(query: JobQuery): Promise<number>;
+
 }
 
 // Define a JobQuery object to encapsulate parameters
@@ -38,7 +40,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -159,9 +161,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-
-      //-----------------------------------------------------------------------------------------------------------
-
+      
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
         where: {
@@ -178,7 +178,7 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset, // Calculate the offset based on the current page
 
       });
-      console.log("recommendedJobs:", recommendedJobs);
+      // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
@@ -217,49 +217,6 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return jobs.map((job: any) => job.toJSON());
-
-      //----------------------------------------------------------------------------------------------------------------------------
-
-
-    } else if (query.year && query.month) {
-
-      // Fetch jobs that match the specified year and month
-      const jobs = await Job.findAll({
-        where: {
-
-          [Op.and]: [
-            Sequelize.where(
-              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-              query.year
-            ),
-            Sequelize.where(
-              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-              query.month
-            ),
-          ],
-
-        },
-
-        include: [
-
-          {
-            model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
-          },
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-          },
-        ],
-
-        limit: itemsPerPage,
-        offset: offset,
-
-      });
-      return jobs.map((job: any) => job.toJSON());
- //-------------------------------------------------------------------------------------------------------------------------------------------
-
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
@@ -302,5 +259,131 @@ export class JobDataSourceImpl implements JobDataSource {
     // If the updated job record is found, convert it to a plain JavaScript object and return it, otherwise return null
     return updatedJob ? updatedJob.toJSON() : null;
   }
-}
 
+  // Method to retrieve the total number of posted jobs
+  async counts(query: JobQuery): Promise<number> {
+    let loginId = query.id;
+
+    const currentPage = query.page || 1; // Default to page 1
+
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    const offset = (currentPage - 1) * itemsPerPage;
+
+    if (query.q === "posted") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+        },
+      });
+      return count;
+    }
+    else if (query.q === "accepted") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantStatus: "Accept",
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "completedjobsforowner") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              paymentStatus: true,
+              jobStatus: "JobCompleted"
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "scheduled") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "applied") {
+      const count = await Job.count({
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "assigned") {
+      const count = await Job.count({
+        where: {
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "completedjobforapplicant") {
+      const count = await Job.count({
+        where: {
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+              jobStatus: "JobCompleted"
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else {
+      return 0;
+    }
+  }
+}

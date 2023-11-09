@@ -9,6 +9,7 @@ import { GetAllFeedBacksUsecase } from "@domain/feedBack/usecases/get-all-feedBa
 import { GetFeedBackByIdUsecase } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBackUsecase } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack";
+import { GetFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -18,19 +19,22 @@ export class FeedBackService {
   private readonly GetFeedBackByIdUsecase: GetFeedBackByIdUsecase;
   private readonly UpdateFeedBackUsecase: UpdateFeedBackUsecase;
   private readonly DeleteFeedBackUsecase: DeleteFeedBackUsecase;
+  private readonly GetFeedbackCountUsecase: GetFeedbackCountUsecase;
 
   constructor(
     CreateFeedBackUsecase: CreateFeedBackUsecase,
     GetAllFeedBacksUsecase: GetAllFeedBacksUsecase,
     GetFeedBackByIdUsecase: GetFeedBackByIdUsecase,
     UpdateFeedBackUsecase: UpdateFeedBackUsecase,
-    DeleteFeedBackUsecase: DeleteFeedBackUsecase
+    DeleteFeedBackUsecase: DeleteFeedBackUsecase,
+    GetFeedbackCountUsecase: GetFeedbackCountUsecase,
   ) {
     this.CreateFeedBackUsecase = CreateFeedBackUsecase;
     this.GetAllFeedBacksUsecase = GetAllFeedBacksUsecase;
     this.GetFeedBackByIdUsecase = GetFeedBackByIdUsecase;
     this.UpdateFeedBackUsecase = UpdateFeedBackUsecase;
     this.DeleteFeedBackUsecase = DeleteFeedBackUsecase;
+    this.GetFeedbackCountUsecase = GetFeedbackCountUsecase;
   }
 
   // Handler for creating a new feedback
@@ -38,27 +42,32 @@ export class FeedBackService {
     const feedBackData: FeedBackModel = FeedBackMapper.toModel(req.body);
 
     const newFeedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.CreateFeedBackUsecase.execute(feedBackData);
+      await this.CreateFeedBackUsecase.execute(feedBackData);
 
     newFeedBack.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: FeedBackEntity) => {
-            const resData = FeedBackMapper.toEntity(result, true);
-            return res.json(resData);
-        }
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: FeedBackEntity) => {
+        const resData = FeedBackMapper.toEntity(result, true);
+        return res.json(resData);
+      }
     );
   }
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const id: string = req.params.id;
-    
-    const Id: number = parseInt(id, 10);
+    let id: string = req.body.loginId;
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+
     const query: any = {}; // Create an empty query object
 
-    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
 
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> =
@@ -85,18 +94,18 @@ export class FeedBackService {
     const feedBackId: string = req.params.id;
 
     const feedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.GetFeedBackByIdUsecase.execute(feedBackId);
+      await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     feedBack.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: FeedBackEntity) => {
-            if (!result) {
-                return res.json({ message: "FeedBack Name not found." });
-            }
-            const resData = FeedBackMapper.toEntity(result);
-            return res.json(resData);
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: FeedBackEntity) => {
+        if (!result) {
+          return res.json({ message: "FeedBack Name not found." });
         }
+        const resData = FeedBackMapper.toEntity(result);
+        return res.json(resData);
+      }
     );
   }
 
@@ -106,52 +115,79 @@ export class FeedBackService {
     const feedBackData: FeedBackModel = req.body;
 
     const existingFeedBack: Either<ErrorClass, FeedBackEntity> =
-        await this.GetFeedBackByIdUsecase.execute(feedBackId);
+      await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     existingFeedBack.cata(
-        (error: ErrorClass) => {
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (existingFeedBackData: FeedBackEntity) => {
+        const updatedFeedBackEntity: FeedBackEntity = FeedBackMapper.toEntity(
+          feedBackData,
+          true,
+          existingFeedBackData
+        );
+
+        const updatedFeedBack: Either<ErrorClass, FeedBackEntity> =
+          await this.UpdateFeedBackUsecase.execute(
+            feedBackId,
+            updatedFeedBackEntity
+          );
+
+        updatedFeedBack.cata(
+          (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
-        },
-        async (existingFeedBackData: FeedBackEntity) => {
-            const updatedFeedBackEntity: FeedBackEntity = FeedBackMapper.toEntity(
-                feedBackData,
-                true,
-                existingFeedBackData
-            );
-
-            const updatedFeedBack: Either<ErrorClass, FeedBackEntity> =
-                await this.UpdateFeedBackUsecase.execute(
-                    feedBackId,
-                    updatedFeedBackEntity
-                );
-
-            updatedFeedBack.cata(
-                (error: ErrorClass) => {
-                    res.status(error.status).json({ error: error.message });
-                },
-                (result: FeedBackEntity) => {
-                    const resData = FeedBackMapper.toEntity(result, true);
-                    res.json(resData);
-                }
-            );
-        }
+          },
+          (result: FeedBackEntity) => {
+            const resData = FeedBackMapper.toEntity(result, true);
+            res.json(resData);
+          }
+        );
+      }
     );
   }
 
   // Handler for deleting feedback by ID
   async deleteFeedBack(req: Request, res: Response): Promise<void> {
-      const id: string = req.params.id;
-    
-      // Execute the deleteFeedBack use case to delete a feedback by ID
-      const deleteFeedBack: Either<ErrorClass, void> 
-        = await this.DeleteFeedBackUsecase.execute(id);
+    const id: string = req.params.id;
 
-      deleteFeedBack.cata(
-        (error: ErrorClass) =>
+    // Execute the deleteFeedBack use case to delete a feedback by ID
+    const deleteFeedBack: Either<ErrorClass, void>
+      = await this.DeleteFeedBackUsecase.execute(id);
+
+    deleteFeedBack.cata(
+      (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-        (result: void) =>{
-          return res.json({ message: "FeedBack deleted successfully." })
-        }
-      )
+      (result: void) => {
+        return res.json({ message: "FeedBack deleted successfully." })
+      }
+    )
   }
+
+  async getFeedbackCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
+
+    const count: Either<ErrorClass, number> = await this.GetFeedbackCountUsecase.execute(query);
+    count.cata(
+      (error: ErrorClass) =>
+
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
+  }
+
+
 }

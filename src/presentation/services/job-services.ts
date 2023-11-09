@@ -6,6 +6,7 @@ import { DeleteJobUsecase } from "@domain/job/usecases/delete-job";
 import { GetJobByIdUsecase } from "@domain/job/usecases/get-job-by-id";
 import { UpdateJobUsecase } from "@domain/job/usecases/update-job";
 import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
+import { GettotalCountUsecase } from "@domain/job/usecases/get-total-counts";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
@@ -17,6 +18,7 @@ export class JobService {
   private readonly getJobByIdUsecase: GetJobByIdUsecase;
   private readonly updateJobUsecase: UpdateJobUsecase;
   private readonly getAllJobsUsecase: GetAllJobsUsecase;
+  private readonly gettotalCountUsecase: GettotalCountUsecase;
 
   // Constructor to initialize use case instances
   constructor(
@@ -24,13 +26,15 @@ export class JobService {
     deleteJobUsecase: DeleteJobUsecase,
     getJobByIdUsecase: GetJobByIdUsecase,
     updateJobUsecase: UpdateJobUsecase,
-    getAllJobsUsecase: GetAllJobsUsecase
+    getAllJobsUsecase: GetAllJobsUsecase,
+    gettotalCountUsecase: GettotalCountUsecase,
   ) {
     this.createJobUsecase = createJobUsecase;
     this.deleteJobUsecase = deleteJobUsecase;
     this.getJobByIdUsecase = getJobByIdUsecase;
     this.updateJobUsecase = updateJobUsecase;
     this.getAllJobsUsecase = getAllJobsUsecase;
+    this.gettotalCountUsecase = gettotalCountUsecase
   }
 
   // Method to create a new job
@@ -152,7 +156,7 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     let loginId = req.body.loginId;
-    loginId = "2"; // You've manually set loginId to "2"
+    loginId = "2"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {}; // Create an empty query object
 
@@ -180,4 +184,30 @@ export class JobService {
       }
     );
   }
+
+  // Method to get total job posted count
+  async getTotalCount(req: Request, res: Response): Promise<void> {
+    let id: string = req.body.loginId;
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
+
+    const count: Either<ErrorClass, number> = await this.gettotalCountUsecase.execute(query);
+    count.cata(
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: number) => {
+        return res.json({ count: result });
+      }
+    )
+  }
+
 }

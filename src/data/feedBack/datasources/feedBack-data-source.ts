@@ -6,24 +6,31 @@ import { Sequelize } from "sequelize";
 import Realtors from "@data/realtors/model/realtor-model";
 import Jobs from "@data/job/models/job-model";
 
+
+export interface Query {
+  id?: number;
+  q?: string;
+  page?: number;
+  limit?: number;
+  year?: number; // Optional year
+  month?: number;
+}
+
 // Define the interface for the FeedBackDataSource
 export interface FeedBackDataSource {
   create(feedBack: any): Promise<any>; // Return type should be Promise of FeedBackEntity
-  getAllFeedBacks(query: FeedbackQuery): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
+  getAllFeedBacks(query: Query): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
   read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
   update(id: string, updatedData: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
   delete(id: string): Promise<void>;
+  Count(query: Query): Promise<number>;
 }
 
 // Define a FeebackQuery object to encapsulate parameters
-export interface FeedbackQuery {
-  page: number;
-  limit: number;
-}
 
 // FeedBack Data Source communicates with the database
 export class FeedBackDataSourceImpl implements FeedBackDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Create a new feedback entry
   async create(feedBack: any): Promise<any> {
@@ -41,7 +48,7 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   }
 
   // Retrieve all feedback entries
-  async getAllFeedBacks(query: FeedbackQuery): Promise<any[]> {
+  async getAllFeedBacks(query: Query): Promise<any[]> {
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
@@ -50,12 +57,12 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       include: [
         {
           model: Realtors,
-          as: "from", // Alias for the first association
+          as: "fromRealtorData", // Alias for the first association
           foreignKey: "fromRealtor",
         },
         {
           model: Realtors,
-          as: "to", // Alias for the second association
+          as: "toRealtorData", // Alias for the second association
           foreignKey: "toRealtor",
         },
         // {
@@ -121,4 +128,34 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       },
     });
   }
+
+  async Count(query: Query): Promise<number> {
+
+    let loginId = query.id;
+
+    const currentPage = query.page || 1; // Default to page 1
+
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    const offset = (currentPage - 1) * itemsPerPage;
+    if (query.q === "owner") {
+      const count = await FeedBack.count({
+        where: {
+          fromRealtor: loginId,
+        },
+      });
+      return count;
+    }
+    else if (query.q === "applicant") {
+      const count = await FeedBack.count({
+        where: {
+          toRealtor: loginId,
+        },
+      });
+      return count;
+    }
+    else {
+      return 0;
+    }
+  }
+
 }

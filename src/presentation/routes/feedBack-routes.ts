@@ -1,5 +1,4 @@
-// Import necessary classes, interfaces, and dependencies
-import mongoose from "mongoose";
+// Import necessary classes, interfaces, and dependenciess
 import { Router } from "express"; // Correctly import Request and Response
 import { FeedBackService } from "@presentation/services/feedBack-services";
 import { FeedBackDataSourceImpl } from "@data/feedBack/datasources/feedBack-data-source";
@@ -10,8 +9,8 @@ import { GetAllFeedBacks } from "@domain/feedBack/usecases/get-all-feedBacks";
 import { GetFeedBackById } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
-import {sequelize} from "@main/sequelizeClient";
-
+import { GetFeedbackCount } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
+import { sequelize } from "@main/sequelizeClient";
 
 // Create an instance of the FeedBackDataSourceImpl and pass the mongoose connection
 const feedBackDataSource = new FeedBackDataSourceImpl(sequelize);
@@ -25,6 +24,7 @@ const getAllFeedBacksUsecase = new GetAllFeedBacks(feedBackRepository);
 const getFeedBackByIdUsecase = new GetFeedBackById(feedBackRepository);
 const updateFeedBackUsecase = new UpdateFeedBack(feedBackRepository);
 const deleteFeedBackUsecase = new DeleteFeedBack(feedBackRepository);
+const getFeedbackCountUsecase = new GetFeedbackCount(feedBackRepository);
 
 // Initialize FeedBackService and inject required dependencies
 const feedBackService = new FeedBackService(
@@ -32,7 +32,8 @@ const feedBackService = new FeedBackService(
   getAllFeedBacksUsecase,
   getFeedBackByIdUsecase,
   updateFeedBackUsecase,
-  deleteFeedBackUsecase
+  deleteFeedBackUsecase,
+  getFeedbackCountUsecase
 );
 
 // Create an Express router
@@ -44,6 +45,9 @@ feedBackRouter.post("/", validateFeedBackInputMiddleware(false), feedBackService
 // Route handling for getting all feedBacksx`
 feedBackRouter.get("/", feedBackService.getAllFeedBacks.bind(feedBackService));
 
+// Route handling for getting the total feedback count
+feedBackRouter.get("/count/", feedBackService.getFeedbackCount.bind(feedBackService));
+
 // Route handling for getting an FeedBack by ID
 feedBackRouter.get("/:id", feedBackService.getFeedBackById.bind(feedBackService));
 
@@ -52,3 +56,4 @@ feedBackRouter.put("/:id", validateFeedBackInputMiddleware(true), feedBackServic
 
 // Route handling for deleting an feedBack by ID
 feedBackRouter.delete("/:id", feedBackService.deleteFeedBack.bind(feedBackService));
+

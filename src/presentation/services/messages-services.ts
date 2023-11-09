@@ -139,7 +139,7 @@ export class MessagesServices {
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
     query.toId = parseInt(req.query.toId as string, 10);
     query.searchList = req.query.search as string;
-    console.log(query);
+    // console.log(query);
     // Execute the getAllMessages use case to retrieve all Messages
     const clientMessages: Either<ErrorClass, MessageEntity[]> =
       await this.getAllMessageUsecase.execute(loginId, query);

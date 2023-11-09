@@ -137,7 +137,7 @@ export class ConnectionsServices {
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
     query.toId = req.query.toId;
-    console.log(query);
+    // console.log(query);
     // Execute the getAllConnections use case to retrieve all connections
     const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
       await this.getAllUsecase.execute(loginId, query);
