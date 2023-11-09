@@ -28,6 +28,7 @@ interface JobInput {
   deleteReason: string;
   coordinates: { latitude: string; longitude: string } | null;
   liveStatus: boolean;
+  urgentRequirement: boolean;
 }
 
 // Create a function for validating the job input
@@ -164,6 +165,10 @@ const jobValidator = function (input: JobInput): JobInput {
     liveStatus: Joi.boolean().optional().messages({
       "boolean.base": "liveStatus must be a boolean",
       "any.required": "liveStatus is required",
+    }),
+    urgentRequirement: Joi.boolean().required().messages({
+      "boolean.base": "urgentRequirement must be a boolean",
+      "any.required": "urgentRequirement is required",
     }),
   });
 

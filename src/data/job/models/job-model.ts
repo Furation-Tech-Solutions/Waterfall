@@ -111,6 +111,11 @@ const Job = sequelize.define("Job", {
   liveStatus: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
+  },
+  urgentRequirement: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
     defaultValue: false,
   },
 });
