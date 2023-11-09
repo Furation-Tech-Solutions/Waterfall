@@ -1,7 +1,7 @@
 // Import necessary modules and dependencies
 import { FeedBackModel, FeedBackEntity } from "@domain/feedBack/entities/feedBack";
 import { FeedBackRepository } from "@domain/feedBack/repositories/feedBack-repository";
-import { FeedBackDataSource, FeedbackQuery } from "@data/feedBack/datasources/feedBack-data-source";
+import { FeedBackDataSource, Query } from "@data/feedBack/datasources/feedBack-data-source";
 import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
@@ -33,16 +33,19 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
 
   // Retrieve all feedback entries
   async getFeedBacks(
-    query: FeedbackQuery
+    query: Query
   ): Promise<Either<ErrorClass, FeedBackEntity[]>> {
     try {
       const feedBacks = await this.feedBackDataSource.getAllFeedBacks(query); // Use the tag feedBack data source
+      // console.log(feedBacks);
       return Right<ErrorClass, FeedBackEntity[]>(feedBacks);
-    } catch (e) {
+    } catch (e: any) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, FeedBackEntity[]>(ApiError.notFound());
       }
-      return Left<ErrorClass, FeedBackEntity[]>(ApiError.badRequest());
+      return Left<ErrorClass, FeedBackEntity[]>(
+        ApiError.customError(400, e.message)
+      );
     }
   }
 
@@ -92,9 +95,9 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
     }
   }
 
-  async getFeedbackCount(id: string): Promise<Either<ErrorClass, number>> {
+  async getFeedbackCount(query: Query): Promise<Either<ErrorClass, number>> {
     try {
-      const count = await this.feedBackDataSource.Count(id); // Use the tag feedBack data source
+      const count = await this.feedBackDataSource.Count(query); // Use the tag feedBack data source
       return Right<ErrorClass, number>(count); // Return Right if the deletion was successful
     } catch (error: any) {
       return Left<ErrorClass, number>(
@@ -103,14 +106,4 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
     }
   }
 
-  async getGivenFeedbackCount(id: string): Promise<Either<ErrorClass, number>> {
-    try {
-      const count = await this.feedBackDataSource.Count1(id); // Use the tag feedBack data source
-      return Right<ErrorClass, number>(count); // Return Right if the deletion was successful
-    } catch (error: any) {
-      return Left<ErrorClass, number>(
-        ApiError.customError(400, error.message)
-      );
-    }
-  }
 }

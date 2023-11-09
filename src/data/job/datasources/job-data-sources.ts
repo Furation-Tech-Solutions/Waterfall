@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, where } from "sequelize";
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -23,10 +23,8 @@ export interface JobDataSource {
   getAll(query: JobQuery): Promise<JobEntity[]>;
 
   // Method to retrieve a total job posted count
-  getTotalPostedJobs(id: string): Promise<number>;
+  counts(query: JobQuery): Promise<number>;
 
-  // Method to retrieve a total request accepted count
-  getTotalRequestAccepted(id: string): Promise<number>;
 }
 
 // Define a JobQuery object to encapsulate parameters
@@ -161,7 +159,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      console.log("completedJobTypes:", completedJobTypes);
+      // console.log("completedJobTypes:", completedJobTypes);
 
 
       // Recommend jobs with the same jobType
@@ -180,7 +178,7 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset, // Calculate the offset based on the current page
 
       });
-      console.log("recommendedJobs:", recommendedJobs);
+      // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
     } else if (query.year && query.month) {
@@ -263,33 +261,129 @@ export class JobDataSourceImpl implements JobDataSource {
   }
 
   // Method to retrieve the total number of posted jobs
-  async getTotalPostedJobs(id: string): Promise<number> {
-    const count = await Job.count({
-      where: {
-        jobOwner: id,
-      },
-    });
-    return count;
-  }
+  async counts(query: JobQuery): Promise<number> {
+    let loginId = query.id;
 
-  // Method to retrieve the total number of request accepted jobs
-  async getTotalRequestAccepted(id: string): Promise<number> {
-    const count = await Job.count({
-      where: {
-        jobOwner: id,
-      },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            applicantStatus: "Accept",
-          },
+    const currentPage = query.page || 1; // Default to page 1
+
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    const offset = (currentPage - 1) * itemsPerPage;
+
+    if (query.q === "posted") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
         },
-      ]
-    });
-    return count;
+      });
+      return count;
+    }
+    else if (query.q === "accepted") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantStatus: "Accept",
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "completedjobsforowner") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              paymentStatus: true,
+              jobStatus: "JobCompleted"
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "scheduled") {
+      const count = await Job.count({
+        where: {
+          jobOwner: loginId,
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "applied") {
+      const count = await Job.count({
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "assigned") {
+      const count = await Job.count({
+        where: {
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else if (query.q === "completedjobforapplicant") {
+      const count = await Job.count({
+        where: {
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+              jobStatus: "JobCompleted"
+            },
+          },
+        ]
+      });
+      return count;
+    }
+    else {
+      return 0;
+    }
   }
-
 }
-

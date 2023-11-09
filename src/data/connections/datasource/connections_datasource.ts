@@ -113,7 +113,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     // loginID = 1;
 
      const currentPage = query.page || 1; // Default to page 1
-    console.log(query);
+    // console.log(query);
     
 
      const itemsPerPage = query.limit || 10; // Default to 10 items per page

@@ -19,20 +19,18 @@ export const jobStatusEnum = {
   // ACCEPTED:"Accepted",
   DECLINE: "Decline",
 };
- 
+
 // Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   job: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Job, key: "id" },
-
   },
   applicant: {
     type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" },
-
   },
   applicantStatus: {
     type: DataTypes.STRING,

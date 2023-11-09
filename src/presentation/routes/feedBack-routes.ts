@@ -10,7 +10,6 @@ import { GetFeedBackById } from "@domain/feedBack/usecases/get-feedBack-by-id";
 import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
 import { GetFeedbackCount } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
-import { GetGivenFeedbackCount } from "@domain/feedBack/usecases/get-all-given-feedBacks-Count";
 import { sequelize } from "@main/sequelizeClient";
 
 // Create an instance of the FeedBackDataSourceImpl and pass the mongoose connection
@@ -26,7 +25,6 @@ const getFeedBackByIdUsecase = new GetFeedBackById(feedBackRepository);
 const updateFeedBackUsecase = new UpdateFeedBack(feedBackRepository);
 const deleteFeedBackUsecase = new DeleteFeedBack(feedBackRepository);
 const getFeedbackCountUsecase = new GetFeedbackCount(feedBackRepository);
-const GetGivenFeedbackCountUsecase = new GetGivenFeedbackCount(feedBackRepository);
 
 // Initialize FeedBackService and inject required dependencies
 const feedBackService = new FeedBackService(
@@ -35,8 +33,7 @@ const feedBackService = new FeedBackService(
   getFeedBackByIdUsecase,
   updateFeedBackUsecase,
   deleteFeedBackUsecase,
-  getFeedbackCountUsecase,
-  GetGivenFeedbackCountUsecase
+  getFeedbackCountUsecase
 );
 
 // Create an Express router
@@ -49,10 +46,7 @@ feedBackRouter.post("/", validateFeedBackInputMiddleware(false), feedBackService
 feedBackRouter.get("/", feedBackService.getAllFeedBacks.bind(feedBackService));
 
 // Route handling for getting the total feedback count
-feedBackRouter.get("/got/", feedBackService.getFeedbackCount.bind(feedBackService));
-
-// Route handling for getting the total given feedback count
-feedBackRouter.get("/given/", feedBackService.getGivenFeedbackCount.bind(feedBackService));
+feedBackRouter.get("/count/", feedBackService.getFeedbackCount.bind(feedBackService));
 
 // Route handling for getting an FeedBack by ID
 feedBackRouter.get("/:id", feedBackService.getFeedBackById.bind(feedBackService));

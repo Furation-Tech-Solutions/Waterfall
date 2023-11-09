@@ -1,7 +1,7 @@
 import { FeedBackModel, FeedBackEntity } from "@domain/feedBack/entities/feedBack";
 import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
-import { FeedbackQuery } from "@data/feedBack/datasources/feedBack-data-source";
+import { Query } from "@data/feedBack/datasources/feedBack-data-source";
 
 // Interface for the FeedBack repository
 export interface FeedBackRepository {
@@ -12,7 +12,7 @@ export interface FeedBackRepository {
 
   // Retrieve all feedbacks
   getFeedBacks(
-    query: FeedbackQuery
+    query: Query
   ): Promise<Either<ErrorClass, FeedBackEntity[]>>;
 
   // Retrieve a feedback by ID
@@ -28,8 +28,5 @@ export interface FeedBackRepository {
   deleteFeedBack(id: string): Promise<Either<ErrorClass, void>>;
 
   // Get the total count of feedbacks
-  getFeedbackCount(id: string): Promise<Either<ErrorClass, number>>;
-
-  // Get the total count of feedbacks
-  getGivenFeedbackCount(id: string): Promise<Either<ErrorClass, number>>;
+  getFeedbackCount(query: Query): Promise<Either<ErrorClass, number>>;
 }

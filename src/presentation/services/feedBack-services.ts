@@ -10,7 +10,6 @@ import { GetFeedBackByIdUsecase } from "@domain/feedBack/usecases/get-feedBack-b
 import { UpdateFeedBackUsecase } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack";
 import { GetFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
-import { GetGivenFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-given-feedBacks-Count";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -21,7 +20,6 @@ export class FeedBackService {
   private readonly UpdateFeedBackUsecase: UpdateFeedBackUsecase;
   private readonly DeleteFeedBackUsecase: DeleteFeedBackUsecase;
   private readonly GetFeedbackCountUsecase: GetFeedbackCountUsecase;
-  private readonly GetGivenFeedbackCountUsecase: GetGivenFeedbackCountUsecase;
 
   constructor(
     CreateFeedBackUsecase: CreateFeedBackUsecase,
@@ -30,7 +28,6 @@ export class FeedBackService {
     UpdateFeedBackUsecase: UpdateFeedBackUsecase,
     DeleteFeedBackUsecase: DeleteFeedBackUsecase,
     GetFeedbackCountUsecase: GetFeedbackCountUsecase,
-    GetGivenFeedbackCountUsecase: GetGivenFeedbackCountUsecase
   ) {
     this.CreateFeedBackUsecase = CreateFeedBackUsecase;
     this.GetAllFeedBacksUsecase = GetAllFeedBacksUsecase;
@@ -38,7 +35,6 @@ export class FeedBackService {
     this.UpdateFeedBackUsecase = UpdateFeedBackUsecase;
     this.DeleteFeedBackUsecase = DeleteFeedBackUsecase;
     this.GetFeedbackCountUsecase = GetFeedbackCountUsecase;
-    this.GetGivenFeedbackCountUsecase = GetGivenFeedbackCountUsecase;
   }
 
   // Handler for creating a new feedback
@@ -60,13 +56,18 @@ export class FeedBackService {
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const id: string = req.params.id;
+    let id: string = req.body.loginId;
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
 
-    const Id: number = parseInt(id, 10);
     const query: any = {}; // Create an empty query object
 
-    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
 
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> =
@@ -165,8 +166,19 @@ export class FeedBackService {
 
   async getFeedbackCount(req: Request, res: Response): Promise<void> {
     let id: string = req.body.loginId;
-    id = id || "1";
-    const count: Either<ErrorClass, number> = await this.GetFeedbackCountUsecase.execute(id);
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+
+    const query: any = {}; // Create an empty query object
+
+    // Assign values to properties of the query object
+    query.q = req.query.q as string;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = parseInt(loginId, 10);
+    query.year = parseInt(req.query.year as string, 10);
+    query.month = parseInt(req.query.month as string, 10);
+
+    const count: Either<ErrorClass, number> = await this.GetFeedbackCountUsecase.execute(query);
     count.cata(
       (error: ErrorClass) =>
 
@@ -177,17 +189,5 @@ export class FeedBackService {
     )
   }
 
-  async getGivenFeedbackCount(req: Request, res: Response): Promise<void> {
-    let id: string = req.body.loginId;
-    id = id || "1";
-    const count: Either<ErrorClass, number> = await this.GetGivenFeedbackCountUsecase.execute(id);
-    count.cata(
-      (error: ErrorClass) =>
 
-        res.status(error.status).json({ error: error.message }),
-      (result: number) => {
-        return res.json({ count: result });
-      }
-    )
-  }
 }

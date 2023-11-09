@@ -2,10 +2,11 @@ import { FeedBackRepository } from "@domain/feedBack/repositories/feedBack-repos
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import { string } from "joi";
+import { Query } from "@data/feedBack/datasources/feedBack-data-source";
 
 // Define the interface for the "Get Feedback Count" use case
 export interface GetFeedbackCountUsecase {
-  execute: (id: string) => Promise<Either<ErrorClass, number>>;
+  execute: (query: Query) => Promise<Either<ErrorClass, number>>;
 }
 
 // Implement the "Get Feedback Count" use case class
@@ -17,8 +18,8 @@ export class GetFeedbackCount implements GetFeedbackCountUsecase {
   }
 
   // Implement the execute method to retrieve the count of feedback entries
-  async execute(id: string): Promise<Either<ErrorClass, number>> {
-    return await this.feedBackRepository.getFeedbackCount(id);
+  async execute(query: Query): Promise<Either<ErrorClass, number>> {
+    return await this.feedBackRepository.getFeedbackCount(query);
   }
 }
 

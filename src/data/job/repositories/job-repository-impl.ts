@@ -122,25 +122,10 @@ export class JobRepositoryImpl implements JobRepository {
   }
 
   // Method to find the total number of posted jobs
-  async totalPostedJobs(id: string): Promise<Either<ErrorClass, number>> {
+  async TotalCount(query: JobQuery): Promise<Either<ErrorClass, number>> {
     try {
       // Call the job repository method to retrieve the count of posted jobs
-      const count = await this.dataSource.getTotalPostedJobs(id);
-
-      // Return a Right monad with the count on success
-      return Right<ErrorClass, number>(count);
-    } catch (error: any) {
-      return Left<ErrorClass, number>(
-        ApiError.customError(400, error.message)
-      );
-    }
-  }
-
-  // Method to find the total number of request accepted jobs
-  async totalRequestAcceptedJobs(id: string): Promise<Either<ErrorClass, number>> {
-    try {
-      // Call the job repository method to retrieve the count of request accepted jobs
-      const count = await this.dataSource.getTotalRequestAccepted(id);
+      const count = await this.dataSource.counts(query);
 
       // Return a Right monad with the count on success
       return Right<ErrorClass, number>(count);
