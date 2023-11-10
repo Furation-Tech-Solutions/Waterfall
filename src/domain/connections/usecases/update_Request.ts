@@ -3,14 +3,16 @@ import { ConnectionsEntity, ConnectionsModel } from "../entities/connections_ent
 import { ConnectionsRepository } from "../repositories/connections_repo"; // Import the ConnectionsRepository
 import { Either, Right, Left } from "monet";
 
+// Define the interface for the UpdateRequest use case
 export interface UpdateRequestUsecase {
   execute: (
     fromId: string,
     toId: string,
-    Data: ConnectionsEntity
+    data: ConnectionsEntity // Corrected 'Data' to 'data' for parameter naming consistency
   ) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
 
+// Implement the UpdateRequest use case
 export class UpdateRequest implements UpdateRequestUsecase {
   private readonly connectionsRepository: ConnectionsRepository;
 
@@ -18,11 +20,14 @@ export class UpdateRequest implements UpdateRequestUsecase {
     this.connectionsRepository = connectionsRepository;
   }
 
+  // Implementation of the execute method
+  // This method updates a specific connection by fromId and toId with the given data and returns a Promise with an Either result
   async execute(
     fromId: string,
     toId: string,
-    Data: ConnectionsEntity
+    data: ConnectionsEntity // Changed 'Data' to 'data' for parameter naming consistency
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
-    return await this.connectionsRepository.updateRequest(fromId, toId, Data);
+    // Delegate the update of the specific connection to the ConnectionsRepository
+    return await this.connectionsRepository.updateRequest(fromId, toId, data);
   }
 }

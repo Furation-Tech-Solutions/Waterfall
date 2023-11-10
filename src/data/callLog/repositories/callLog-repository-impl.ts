@@ -22,9 +22,9 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   ): Promise<Either<ErrorClass, CallLogEntity>> {
     try {
       // Call the data source's create method and await the result
-      const i = await this.dataSource.create(callLog);
+      const createdCallLog = await this.dataSource.create(callLog);
       // Return a Right with the created CallLogEntity on success
-      return Right<ErrorClass, CallLogEntity>(i);
+      return Right<ErrorClass, CallLogEntity>(createdCallLog);
     } catch (error: any) {
       // Handle errors:
       // If it's an unauthorized error, return a Left with an unauthorized ApiError
@@ -42,9 +42,9 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   async deleteCallLog(id: string): Promise<Either<ErrorClass, void>> {
     try {
       // Call the data source's delete method and await the result
-      const res = await this.dataSource.delete(id);
+      await this.dataSource.delete(id);
       // Return a Right indicating successful deletion
-      return Right<ErrorClass, void>(res);
+      return Right<ErrorClass, void>(undefined);
     } catch (error: any) {
       // If an error occurs, return a Left with a custom ApiError indicating a bad request
       return Left<ErrorClass, void>(
@@ -60,9 +60,9 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   ): Promise<Either<ErrorClass, CallLogEntity>> {
     try {
       // Call the data source's update method and await the result
-      const response = await this.dataSource.update(id, data);
+      const updatedCallLog = await this.dataSource.update(id, data);
       // Return a Right with the updated CallLogEntity on success
-      return Right<ErrorClass, CallLogEntity>(response);
+      return Right<ErrorClass, CallLogEntity>(updatedCallLog);
     } catch (error: any) {
       // If an error occurs, return a Left with a custom ApiError indicating a bad request
       return Left<ErrorClass, CallLogEntity>(
@@ -77,9 +77,9 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   ): Promise<Either<ErrorClass, CallLogEntity[]>> {
     try {
       // Call the data source's getAll method and await the result
-      const response = await this.dataSource.getAll(query);
+      const callLogs = await this.dataSource.getAll(query);
       // Return a Right with an array of CallLogEntity objects on success
-      return Right<ErrorClass, CallLogEntity[]>(response);
+      return Right<ErrorClass, CallLogEntity[]>(callLogs);
     } catch (error: any) {
       // Handle errors:
       // If it's a not found error, return a Left with a not found ApiError
@@ -97,13 +97,13 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   async getCallLogById(id: string): Promise<Either<ErrorClass, CallLogEntity>> {
     try {
       // Call the data source's read method and await the result
-      const response = await this.dataSource.read(id);
+      const callLog = await this.dataSource.read(id);
       // If the response is null (not found), return a Left with a not found ApiError
-      if (response === null) {
+      if (callLog === null) {
         return Left<ErrorClass, CallLogEntity>(ApiError.notFound());
       }
       // Otherwise, return a Right with the retrieved CallLogEntity
-      return Right<ErrorClass, CallLogEntity>(response);
+      return Right<ErrorClass, CallLogEntity>(callLog);
     } catch (error: any) {
       // If an error occurs, return a Left with a custom ApiError indicating a bad request
       return Left<ErrorClass, CallLogEntity>(

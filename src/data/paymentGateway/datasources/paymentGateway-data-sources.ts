@@ -1,11 +1,13 @@
 // Import necessary dependencies and modules
 import { Sequelize } from "sequelize";
-import { PaymentGatewayEntity, PaymentGatewayModel } from "@domain/paymentGateway/entities/paymentGateway"; // Import the PaymentGatewayModel
+import {
+  PaymentGatewayEntity,
+  PaymentGatewayModel,
+} from "@domain/paymentGateway/entities/paymentGateway"; // Import the PaymentGatewayModel
 import PaymentGateway from "@data/paymentGateway/models/paymentGateway-models"; // Import the PaymentGateway model
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
-
 
 // Create PaymentGatewayDataSource Interface
 export interface PaymentGatewayDataSource {
@@ -57,8 +59,8 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
           model: Job,
           foreignKey: "jobId",
           as: "jobData",
-        }
-      ]
+        },
+      ],
       // include: 'tags', // You can include associations here if needed
     });
 
@@ -80,8 +82,8 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
           model: Job,
           foreignKey: "jobId",
           as: "jobData",
-        }
-      ]
+        },
+      ],
     });
 
     // Convert the PaymentGatewayEntities to plain JavaScript objects before returning

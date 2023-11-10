@@ -61,7 +61,7 @@ export class BugReportMapper {
         timestamp: bugReportData.timestamp,
       };
       // return bugReportEntity;
-      return bugReportData;
+      return bugReportData; // Consider uncommenting the line above if you want to return the created entity
     }
   }
 

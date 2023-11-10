@@ -1,19 +1,20 @@
-import { BugReportRepository } from "@domain/bugReport/repositories/bugReport-repository"; // Import the BugReportRepository interface
-import { ErrorClass } from "@presentation/error-handling/api-error"; // Import the ErrorClass for error handling
-import { Either } from "monet"; // Import Either for handling success or failure results
+// Import necessary modules and types
+import { BugReportRepository } from "@domain/bugReport/repositories/bugReport-repository";
+import { ErrorClass } from "@presentation/error-handling/api-error";
+import { Either } from "monet";
 
 // Define the DeleteBugReportUsecase interface
 export interface DeleteBugReportUsecase {
-  execute: (bugReportId: string) => Promise<Either<ErrorClass, void>>; // A function that takes a bugReportId and returns a Promise with Either result
+  execute: (bugReportId: string) => Promise<Either<ErrorClass, void>>;
 }
 
 // Implement the DeleteBugReportUsecase interface as a class
 export class DeleteBugReport implements DeleteBugReportUsecase {
-  private readonly bugReportRepository: BugReportRepository; // Private property to hold the bugReportRepository
+  private readonly bugReportRepository: BugReportRepository;
 
   // Constructor to inject the bugReportRepository dependency
   constructor(bugReportRepository: BugReportRepository) {
-    this.bugReportRepository = bugReportRepository; // Initialize the bugReportRepository
+    this.bugReportRepository = bugReportRepository;
   }
 
   // Implementation of the execute method from the interface

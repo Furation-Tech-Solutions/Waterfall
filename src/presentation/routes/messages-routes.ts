@@ -2,7 +2,7 @@
 import { sequelize } from "@main/sequelizeClient";
 import { Router } from "express";
 import { MessagesServices } from "@presentation/services/messages-services"; // Import the messagesServices
-import { messagesDataSourceImpl } from "@data/messages/datasources/msg-datasource"; // Import the messagesDataSourceImpl
+import { MessagesDataSourceImpl } from "@data/messages/datasources/msg-datasource"; // Import the messagesDataSourceImpl
 import { MessagesRepositoryImpl } from "@data/messages/repositories/msg-repositories-impl"; // Import the messagesRepositoryImpl
 import { CreateMessages } from "@domain/messages/usecases/create-msg"; // Import messages-related use cases
 import { DeleteMessage } from "@domain/messages/usecases/delete-msg";
@@ -13,7 +13,7 @@ import { UpdateMessage } from "@domain/messages/usecases/update-msg";
 // import { validatemessagesInputMiddleware } from "@presentation/middlewares/messages/validation-messages";
 
 // Create an instance of the messagesDataSourceImpl and pass the Sequelize message
-const messagesDataSource = new messagesDataSourceImpl(sequelize);
+const messagesDataSource = new MessagesDataSourceImpl(sequelize);
 
 // Create an instance of the messagesRepositoryImpl and pass the messagesDataSourceImpl
 const messagesRepository = new MessagesRepositoryImpl(messagesDataSource);

@@ -6,7 +6,7 @@ export class ConnectionsModel {
     public fromRealtor: {} = {},
     public toRealtor: {} = {},
     public connected: boolean = false
-  ) {}
+  ) { }
 }
 
 // ConnectionsEntity provided by Connections Repository is converted to Express API Response
@@ -18,7 +18,7 @@ export class ConnectionsEntity {
     public connected: boolean,
     public fromRealtor: {},
     public toRealtor: {}
-  ) {}
+  ) { }
 }
 
 /* ConnectionsMapper provided by Connections Repository is converted to Express API Response */
@@ -29,6 +29,7 @@ export class ConnectionMapper {
     existingConnection?: ConnectionsEntity
   ): ConnectionsEntity {
     if (existingConnection != null) {
+      // Update the existing connection or maintain previous values
       return {
         ...existingConnection,
         fromId:
@@ -45,11 +46,10 @@ export class ConnectionMapper {
             : existingConnection.connected,
       };
     } else {
+      // Create a new ConnectionsEntity
       const connectionEntity: ConnectionsEntity = {
         id: includeId
-          ? connectionData.id
-            ? connectionData.id
-            : undefined
+          ? connectionData.id ? connectionData.id : undefined
           : connectionData.id,
         fromId: connectionData.fromId,
         toId: connectionData.toId,
@@ -62,6 +62,7 @@ export class ConnectionMapper {
   }
 
   static toModel(connection: ConnectionsEntity): any {
+    // Map ConnectionsEntity to an object compatible with the model
     return {
       fromId: connection.fromId,
       toId: connection.toId,

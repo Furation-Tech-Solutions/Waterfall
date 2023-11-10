@@ -1,3 +1,4 @@
+// Import the necessary types and dependencies
 import { FQAEntity, FQAModel } from "@domain/fqa/entities/fqa";
 import { FQARepository } from "@domain/fqa/repositories/fqa-repository";
 import { Either } from "monet";
