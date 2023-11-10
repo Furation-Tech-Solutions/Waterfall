@@ -1,7 +1,6 @@
 import { FeedBackRepository } from "@domain/feedBack/repositories/feedBack-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
-import { string } from "joi";
 import { Query } from "@data/feedBack/datasources/feedBack-data-source";
 
 // Define the interface for the "Get Feedback Count" use case
@@ -22,4 +21,3 @@ export class GetFeedbackCount implements GetFeedbackCountUsecase {
     return await this.feedBackRepository.getFeedbackCount(query);
   }
 }
-

@@ -1,4 +1,4 @@
-import { type FQARepository } from "@domain/fqa/repositories/fqa-repository";
+import { FQARepository } from "@domain/fqa/repositories/fqa-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 

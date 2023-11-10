@@ -6,23 +6,16 @@ import { Query } from "@data/feedBack/datasources/feedBack-data-source";
 // Interface for the FeedBack repository
 export interface FeedBackRepository {
   // Create a new feedback
-  createFeedBack(
-    feedBack: FeedBackModel
-  ): Promise<Either<ErrorClass, FeedBackEntity>>;
+  createFeedBack(feedBack: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>>;
 
   // Retrieve all feedbacks
-  getFeedBacks(
-    query: Query
-  ): Promise<Either<ErrorClass, FeedBackEntity[]>>;
+  getFeedBacks(query: Query): Promise<Either<ErrorClass, FeedBackEntity[]>>;
 
   // Retrieve a feedback by ID
   getFeedBackById(id: string): Promise<Either<ErrorClass, FeedBackEntity>>;
 
   // Update a feedback by ID
-  updateFeedBack(
-    id: string,
-    data: FeedBackModel
-  ): Promise<Either<ErrorClass, FeedBackEntity>>;
+  updateFeedBack(id: string, data: FeedBackModel): Promise<Either<ErrorClass, FeedBackEntity>>;
 
   // Delete a feedback by ID
   deleteFeedBack(id: string): Promise<Either<ErrorClass, void>>;
