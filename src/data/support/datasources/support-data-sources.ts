@@ -4,14 +4,23 @@ import { SupportEntity, SupportModel } from "@domain/support/entities/support"; 
 import Support from "..//models/support-model"; // Import the Support model
 import Realtors from "@data/realtors/model/realtor-model";
 
-
 // Create SupportDataSource Interface
 export interface SupportDataSource {
   // Define methods for data operations on Support entities
+
+  // Method to create a new SupportEntity
   create(support: SupportModel): Promise<SupportEntity>;
+
+  // Method to update a SupportEntity by ID
   update(id: string, support: SupportModel): Promise<any>;
+
+  // Method to delete a SupportEntity by ID
   delete(id: string): Promise<void>;
+
+  // Method to read a SupportEntity by ID
   read(id: string): Promise<SupportEntity | null>;
+
+  // Method to get all SupportEntity records
   getAll(): Promise<SupportEntity[]>;
 }
 
