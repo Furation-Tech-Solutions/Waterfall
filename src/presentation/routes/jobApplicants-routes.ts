@@ -1,5 +1,5 @@
 // Import necessary classes, interfaces, and dependencies
-import {sequelize} from "@main/sequelizeClient"; // Import the Sequelize instance for database connection
+import { sequelize } from "@main/sequelizeClient"; // Import the Sequelize instance for database connection
 import { Router } from "express"; // Import the Express Router class for creating routes
 import { JobApplicantService } from "@presentation/services/jobApplicants-services"; // Import the JobApplicantService for handling business logic
 import { JobApplicantDataSourceImpl } from "@data/jobApplicants/datasources/jobApplicants-data-sources"; // Import the data source for job applicants
@@ -9,7 +9,7 @@ import { GetAllJobApplicants } from "@domain/jobApplicants/usecases/get-all-jobA
 import { UpdateJobApplicant } from "@domain/jobApplicants/usecases/update-jobApplicant"; // Import the use case to update a job applicant
 import { CreateJobApplicant } from "@domain/jobApplicants/usecases/create-jobApplicants"; // Import the use case to create a job applicant
 import { validateJobApplicantInputMiddleware } from "@presentation/middlewares/jobApplicants/validation-middleware"; // Import a middleware for validating job applicant input
-import { DeleteJobApplicant } from "@domain/jobApplicants/usecases/delete-jobApplicant";
+import { DeleteJobApplicant } from "@domain/jobApplicants/usecases/delete-jobApplicant"; // Import the use case to delete a job applicant
 
 // Create an instance of the JobApplicantDataSourceImpl and pass the sequelize connection
 const jobApplicantDataSource = new JobApplicantDataSourceImpl(sequelize);
@@ -52,9 +52,7 @@ export const jobApplicantRouter = Router();
 jobApplicantRouter.post(
   "/", // HTTP POST request to create a new job applicant
   validateJobApplicantInputMiddleware, // Apply validation middleware before processing the request
-  jobApplicantService.createJobApplicant.bind(
-    jobApplicantService // Bind the createJobApplicant method from the service to handle the route
-  )
+  jobApplicantService.createJobApplicant.bind(jobApplicantService) // Bind the createJobApplicant method from the service to handle the route
 );
 
 // Route handling for getting a Job Applicant by ID
@@ -79,4 +77,4 @@ jobApplicantRouter.put(
 jobApplicantRouter.delete(
   "/:id",
   jobApplicantService.deleteJobApplicant.bind(jobApplicantService)
-); // Route URL for deleting a jobApplican by ID
+); // Route URL for deleting a job applicant by ID

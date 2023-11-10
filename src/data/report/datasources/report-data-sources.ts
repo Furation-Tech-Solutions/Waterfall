@@ -24,17 +24,20 @@ export interface ReportDataSource {
 
 // Implementation of the ReportDataSource interface
 export class ReportDataSourceImpl implements ReportDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Implement the "create" method to add a new report to the database
   async create(report: any): Promise<ReportEntity> {
+    // Create a new report record in the database
     const createdReport = await Report.create(report);
 
+    // Return the created report as a plain JavaScript object
     return createdReport.toJSON();
   }
 
   // Implement the "delete" method to remove a report by ID from the database
   async delete(id: string): Promise<void> {
+    // Delete the report record where the ID matches the provided ID
     await Report.destroy({
       where: {
         id: id,
@@ -44,57 +47,67 @@ export class ReportDataSourceImpl implements ReportDataSource {
 
   // Implement the "read" method to retrieve a report by ID from the database
   async read(id: string): Promise<ReportEntity | null> {
+    // Find a report record in the database by ID
     const report = await Report.findOne({
       where: {
         id: id,
       },
-      include: [{
-        model: Realtors,
-        as: 'fromRealtorData', // Alias for the first association
-        foreignKey: 'fromRealtor',
-      },
-      {
-        model: Realtors,
-        as: 'toRealtorData', // Alias for the second association
-        foreignKey: 'toRealtor',
-      },
+      // Include associations to retrieve related data
+      include: [
+        {
+          model: Realtors,
+          as: "fromRealtorData", // Alias for the first association
+          foreignKey: "fromRealtor",
+        },
+        {
+          model: Realtors,
+          as: "toRealtorData", // Alias for the second association
+          foreignKey: "toRealtor",
+        },
       ],
-      // You can include associations here if needed
     });
-    return report ? report.toJSON() : null; // Convert to a plain JavaScript object before returning
+
+    // If a report record is found, convert it to a plain JavaScript object before returning
+    return report ? report.toJSON() : null;
   }
 
   // Implement the "getAll" method to retrieve all reports from the database
   async getAll(): Promise<ReportEntity[]> {
+    // Find all report records in the database
     const reports = await Report.findAll({
-      include: [{
-        model: Realtors,
-        as: 'fromRealtorData', // Alias for the first association
-        foreignKey: 'fromRealtor',
-      },
-      {
-        model: Realtors,
-        as: 'toRealtorData', // Alias for the second association
-        foreignKey: 'toRealtor',
-      },
+      // Include associations to retrieve related data
+      include: [
+        {
+          model: Realtors,
+          as: "fromRealtorData", // Alias for the first association
+          foreignKey: "fromRealtor",
+        },
+        {
+          model: Realtors,
+          as: "toRealtorData", // Alias for the second association
+          foreignKey: "toRealtor",
+        },
       ],
     });
-    return reports.map((report: any) => report.toJSON()); // Convert to plain JavaScript objects before returning
+
+    // Convert the array of report records to an array of plain JavaScript objects before returning
+    return reports.map((report: any) => report.toJSON());
   }
 
   // Implement the "update" method to update an existing report by ID in the database
   async update(id: string, updatedData: ReportModel): Promise<any> {
-    // Find the record by ID
+    // Find the report record in the database by ID
     const report = await Report.findByPk(id);
 
-    // Update the record with the provided data
+    // Update the record with the provided data if it exists
     if (report) {
       await report.update(updatedData);
     }
 
-    // Fetch the updated record
+    // Fetch the updated record by ID
     const updatedReport = await Report.findByPk(id);
 
-    return updatedReport ? updatedReport.toJSON() : null; // Convert to a plain JavaScript object before returning
+    // If an updated report record is found, convert it to a plain JavaScript object before returning
+    return updatedReport ? updatedReport.toJSON() : null;
   }
 }

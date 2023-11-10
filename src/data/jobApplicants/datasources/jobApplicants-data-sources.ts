@@ -82,16 +82,20 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return jobApplicant ? jobApplicant.toJSON() : null;
   }
 
+  // Method to get all job applicants based on query parameters
   async getAll(query: JobApplicantQuery): Promise<any[]> {
     //-------------------------------------------------------------------------------------------------------------
+    // Extract relevant information from the query parameters
     let loginId = parseInt(query.id);
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
     const offset = (currentPage - 1) * itemsPerPage;
     //-------------------------------------------------------------------------------------------------------------------------------
+
     if (query.q === "upcomingTask") {
       {
+        // Retrieve upcoming tasks for the specified realtor
         const jobApplicant = await JobApplicant.findAll({
           where: {
             agreement: true, // Now, it's a boolean
@@ -103,11 +107,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               model: Job,
               as: "jobData",
               foreignKey: "job",
-              //  where: {
-              //    date: {
-              //      [Op.gte]: currentDate,
-              //      [Op.lt]: nextDay,
-              //    },
             },
             {
               model: Realtors,
@@ -121,9 +120,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-      //------------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
+        // Retrieve job applicants for assigned jobs
         const jobApplicant = await JobApplicant.findAll({
           where: {
             agreement: true, // Now, it's a boolean
@@ -150,9 +150,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-      //------------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
+        // Retrieve job applicants with pending responses
         const jobApplicant = await JobApplicant.findAll({
           where: {
             applicantStatus: "Pending",
@@ -179,6 +180,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
     } else {
+      // Retrieve all job applicants with optional pagination
       const jobApplicant = await JobApplicant.findAll({
         include: [
           {
@@ -198,6 +200,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
     }
   }
+
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
     // Find the job applicant record in the database by ID
@@ -229,43 +232,42 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
 
-      //-----------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------
+
+    if (
+      jobApplicant.applicantStatus === "Pending" &&
+      updatedData.applicantStatus === "Accept"
+    ) {
+      // Check if there's already an accepted applicant for the same job (jobOwner can accept only one application)
+      const acceptedApplicant: Model<any, any> | null = await Job.findOne({
+        where: {
+          liveStatus: false,
+        },
+      });
 
       if (
-        jobApplicant.applicantStatus === "Pending" &&
-        updatedData.applicantStatus === "Accept"
+        acceptedApplicant &&
+        acceptedApplicant.get("applicant") !== jobApplicant.get("applicant")
       ) {
-        // Check if there's already an accepted applicant for the same job (jobOwner can accept only one application)
-        const acceptedApplicant: Model<any, any> | null = await Job.findOne({
-          where: {
+        throw new Error(
+          "Job Owner can accept only one application for this Job"
+        );
+      } else {
+    //----------------------------------------------------------------------------------------------
+        // Check if the updated values meet the criteria for setting liveStatus to false
+
+        // Update the associated Job to set liveStatus to false
+        const associatedJob = await Job.findByPk(
+          jobApplicant.getDataValue("job")
+        );
+        if (associatedJob) {
+          // Set liveStatus to false in the associated Job
+          await associatedJob.update({
             liveStatus: false,
-          },
-        });
-
-        if (
-          acceptedApplicant &&
-          acceptedApplicant.get("applicant") !== jobApplicant.get("applicant")
-        ) {
-          throw new Error(
-            "Job Owner can accept only one application for this Job"
-          );
-        } else {
-          //----------------------------------------------------------------------------------------------
-          // Check if the updated values meet the criteria for setting liveStatus to false
-
-          // Update the associated Job to set liveStatus to false
-          const associatedJob = await Job.findByPk(
-            jobApplicant.getDataValue("job")
-          );
-          if (associatedJob) {
-            // Set liveStatus to false in the associated Job
-            await associatedJob.update({
-              liveStatus: false,
-            });
-          }
+          });
         }
       }
-  
+    }
 
     //--------------------------------------------------------------------------------------------------------------
     // Check if the provided data includes changes to agreement and jobStatus
@@ -287,15 +289,15 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     }
 
     //-------------------------------------------------------------------------------------------------------------
-   
+
     // Check if the provided data includes changes to jobStatus
     if (
       jobApplicant.jobStatus !== updatedData.jobStatus &&
       updatedData.jobStatus === "JobCompleted"
     ) {
       // Check if the current time is within 24 hours after toTime
-      const currentTime : any = new Date();
-      const toTime : any = new Date(jobApplicant.getDataValue("toTime"));
+      const currentTime: any = new Date();
+      const toTime: any = new Date(jobApplicant.getDataValue("toTime"));
       const hoursDifference = Math.abs(currentTime - toTime) / 36e5;
 
       if (hoursDifference > 24) {
@@ -304,6 +306,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         );
       }
     }
+
     //--------------------------------------------------------------------------------------------------------------------------------------
 
     // Update the job applicant record with the provided data
