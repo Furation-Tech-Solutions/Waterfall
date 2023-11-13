@@ -89,11 +89,15 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    let loginId = req.body.loginId;
+    loginId = "2"; // For testing purposes, manually set loginId to "2"
+
     // Create an empty query object
     const query: any = {};
 
     // Assign values to properties of the query object
     query.q = req.query.q as string;
+    query.id = parseInt(loginId, 10);
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 

@@ -86,7 +86,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   async getAll(query: JobApplicantQuery): Promise<any[]> {
     //-------------------------------------------------------------------------------------------------------------
     // Extract relevant information from the query parameters
-    let loginId = parseInt(query.id);
+    let loginId = query.id;
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
