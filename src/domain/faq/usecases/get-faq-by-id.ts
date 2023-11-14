@@ -1,6 +1,6 @@
 // Import necessary modules and classes
-import { FQAEntity } from "@domain/fqa/entities/fqa";
-import { FQARepository } from "@domain/fqa/repositories/fqa-repository";
+import { FQAEntity } from "@domain/faq/entities/faq";
+import { FQARepository } from "@domain/faq/repositories/faq-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 

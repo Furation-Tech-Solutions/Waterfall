@@ -1,17 +1,16 @@
 // Import necessary classes, interfaces, and dependencies
 import mongoose from "mongoose";
 import { Router } from "express"; // Correctly import Request and Response
-import { FQAService } from "@presentation/services/fqa-services";
-import { FQADataSourceImpl } from "@data/fqa/datasources/fqa-data-source";
-import { FQARepositoryImpl } from "@data/fqa/repositories/fqa-repositories-impl";
-import { CreateFQA } from "@domain/fqa/usecases/create-fqa";
-import { validateFQAInputMiddleware } from "@presentation/middlewares/fqa/validation-middleware";
-import { GetAllFQAs } from "@domain/fqa/usecases/get-all-fqas";
-import { GetFQAById } from "@domain/fqa/usecases/get-fqa-by-id";
-import { UpdateFQA } from "@domain/fqa/usecases/update-fqa";
-import { DeleteFQA } from "@domain/fqa/usecases/delete-fqa";
-import {sequelize} from "@main/sequelizeClient";
-
+import { FQAService } from "@presentation/services/faq-services";
+import { FQADataSourceImpl } from "@data/faq/datasources/faq-data-source";
+import { FQARepositoryImpl } from "@data/faq/repositories/faq-repositories-impl";
+import { CreateFQA } from "@domain/faq/usecases/create-faq";
+import { validateFQAInputMiddleware } from "@presentation/middlewares/faq/validation-middleware";
+import { GetAllFQAs } from "@domain/faq/usecases/get-all-faqs";
+import { GetFQAById } from "@domain/faq/usecases/get-faq-by-id";
+import { UpdateFQA } from "@domain/faq/usecases/update-faq";
+import { DeleteFQA } from "@domain/faq/usecases/delete-faq";
+import { sequelize } from "@main/sequelizeClient";
 
 // Create an instance of the FQADataSourceImpl and pass the mongoose connection
 const fqaDataSource = new FQADataSourceImpl(sequelize);
@@ -39,7 +38,11 @@ const fqaService = new FQAService(
 export const fqaRouter = Router();
 
 // Route handling for creating a new fqa
-fqaRouter.post("/", validateFQAInputMiddleware(false), fqaService.createFQA.bind(fqaService));
+fqaRouter.post(
+  "/",
+  validateFQAInputMiddleware(false),
+  fqaService.createFQA.bind(fqaService)
+);
 
 // Route handling for getting all fqasx`
 fqaRouter.get("/", fqaService.getAllFQAs.bind(fqaService));
@@ -48,7 +51,11 @@ fqaRouter.get("/", fqaService.getAllFQAs.bind(fqaService));
 fqaRouter.get("/:id", fqaService.getFQAById.bind(fqaService));
 
 // Route handling for updating an fqa by ID
-fqaRouter.put("/:id", validateFQAInputMiddleware(true), fqaService.updateFQA.bind(fqaService));
+fqaRouter.put(
+  "/:id",
+  validateFQAInputMiddleware(true),
+  fqaService.updateFQA.bind(fqaService)
+);
 
 // Route handling for deleting an fqa by ID
 fqaRouter.delete("/:id", fqaService.deleteFQA.bind(fqaService));

@@ -1,5 +1,5 @@
-import { FQAEntity, FQAModel } from "@domain/fqa/entities/fqa";
-import { FQARepository } from "@domain/fqa/repositories/fqa-repository";
+import { FQAEntity, FQAModel } from "@domain/faq/entities/faq";
+import { FQARepository } from "@domain/faq/repositories/faq-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 

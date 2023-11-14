@@ -1,6 +1,6 @@
 // Import necessary modules and classes
-import { FQAEntity, FQAModel } from "@domain/fqa/entities/fqa";
-import { FQARepository } from "@domain/fqa/repositories/fqa-repository";
+import { FQAEntity, FQAModel } from "@domain/faq/entities/faq";
+import { FQARepository } from "@domain/faq/repositories/faq-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
@@ -22,7 +22,10 @@ export class UpdateFQA implements UpdateFQAUsecase {
   }
 
   // Method to execute the use case and update an FQA entity
-  async execute(id: string, fqaData: FQAModel): Promise<Either<ErrorClass, FQAEntity>> {
+  async execute(
+    id: string,
+    fqaData: FQAModel
+  ): Promise<Either<ErrorClass, FQAEntity>> {
     // Call the repository's method to update an FQA entity and return the result
     return await this.fqaRepository.updateFQA(id, fqaData);
   }
