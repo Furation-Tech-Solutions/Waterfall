@@ -8,7 +8,6 @@ import NotInterested from "@data/notInterested/model/notInterested-models";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 
-
 // Create a NotInterestedDataSource Interface
 export interface NotInterestedDataSource {
   // Define methods for data source operations
@@ -31,10 +30,15 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
 
   // Implement the "create" method to insert a new NotInterestedModel into the database
   async create(notInterested: any): Promise<NotInterestedEntity> {
-    const createdNotInterested = await NotInterested.create(notInterested);
+    try {
+      const createdNotInterested = await NotInterested.create(notInterested);
 
-    // Return the created NotInterested as a plain JavaScript object
-    return createdNotInterested.toJSON();
+      // Return the created NotInterested as a plain JavaScript object
+      return createdNotInterested.toJSON();
+    } catch (error) {
+      // Handle the error or log it for debugging
+      throw new Error("Failed to create NotInterested");
+    }
   }
 
   // Implement the "delete" method to remove a NotInterested record from the database by ID
@@ -51,61 +55,50 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
     const notInterested = await NotInterested.findOne({
       where: {
         id: id,
-        include: [
-          {
-            model: Realtors,
-            foreignKey: "applicant",
-            as: "realtorData",
-          },
-          {
-            model: Job,
-            foreignKey: "job",
-            as: "jobData",
-          }
-        ]
       },
       include: [
         {
           model: Realtors,
-          as: "realtorData", // Alias for the first association
+          as: "realtorData",
           foreignKey: "realtor",
         },
         {
           model: Job,
-          as: "jobData", // Alias for the second association
+          as: "jobData",
           foreignKey: "job",
-        },
+        }
       ],
-      // include: 'tags', // You can include associations here if needed
     });
-    return notInterested ? notInterested.toJSON() : null; // Convert to a plain JavaScript object before returning
+
+    // Convert to a plain JavaScript object before returning
+    return notInterested ? notInterested.toJSON() : null;
   }
 
   // Implement the "getAll" method to retrieve all NotInterestedEntity records from the database
   async getAll(query: NotInterestedQuery): Promise<NotInterestedEntity[]> {
-
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
-
     const offset = (currentPage - 1) * itemsPerPage;
 
     const notInteresteds = await NotInterested.findAll({
       include: [
         {
           model: Realtors,
-          as: "realtorData", // Alias for the first association
+          as: "realtorData",
           foreignKey: "realtor",
         },
         {
           model: Job,
-          as: "jobData", // Alias for the second association
+          as: "jobData",
           foreignKey: "job",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page
       offset: offset, // Calculate the offset based on the current page
     });
-    return notInteresteds.map((notInterested: any) => notInterested.toJSON()); // Convert to plain JavaScript objects before returning
+
+    // Convert to plain JavaScript objects before returning
+    return notInteresteds.map((notInterested: any) => notInterested.toJSON());
   }
 
   // Implement the "update" method to update a NotInterested record by ID with provided data
@@ -121,6 +114,7 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
     // Fetch the updated record
     const updatedNotInterested = await NotInterested.findByPk(id);
 
-    return updatedNotInterested ? updatedNotInterested.toJSON() : null; // Convert to a plain JavaScript object before returning
+    // Convert to a plain JavaScript object before returning
+    return updatedNotInterested ? updatedNotInterested.toJSON() : null;
   }
 }

@@ -5,10 +5,7 @@ import ErrorClass from "@presentation/error-handling/api-error";
 
 // Define the interface for the update feedback use case
 export interface UpdateFeedBackUsecase {
-  execute: (
-    id: string,
-    feedBackData: FeedBackModel
-  ) => Promise<Either<ErrorClass, FeedBackEntity>>;
+  execute: (id: string, feedBackData: FeedBackModel) => Promise<Either<ErrorClass, FeedBackEntity>>;
 }
 
 // Implement the update feedback use case class

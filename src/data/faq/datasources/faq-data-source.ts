@@ -1,71 +1,71 @@
 // Import necessary modules and dependencies
-import { FQAModel } from "@domain/faq/entities/faq";
-import FQA from "../model/faq-model";
+import { FAQModel } from "@domain/faq/entities/faq";
+import FAQ from "../model/faq-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize";
 
-// Define the interface for the FQADataSource
-export interface FQADataSource {
-  create(fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
-  getAllFQAs(): Promise<any[]>; // Return type should be Promise of an array of FQAEntity
-  read(id: string): Promise<any | null>; // Return type should be Promise of FQAEntity or null
-  update(id: string, fqa: FQAModel): Promise<any>; // Return type should be Promise of FQAEntity
+// Define the interface for the FAQDataSource
+export interface FAQDataSource {
+  create(faq: FAQModel): Promise<any>; // Return type should be Promise of FAQEntity
+  getAllFAQs(): Promise<any[]>; // Return type should be Promise of an array of FAQEntity
+  read(id: string): Promise<any | null>; // Return type should be Promise of FAQEntity or null
+  update(id: string, faq: FAQModel): Promise<any>; // Return type should be Promise of FAQEntity
   delete(id: string): Promise<void>;
 }
 
-// FQA Data Source communicates with the database
-export class FQADataSourceImpl implements FQADataSource {
+// FAQ Data Source communicates with the database
+export class FAQDataSourceImpl implements FAQDataSource {
   constructor(private db: Sequelize) {}
 
-  // Create a new FQA (Frequently Asked Question) entry
-  async create(fqa: any): Promise<any> {
-    const existingFQA = await FQA.findOne({
+  // Create a new FAQ (Frequently Asked Question) entry
+  async create(faq: any): Promise<any> {
+    const existingFAQ = await FAQ.findOne({
       where: {
-        question: fqa.question,
+        question: faq.question,
       },
     });
-    if (existingFQA) {
+    if (existingFAQ) {
       throw ApiError.questionExist();
     }
-    const createdFQA = await FQA.create(fqa);
-    return createdFQA.toJSON();
+    const createdFAQ = await FAQ.create(faq);
+    return createdFAQ.toJSON();
   }
 
-  // Retrieve all FQA entries
-  async getAllFQAs(): Promise<any[]> {
-    const fqa = await FQA.findAll({});
-    return fqa.map((fqa: any) => fqa.toJSON()); // Convert to plain JavaScript objects before returning
+  // Retrieve all FAQ entries
+  async getAllFAQs(): Promise<any[]> {
+    const faq = await FAQ.findAll({});
+    return faq.map((faq: any) => faq.toJSON()); // Convert to plain JavaScript objects before returning
   }
 
-  // Retrieve an FQA entry by its ID
+  // Retrieve an FAQ entry by its ID
   async read(id: string): Promise<any | null> {
-    const fqa = await FQA.findOne({
+    const faq = await FAQ.findOne({
       where: {
         id: id,
       },
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
-    return fqa ? fqa.toJSON() : null; // Convert to a plain JavaScript object before returning
+    return faq ? faq.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  // Update an FQA entry by ID
-  async update(id: string, updatedData: FQAModel): Promise<any> {
+  // Update an FAQ entry by ID
+  async update(id: string, updatedData: FAQModel): Promise<any> {
     // Find the record by ID
-    const fqa = await FQA.findByPk(id);
+    const faq = await FAQ.findByPk(id);
 
     // Update the record with the provided data
-    if (fqa) {
-      await fqa.update(updatedData);
+    if (faq) {
+      await faq.update(updatedData);
     }
     // Fetch the updated record
-    const updatedFQA = await FQA.findByPk(id);
+    const updatedFAQ = await FAQ.findByPk(id);
 
-    return updatedFQA ? updatedFQA.toJSON() : null; // Convert to a plain JavaScript object before returning
+    return updatedFAQ ? updatedFAQ.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  // Delete an FQA entry by ID
+  // Delete an FAQ entry by ID
   async delete(id: string): Promise<void> {
-    await FQA.destroy({
+    await FAQ.destroy({
       where: {
         id: id,
       },

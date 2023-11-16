@@ -10,6 +10,7 @@ import ApiError from "@presentation/error-handling/api-error";
 export class BlockingRepositoryImpl implements BlockingRepository {
   private readonly blockingDataSource: BlockingDataSource;
 
+  // Constructor to initialize the BlockingRepository with a BlockingDataSource
   constructor(blockingDataSource: BlockingDataSource) {
     this.blockingDataSource = blockingDataSource;
   }
@@ -22,9 +23,11 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       const blockings = await this.blockingDataSource.create(blocking); // Use the blocking data source
       return Right<ErrorClass, BlockingEntity>(blockings);
     } catch (error: any) {
+      // Handle specific API error for blocked ID conflict
       if (error instanceof ApiError && error.name === "idBlocked_conflict") {
         return Left<ErrorClass, BlockingEntity>(ApiError.idBlocked());
       }
+      // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity>(
         ApiError.customError(400, error.message)
       );
@@ -39,9 +42,11 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       const blockings = await this.blockingDataSource.getAllBlockings(query); // Use the tag blocking data source
       return Right<ErrorClass, BlockingEntity[]>(blockings);
     } catch (e) {
+      // Handle specific API error for not found
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, BlockingEntity[]>(ApiError.notFound());
       }
+      // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity[]>(ApiError.badRequest());
     }
   }
@@ -56,9 +61,11 @@ export class BlockingRepositoryImpl implements BlockingRepository {
         ? Right<ErrorClass, BlockingEntity>(blocking)
         : Left<ErrorClass, BlockingEntity>(ApiError.notFound());
     } catch (e) {
+      // Handle specific API error for not found
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, BlockingEntity>(ApiError.notFound());
       }
+      // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
     }
   }
@@ -72,9 +79,11 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       const updatedBlocking = await this.blockingDataSource.update(id, data); // Use the tag blocking data source
       return Right<ErrorClass, BlockingEntity>(updatedBlocking);
     } catch (e) {
+      // Handle specific API error for conflict
       if (e instanceof ApiError && e.name === "conflict") {
         return Left<ErrorClass, BlockingEntity>(ApiError.emailExist());
       }
+      // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
     }
   }
@@ -85,9 +94,11 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       const result = await this.blockingDataSource.delete(id); // Use the tag blocking data source
       return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
     } catch (e) {
+      // Handle specific API error for not found
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, void>(ApiError.notFound());
       }
+      // Handle other errors with a generic bad request error
       return Left<ErrorClass, void>(ApiError.badRequest());
     }
   }

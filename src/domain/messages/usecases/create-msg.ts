@@ -4,12 +4,12 @@ import { MessageEntity, MessageModel } from "../entities/msg"; // Import the Mes
 import { MessagesRepository } from "../repositories/msg-repository"; // Import the MessagesRepository
 import { Either, Right, Left } from "monet";
 
-// Define the interface for the Createmessages use case
+// Define the interface for the CreateMessages use case
 export interface CreateMessagesUsecase {
   execute: (messagesData: MessageModel) => Promise<Either<ErrorClass, MessageEntity>>;
 }
 
-// Implement the Createmessages use case
+// Implement the CreateMessages use case
 export class CreateMessages implements CreateMessagesUsecase {
   private readonly messagesRepository: MessagesRepository;
 

@@ -1,13 +1,13 @@
-// Define the FQA model for incoming API requests
-export class FQAModel {
+// Define the FAQ model for incoming API requests
+export class FAQModel {
   constructor(
     public question: string = "",
     public answer: string = ""
   ) {}
 }
 
-// Define the FQA entity for data storage and API responses
-export class FQAEntity {
+// Define the FAQ entity for data storage and API responses
+export class FAQEntity {
   constructor(
     public id: number| undefined = undefined, // Set a default value for id
     public question: string,
@@ -16,40 +16,40 @@ export class FQAEntity {
 }
 
 // Create a mapper class for converting between data formats
-export class FQAMapper {
+export class FAQMapper {
   static toEntity(
-    fqaData: any,
+    faqData: any,
     includeId?: boolean,
-    existingFQA?: FQAEntity
-  ): FQAEntity {
-    if (existingFQA != null) {
-      // If existingFQA is provided, merge the data from fqaData with the existingFQA
+    existingFAQ?: FAQEntity
+  ): FAQEntity {
+    if (existingFAQ != null) {
+      // If existingFAQ is provided, merge the data from faqData with the existingFAQ
       return {
-        ...existingFQA,
+        ...existingFAQ,
         question:
-          fqaData.question !== undefined
-            ? fqaData.question
-            : existingFQA.question,
+          faqData.question !== undefined
+            ? faqData.question
+            : existingFAQ.question,
         answer:
-          fqaData.answer !== undefined
-            ? fqaData.answer
-            : existingFQA.answer
+          faqData.answer !== undefined
+            ? faqData.answer
+            : existingFAQ.answer
       };
     } else {
-      // If existingFQA is not provided, create a new FQAEntity using fqaData
-      const fqaEntity: FQAEntity = {
-        id: includeId ? (fqaData.id ? fqaData.id : undefined) : fqaData.id,
-        question: fqaData.question,
-        answer: fqaData.answer
+      // If existingFAQ is not provided, create a new FAQEntity using faqData
+      const faqEntity: FAQEntity = {
+        id: includeId ? (faqData.id ? faqData.id : undefined) : faqData.id,
+        question: faqData.question,
+        answer: faqData.answer
       };
-      return fqaData;
+      return faqData;
     }
   }
 
-  static toModel(fqa: FQAEntity): any {
+  static toModel(faq: FAQEntity): any {
     return {
-      question: fqa.question,
-      answer: fqa.answer
+      question: faq.question,
+      answer: faq.answer
     };
   }
 }

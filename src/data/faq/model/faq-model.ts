@@ -1,12 +1,12 @@
 // Import the necessary modules and dependencies
 import { DataTypes } from "sequelize";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 
-// Define a Sequelize model called 'FQAs' with two string fields: 'question' and 'answer'
-const FQAs = sequelize.define('FQAs', {
+// Define a Sequelize model called 'FAQs' with two string fields: 'question' and 'answer'
+const FAQs = sequelize.define('FAQs', {
   question: { type: DataTypes.STRING, allowNull: false },
   answer: { type: DataTypes.STRING, allowNull: false }
 });
 
-// Export the 'FQAs' model for use in other parts of the application
-export default FQAs;
+// Export the 'FAQs' model for use in other parts of the application
+export default FAQs;

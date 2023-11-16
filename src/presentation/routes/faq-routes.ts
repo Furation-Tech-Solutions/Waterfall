@@ -1,61 +1,61 @@
 // Import necessary classes, interfaces, and dependencies
 import mongoose from "mongoose";
 import { Router } from "express"; // Correctly import Request and Response
-import { FQAService } from "@presentation/services/faq-services";
-import { FQADataSourceImpl } from "@data/faq/datasources/faq-data-source";
-import { FQARepositoryImpl } from "@data/faq/repositories/faq-repositories-impl";
-import { CreateFQA } from "@domain/faq/usecases/create-faq";
-import { validateFQAInputMiddleware } from "@presentation/middlewares/faq/validation-middleware";
-import { GetAllFQAs } from "@domain/faq/usecases/get-all-faqs";
-import { GetFQAById } from "@domain/faq/usecases/get-faq-by-id";
-import { UpdateFQA } from "@domain/faq/usecases/update-faq";
-import { DeleteFQA } from "@domain/faq/usecases/delete-faq";
+import { FAQService } from "@presentation/services/faq-services";
+import { FAQDataSourceImpl } from "@data/faq/datasources/faq-data-source";
+import { FAQRepositoryImpl } from "@data/faq/repositories/faq-repositories-impl";
+import { CreateFAQ } from "@domain/faq/usecases/create-faq";
+import { validateFAQInputMiddleware } from "@presentation/middlewares/faq/validation-middleware";
+import { GetAllFAQs } from "@domain/faq/usecases/get-all-faqs";
+import { GetFAQById } from "@domain/faq/usecases/get-faq-by-id";
+import { UpdateFAQ } from "@domain/faq/usecases/update-faq";
+import { DeleteFAQ } from "@domain/faq/usecases/delete-faq";
 import { sequelize } from "@main/sequelizeClient";
 
-// Create an instance of the FQADataSourceImpl and pass the mongoose connection
-const fqaDataSource = new FQADataSourceImpl(sequelize);
+// Create an instance of the FAQDataSourceImpl and pass the mongoose connection
+const faqDataSource = new FAQDataSourceImpl(sequelize);
 
 // Create an instance of the OutletRepositoryImpl and pass the OutletDataSourceImpl
-const fqaRepository = new FQARepositoryImpl(fqaDataSource);
+const faqRepository = new FAQRepositoryImpl(faqDataSource);
 
-// Create instances of the required use cases and pass the FQARepositoryImpl
-const createFQAUsecase = new CreateFQA(fqaRepository);
-const getAllFQAsUsecase = new GetAllFQAs(fqaRepository);
-const getFQAByIdUsecase = new GetFQAById(fqaRepository);
-const updateFQAUsecase = new UpdateFQA(fqaRepository);
-const deleteFQAUsecase = new DeleteFQA(fqaRepository);
+// Create instances of the required use cases and pass the FAQRepositoryImpl
+const createFAQUsecase = new CreateFAQ(faqRepository);
+const getAllFAQsUsecase = new GetAllFAQs(faqRepository);
+const getFAQByIdUsecase = new GetFAQById(faqRepository);
+const updateFAQUsecase = new UpdateFAQ(faqRepository);
+const deleteFAQUsecase = new DeleteFAQ(faqRepository);
 
-// Initialize FQAService and inject required dependencies
-const fqaService = new FQAService(
-  createFQAUsecase,
-  getAllFQAsUsecase,
-  getFQAByIdUsecase,
-  updateFQAUsecase,
-  deleteFQAUsecase
+// Initialize FAQService and inject required dependencies
+const faqService = new FAQService(
+  createFAQUsecase,
+  getAllFAQsUsecase,
+  getFAQByIdUsecase,
+  updateFAQUsecase,
+  deleteFAQUsecase
 );
 
 // Create an Express router
-export const fqaRouter = Router();
+export const faqRouter = Router();
 
-// Route handling for creating a new fqa
-fqaRouter.post(
+// Route handling for creating a new faq
+faqRouter.post(
   "/",
-  validateFQAInputMiddleware(false),
-  fqaService.createFQA.bind(fqaService)
+  validateFAQInputMiddleware(false),
+  faqService.createFAQ.bind(faqService)
 );
 
-// Route handling for getting all fqasx`
-fqaRouter.get("/", fqaService.getAllFQAs.bind(fqaService));
+// Route handling for getting all faqsx`
+faqRouter.get("/", faqService.getAllFAQs.bind(faqService));
 
-// Route handling for getting an FQA by ID
-fqaRouter.get("/:id", fqaService.getFQAById.bind(fqaService));
+// Route handling for getting an FAQ by ID
+faqRouter.get("/:id", faqService.getFAQById.bind(faqService));
 
-// Route handling for updating an fqa by ID
-fqaRouter.put(
+// Route handling for updating an faq by ID
+faqRouter.put(
   "/:id",
-  validateFQAInputMiddleware(true),
-  fqaService.updateFQA.bind(fqaService)
+  validateFAQInputMiddleware(true),
+  faqService.updateFAQ.bind(faqService)
 );
 
-// Route handling for deleting an fqa by ID
-fqaRouter.delete("/:id", fqaService.deleteFQA.bind(fqaService));
+// Route handling for deleting an faq by ID
+faqRouter.delete("/:id", faqService.deleteFAQ.bind(faqService));

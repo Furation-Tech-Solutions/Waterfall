@@ -1,8 +1,8 @@
 // Import necessary modules and types
-import { BugReportEntity } from "@domain/bugReport/entities/bugReport"; // Import BugReportEntity for the entity type
-import { BugReportRepository } from "@domain/bugReport/repositories/bugReport-repository"; // Import BugReportRepository for data access
-import { ErrorClass } from "@presentation/error-handling/api-error"; // Import ErrorClass for error handling
-import { Either } from "monet"; // Import Either for functional error handling
+import { BugReportEntity } from "@domain/bugReport/entities/bugReport";
+import { BugReportRepository } from "@domain/bugReport/repositories/bugReport-repository";
+import { ErrorClass } from "@presentation/error-handling/api-error";
+import { Either } from "monet";
 
 // Define the interface for the GetBugReportByIdUsecase
 export interface GetBugReportByIdUsecase {

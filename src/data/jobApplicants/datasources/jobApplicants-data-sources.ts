@@ -290,22 +290,22 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
     //-------------------------------------------------------------------------------------------------------------
 
-    // Check if the provided data includes changes to jobStatus
-    if (
-      jobApplicant.jobStatus !== updatedData.jobStatus &&
-      updatedData.jobStatus === "JobCompleted"
-    ) {
-      // Check if the current time is within 24 hours after toTime
-      const currentTime: any = new Date();
-      const toTime: any = new Date(jobApplicant.getDataValue("toTime"));
-      const hoursDifference = Math.abs(currentTime - toTime) / 36e5;
+    // // Check if the provided data includes changes to jobStatus
+    // if (
+    //   jobApplicant.jobStatus !== updatedData.jobStatus &&
+    //   updatedData.jobStatus === "JobCompleted"
+    // ) {
+    //   // Check if the current time is within 24 hours after toTime
+    //   const currentTime: any = new Date();
+    //   const toTime: any = new Date(jobApplicant.getDataValue("toTime"));
+    //   const hoursDifference = Math.abs(currentTime - toTime) / 36e5;
 
-      if (hoursDifference > 24) {
-        throw new Error(
-          "Job can only be marked as completed within 24 hours after toTime"
-        );
-      }
-    }
+    //   if (hoursDifference > 24) {
+    //     throw new Error(
+    //       "Job can only be marked as completed within 24 hours after toTime"
+    //     );
+    //   }
+    // }
 
     //--------------------------------------------------------------------------------------------------------------------------------------
 

@@ -7,10 +7,19 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
-  create(blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
-  getAllBlockings(query: BlockQuery): Promise<any[]>; // Return type should be Promise of an array of BlockingEntity
-  read(id: string): Promise<any | null>; // Return type should be Promise of BlockingEntity or null
-  update(id: string, blocking: BlockingModel): Promise<any>; // Return type should be Promise of BlockingEntity
+  // Method to create a new blocking entry
+  create(blocking: BlockingModel): Promise<any>; // Promise of BlockingEntity
+
+  // Method to retrieve all blocking entries
+  getAllBlockings(query: BlockQuery): Promise<any[]>; // Promise of an array of BlockingEntity
+
+  // Method to read a blocking entry by ID
+  read(id: string): Promise<any | null>; // Promise of BlockingEntity or null
+
+  // Method to update a blocking entry by ID
+  update(id: string, blocking: BlockingModel): Promise<any>; // Promise of BlockingEntity
+
+  // Method to delete a blocking entry by ID
   delete(id: string): Promise<void>;
 }
 
@@ -36,7 +45,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // If a matching entry exists, throw an error
     if (existingBlockor) {
-      throw ApiError.idBlocked();
+      throw ApiError.idBlocked(); // API error indicating ID is blocked
     }
 
     // Create a new blocking entry and return its JSON representation
@@ -48,7 +57,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   async getAllBlockings(query: BlockQuery): Promise<any[]> {
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
-
     const offset = (currentPage - 1) * itemsPerPage;
 
     // Fetch all blocking entries from the database
@@ -92,8 +100,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
           foreignKey: "toRealtor",
         },
       ],
-
-      // include: 'tags', // You can uncomment this line if there are associations to include
     });
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning

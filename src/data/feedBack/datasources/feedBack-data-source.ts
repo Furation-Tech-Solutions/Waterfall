@@ -1,4 +1,3 @@
-// Import necessary modules and dependencies
 import { FeedBackModel } from "@domain/feedBack/entities/feedBack";
 import FeedBack from "../model/feedBack-model";
 import ApiError from "@presentation/error-handling/api-error";
@@ -6,39 +5,34 @@ import { Sequelize } from "sequelize";
 import Realtors from "@data/realtors/model/realtor-model";
 import Jobs from "@data/job/models/job-model";
 
-
+// Define the structure of the query parameters
 export interface Query {
   id?: number;
   q?: string;
   page?: number;
   limit?: number;
-  year?: number; // Optional year
+  year?: number;
   month?: number;
 }
 
 // Define the interface for the FeedBackDataSource
 export interface FeedBackDataSource {
-  create(feedBack: any): Promise<any>; // Return type should be Promise of FeedBackEntity
-  getAllFeedBacks(query: Query): Promise<any[]>; // Return type should be Promise of an array of FeedBackEntity
-  read(id: string): Promise<any | null>; // Return type should be Promise of FeedBackEntity or null
-  update(id: string, updatedData: FeedBackModel): Promise<any>; // Return type should be Promise of FeedBackEntity
+  create(feedBack: any): Promise<any>;
+  getAllFeedBacks(query: Query): Promise<any[]>;
+  read(id: string): Promise<any | null>;
+  update(id: string, updatedData: FeedBackModel): Promise<any>;
   delete(id: string): Promise<void>;
-  Count(query: Query): Promise<number>;
+  count(query: Query): Promise<number>;
 }
 
-// Define a FeebackQuery object to encapsulate parameters
-
-// FeedBack Data Source communicates with the database
+// Implementation of the FeedBackDataSource interface
 export class FeedBackDataSourceImpl implements FeedBackDataSource {
   constructor(private db: Sequelize) { }
 
   // Create a new feedback entry
   async create(feedBack: any): Promise<any> {
-    const existingFeedBack = await FeedBack.findOne({
-      where: {
-        jobId: feedBack.jobId,
-      },
-    });
+    const existingFeedBack = await FeedBack.findOne({ where: { jobId: feedBack.jobId } });
+
     if (existingFeedBack) {
       throw ApiError.feedBackGiven();
     }
@@ -49,113 +43,62 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
   // Retrieve all feedback entries
   async getAllFeedBacks(query: Query): Promise<any[]> {
-    const currentPage = query.page || 1; // Default to page 1
-    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    const { page = 1, limit = 10 } = query;
+    const offset = (page - 1) * limit;
 
-    const offset = (currentPage - 1) * itemsPerPage;
     const data = await FeedBack.findAll({
       include: [
-        {
-          model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
-        },
-        {
-          model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
-        },
-        // {
-        //     model: Jobs,
-        //     as: 'job', // Alias for the third association
-        //     foreignKey: 'jobId',
-        // },
+        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
+        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
       ],
-      limit: itemsPerPage, // Limit the number of results per page
-      offset: offset, // Calculate the offset based on the current page
+      limit,
+      offset,
     });
-    return data.map((feedBack: any) => feedBack.toJSON()); // Convert to plain JavaScript objects before returning
+
+    return data.map((feedBack: any) => feedBack.toJSON());
   }
 
   // Retrieve a feedback entry by its ID
   async read(id: string): Promise<any | null> {
     const feedBack = await FeedBack.findOne({
-      where: {
-        id: id,
-      },
+      where: { id },
       include: [
-        {
-          model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
-        },
-        {
-          model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
-        },
-        {
-          model: Jobs,
-          as: "JobData", // Alias for the third association
-          foreignKey: "jobId",
-        },
+        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
+        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
+        { model: Jobs, as: "JobData", foreignKey: "jobId" },
       ],
-      // include: 'tags', // Replace 'tags' with the actual name of your association
     });
-    return feedBack ? feedBack.toJSON() : null; // Convert to a plain JavaScript object before returning
+
+    return feedBack ? feedBack.toJSON() : null;
   }
 
   // Update a feedback entry by ID
   async update(id: string, updatedData: FeedBackModel): Promise<any> {
-    // Find the record by ID
     const feedBack = await FeedBack.findByPk(id);
 
-    // Update the record with the provided data
     if (feedBack) {
       await feedBack.update(updatedData);
     }
-    // Fetch the updated record
-    const updatedFeedBack = await FeedBack.findByPk(id);
 
-    return updatedFeedBack ? updatedFeedBack.toJSON() : null; // Convert to a plain JavaScript object before returning
+    const updatedFeedBack = await FeedBack.findByPk(id);
+    return updatedFeedBack ? updatedFeedBack.toJSON() : null;
   }
 
   // Delete a feedback entry by ID
   async delete(id: string): Promise<void> {
-    await FeedBack.destroy({
-      where: {
-        id: id,
-      },
-    });
+    await FeedBack.destroy({ where: { id } });
   }
 
-  async Count(query: Query): Promise<number> {
+  // Count the number of feedback entries based on query parameters
+  async count(query: Query): Promise<number> {
+    const { id, page = 1, limit = 10, q } = query;
 
-    let loginId = query.id;
+    if (q === "owner") {
+      return FeedBack.count({ where: { fromRealtor: id } });
+    } else if (q === "applicant") {
+      return FeedBack.count({ where: { toRealtor: id } });
+    }
 
-    const currentPage = query.page || 1; // Default to page 1
-
-    const itemsPerPage = query.limit || 10; // Default to 10 items per page
-    const offset = (currentPage - 1) * itemsPerPage;
-    if (query.q === "owner") {
-      const count = await FeedBack.count({
-        where: {
-          fromRealtor: loginId,
-        },
-      });
-      return count;
-    }
-    else if (query.q === "applicant") {
-      const count = await FeedBack.count({
-        where: {
-          toRealtor: loginId,
-        },
-      });
-      return count;
-    }
-    else {
-      return 0;
-    }
+    return 0;
   }
-
 }

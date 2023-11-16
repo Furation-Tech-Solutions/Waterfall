@@ -1,26 +1,26 @@
-import { FQAEntity, FQAModel } from "@domain/faq/entities/faq";
-import { FQARepository } from "@domain/faq/repositories/faq-repository";
+import { FAQEntity, FAQModel } from "@domain/faq/entities/faq";
+import { FAQRepository } from "@domain/faq/repositories/faq-repository";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
-// Define the CreateFQAUsecase interface
-export interface CreateFQAUsecase {
-  // Method to execute the creation of a new FQA entry
-  execute: (fqaData: FQAModel) => Promise<Either<ErrorClass, FQAEntity>>;
+// Define the CreateFAQUsecase interface
+export interface CreateFAQUsecase {
+  // Method to execute the creation of a new FAQ entry
+  execute: (faqData: FAQModel) => Promise<Either<ErrorClass, FAQEntity>>;
 }
 
-// Create a class named CreateFQA that implements the CreateFQAUsecase interface
-export class CreateFQA implements CreateFQAUsecase {
-  private readonly FQARepository: FQARepository;
+// Create a class named CreateFAQ that implements the CreateFAQUsecase interface
+export class CreateFAQ implements CreateFAQUsecase {
+  private readonly FAQRepository: FAQRepository;
 
-  // Constructor to inject the FQARepository dependency
-  constructor(FQARepository: FQARepository) {
-    this.FQARepository = FQARepository;
+  // Constructor to inject the FAQRepository dependency
+  constructor(FAQRepository: FAQRepository) {
+    this.FAQRepository = FAQRepository;
   }
 
-  // Implementation of the execute method defined by the CreateFQAUsecase interface
-  async execute(fqaData: FQAModel): Promise<Either<ErrorClass, FQAEntity>> {
-    // Call the createFQA method of the FQARepository with the provided fqaData
-    return await this.FQARepository.createFQA(fqaData);
+  // Implementation of the execute method defined by the CreateFAQUsecase interface
+  async execute(faqData: FAQModel): Promise<Either<ErrorClass, FAQEntity>> {
+    // Call the createFAQ method of the FAQRepository with the provided faqData
+    return await this.FAQRepository.createFAQ(faqData);
   }
 }

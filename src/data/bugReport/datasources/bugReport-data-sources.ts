@@ -7,7 +7,6 @@ import {
 import BugReport from "@data/bugReport/models/bugReport-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
-
 // Create an interface for the BugReportDataSource
 export interface BugReportDataSource {
   // Define methods for data operations with promises

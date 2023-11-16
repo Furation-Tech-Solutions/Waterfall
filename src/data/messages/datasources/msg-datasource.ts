@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import { Op, Sequelize, where } from "sequelize";
 import { MessageModel } from "@domain/messages/entities/msg"; // Import the MessageModel
 import Message from "../model/msg-model";
@@ -22,21 +23,18 @@ export interface MessageDataSource {
     getAll(loginId: string, query: Query): Promise<any[]>;
 }
 
-// message Data Source communicates with the database
-export class messagesDataSourceImpl implements MessageDataSource {
+// Message Data Source communicates with the database
+export class MessagesDataSourceImpl implements MessageDataSource {
     constructor(private db: Sequelize) { }
 
     async createMsg(msg: any): Promise<any> {
-        // console.log(newMessage);
-
+        // Create a new message record using the provided data
         const createdMessages = await Message.create(msg);
-        return createdMessages.toJSON();
+        return createdMessages.toJSON(); // Convert to a plain JavaScript object before returning
     }
 
     async deleteMsg(loginId: string, id: string): Promise<void> {
-        let loginID = parseInt(loginId);
-        // let friendId = parseInt(toId);
-
+        // Delete the message record where the ID matches the provided ID
         const deletedMessage = await Message.destroy({
             where: {
                 id,
@@ -45,8 +43,7 @@ export class messagesDataSourceImpl implements MessageDataSource {
     }
 
     async read(loginId: string, id: string): Promise<any | null> {
-        let loginID = parseInt(loginId);
-
+        // Read a message record by ID
         const messages = await Message.findOne({
             where: {
                 id,
@@ -68,14 +65,13 @@ export class messagesDataSourceImpl implements MessageDataSource {
     }
 
     async getAll(loginId: string, query: Query): Promise<any[]> {
-        let loginID = parseInt(loginId);
-
+        // Get all message records based on the provided query parameters
         const currentPage = query.page || 1;
         const itemsPerPage = query.limit || 10;
         const offset = (currentPage - 1) * itemsPerPage;
 
         if (query.searchList) {
-
+            // If searchList is provided, apply search condition
             const data = await Message.findAll({
                 where: {
                     [Op.or]: [
@@ -85,7 +81,7 @@ export class messagesDataSourceImpl implements MessageDataSource {
                             },
                         },
                     ],
-                }, // Apply search condition if searchList is provided
+                },
                 include: [
                     {
                         model: Realtors,
@@ -105,6 +101,7 @@ export class messagesDataSourceImpl implements MessageDataSource {
             if (data.length > 0) {
                 return data.map((msg: any) => msg.toJSON());
             }
+
             const data1 = await Message.findAll({
                 include: [
                     {
@@ -137,9 +134,8 @@ export class messagesDataSourceImpl implements MessageDataSource {
             });
 
             return data1.map((msg: any) => msg.toJSON());
-
-
         } else {
+            // If no searchList, get all messages
             const data = await Message.findAll({
                 include: [
                     {
@@ -156,6 +152,7 @@ export class messagesDataSourceImpl implements MessageDataSource {
                 limit: itemsPerPage,
                 offset: offset,
             });
+
             return data.map((msg: any) => msg.toJSON());
         }
     }
@@ -165,19 +162,18 @@ export class messagesDataSourceImpl implements MessageDataSource {
         id: string,
         updatedData: MessageModel
     ): Promise<any> {
-        // Find the record by ID
-        let loginID = parseInt(loginId);
-        // let toID = parseInt(toId);
+        // Update a message record by ID
         const message: any = await Message.findOne({
             where: {
                 id,
             },
         });
-        // Update the record with the provided data
 
+        // If the message record is found, update it with the provided data
         await message.update(updatedData);
         await message.save();
 
+        // Fetch the updated message record
         const updatedMessages = await Message.findOne({
             where: {
                 id,

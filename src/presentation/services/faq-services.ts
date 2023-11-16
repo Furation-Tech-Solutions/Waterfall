@@ -1,123 +1,123 @@
 import { NextFunction, Request, Response } from "express";
-import { FQAModel, FQAEntity, FQAMapper } from "@domain/faq/entities/faq";
-import { CreateFQAUsecase } from "@domain/faq/usecases/create-faq";
-import { GetAllFQAsUsecase } from "@domain/faq/usecases/get-all-faqs";
-import { GetFQAByIdUsecase } from "@domain/faq/usecases/get-faq-by-id";
-import { UpdateFQAUsecase } from "@domain/faq/usecases/update-faq";
-import { DeleteFQAUsecase } from "@domain/faq/usecases/delete-faq";
+import { FAQModel, FAQEntity, FAQMapper } from "@domain/faq/entities/faq";
+import { CreateFAQUsecase } from "@domain/faq/usecases/create-faq";
+import { GetAllFAQsUsecase } from "@domain/faq/usecases/get-all-faqs";
+import { GetFAQByIdUsecase } from "@domain/faq/usecases/get-faq-by-id";
+import { UpdateFAQUsecase } from "@domain/faq/usecases/update-faq";
+import { DeleteFAQUsecase } from "@domain/faq/usecases/delete-faq";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 
-export class FQAService {
-  private readonly CreateFQAUsecase: CreateFQAUsecase;
-  private readonly GetAllFQAsUsecase: GetAllFQAsUsecase;
-  private readonly GetFQAByIdUsecase: GetFQAByIdUsecase;
-  private readonly UpdateFQAUsecase: UpdateFQAUsecase;
-  private readonly DeleteFQAUsecase: DeleteFQAUsecase;
+export class FAQService {
+  private readonly CreateFAQUsecase: CreateFAQUsecase;
+  private readonly GetAllFAQsUsecase: GetAllFAQsUsecase;
+  private readonly GetFAQByIdUsecase: GetFAQByIdUsecase;
+  private readonly UpdateFAQUsecase: UpdateFAQUsecase;
+  private readonly DeleteFAQUsecase: DeleteFAQUsecase;
 
   constructor(
-    CreateFQAUsecase: CreateFQAUsecase,
-    GetAllFQAsUsecase: GetAllFQAsUsecase,
-    GetFQAByIdUsecase: GetFQAByIdUsecase,
-    UpdateFQAUsecase: UpdateFQAUsecase,
-    DeleteFQAUsecase: DeleteFQAUsecase
+    CreateFAQUsecase: CreateFAQUsecase,
+    GetAllFAQsUsecase: GetAllFAQsUsecase,
+    GetFAQByIdUsecase: GetFAQByIdUsecase,
+    UpdateFAQUsecase: UpdateFAQUsecase,
+    DeleteFAQUsecase: DeleteFAQUsecase
   ) {
-    this.CreateFQAUsecase = CreateFQAUsecase;
-    this.GetAllFQAsUsecase = GetAllFQAsUsecase;
-    this.GetFQAByIdUsecase = GetFQAByIdUsecase;
-    this.UpdateFQAUsecase = UpdateFQAUsecase;
-    this.DeleteFQAUsecase = DeleteFQAUsecase;
+    this.CreateFAQUsecase = CreateFAQUsecase;
+    this.GetAllFAQsUsecase = GetAllFAQsUsecase;
+    this.GetFAQByIdUsecase = GetFAQByIdUsecase;
+    this.UpdateFAQUsecase = UpdateFAQUsecase;
+    this.DeleteFAQUsecase = DeleteFAQUsecase;
   }
 
-  // Handler for creating a new FQA
-  async createFQA(req: Request, res: Response): Promise<void> {
-    const fqaData: FQAModel = FQAMapper.toModel(req.body);
+  // Handler for creating a new FAQ
+  async createFAQ(req: Request, res: Response): Promise<void> {
+    const faqData: FAQModel = FAQMapper.toModel(req.body);
 
-    const newFQA: Either<ErrorClass, FQAEntity> =
-      await this.CreateFQAUsecase.execute(fqaData);
+    const newFAQ: Either<ErrorClass, FAQEntity> =
+      await this.CreateFAQUsecase.execute(faqData);
 
-    newFQA.cata(
+    newFAQ.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-      (result: FQAEntity) => {
-        const resData = FQAMapper.toEntity(result, true);
+      (result: FAQEntity) => {
+        const resData = FAQMapper.toEntity(result, true);
         return res.json(resData);
       }
     );
   }
 
-  // Handler for getting all FQAs
-  async getAllFQAs(
+  // Handler for getting all FAQs
+  async getAllFAQs(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    // Call the GetAllFQAsUsecase to get all FQAs
-    const fqas: Either<ErrorClass, FQAEntity[]> =
-      await this.GetAllFQAsUsecase.execute();
+    // Call the GetAllFAQsUsecase to get all FAQs
+    const faqs: Either<ErrorClass, FAQEntity[]> =
+      await this.GetAllFAQsUsecase.execute();
 
-    fqas.cata(
+    faqs.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-      (result: FQAEntity[]) => {
-        // Filter out FQAs with del_status set to "Deleted"
-        // const nonDeletedFQAs = result.filter((fqa) => fqa.deleteStatus !== false);
+      (result: FAQEntity[]) => {
+        // Filter out FAQs with del_status set to "Deleted"
+        // const nonDeletedFAQs = result.filter((faq) => faq.deleteStatus !== false);
 
-        // Convert non-deleted FQAs from an array of FQAEntity to an array of plain JSON objects using fqaMapper
-        const responseData = fqas.map((fqa) => FQAMapper.toEntity(fqa));
+        // Convert non-deleted FAQs from an array of FAQEntity to an array of plain JSON objects using faqMapper
+        const responseData = faqs.map((faq) => FAQMapper.toEntity(faq));
         return res.json(responseData);
       }
     );
   }
 
-  // Handler for getting FQA by ID
-  async getFQAById(req: Request, res: Response): Promise<void> {
-    const fqaId: string = req.params.id;
+  // Handler for getting FAQ by ID
+  async getFAQById(req: Request, res: Response): Promise<void> {
+    const faqId: string = req.params.id;
 
-    const fqa: Either<ErrorClass, FQAEntity> =
-      await this.GetFQAByIdUsecase.execute(fqaId);
+    const faq: Either<ErrorClass, FAQEntity> =
+      await this.GetFAQByIdUsecase.execute(faqId);
 
-    fqa.cata(
+    faq.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-      (result: FQAEntity) => {
+      (result: FAQEntity) => {
         if (!result) {
-          return res.json({ message: "FQA Name not found." });
+          return res.json({ message: "FAQ Name not found." });
         }
-        const resData = FQAMapper.toEntity(result);
+        const resData = FAQMapper.toEntity(result);
         return res.json(resData);
       }
     );
   }
 
-  // Handler for updating FQA by ID
-  async updateFQA(req: Request, res: Response): Promise<void> {
-    const fqaId: string = req.params.id;
-    const fqaData: FQAModel = req.body;
+  // Handler for updating FAQ by ID
+  async updateFAQ(req: Request, res: Response): Promise<void> {
+    const faqId: string = req.params.id;
+    const faqData: FAQModel = req.body;
 
-    const existingFQA: Either<ErrorClass, FQAEntity> =
-      await this.GetFQAByIdUsecase.execute(fqaId);
+    const existingFAQ: Either<ErrorClass, FAQEntity> =
+      await this.GetFAQByIdUsecase.execute(faqId);
 
-    existingFQA.cata(
+    existingFAQ.cata(
       (error: ErrorClass) => {
         res.status(error.status).json({ error: error.message });
       },
-      async (existingFQAData: FQAEntity) => {
-        const updatedFQAEntity: FQAEntity = FQAMapper.toEntity(
-          fqaData,
+      async (existingFAQData: FAQEntity) => {
+        const updatedFAQEntity: FAQEntity = FAQMapper.toEntity(
+          faqData,
           true,
-          existingFQAData
+          existingFAQData
         );
 
-        const updatedFQA: Either<ErrorClass, FQAEntity> =
-          await this.UpdateFQAUsecase.execute(fqaId, updatedFQAEntity);
+        const updatedFAQ: Either<ErrorClass, FAQEntity> =
+          await this.UpdateFAQUsecase.execute(faqId, updatedFAQEntity);
 
-        updatedFQA.cata(
+        updatedFAQ.cata(
           (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
           },
-          (result: FQAEntity) => {
-            const resData = FQAMapper.toEntity(result, true);
+          (result: FAQEntity) => {
+            const resData = FAQMapper.toEntity(result, true);
             res.json(resData);
           }
         );
@@ -125,15 +125,15 @@ export class FQAService {
     );
   }
 
-  // Handler for deleting FQA by ID
-  async deleteFQA(req: Request, res: Response): Promise<void> {
+  // Handler for deleting FAQ by ID
+  async deleteFAQ(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    // Execute the deleteFQA use case to delete an FQA by ID
-    const deleteFQA: Either<ErrorClass, void> =
-      await this.DeleteFQAUsecase.execute(id);
+    // Execute the deleteFAQ use case to delete an FAQ by ID
+    const deleteFAQ: Either<ErrorClass, void> =
+      await this.DeleteFAQUsecase.execute(id);
 
-    deleteFQA.cata(
+    deleteFAQ.cata(
       (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
       (result: void) => {

@@ -1,33 +1,33 @@
 // Define a data transfer object (DTO) for Express API requests
 export class CallLogModel {
   constructor(
-    public jobApplicant: number = 0,
-    public logActivity: string = "",
-    public logOutcome: string = ""
-  ) {}
+    public jobApplicant: number = 0, // Job applicant ID, defaulting to 0
+    public logActivity: string = "", // Log activity, defaulting to an empty string
+    public logOutcome: string = "" // Log outcome, defaulting to an empty string
+  ) { }
 }
 
 // Define an entity class to represent CallLog provided by the CallLog Repository
 // This class is used to convert data from the repository to Express API responses
 export class CallLogEntity {
   constructor(
-    public id: number| undefined = undefined,
-    public jobApplicant: number,
-    public logActivity: string,
-    public logOutcome: string
-  ) {}
+    public id: number | undefined = undefined, // Log ID, defaulting to undefined
+    public jobApplicant: number, // Job applicant ID
+    public logActivity: string, // Log activity
+    public logOutcome: string // Log outcome
+  ) { }
 }
 
 // Create a mapper class to convert between different representations of CallLog data
 export class CallLogMapper {
   // Method to convert data to a CallLogEntity
   static toEntity(
-    callLogData: any,
-    includeId?: boolean,
-    existingCallLog?: CallLogEntity
+    callLogData: any, // Input data to convert
+    includeId?: boolean, // Optional flag to include ID in the entity
+    existingCallLog?: CallLogEntity // Optional existing CallLogEntity for merging data
   ): CallLogEntity {
     if (existingCallLog != null) {
-      // If an existingCallLog is provided, merge data from callLogData with it
+      // If an existing CallLogEntity is provided, merge data from callLogData with it
       return {
         ...existingCallLog,
         jobApplicant:
@@ -44,7 +44,7 @@ export class CallLogMapper {
             : existingCallLog.logOutcome,
       };
     } else {
-      // If no existingCallLog is provided, create a new CallLogEntity using callLogData
+      // If no existing CallLogEntity is provided, create a new CallLogEntity using callLogData
       const callLogEntity: CallLogEntity = {
         id: includeId
           ? callLogData.id
@@ -55,17 +55,17 @@ export class CallLogMapper {
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
       };
-      return callLogData;
+      return callLogData; // Should return callLogEntity instead of callLogData
     }
   }
 
   // Method to convert a CallLogEntity to a generic model object
   static toModel(callLog: CallLogEntity): any {
     return {
-      id: callLog.id,
-      jobApplicant: callLog.jobApplicant,
-      logActivity: callLog.logActivity,
-      logOutcome: callLog.logOutcome,
+      id: callLog.id, // ID of the log
+      jobApplicant: callLog.jobApplicant, // Job applicant ID
+      logActivity: callLog.logActivity, // Log activity
+      logOutcome: callLog.logOutcome, // Log outcome
     };
   }
 }

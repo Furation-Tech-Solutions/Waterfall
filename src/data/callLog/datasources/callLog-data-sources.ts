@@ -4,7 +4,6 @@ import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog"; 
 import CallLog from "@data/callLog/models/callLog-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
-
 // Create CallLogDataSource Interface
 export interface CallLogDataSource {
   // Method to create a new call log
@@ -75,13 +74,14 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
 
   // Method to retrieve all call logs
   async getAll(query: CallLogQuery): Promise<CallLogEntity[]> {
+    // Set defaults for pagination
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
-     const currentPage = query.page || 1; // Default to page 1
-     const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    // Calculate the offset based on the current page
+    const offset = (currentPage - 1) * itemsPerPage;
 
-     const offset = (currentPage - 1) * itemsPerPage;
-
-    // Retrieve all call log records from the database
+    // Retrieve all call log records from the database with pagination
     const callLog = await CallLog.findAll({
       include: [
         {
@@ -103,7 +103,7 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
     // Find the call log record in the database by ID
     const callLog = await CallLog.findByPk(id);
 
-    // Update the call log record with the provided data
+    // Update the call log record with the provided data if it exists
     if (callLog) {
       await callLog.update(updatedData);
     }
