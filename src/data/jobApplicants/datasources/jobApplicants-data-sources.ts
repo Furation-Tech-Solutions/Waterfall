@@ -179,6 +179,68 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
+    } else if (query.q == "active") {
+      // Check if the query parameter is "active"
+      const jobApplicant = await JobApplicant.findAll({
+        where: {
+          applicantStatus: "Pending", // Filter by applicantStatus
+          agreement: true, // Filter by agreement
+        },
+        include: [
+          {
+            model: Job,
+            as: "jobdata",
+            foreignKey: "job",
+          },
+          {
+            model: Realtors,
+            as: "applicantData",
+            foreignKey: "applicant",
+          },
+        ],
+      });
+      return jobApplicant.map((jobA: any) => jobA.toJSON());
+    } else if (query.q == "PaymentPending") {
+      // Check if the query parameter is "active"
+      const jobApplicant = await JobApplicant.findAll({
+        where: {
+          jobStatus: "JobCompleted", // Filter by applicantStatus
+          paymentStatus: false, // Filter by agreement
+        },
+        include: [
+          {
+            model: Job,
+            as: "jobdata",
+            foreignKey: "job",
+          },
+          {
+            model: Realtors,
+            as: "applicantData",
+            foreignKey: "applicant",
+          },
+        ],
+      });
+      return jobApplicant.map((jobA: any) => jobA.toJSON());
+    } else if (query.q == "Completed") {
+      // Check if the query parameter is "active"
+      const jobApplicant = await JobApplicant.findAll({
+        where: {
+          paymentStatus: true, // Filter by agreement
+        },
+        include: [
+          {
+            model: Job,
+            as: "jobdata",
+            foreignKey: "job",
+          },
+          {
+            model: Realtors,
+            as: "applicantData",
+            foreignKey: "applicant",
+          },
+        ],
+      });
+      return jobApplicant.map((jobA: any) => jobA.toJSON());
     } else {
       // Retrieve all job applicants with optional pagination
       const jobApplicant = await JobApplicant.findAll({
