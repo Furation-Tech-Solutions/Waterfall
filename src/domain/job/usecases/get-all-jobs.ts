@@ -21,6 +21,7 @@ export class GetAllJobs implements GetAllJobsUsecase {
 
   // Implementation of the "execute" method defined in the interface
   async execute(query: JobQuery): Promise<Either<ErrorClass, JobEntity[]>> {
-    return await this.jobRepository.getJobs(query); // Invoke the "getJobs" method of jobRepository and return its result
+    // Invoke the "getJobs" method of jobRepository and return its result
+    return await this.jobRepository.getJobs(query);
   }
 }

@@ -6,6 +6,7 @@ import { Either } from "monet"; // Importing the Either class from the 'monet' l
 
 // Define an interface for the GetJobApplicantById use case
 export interface GetJobApplicantByIdUsecase {
+  // Method signature for the 'execute' method that takes a jobApplicantId and returns a Promise of Either type
   execute: (
     jobApplicantId: string
   ) => Promise<Either<ErrorClass, JobApplicantEntity>>;

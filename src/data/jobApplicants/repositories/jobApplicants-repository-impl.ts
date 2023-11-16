@@ -1,14 +1,16 @@
-// Import necessary modules and dependencies
+/// Import necessary modules and dependencies
 import {
   JobApplicantEntity,
   JobApplicantModel,
-} from "@domain/jobApplicants/entites/jobApplicants";
-import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository";
-import { JobApplicantDataSource, JobApplicantQuery } from "@data/jobApplicants/datasources/jobApplicants-data-sources";
-import { Either, Left, Right } from "monet";
-import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
-import * as HttpStatus from "@presentation/error-handling/http-status";
-
+} from "@domain/jobApplicants/entites/jobApplicants"; // Importing entity types
+import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository"; // Importing repository interface
+import {
+  JobApplicantDataSource,
+  JobApplicantQuery,
+} from "@data/jobApplicants/datasources/jobApplicants-data-sources"; // Importing data source and query interfaces
+import { Either, Left, Right } from "monet"; // Importing Either monad for handling success and failure
+import ApiError, { ErrorClass } from "@presentation/error-handling/api-error"; // Importing custom error handling class
+import * as HttpStatus from "@presentation/error-handling/http-status"; // Importing HTTP status codes
 
 // Create a class for the JobApplicantRepositoryImpl implementing the JobApplicantRepository interface
 export class JobApplicantRepositoryImpl implements JobApplicantRepository {
@@ -24,12 +26,11 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     try {
       // Attempt to create a job applicant using the data source
-      const i = await this.dataSource.create(jobApplicant);
+      const createdJobApplicant = await this.dataSource.create(jobApplicant);
 
       // Return a Right Either indicating success with the created job applicant
-      return Right<ErrorClass, JobApplicantEntity>(i);
+      return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
     } catch (error: any) {
-
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 401) {
         // If unauthorized, return an Unauthorized error
@@ -49,10 +50,10 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     try {
       // Attempt to update the job applicant using the data source
-      const response = await this.dataSource.update(id, data);
+      const updatedJobApplicant = await this.dataSource.update(id, data);
 
       // Return a Right Either indicating success with the updated job applicant
-      return Right<ErrorClass, JobApplicantEntity>(response);
+      return Right<ErrorClass, JobApplicantEntity>(updatedJobApplicant);
     } catch (error: any) {
       // Return a custom error with a Bad Request status and the error message
       return Left<ErrorClass, JobApplicantEntity>(
@@ -67,10 +68,10 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
     try {
       // Attempt to get all job applicants using the data source
-      const response = await this.dataSource.getAll(query);
+      const jobApplicants = await this.dataSource.getAll(query);
 
       // Return a Right Either indicating success with an array of job applicants
-      return Right<ErrorClass, JobApplicantEntity[]>(response);
+      return Right<ErrorClass, JobApplicantEntity[]>(jobApplicants);
     } catch (error: any) {
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 404) {
@@ -90,16 +91,16 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     try {
       // Attempt to read a job applicant by ID using the data source
-      const response = await this.dataSource.read(id);
+      const jobApplicant = await this.dataSource.read(id);
 
       // Check if the response is null (not found)
-      if (response === null) {
+      if (!jobApplicant) {
         // If not found, return a Not Found error
         return Left<ErrorClass, JobApplicantEntity>(ApiError.notFound());
       }
 
       // Return a Right Either indicating success with the retrieved job applicant
-      return Right<ErrorClass, JobApplicantEntity>(response);
+      return Right<ErrorClass, JobApplicantEntity>(jobApplicant);
     } catch (error: any) {
       // Return a custom error with a Bad Request status and the error message
       return Left<ErrorClass, JobApplicantEntity>(
@@ -107,6 +108,7 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       );
     }
   }
+
   // Method to delete a jobApplicant by ID
   async deleteJobApplicant(id: string): Promise<Either<ErrorClass, void>> {
     try {
@@ -124,3 +126,4 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
     }
   }
 }
+

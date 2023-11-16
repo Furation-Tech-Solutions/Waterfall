@@ -9,9 +9,10 @@ import { Either } from "monet"; // Importing the Either type from the Monet libr
 
 // Defining an interface for the CreateJobApplicant use case
 export interface CreateJobApplicantUsecase {
+  // The execute method takes JobApplicantModel as input and returns Either<ErrorClass, JobApplicantEntity>
   execute: (
     jobApplicantData: JobApplicantModel
-  ) => Promise<Either<ErrorClass, JobApplicantEntity>>; // The execute method takes JobApplicantModel as input and returns Either<ErrorClass, JobApplicantEntity>
+  ) => Promise<Either<ErrorClass, JobApplicantEntity>>;
 }
 
 // Implementing the CreateJobApplicant use case

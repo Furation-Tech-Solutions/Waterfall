@@ -1,11 +1,24 @@
 // Import necessary dependencies and modules
+
+// Import entities and models related to Saved Jobs
 import {
   SavedJobEntity,
   SavedJobModel,
 } from "@domain/savedJobs/entities/savedJobs";
+
+// Import the repository interface for Saved Jobs
 import { SavedJobRepository } from "@domain/savedJobs/repositories/savedJob-repository";
-import { SavedJobDataSource, SavedJobQuery } from "@data/savedJobs/datasources/savedJobs-data-sources";
+
+// Import data sources and queries for Saved Jobs
+import {
+  SavedJobDataSource,
+  SavedJobQuery,
+} from "@data/savedJobs/datasources/savedJobs-data-sources";
+
+// Import Either, Left, and Right from the 'monet' library for functional programming
 import { Either, Left, Right } from "monet";
+
+// Import the ApiError class and the HttpStatus module for error handling
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
 
@@ -25,10 +38,9 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   ): Promise<Either<ErrorClass, SavedJobEntity>> {
     try {
       // Create a new saved job using the "dataSource" and return it as a Right Either
-      const i = await this.dataSource.create(savedJob);
-      return Right<ErrorClass, SavedJobEntity>(i);
+      const newSavedJob = await this.dataSource.create(savedJob);
+      return Right<ErrorClass, SavedJobEntity>(newSavedJob);
     } catch (error: any) {
-
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left
       if (error instanceof ApiError && error.status === 401) {
@@ -46,8 +58,8 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   async deleteSavedJob(id: string): Promise<Either<ErrorClass, void>> {
     try {
       // Delete the saved job with the given ID using the "dataSource" and return success as Right
-      const res = await this.dataSource.delete(id);
-      return Right<ErrorClass, void>(res);
+      const deletionResult = await this.dataSource.delete(id);
+      return Right<ErrorClass, void>(deletionResult);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, void>(
@@ -63,8 +75,8 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   ): Promise<Either<ErrorClass, SavedJobEntity>> {
     try {
       // Update the saved job with the given ID using the "dataSource" and return the updated job as Right
-      const response = await this.dataSource.update(id, data);
-      return Right<ErrorClass, SavedJobEntity>(response);
+      const updatedJob = await this.dataSource.update(id, data);
+      return Right<ErrorClass, SavedJobEntity>(updatedJob);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, SavedJobEntity>(
@@ -79,8 +91,8 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   ): Promise<Either<ErrorClass, SavedJobEntity[]>> {
     try {
       // Retrieve all saved jobs using the "dataSource" and return them as Right
-      const response = await this.dataSource.getAll(query);
-      return Right<ErrorClass, SavedJobEntity[]>(response);
+      const allSavedJobs = await this.dataSource.getAll(query);
+      return Right<ErrorClass, SavedJobEntity[]>(allSavedJobs);
     } catch (error: any) {
       // Handle error cases:
       // If the error is a not-found ApiError with a status code of 404, return it as Left
@@ -101,15 +113,15 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
   ): Promise<Either<ErrorClass, SavedJobEntity>> {
     try {
       // Retrieve the saved job with the given ID using the "dataSource"
-      const response = await this.dataSource.read(id);
+      const retrievedJob = await this.dataSource.read(id);
 
       // If the response is null, return a not-found ApiError as Left
-      if (response === null) {
+      if (retrievedJob === null) {
         return Left<ErrorClass, SavedJobEntity>(ApiError.notFound());
       }
 
       // Otherwise, return the saved job as Right
-      return Right<ErrorClass, SavedJobEntity>(response);
+      return Right<ErrorClass, SavedJobEntity>(retrievedJob);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, SavedJobEntity>(

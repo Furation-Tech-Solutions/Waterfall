@@ -5,7 +5,6 @@ import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize in
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
-
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
   FROM1TO5: "1To5",
@@ -34,85 +33,125 @@ export const feeTypeEnum = {
 // Define a Sequelize model named "Job"
 const Job = sequelize.define("Job", {
   // Define various fields of the "Job" model with their data types and constraints
+
+  // UUID representing the job owner
   jobOwner: {
-    type: DataTypes.INTEGER, // Data type for jobOwner is UUID
-    allowNull: false, // It cannot be null
+    type: DataTypes.INTEGER,
+    allowNull: false,
     references: { model: Realtors, key: "id" },
   },
+
+  // Location of the job
   location: {
-    type: DataTypes.STRING, // Data type for location is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Address of the job
   address: {
-    type: DataTypes.STRING, // Data type for address is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Date of the job
   date: {
-    type: DataTypes.DATE, // Data type for date is DATE
-    allowNull: false, // It cannot be null
+    type: DataTypes.DATE,
+    allowNull: false,
   },
+
+  // Number of applicants for the job, with predefined values using ENUM
   numberOfApplicants: {
-    type: DataTypes.ENUM(...Object.values(numberOfApplicantsEnum)), // Data type for numberOfApplicants is ENUM with predefined values
-    allowNull: false, // It cannot be null
+    type: DataTypes.ENUM(...Object.values(numberOfApplicantsEnum)),
+    allowNull: false,
   },
+
+  // Start time of the job
   fromTime: {
-    type: DataTypes.STRING, // Data type for fromTime is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // End time of the job
   toTime: {
-    type: DataTypes.STRING, // Data type for toTime is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Type of the job, with predefined values using ENUM
   jobType: {
-    type: DataTypes.ENUM(...Object.values(jobTypeEnum)), // Data type for jobType is ENUM with predefined values
-    allowNull: false, // It cannot be null
+    type: DataTypes.ENUM(...Object.values(jobTypeEnum)),
+    allowNull: false,
   },
+
+  // Email of the client associated with the job
   clientEmail: {
-    type: DataTypes.STRING, // Data type for clientEmail is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Phone number of the client associated with the job
   clientPhoneNumber: {
-    type: DataTypes.STRING, // Data type for clientPhoneNumber is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Type of fee for the job, with predefined values using ENUM
   feeType: {
-    type: DataTypes.ENUM(...Object.values(feeTypeEnum)), // Data type for feeType is ENUM with predefined values
-    allowNull: false, // It cannot be null
+    type: DataTypes.ENUM(...Object.values(feeTypeEnum)),
+    allowNull: false,
   },
+
+  // Fee associated with the job
   fee: {
-    type: DataTypes.STRING, // Data type for fee is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Description of the job
   description: {
-    type: DataTypes.STRING, // Data type for description is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Attachments for the job, stored as an array of strings
   attachments: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // Data type for attachments is an ARRAY of STRINGS
-    allowNull: true, // It can be null
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
   },
+
+  // Deadline for applying to the job
   applyBy: {
-    type: DataTypes.DATE, // Data type for applyBy is DATE
-    allowNull: false, // It cannot be null
+    type: DataTypes.DATE,
+    allowNull: false,
   },
+
+  // Timestamp representing the creation date of the job
   createdAt: {
-    type: DataTypes.DATE, // Data type for createdAt is DATE
-    defaultValue: sequelize.literal("CURRENT_TIMESTAMP"), // Default value is the current timestamp
-    allowNull: false, // It cannot be null
+    type: DataTypes.DATE,
+    defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
+    allowNull: false,
   },
+
+  // Reason for deleting the job
   deleteReason: {
-    type: DataTypes.STRING, // Data type for deleteReason is STRING
-    allowNull: false, // It cannot be null
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+
+  // Coordinates of the job, stored as JSONB for better performance and flexibility
   coordinates: {
-    type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
-    allowNull: true, // Set to allowNull: true if coordinates are optional
+    type: DataTypes.JSONB,
+    allowNull: true,
   },
+
+  // Boolean indicating the live status of the job
   liveStatus: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
+
+  // Boolean indicating if the job has an urgent requirement
   urgentRequirement: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
@@ -120,13 +159,11 @@ const Job = sequelize.define("Job", {
   },
 });
 
+// Define an association between Job and Realtors (jobOwner)
 Job.belongsTo(Realtors, {
-  foreignKey: "jobOwner", // Use the correct attribute that links Job to Realtors
-  as: "owner" // Optionally, you can specify an alias for this association
+  foreignKey: "jobOwner",
+  as: "owner", // Optional alias for the association
 });
-
-
-
 
 // Export the "Job" model as the default export of this module
 export default Job;

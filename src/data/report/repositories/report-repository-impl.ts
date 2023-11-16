@@ -2,7 +2,7 @@
 import { ReportEntity, ReportModel } from "@domain/report/entities/report";
 import { ReportRepository } from "@domain/report/repositories/report-repository";
 import { ReportDataSource } from "@data/report/datasources/report-data-sources";
-import { Either, Left, Right } from "monet";
+import { Either, Left, Right } from "monet"; // Using the Monet library for Either monad
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
 
@@ -22,10 +22,9 @@ export class ReportRepositoryImpl implements ReportRepository {
   ): Promise<Either<ErrorClass, ReportEntity>> {
     try {
       // Create a new report using the "dataSource" and return it as a Right Either
-      const i = await this.dataSource.create(report);
-      return Right<ErrorClass, ReportEntity>(i);
+      const createdReport = await this.dataSource.create(report);
+      return Right<ErrorClass, ReportEntity>(createdReport);
     } catch (error: any) {
-
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left
       if (error instanceof ApiError && error.status === 401) {
@@ -43,8 +42,8 @@ export class ReportRepositoryImpl implements ReportRepository {
   async deleteReport(id: string): Promise<Either<ErrorClass, void>> {
     try {
       // Delete the report with the given ID using the "dataSource" and return success as Right
-      const res = await this.dataSource.delete(id);
-      return Right<ErrorClass, void>(res);
+      const deletionResult = await this.dataSource.delete(id);
+      return Right<ErrorClass, void>(deletionResult);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, void>(
@@ -60,8 +59,8 @@ export class ReportRepositoryImpl implements ReportRepository {
   ): Promise<Either<ErrorClass, ReportEntity>> {
     try {
       // Update the report with the given ID using the "dataSource" and return the updated report as Right
-      const response = await this.dataSource.update(id, data);
-      return Right<ErrorClass, ReportEntity>(response);
+      const updatedReport = await this.dataSource.update(id, data);
+      return Right<ErrorClass, ReportEntity>(updatedReport);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, ReportEntity>(
@@ -74,8 +73,8 @@ export class ReportRepositoryImpl implements ReportRepository {
   async getReports(): Promise<Either<ErrorClass, ReportEntity[]>> {
     try {
       // Retrieve all reports using the "dataSource" and return them as Right
-      const response = await this.dataSource.getAll();
-      return Right<ErrorClass, ReportEntity[]>(response);
+      const allReports = await this.dataSource.getAll();
+      return Right<ErrorClass, ReportEntity[]>(allReports);
     } catch (error: any) {
       // Handle error cases:
       // If the error is a not-found ApiError with a status code of 404, return it as Left
@@ -94,15 +93,15 @@ export class ReportRepositoryImpl implements ReportRepository {
   async getReportById(id: string): Promise<Either<ErrorClass, ReportEntity>> {
     try {
       // Retrieve the report with the given ID using the "dataSource"
-      const response = await this.dataSource.read(id);
+      const retrievedReport = await this.dataSource.read(id);
 
       // If the response is null, return a not-found ApiError as Left
-      if (response === null) {
+      if (retrievedReport === null) {
         return Left<ErrorClass, ReportEntity>(ApiError.notFound());
       }
 
       // Otherwise, return the report as Right
-      return Right<ErrorClass, ReportEntity>(response);
+      return Right<ErrorClass, ReportEntity>(retrievedReport);
     } catch (error: any) {
       // Return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, ReportEntity>(
