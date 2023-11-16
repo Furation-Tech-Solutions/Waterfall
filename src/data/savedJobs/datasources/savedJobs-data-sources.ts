@@ -11,10 +11,20 @@ import Job from "@data/job/models/job-model";
 // Create a SavedJobDataSource Interface
 export interface SavedJobDataSource {
   // Define methods for data source operations
+
+  // Method to create a new SavedJobModel in the database
   create(savedJob: SavedJobModel): Promise<SavedJobEntity>;
+
+  // Method to update a SavedJobModel in the database by ID
   update(id: string, savedJob: SavedJobModel): Promise<any>;
+
+  // Method to delete a SavedJobModel from the database by ID
   delete(id: string): Promise<void>;
+
+  // Method to read a SavedJobEntity from the database by ID
   read(id: string): Promise<SavedJobEntity | null>;
+
+  // Method to get all SavedJobEntity records from the database based on a query
   getAll(query: SavedJobQuery): Promise<SavedJobEntity[]>;
 }
 
@@ -63,7 +73,6 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           as: "jobData",
         }
       ]
-      // include: 'tags', // You can include associations here if needed
     });
     return savedJob ? savedJob.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
@@ -71,10 +80,14 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
   // Implement the "getAll" method to retrieve all SavedJobEntity records from the database
   async getAll(query: SavedJobQuery): Promise<SavedJobEntity[]> {
 
-    const currentPage = query.page || 1; // Default to page 1
-    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    // Default to page 1 and 10 items per page if not specified in the query
+    const currentPage = query.page || 1;
+    const itemsPerPage = query.limit || 10;
 
+    // Calculate the offset based on the current page
     const offset = (currentPage - 1) * itemsPerPage;
+
+    // Retrieve SavedJobEntity records from the database with associations
     const savedJobs = await SavedJob.findAll({
       include: [
         {
@@ -91,7 +104,9 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       limit: itemsPerPage, // Limit the number of results per page
       offset: offset, // Calculate the offset based on the current page
     });
-    return savedJobs.map((savedJob: any) => savedJob.toJSON()); // Convert to plain JavaScript objects before returning
+
+    // Convert to plain JavaScript objects before returning
+    return savedJobs.map((savedJob: any) => savedJob.toJSON());
   }
 
   // Implement the "update" method to update a SavedJob record by ID with provided data
@@ -107,6 +122,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
     // Fetch the updated record
     const updatedSavedJob = await SavedJob.findByPk(id);
 
-    return updatedSavedJob ? updatedSavedJob.toJSON() : null; // Convert to a plain JavaScript object before returning
+    // Convert to a plain JavaScript object before returning
+    return updatedSavedJob ? updatedSavedJob.toJSON() : null;
   }
 }

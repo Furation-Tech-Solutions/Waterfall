@@ -24,7 +24,6 @@ export interface JobDataSource {
 
   // Method to retrieve a total job posted count
   counts(query: JobQuery): Promise<number>;
-
 }
 
 // Define a JobQuery object to encapsulate parameters
@@ -33,14 +32,14 @@ export interface JobQuery {
   q: string;
   page: number;
   limit: number;
-  year?: number; // Optional year
+  year?: number; 
   month?: number;
 }
 
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -103,15 +102,12 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // Fetch jobs that are expired
       const jobs = await Job.findAll({
-
         include: [
-
           {
             model: Realtors,
             as: "owner",
             foreignKey: "jobOwner",
           },
-
           {
             model: JobApplicant,
             as: "applicantsData",
@@ -122,21 +118,18 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           },
         ],
-
         where: {
           date: {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
           },
         },
-
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
 
       return jobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------
-
+    //-----------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -146,7 +139,6 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "owner",
             foreignKey: "jobOwner",
           },
-
           {
             model: JobApplicant,
             as: "applicantsData",
@@ -161,7 +153,8 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
         where: {
@@ -176,13 +169,12 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
-
       });
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
@@ -198,9 +190,7 @@ export class JobDataSourceImpl implements JobDataSource {
             ),
           ],
         },
-
         include: [
-
           {
             model: Realtors,
             as: "owner",
@@ -211,8 +201,6 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
           },
         ],
-
-
         limit: itemsPerPage,
         offset: offset,
       });
@@ -220,21 +208,17 @@ export class JobDataSourceImpl implements JobDataSource {
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
-
         include: [
-
           {
             model: Realtors,
             as: "owner",
             foreignKey: "jobOwner",
           },
-
           {
             model: JobApplicant,
             as: "applicantsData",
           },
         ],
-
         limit: itemsPerPage,
         offset: offset,
       });
@@ -268,6 +252,8 @@ export class JobDataSourceImpl implements JobDataSource {
 
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
+  
+  //-------------------------------------------------------------------------------------------------------------------------------------
 
     if (query.q === "posted") {
       const count = await Job.count({
@@ -276,8 +262,7 @@ export class JobDataSourceImpl implements JobDataSource {
         },
       });
       return count;
-    }
-    else if (query.q === "accepted") {
+    } else if (query.q === "accepted") {
       const count = await Job.count({
         where: {
           jobOwner: loginId,
@@ -291,11 +276,11 @@ export class JobDataSourceImpl implements JobDataSource {
               applicantStatus: "Accept",
             },
           },
-        ]
+        ],
       });
       return count;
-    }
-    else if (query.q === "completedjobsforowner") {
+    //----------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "completedjobsforowner") {
       const count = await Job.count({
         where: {
           jobOwner: loginId,
@@ -307,14 +292,14 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
             where: {
               paymentStatus: true,
-              jobStatus: "JobCompleted"
+              jobStatus: "JobCompleted",
             },
           },
-        ]
+        ],
       });
       return count;
-    }
-    else if (query.q === "scheduled") {
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "scheduled") {
       const count = await Job.count({
         where: {
           jobOwner: loginId,
@@ -329,11 +314,11 @@ export class JobDataSourceImpl implements JobDataSource {
               jobStatus: "Pending",
             },
           },
-        ]
+        ],
       });
       return count;
-    }
-    else if (query.q === "applied") {
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "applied") {
       const count = await Job.count({
         include: [
           {
@@ -343,28 +328,11 @@ export class JobDataSourceImpl implements JobDataSource {
               id: loginId,
             },
           },
-        ]
+        ],
       });
       return count;
-    }
-    else if (query.q === "assigned") {
-      const count = await Job.count({
-        where: {
-          liveStatus: false,
-        },
-        include: [
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-            where: {
-              id: loginId,
-            },
-          },
-        ]
-      });
-      return count;
-    }
-    else if (query.q === "completedjobforapplicant") {
+    //----------------------------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "assigned") {
       const count = await Job.count({
         where: {
           liveStatus: false,
@@ -375,15 +343,32 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
             where: {
               id: loginId,
-              jobStatus: "JobCompleted"
             },
           },
-        ]
+        ],
       });
       return count;
-    }
-    else {
+    //----------------------------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "completedjobforapplicant") {
+      const count = await Job.count({
+        where: {
+          liveStatus: false,
+        },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              id: loginId,
+              jobStatus: "JobCompleted",
+            },
+          },
+        ],
+      });
+      return count;
+    } else {
       return 0;
     }
+    //--------------------------------------------------------------------------------------------------------------------
   }
 }

@@ -1,19 +1,19 @@
-// Import necessary modules and types
+/// Import necessary modules and types
 
+// Import JobApplicantEntity and JobApplicantModel from the specified module.
 import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants";
-// Import JobApplicantEntity and JobApplicantModel from the specified module.
 
-import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository";
 // Import the JobApplicantRepository from the specified module.
+import { JobApplicantRepository } from "@domain/jobApplicants/repositories/jobApplicants-repository";
 
-import { ErrorClass } from "@presentation/error-handling/api-error";
 // Import the ErrorClass type from the specified module.
+import { ErrorClass } from "@presentation/error-handling/api-error";
 
-import { Either } from "monet";
 // Import the Either type from the "monet" library.
+import { Either } from "monet";
 
 // Define an interface for the "UpdateJobApplicant" use case.
 export interface UpdateJobApplicantUsecase {
