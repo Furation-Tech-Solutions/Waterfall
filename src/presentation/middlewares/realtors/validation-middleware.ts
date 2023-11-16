@@ -48,11 +48,11 @@ const realtorValidator = (
         "any.required": "lastName is required",
       }),
     email: isUpdate
-      ? Joi.string().min(3).max(30).optional().trim().messages({
+      ? Joi.string().email().min(3).max(30).optional().trim().messages({
         "string.min": "lastName should have at least 3 characters",
         "string.max": "lastName should have less than 30 characters",
       })
-      : Joi.string().min(3).max(30).required().trim().messages({
+      : Joi.string().email().min(3).max(30).required().trim().messages({
         "string.min": "lastName should have at least 3 characters",
         "string.max": "lastName should have less than 30 characters",
         "any.required": "lastName is required",
