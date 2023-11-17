@@ -5,6 +5,7 @@ import { RealtorDataSource, RealtorQuery } from "@data/realtors/datasources/real
 import { Either, Right, Left } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import ApiError from "@presentation/error-handling/api-error";
+import * as HttpStatus from "@presentation/error-handling/http-status";
 
 // Define the implementation of the RealtorRepository interface
 export class RealtorRepositoryImpl implements RealtorRepository {
@@ -30,13 +31,19 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Get all Realtor entities
     async getRealtors(query: RealtorQuery): Promise<Either<ErrorClass, RealtorEntity[]>> {
         try {
-            const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
-            return Right<ErrorClass, RealtorEntity[]>(realtors);
-        } catch (e) {
-            if (e instanceof ApiError && e.name === "notfound") {
-                return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
-            }
-            return Left<ErrorClass, RealtorEntity[]>(ApiError.badRequest());
+          const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+          return Right<ErrorClass, RealtorEntity[]>(realtors);
+        } catch (error: any) {
+          // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
+          if (error instanceof ApiError && error.status === 404) {
+            // Return a Left monad with a not found error
+            return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
+          }
+
+          // Return a Left monad with a custom error and the error message
+          return Left<ErrorClass, RealtorEntity[]>(
+            ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
+          );
         }
     }
 
