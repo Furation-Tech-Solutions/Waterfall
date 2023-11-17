@@ -16,7 +16,7 @@ export interface RealtorDataSource {
 export interface RealtorQuery {
     location?: string;
     gender?: string;
-    searchList?: string;
+    q?: string;
     page: number;
     limit: number;
 }
@@ -80,30 +80,25 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
-        else if (query.searchList != undefined) {
+        else if (query.q != undefined) {
             const data = await Realtor.findAll({
                 where: {
                     [Op.or]: [
                         {
                             firstName: {
-                                [Op.iLike]: `%${query.searchList}%`,
+                                [Op.iLike]: `%${query.q}%`,
                             },
                         },
                         {
                             lastName: {
-                                [Op.iLike]: `%${query.searchList}%`,
+                                [Op.iLike]: `%${query.q}%`,
                             },
                         },
                         {
                             email: {
-                                [Op.iLike]: `%${query.searchList}%`,
+                                [Op.iLike]: `%${query.q}%`,
                             },
                         },
-                        {
-                            contact: {
-                                [Op.iLike]: `%${query.searchList}%`,
-                            },
-                        }
                     ]
                 },
                 limit: itemsPerPage, // Limit the number of results per page
