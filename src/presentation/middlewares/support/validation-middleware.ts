@@ -12,12 +12,27 @@ interface SupportInput {
 }
 
 // Define a supportValidator function to validate the input
-const supportValidator = function (input: SupportInput): SupportInput {
+const supportValidator = (
+  input: SupportInput,
+  isUpdate: boolean = false
+  ) => {
   // Define a Joi schema to validate the SupportInput object
   const supportSchema = Joi.object<SupportInput>({
-    realtor: Joi.number().required(),
-    to: Joi.number().required(),
-    description: Joi.string().required().min(1).max(1000).messages({
+    realtor: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    to: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    description: isUpdate
+    ? Joi.string().optional().min(1).max(1000).messages({
+      "string.base": "Description must be a string",
+      "string.empty": "Description is required",
+      "string.min": "Description should be at least 1 character",
+      "string.max": "Description should be under 1000 characters",
+      "any.required": "Description is required",
+    })
+    : Joi.string().required().min(1).max(1000).messages({
       "string.base": "Description must be a string",
       "string.empty": "Description is required",
       "string.min": "Description should be at least 1 character",

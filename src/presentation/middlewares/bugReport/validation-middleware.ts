@@ -11,11 +11,24 @@ interface BugReportInput {
 }
 
 // Define a function for validating BugReportInput
-const bugReportValidator = function (input: BugReportInput): BugReportInput {
+const bugReportValidator = (
+  input: BugReportInput,
+  isUpdate: boolean = false
+  ) => {
   // Define a Joi schema for BugReportInput
   const bugReportSchema = Joi.object<BugReportInput>({
-    realtor: Joi.number().required(),
-    description: Joi.string().required().max(1000).messages({
+    realtor
+    : isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    description: isUpdate
+    ? Joi.string().optional().max(1000).messages({
+      "string.base": "Description must be a string",
+      "string.empty": "Description is required",
+      "string.max": "Description should be at most 1000 characters",
+      "any.required": "Description is required",
+    })
+    : Joi.string().required().max(1000).messages({
       "string.base": "Description must be a string",
       "string.empty": "Description is required",
       "string.max": "Description should be at most 1000 characters",

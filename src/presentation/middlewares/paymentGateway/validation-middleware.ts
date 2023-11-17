@@ -14,16 +14,31 @@ interface PaymentGatewayInput {
 }
 
 // Define a function for validating payment gateway input
-const paymentGatewayValidator = function (
-  input: PaymentGatewayInput
-): PaymentGatewayInput {
+const paymentGatewayValidator = (
+  input: PaymentGatewayInput,
+  isUpdate: boolean = false
+) => {
   // Define a Joi schema for validating the input
   const paymentGatewaySchema = Joi.object<PaymentGatewayInput>({
-    jobId: Joi.number().required(),
-    jobApplicantId: Joi.number().required(),
-    amount: Joi.string().required(),
-    paymentMethod: Joi.string()
-      .valid("Credit Card", "Debit Card", "Paypal", "Bank Transfer")
+    jobId: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    jobApplicantId: isUpdate
+    ?Joi.number().optional()
+    :Joi.number().required(),
+    amount: isUpdate
+    ?Joi.string().optional()
+    :Joi.string().required(),
+    paymentMethod: isUpdate
+    ?Joi.string()
+      .valid(...Object.values(paymentMethodEnum))
+      .optional()
+      .messages({
+        "any.only": "Invalid payment method",
+        "any.required": "Payment method is required",
+      })
+      : Joi.string()
+      .valid(...Object.values(paymentMethodEnum))
       .required()
       .messages({
         "any.only": "Invalid payment method",
