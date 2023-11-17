@@ -50,26 +50,25 @@ export class RealtorService {
     );
   }
 
-// Handler for getting all Realtors
-async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const query: any = {}; // Create an empty query object
-  query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-  query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+  // Handler for getting all Realtors
+  async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const query: any = {}; // Create an empty query object
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.q = req.query.q as string;
 
-  const realtors: Either<ErrorClass, RealtorEntity[]> =
-    await this.GetAllRealtorsUsecase.execute(query);
+    const realtors: Either<ErrorClass, RealtorEntity[]> =
+      await this.GetAllRealtorsUsecase.execute(query);
 
-  realtors.cata(
-    (error: ErrorClass) => {
-      res.status(error.status).json({ error: error.message });
-    },
-    (result: RealtorEntity[]) => {
-      res.json(result);
-    }
-  );
-}
-
-
+    realtors.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      (result: RealtorEntity[]) => {
+        res.json(result);
+      }
+    );
+  }
 
 
   // Handler for getting Realtor by ID  
