@@ -78,6 +78,7 @@ const Realtors = sequelize.define("Realtors", {
   recoId: {
     type: DataTypes.STRING,
     allowNull: false, // Set to allowNull: true if coordinates are optional
+    unique: true, // It must be unique
   }
 });
 

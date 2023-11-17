@@ -33,6 +33,21 @@ export class RealtorService {
     this.DeleteRealtorUsecase = DeleteRealtorUsecase;
   }
 
+  private sendSuccessResponse(res: Response, data: any, message: string = "Success", statusCode: number = 200): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  private sendErrorResponse(res: Response, error: ErrorClass): void {
+    res.status(error.status).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Handler for creating a new Realtor
   async createRealtor(req: Request, res: Response): Promise<void> {
     const realtorData: RealtorModel = RealtorMapper.toModel(req.body);
@@ -41,11 +56,10 @@ export class RealtorService {
       await this.CreateRealtorUsecase.execute(realtorData);
 
     newRealtor.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: RealtorEntity) => {
         const resData = RealtorMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Realtor created successfully", 201);
       }
     );
   }
@@ -61,15 +75,10 @@ export class RealtorService {
       await this.GetAllRealtorsUsecase.execute(query);
 
     realtors.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
-      (result: RealtorEntity[]) => {
-        res.json(result);
-      }
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (result: RealtorEntity[]) => this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
     );
   }
-
 
   // Handler for getting Realtor by ID  
   async getRealtorById(req: Request, res: Response): Promise<void> {
@@ -79,14 +88,14 @@ export class RealtorService {
       await this.GetRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: RealtorEntity) => {
         if (!result) {
-          return res.json({ message: "Realtor Name not found." });
+          this.sendErrorResponse(res, ErrorClass.notFound());
+        } else {
+          const resData = RealtorMapper.toEntity(result);
+          this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
         }
-        const resData = RealtorMapper.toEntity(result);
-        return res.json(resData);
       }
     );
   }
@@ -100,9 +109,7 @@ export class RealtorService {
       await this.GetRealtorByIdUsecase.execute(realtorId);
 
     existingRealtor.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       async (existingRealtorData: RealtorEntity) => {
         const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
           realtorData,
@@ -117,12 +124,10 @@ export class RealtorService {
           );
 
         updatedRealtor.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error),
           (result: RealtorEntity) => {
             const resData = RealtorMapper.toEntity(result, true);
-            res.json(resData);
+            this.sendSuccessResponse(res, resData, "Realtor updated successfully");
           }
         );
       }
@@ -145,12 +150,11 @@ export class RealtorService {
     );
 
     updatedRealtor.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: RealtorEntity) => {
         const responseData = RealtorMapper.toModel(result);
-        return res.json(responseData)
+        this.sendSuccessResponse(res, responseData, "Realtor deleted successfully");
       }
-    )
+    );
   }
 }
