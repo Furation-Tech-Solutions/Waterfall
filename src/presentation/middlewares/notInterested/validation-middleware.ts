@@ -9,15 +9,30 @@ interface NotInterestedInput {
 }
 
 // Define a validator function for NotInterestedInput
-const notInterestedValidator = function (input: NotInterestedInput): NotInterestedInput {
+const notInterestedValidator = (
+  input: NotInterestedInput,
+  isUpdate: boolean = false
+  ) => {
   // Define a Joi schema for validation
   const notInterestedSchema = Joi.object<NotInterestedInput>({
-    realtor: Joi.number().required().messages({
+    realtor: isUpdate
+    ?Joi.number().optional().messages({
+      "string.base": "Realtor must be a number",
+      "string.empty": "Realtor is required",
+      "any.required": "Realtor is required",
+    })
+    : Joi.number().required().messages({
       "string.base": "Realtor must be a number",
       "string.empty": "Realtor is required",
       "any.required": "Realtor is required",
     }),
-    job: Joi.number().required().messages({
+    job: isUpdate
+    ? Joi.number().optional().messages({
+      "string.base": "Job must be a number",
+      "string.empty": "Job is required",
+      "any.required": "Job is required",
+    })
+    : Joi.number().required().messages({
       "string.base": "Job must be a number",
       "string.empty": "Job is required",
       "any.required": "Job is required",

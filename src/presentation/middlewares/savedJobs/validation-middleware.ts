@@ -9,11 +9,17 @@ interface SavedJobInput {
 }
 
 // Define a validator function for SavedJobInput
-const savedJobValidator = function (input: SavedJobInput): SavedJobInput {
+const savedJobValidator = (
+  input: SavedJobInput,
+  isUpdate: boolean = false) => {
   // Define a Joi schema for validation
   const savedJobSchema = Joi.object<SavedJobInput>({
-    Realtor: Joi.number().required(),
-    Job: Joi.number().required(),
+    Realtor: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    Job: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
   });
 
   // Validate the input against the schema

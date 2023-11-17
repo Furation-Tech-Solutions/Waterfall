@@ -12,18 +12,39 @@ interface CallLogInput {
 }
 
 // Define a function for validating call log input data
-const callLogValidator = function (input: CallLogInput): CallLogInput {
+const callLogValidator = (
+  input: CallLogInput,
+  isUpdate: boolean = false
+  ) => {
   // Define a schema using Joi for validating the input
   const callLogSchema = Joi.object<CallLogInput>({
-    jobApplicant: Joi.number().required(),
-    logActivity: Joi.string().required().min(1).max(500).messages({
+    jobApplicant: isUpdate
+    ? Joi.number().optional()
+    : Joi.number().required(),
+    logActivity: isUpdate
+    ?Joi.string().optional().min(1).max(500).messages({
+      "string.base": "Log activity must be a string",
+      "string.empty": "Log activity is required",
+      "string.min": "Log activity should be at least 1 character",
+      "string.max": "Log activity should be under 500 characters",
+      "any.required": "Log activity is required",
+    })
+    : Joi.string().required().min(1).max(500).messages({
       "string.base": "Log activity must be a string",
       "string.empty": "Log activity is required",
       "string.min": "Log activity should be at least 1 character",
       "string.max": "Log activity should be under 500 characters",
       "any.required": "Log activity is required",
     }),
-    logOutcome: Joi.string()
+    logOutcome: isUpdate
+    ? Joi.string()
+      .valid(...Object.values(OutcomeEnum))
+      .optional()
+      .messages({
+        "any.only": "Invalid log outcome",
+        "any.required": "Log outcome is required",
+      })
+      : Joi.string()
       .valid(...Object.values(OutcomeEnum))
       .required()
       .messages({
