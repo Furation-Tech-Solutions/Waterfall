@@ -9,11 +9,11 @@ export class RealtorModel {
     public gender: string = "",
     public location: string = "",
     public about: string = "",
-    public password: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
     public deleteStatus: boolean, // You might want to provide a default value here
-    public coordinates: { latitude: string; longitude: string } | null = null
+    public coordinates: { latitude: string; longitude: string } | null = null,
+    public recoId: string = ""
   ) { }
 }
 
@@ -29,11 +29,11 @@ export class RealtorEntity {
     public gender: string,
     public location: string,
     public about: string,
-    public password: string,
     public profileImage: string,
     public countryCode: number,
     public deleteStatus: boolean,
-    public coordinates: { latitude: string; longitude: string } | null = null
+    public coordinates: { latitude: string; longitude: string } | null = null,
+    public recoId: string,
   ) { }
 }
 
@@ -73,9 +73,6 @@ export class RealtorMapper {
         about: realtorData.about !== undefined
           ? realtorData.about
           : existingRealtor.about,
-        password: realtorData.password !== undefined
-          ? realtorData.password
-          : existingRealtor.password,
         profileImage: realtorData.profileImage !== undefined
           ? realtorData.profileImage
           : existingRealtor.profileImage,
@@ -87,7 +84,10 @@ export class RealtorMapper {
           : existingRealtor.deleteStatus,
         coordinates: realtorData.coordinates !== undefined
           ? realtorData.coordinates
-          : existingRealtor.coordinates
+          : existingRealtor.coordinates,
+        recoId: realtorData.recoId !== undefined
+          ? realtorData.recoId
+          : existingRealtor.recoId,
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -101,11 +101,11 @@ export class RealtorMapper {
         gender: realtorData.gender,
         location: realtorData.location,
         about: realtorData.about,
-        password: realtorData.password,
         profileImage: realtorData.profileImage,
         countryCode: realtorData.countryCode,
         deleteStatus: realtorData.deleteStatus,
-        coordinates: realtorData.coordinates || null
+        coordinates: realtorData.coordinates || null,
+        recoId: realtorData.recoId
       };
       return realtorEntity;
     }
@@ -122,11 +122,11 @@ export class RealtorMapper {
       gender: realtor.gender,
       location: realtor.location,
       about: realtor.about,
-      password: realtor.password,
       profileImage: realtor.profileImage,
       countryCode: realtor.countryCode,
       deleteStatus: realtor.deleteStatus,
-      coordinates: realtor.coordinates
+      coordinates: realtor.coordinates,
+      recoId: realtor.recoId
     };
   }
 }
