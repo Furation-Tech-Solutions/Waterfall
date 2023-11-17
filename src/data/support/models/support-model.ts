@@ -1,16 +1,16 @@
 // Import necessary dependencies
-import { DataTypes } from "sequelize";
-import { sequelize } from "@main/sequelizeClient";
+import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize for defining data types
+import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize instance from the sequelizeClient module
 
-import Realtors from "@data/realtors/model/realtor-model";
+import Realtors from "@data/realtors/model/realtor-model"; // Importing the Realtors model from the specified path
 
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
-  // Define a "realtor" field with UUID data type, which cannot be null
+  // Define a "realtor" field with INTEGER data type, which cannot be null
   realtor: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: Realtors, key: 'id' }
+    references: { model: Realtors, key: 'id' } // Adding a foreign key constraint referencing the 'id' field in the Realtors model
   },
   // Define a "to" field with STRING data type, which cannot be null
   to: {
@@ -42,9 +42,11 @@ const Support = sequelize.define("Support", {
   },
 });
 
+// Establishing a foreign key relationship: Support belongs to Realtors
 Support.belongsTo(Realtors, {
-  foreignKey: "realtor",
-  as: "realtorData",
+  foreignKey: "realtor", // Using the "realtor" field as the foreign key
+  as: "realtorData", // Alias for the relation to access realtor data, e.g., supportInstance.realtorData
 });
+
 // Export the "Support" model
 export default Support;

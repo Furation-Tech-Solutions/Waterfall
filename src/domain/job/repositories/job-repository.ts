@@ -23,5 +23,4 @@ export interface JobRepository {
 
   // Define a method to find the total number of posted jobs and return an Either monad with the count or an ErrorClass
   TotalCount(query: JobQuery): Promise<Either<ErrorClass, number>>;
-
 }

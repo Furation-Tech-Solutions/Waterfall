@@ -1,7 +1,10 @@
 // Import necessary modules and dependencies
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import { JobRepository } from "@domain/job/repositories/job-repository";
-import { JobDataSource, JobQuery } from "@data/job/datasources/job-data-sources";
+import {
+  JobDataSource,
+  JobQuery,
+} from "@data/job/datasources/job-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -130,9 +133,7 @@ export class JobRepositoryImpl implements JobRepository {
       // Return a Right monad with the count on success
       return Right<ErrorClass, number>(count);
     } catch (error: any) {
-      return Left<ErrorClass, number>(
-        ApiError.customError(400, error.message)
-      );
+      return Left<ErrorClass, number>(ApiError.customError(400, error.message));
     }
   }
 }

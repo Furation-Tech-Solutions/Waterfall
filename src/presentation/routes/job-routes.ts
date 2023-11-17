@@ -9,7 +9,7 @@ import { DeleteJob } from "@domain/job/usecases/delete-job"; // Importing the De
 import { GetJobById } from "@domain/job/usecases/get-job-by-id"; // Importing the GetJobById use case
 import { GetAllJobs } from "@domain/job/usecases/get-all-jobs"; // Importing the GetAllJobs use case
 import { UpdateJob } from "@domain/job/usecases/update-job"; // Importing the UpdateJob use case
-import { GettotalCount } from "@domain/job/usecases/get-total-counts"
+import { GettotalCount } from "@domain/job/usecases/get-total-counts"; // Importing the GettotalCount use case
 import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware"; // Importing a middleware for job input validation
 
 // Create an instance of the JobDataSourceImpl and pass the Sequelize connection
@@ -60,5 +60,3 @@ jobRouter.put("/:id", jobService.updateJob.bind(jobService)); // Route URL for u
 
 // Route handling for deleting a Job by ID
 jobRouter.delete("/:id", jobService.deleteJob.bind(jobService)); // Route URL for deleting a job by ID
-
-

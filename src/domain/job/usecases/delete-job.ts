@@ -1,4 +1,4 @@
-// Importing the JobRepository interface from a module called "@domain/job/repositories/job-repository"
+/// Importing the JobRepository interface from a module called "@domain/job/repositories/job-repository"
 import { JobRepository } from "@domain/job/repositories/job-repository";
 
 // Importing the ErrorClass from a module called "@presentation/error-handling/api-error"

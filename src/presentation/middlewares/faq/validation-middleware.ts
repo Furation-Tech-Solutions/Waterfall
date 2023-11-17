@@ -3,19 +3,19 @@ import Joi, { ValidationErrorItem } from "joi";
 import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
-// Define the structure of the input for FQA (Frequently Asked Questions)
-interface FQAInput {
+// Define the structure of the input for FAQ (Frequently Asked Questions)
+interface FAQInput {
   question: string;
   answer: string;
 }
 
-// Define a validator function for FQA input
-const fqaValidator = (
-  input: FQAInput,
+// Define a validator function for FAQ input
+const faqValidator = (
+  input: FAQInput,
   isUpdate: boolean = false
 ) => {
-  // Define a schema for FQA input using Joi
-  const fqaSchema = Joi.object<FQAInput>({
+  // Define a schema for FAQ input using Joi
+  const faqSchema = Joi.object<FAQInput>({
     question: isUpdate
       ? Joi.string().optional().trim()
       : Joi.string().required().trim(),
@@ -25,7 +25,7 @@ const fqaValidator = (
   });
 
   // Validate the input against the schema
-  const { error, value } = fqaSchema.validate(input, {
+  const { error, value } = faqSchema.validate(input, {
     abortEarly: false,
   });
 
@@ -44,8 +44,8 @@ const fqaValidator = (
   return value; // Return the validated input
 };
 
-// Define a middleware for validating FQA input
-export const validateFQAInputMiddleware = (
+// Define a middleware for validating FAQ input
+export const validateFAQInputMiddleware = (
   isUpdate: boolean = false
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -53,8 +53,8 @@ export const validateFQAInputMiddleware = (
       // Extract the request body
       const { body } = req;
 
-      // Validate the client's FQA input using the fqaValidator
-      const validatedInput: FQAInput = fqaValidator(
+      // Validate the client's FAQ input using the faqValidator
+      const validatedInput: FAQInput = faqValidator(
         body,
         isUpdate
       );

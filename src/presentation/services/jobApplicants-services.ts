@@ -39,6 +39,7 @@ export class JobApplicantService {
 
   // Method to create a new job applicant
   async createJobApplicant(req: Request, res: Response): Promise<void> {
+    // Extract job applicant data from the request body
     const jobApplicantData: JobApplicantModel = JobApplicantMapper.toModel(
       req.body
     );
@@ -88,17 +89,17 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId: string = req.body.loginId;
-    loginId = "1";
-    const query: any = {}; // Create an empty query object
+    let loginId = req.body.loginId;
+    loginId = "2"; // For testing purposes, manually set loginId to "2"
+
+    // Create an empty query object
+    const query: any = {};
 
     // Assign values to properties of the query object
     query.q = req.query.q as string;
+    query.id = parseInt(loginId, 10);
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
-
-    // Convert the agreement query parameter to a boolean
-    // const isAgreementTrue = query.agreement === "true"; // This ensures that "agreement" is parsed as a boolean
 
     // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
     const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
@@ -118,38 +119,11 @@ export class JobApplicantService {
     );
   }
 
-  // // Method to get all jobApplicants
-  // async getAllJobApplicants(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const query = req.query as {};
-  //   let a = req.query
-  //   let loginId: string = req.body.loginId;
-  //   loginId = "1";
-  //   // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
-  //   const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
-  //     await this.getAllJobApplicantsUsecase.execute(loginId, query);
-
-  //   // Handle the result using the Either monad's cata method
-  //   jobApplicants.cata(
-  //     (error: ErrorClass) =>
-  //       res.status(error.status).json({ error: error.message }),
-  //     (jobApplicants: JobApplicantEntity[]) => {
-  //       // Map jobApplicant entities to the desired format
-  //       const resData = jobApplicants.map((jobApplicant: any) =>
-  //         JobApplicantMapper.toEntity(jobApplicant)
-  //       );
-  //       return res.json(resData);
-  //     }
-  //   );
-  // }
-
   // Method to update a job applicant
   async updateJobApplicant(req: Request, res: Response): Promise<void> {
     // Extract the job applicant ID from the request parameters
     const jobApplicantId: string = req.params.id;
+
     // Extract job applicant data from the request body
     const jobApplicantData: JobApplicantModel = req.body;
 
@@ -187,7 +161,6 @@ export class JobApplicantService {
           (response: JobApplicantEntity) => {
             // Handle success case
             const responseData = JobApplicantMapper.toModel(response);
-
             res.json(responseData);
           }
         );
