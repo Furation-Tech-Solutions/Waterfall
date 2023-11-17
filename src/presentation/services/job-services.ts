@@ -9,6 +9,8 @@ import { GetAllJobsUsecase } from "@domain/job/usecases/get-all-jobs";
 import { GettotalCountUsecase } from "@domain/job/usecases/get-total-counts";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
+import SESMailService from "./email-ses-services";
+import SMSService from "./sms-service";
 
 // Create a class for the JobService
 export class JobService {
@@ -180,6 +182,20 @@ export class JobService {
       // If successful, map the results to Entities and send them as a JSON response
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+        const emailService = new SESMailService()
+        const emailOption = {
+          email: "shehzadmalik123.sm@gmail.com",
+          subject: "Booking Request Confirmation",
+          message: "this is testing email",
+        };
+          emailService.sendEmail(emailOption)
+  
+          const smsService=new SMSService()
+          const smsOptions={
+             phoneNumber:"+919881239491",
+             message:"this is testing sms in node .ts"
+          }
+          smsService.sendSMS(smsOptions)
         return res.json(resData);
       }
     );
