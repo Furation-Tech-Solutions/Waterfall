@@ -67,8 +67,8 @@ const Realtors = sequelize.define("Realtors", {
   },
   // Define the "deleteStatus" field with a data type of BOOLEAN and a default value of false
   deleteStatus: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    type: DataTypes.JSONB,
+    defaultValue: { status: false, deletedAt: null }, // Initial values
   },
   // Define the "coordinates" field with a data type of JSONB
   coordinates: {
