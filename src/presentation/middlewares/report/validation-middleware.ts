@@ -12,18 +12,28 @@ interface ReportInput {
 }
 
 // Define a function to validate the report input
-const reportValidator = function (input: ReportInput): ReportInput {
+const reportValidator = (
+  input: ReportInput, 
+  isUpdate: boolean = false) => {
   // Define a Joi schema to validate the input
   const reportSchema = Joi.object<ReportInput>({
-    fromRealtor: Joi.number().required(),
-    toRealtor: Joi.number().required(),
-    description: Joi.string().required().min(1).max(1000).messages({
-      "string.base": "Description must be a string",
-      "string.empty": "Description is required",
-      "string.min": "Description should be at least 1 character",
-      "string.max": "Description should be under 1000 characters",
-      "any.required": "Description is required",
-    }),
+    fromRealtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    toRealtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    description: isUpdate
+      ? Joi.string().optional().min(1).max(1000).messages({
+          "string.base": "Description must be a string",
+          "string.empty": "Description is required",
+          "string.min": "Description should be at least 1 character",
+          "string.max": "Description should be under 1000 characters",
+          "any.required": "Description is required",
+        })
+      : Joi.string().required().min(1).max(1000).messages({
+          "string.base": "Description must be a string",
+          "string.empty": "Description is required",
+          "string.min": "Description should be at least 1 character",
+          "string.max": "Description should be under 1000 characters",
+          "any.required": "Description is required",
+        }),
     reportTimestamp: Joi.date().messages({
       "date.base": "Report Timestamp must be a valid date",
     }),
