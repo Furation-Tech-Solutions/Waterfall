@@ -11,7 +11,7 @@ export class RealtorModel {
     public about: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: boolean, // You might want to provide a default value here
+    public deleteStatus: {status:boolean,deletedAt:string}, // You might want to provide a default value here
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = ""
   ) { }
@@ -31,7 +31,7 @@ export class RealtorEntity {
     public about: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: boolean,
+    public deleteStatus: {status:boolean;deletedAt:string},
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
   ) { }
