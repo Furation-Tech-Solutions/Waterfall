@@ -85,11 +85,10 @@ export class ConnectionsServices {
 
   // Handler for deleting connections by ID
   async deleteRequest(req: Request, res: Response): Promise<void> {
-    let loginId = req.body.fromId;
     let id = req.params.id;
 
     const deletedConnections: Either<ErrorClass, void> =
-      await this.deleteRequestUsecase.execute(loginId, id);
+      await this.deleteRequestUsecase.execute(id);
 
     deletedConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
@@ -110,7 +109,7 @@ export class ConnectionsServices {
     let id = req.params.id;
 
     const connections: Either<ErrorClass, ConnectionsEntity> =
-      await this.getByIdUsecase.execute(loginId, id);
+      await this.getByIdUsecase.execute(id);
 
     connections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
@@ -165,7 +164,7 @@ export class ConnectionsServices {
     let id = req.params.id;
 
     const existingConnections: Either<ErrorClass, ConnectionsEntity> =
-      await this.getByIdUsecase.execute(loginId, id);
+      await this.getByIdUsecase.execute(id);
 
     existingConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
@@ -177,7 +176,6 @@ export class ConnectionsServices {
 
         const updatedConnections: Either<ErrorClass, ConnectionsEntity> =
           await this.updateRequestUsecase.execute(
-            loginId,
             id,
             updatedConnectionsEntity
           );

@@ -79,11 +79,10 @@ export class MessagesServices {
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {
-    let loginId = req.body.fromId;
     let id = req.params.id;
 
     const deletedMessages: Either<ErrorClass, void> =
-      await this.deleteMessagesUsecase.execute(loginId, id);
+      await this.deleteMessagesUsecase.execute(id);
 
     deletedMessages.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
@@ -99,11 +98,10 @@ export class MessagesServices {
   }
 
   async getByIdMessages(req: Request, res: Response): Promise<void> {
-    let loginId = req.body.fromId;
     let id = req.params.id;
 
     const Messages: Either<ErrorClass, MessageEntity> =
-      await this.getByIdMessageUsecase.execute(loginId, id);
+      await this.getByIdMessageUsecase.execute(id);
 
     Messages.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
@@ -152,11 +150,10 @@ export class MessagesServices {
 
   async updateMessages(req: Request, res: Response): Promise<void> {
     const Data: MessageModel = req.body;
-    let loginId = req.body.fromId;
     let id = req.params.id;
 
     const existingMessages: Either<ErrorClass, MessageEntity> =
-      await this.getByIdMessageUsecase.execute(loginId, id);
+      await this.getByIdMessageUsecase.execute(id);
 
     existingMessages.cata(
       (error: ErrorClass) => {
@@ -168,7 +165,6 @@ export class MessagesServices {
 
         const updatedMessages: Either<ErrorClass, MessageEntity> =
           await this.updateMessageUsecase.execute(
-            loginId,
             id,
             updatedMessageEntity
           );
