@@ -29,6 +29,32 @@ export class FAQService {
     this.DeleteFAQUsecase = DeleteFAQUsecase;
   }
 
+  // Helper method to send success response
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  // Helper method to send error response
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Handler for creating a new FAQ
   async createFAQ(req: Request, res: Response): Promise<void> {
     const faqData: FAQModel = FAQMapper.toModel(req.body);
@@ -37,11 +63,15 @@ export class FAQService {
       await this.CreateFAQUsecase.execute(faqData);
 
     newFAQ.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
       (result: FAQEntity) => {
         const resData = FAQMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "FAQ created successfully",
+          201
+        ); // Created
       }
     );
   }
@@ -52,20 +82,18 @@ export class FAQService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    // Call the GetAllFAQsUsecase to get all FAQs
     const faqs: Either<ErrorClass, FAQEntity[]> =
       await this.GetAllFAQsUsecase.execute();
 
     faqs.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: FAQEntity[]) => {
-        // Filter out FAQs with del_status set to "Deleted"
-        // const nonDeletedFAQs = result.filter((faq) => faq.deleteStatus !== false);
-
-        // Convert non-deleted FAQs from an array of FAQEntity to an array of plain JSON objects using faqMapper
-        const responseData = faqs.map((faq) => FAQMapper.toEntity(faq));
-        return res.json(responseData);
+        const responseData = result.map((faq) => FAQMapper.toEntity(faq));
+        this.sendSuccessResponse(
+          res,
+          responseData,
+          "FAQs retrieved successfully"
+        );
       }
     );
   }
@@ -78,14 +106,18 @@ export class FAQService {
       await this.GetFAQByIdUsecase.execute(faqId);
 
     faq.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       (result: FAQEntity) => {
         if (!result) {
-          return res.json({ message: "FAQ Name not found." });
+          this.sendErrorResponse(res, ErrorClass.notFound());
+        } else {
+          const resData = FAQMapper.toEntity(result);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "FAQ retrieved successfully"
+          );
         }
-        const resData = FAQMapper.toEntity(result);
-        return res.json(resData);
       }
     );
   }
@@ -99,26 +131,28 @@ export class FAQService {
       await this.GetFAQByIdUsecase.execute(faqId);
 
     existingFAQ.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       async (existingFAQData: FAQEntity) => {
+        const resData = FAQMapper.toEntity(existingFAQData, true);
+
         const updatedFAQEntity: FAQEntity = FAQMapper.toEntity(
           faqData,
           true,
-          existingFAQData
+          resData
         );
 
         const updatedFAQ: Either<ErrorClass, FAQEntity> =
           await this.UpdateFAQUsecase.execute(faqId, updatedFAQEntity);
 
         updatedFAQ.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
           (result: FAQEntity) => {
             const resData = FAQMapper.toEntity(result, true);
-            res.json(resData);
+            this.sendSuccessResponse(
+              res,
+              resData,
+              "FAQ updated successfully"
+            );
           }
         );
       }
@@ -129,15 +163,18 @@ export class FAQService {
   async deleteFAQ(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    // Execute the deleteFAQ use case to delete an FAQ by ID
     const deleteFAQ: Either<ErrorClass, void> =
       await this.DeleteFAQUsecase.execute(id);
 
     deleteFAQ.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: void) => {
-        return res.json({ message: "FAQ deleted successfully." });
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      () => {
+        this.sendSuccessResponse(
+          res,
+          {},
+          "FAQ deleted successfully",
+          204
+        ); // No Content
       }
     );
   }

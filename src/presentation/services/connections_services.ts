@@ -1,6 +1,6 @@
 // Import necessary dependencies and types
-import { NextFunction, Request, Response, query } from "express";
-import { ErrorClass } from "@presentation/error-handling/api-error";
+import { NextFunction, Request, Response } from "express";
+import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import {
   ConnectionsEntity,
   ConnectionMapper,
@@ -36,153 +36,145 @@ export class ConnectionsServices {
     this.updateRequestUsecase = updateRequestUsecase;
   }
 
+  // Helper method to send success response
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  // Helper method to send error response
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Handler for creating new connections
   async createRequest(req: Request, res: Response): Promise<void> {
-    //----------------------------------------------------------------------------
-    // Extract data from the request body and map it to the ConnectionsModel
-    // const id: string = req.params.id;
-    // let loginId: number = req.body.loginId;
-    // loginId = 1;
-    // req.body.fromId = loginId;
-    // req.body.toId = id;
-    //-----------------------------------------------------------------------------
     const Data: ConnectionsModel = ConnectionMapper.toModel(req.body);
-    // console.log(req.body, 'serviec');
 
-    // Execute the createConnections use case to create a new connection
     const newConnections: Either<ErrorClass, ConnectionsEntity> =
       await this.createRequestUsecase.execute(Data);
 
-    // Handle the result of the use case execution
     newConnections.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }), // Handle error case
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
       (result: ConnectionsEntity) => {
-        // Handle success case
         const resData = ConnectionMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Connection created successfully",
+          201
+        );
       }
     );
   }
 
   // Handler for deleting connections by ID
   async deleteRequest(req: Request, res: Response): Promise<void> {
-    //-----------------------------------------------------------------------------
-    // const toId: string = req.params.id;
-    // let loginId: string = req.body.loginId;
-    // loginId = "1";
-    // const fromId: string = loginId;
-    //-----------------------------------------------------------------------------
     let loginId = req.body.fromId;
     let id = req.params.id;
-    // Execute the deleteConnections use case to delete a connection by ID
+
     const deletedConnections: Either<ErrorClass, void> =
       await this.deleteRequestUsecase.execute(loginId, id);
 
-    // Handle the result of the use case execution
     deletedConnections.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }), // Handle error case
-      (result: void) => {
-        // Handle success case
-        return res.json({ message: "Connection deleted successfully." });
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      () => {
+        this.sendSuccessResponse(
+          res,
+          {},
+          "Connection deleted successfully",
+          204
+        ); // No Content
       }
     );
   }
 
   // Handler for getting connections by ID
   async getById(req: Request, res: Response): Promise<void> {
-    //-----------------------------------------------------------------------------
-    // let fromId: string = req.body.loginId;
-    // fromId = "6";
-    // const toId: string = req.params.id;
-    //-----------------------------------------------------------------------------
-
     let loginId = req.body.fromId;
     let id = req.params.id;
-    // console.log(toId);
 
-    // Execute the getConnectionsById use case to retrieve a connection by ID
     const connections: Either<ErrorClass, ConnectionsEntity> =
       await this.getByIdUsecase.execute(loginId, id);
 
-    // Handle the result of the use case execution
     connections.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }), // Handle error case
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       (result: ConnectionsEntity) => {
-        // Handle success case
         if (!result) {
-          return res.json({ message: "Connection not found." });
+          this.sendErrorResponse(res, new ApiError(400, " not found"));
+        } else {
+          const resData = ConnectionMapper.toEntity(result);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Connection retrieved successfully"
+          );
         }
-        const resData = ConnectionMapper.toEntity(result);
-        return res.json(resData);
       }
     );
   }
 
   // Handler for getting all connections
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    //-----------------------------------------------------------------------------
-    // let loginId: string = req.body.loginId;
-    // loginId = "2";
-    //-----------------------------------------------------------------------------
-
     let loginId = req.body.fromId;
 
-    const query: any = {}; // Create an empty query object
+    const query: any = {};
 
-    // Assign values to properties of the query object
     query.q = req.query.q as string;
-    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
     query.toId = req.query.toId;
-    // console.log(query);
-    // Execute the getAllConnections use case to retrieve all connections
+
     const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
       await this.getAllUsecase.execute(loginId, query);
 
-    // Handle the result of the use case execution
     clientConnections.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }), // Handle error case
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: ConnectionsEntity[]) => {
-        // Handle success case
         const responseData = result.map((connection) =>
           ConnectionMapper.toEntity(connection)
         );
-        return res.json(responseData);
+        this.sendSuccessResponse(
+          res,
+          responseData,
+          "Connections retrieved successfully"
+        );
       }
     );
   }
 
   // Handler for updating connections by ID
   async updateRequests(req: Request, res: Response): Promise<void> {
-    //-----------------------------------------------------------------------------
-    // let toId: string = req.body.loginId;
-    // toId = "1";
-    // const fromId: string = req.params.id;
-    // const Data: ConnectionsModel = req.body;
-    //-----------------------------------------------------------------------------
     const Data: ConnectionsModel = req.body;
     let loginId = req.body.fromId;
     let id = req.params.id;
 
-    // Execute the getConnectionsById use case to retrieve existing connection data
     const existingConnections: Either<ErrorClass, ConnectionsEntity> =
       await this.getByIdUsecase.execute(loginId, id);
 
-    // Handle the result of retrieving existing data
     existingConnections.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message }); // Handle error case
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       async (existingData: ConnectionsEntity) => {
-        // Map the updated data to the existing connection entity
-        const updatedConnectionsEntity: ConnectionsEntity =
-          ConnectionMapper.toEntity(Data, true, existingData);
+        const resData = ConnectionMapper.toEntity(existingData, true);
 
-        // Execute the updateConnections use case to update the connection
+        const updatedConnectionsEntity: ConnectionsEntity =
+          ConnectionMapper.toEntity(Data, true, resData);
+
         const updatedConnections: Either<ErrorClass, ConnectionsEntity> =
           await this.updateRequestUsecase.execute(
             loginId,
@@ -190,15 +182,15 @@ export class ConnectionsServices {
             updatedConnectionsEntity
           );
 
-        // Handle the result of the use case execution
         updatedConnections.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message }); // Handle error case
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
           (result: ConnectionsEntity) => {
-            // Handle success case
             const resData = ConnectionMapper.toEntity(result, true);
-            res.json(resData);
+            this.sendSuccessResponse(
+              res,
+              resData,
+              "Connection updated successfully"
+            );
           }
         );
       }

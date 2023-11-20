@@ -56,7 +56,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                 },
                 {
                     model: Realtors,
-                    as: "ReceiverData", // Alias for the second association
+                    as: "receiverData", // Alias for the second association
                     foreignKey: "receiver",
                 },
             ],
@@ -90,7 +90,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                     },
                     {
                         model: Realtors,
-                        as: "ReceiverData",
+                        as: "receiverData",
                         foreignKey: "receiver",
                     },
                 ],
@@ -125,7 +125,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                     },
                     {
                         model: Realtors,
-                        as: "ReceiverData",
+                        as: "receiverData",
                         foreignKey: "receiver",
                     },
                 ],
@@ -145,7 +145,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                     },
                     {
                         model: Realtors,
-                        as: "ReceiverData",
+                        as: "receiverData",
                         foreignKey: "receiver",
                     },
                 ],

@@ -12,7 +12,6 @@ import { GetAllNotInterestedsUsecase } from "@domain/notInterested/usecases/get-
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
-// Create a class for the NotInterestedService
 export class NotInterestedService {
   private readonly createNotInterestedUsecase: CreateNotInterestedUsecase;
   private readonly deleteNotInterestedUsecase: DeleteNotInterestedUsecase;
@@ -20,7 +19,6 @@ export class NotInterestedService {
   private readonly updateNotInterestedUsecase: UpdateNotInterestedUsecase;
   private readonly getAllNotInterestedsUsecase: GetAllNotInterestedsUsecase;
 
-  // Constructor to initialize dependencies
   constructor(
     createNotInterestedUsecase: CreateNotInterestedUsecase,
     deleteNotInterestedUsecase: DeleteNotInterestedUsecase,
@@ -35,138 +33,150 @@ export class NotInterestedService {
     this.getAllNotInterestedsUsecase = getAllNotInterestedsUsecase;
   }
 
-  // Function to create a new saved job
-  async createNotInterested(req: Request, res: Response): Promise<void> {
-    // Extract saved job data from the request body
-    const notInterestedData: NotInterestedModel = NotInterestedMapper.toModel(req.body);
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
 
-    // Execute the createNotInterestedUsecase and handle the result using Either
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  async createNotInterested(req: Request, res: Response): Promise<void> {
+    const notInterestedData: NotInterestedModel = NotInterestedMapper.toModel(
+      req.body
+    );
+
     const newNotInterested: Either<ErrorClass, NotInterestedEntity> =
       await this.createNotInterestedUsecase.execute(notInterestedData);
 
-    // Handle the result and send a JSON response
     newNotInterested.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
       (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "NotInterested Job data created successfully",
+          201
+        );
       }
     );
   }
 
-  // Function to delete a saved job
   async deleteNotInterested(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const notInterestedId: string = req.params.id;
 
-    // Execute the deleteNotInterestedUsecase and handle the result using Either
     const response: Either<ErrorClass, void> =
       await this.deleteNotInterestedUsecase.execute(notInterestedId);
 
-    // Handle the result and send a JSON response
     response.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        return res.json({ message: "NotInterested deleted successfully." });
+        this.sendSuccessResponse(
+          res,
+          {},
+          "NotInterested Job data deleted successfully",
+          204
+        );
       }
     );
   }
 
-  // Function to get a saved job by ID
   async getNotInterestedById(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const notInterestedId: string = req.params.id;
 
-    // Execute the getNotInterestedByIdUsecase and handle the result using Either
     const notInterested: Either<ErrorClass, NotInterestedEntity> =
       await this.getNotInterestedByIdUsecase.execute(notInterestedId);
 
-    // Handle the result and send a JSON response
     notInterested.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "NotInterested Job data retrieved successfully"
+        );
       }
     );
   }
 
-  // Function to update a saved job
   async updateNotInterested(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const notInterestedId: string = req.params.id;
-    // Extract saved job data from the request body
     const notInterestedData: NotInterestedModel = req.body;
 
-    // Execute the getNotInterestedByIdUsecase to fetch the existing saved job
     const existingNotInterested: Either<ErrorClass, NotInterestedEntity> =
       await this.getNotInterestedByIdUsecase.execute(notInterestedId);
 
-    // Handle the result of fetching the existing saved job
     existingNotInterested.cata(
       (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
+        this.sendErrorResponse(res, error, 404);
       },
       async (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
 
-        // Map the updated saved job data to an entity
-        const updatedNotInterestedEntity: NotInterestedEntity = NotInterestedMapper.toEntity(
-          notInterestedData,
-          true,
-          resData
-        );
+        const updatedNotInterestedEntity: NotInterestedEntity =
+          NotInterestedMapper.toEntity(notInterestedData, true, resData);
 
-        // Execute the updateNotInterestedUsecase and handle the result using Either
         const updatedNotInterested: Either<ErrorClass, NotInterestedEntity> =
           await this.updateNotInterestedUsecase.execute(
             notInterestedId,
             updatedNotInterestedEntity
           );
 
-        // Handle the result and send a JSON response
         updatedNotInterested.cata(
           (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
+            this.sendErrorResponse(res, error, 500);
           },
           (response: NotInterestedEntity) => {
             const responseData = NotInterestedMapper.toModel(response);
-
-            res.json(responseData);
+            this.sendSuccessResponse(
+              res,
+              responseData,
+              "NotInterested Job data updated successfully"
+            );
           }
         );
       }
     );
   }
 
-  // Function to get all saved jobs
   async getAllNotInteresteds(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const query: any = {}; // Create an empty query object
+    const query: any = {};
 
-    // Assign values to properties of the query object
-    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
 
-    // Execute the getAllNotInterestedsUsecase and handle the result using Either
     const notInteresteds: Either<ErrorClass, NotInterestedEntity[]> =
       await this.getAllNotInterestedsUsecase.execute(query);
 
-    // Handle the result and send a JSON response
     notInteresteds.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (notInteresteds: NotInterestedEntity[]) => {
-        const resData = notInteresteds.map((notInterested: any) =>
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (result: NotInterestedEntity[]) => {
+        const resData = result.map((notInterested: any) =>
           NotInterestedMapper.toEntity(notInterested)
         );
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData);
       }
     );
   }

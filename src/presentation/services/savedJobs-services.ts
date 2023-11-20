@@ -12,7 +12,6 @@ import { GetAllSavedJobsUsecase } from "@domain/savedJobs/usecases/get-all-saved
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
-// Create a class for the SavedJobService
 export class SavedJobService {
   private readonly createSavedJobUsecase: CreateSavedJobUsecase;
   private readonly deleteSavedJobUsecase: DeleteSavedJobUsecase;
@@ -20,7 +19,6 @@ export class SavedJobService {
   private readonly updateSavedJobUsecase: UpdateSavedJobUsecase;
   private readonly getAllSavedJobsUsecase: GetAllSavedJobsUsecase;
 
-  // Constructor to initialize dependencies
   constructor(
     createSavedJobUsecase: CreateSavedJobUsecase,
     deleteSavedJobUsecase: DeleteSavedJobUsecase,
@@ -35,114 +33,120 @@ export class SavedJobService {
     this.getAllSavedJobsUsecase = getAllSavedJobsUsecase;
   }
 
-  // Function to create a new saved job
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   async createSavedJob(req: Request, res: Response): Promise<void> {
-    // Extract saved job data from the request body
     const savedJobData: SavedJobModel = SavedJobMapper.toModel(req.body);
 
-    // Execute the createSavedJobUsecase and handle the result using Either
     const newSavedJob: Either<ErrorClass, SavedJobEntity> =
       await this.createSavedJobUsecase.execute(savedJobData);
 
-    // Handle the result and send a JSON response
     newSavedJob.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved job created successfully",
+          201
+        );
       }
     );
   }
 
-  // Function to delete a saved job
   async deleteSavedJob(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const savedJobId: string = req.params.id;
 
-    // Execute the deleteSavedJobUsecase and handle the result using Either
     const response: Either<ErrorClass, void> =
       await this.deleteSavedJobUsecase.execute(savedJobId);
 
-    // Handle the result and send a JSON response
     response.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        return res.json({ message: "SavedJob deleted successfully." });
+        this.sendSuccessResponse(
+          res,
+          {},
+          "Saved job deleted successfully",
+          204
+        );
       }
     );
   }
-
-  // Function to get a saved job by ID
   async getSavedJobById(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const savedJobId: string = req.params.id;
 
-    // Execute the getSavedJobByIdUsecase and handle the result using Either
     const savedJob: Either<ErrorClass, SavedJobEntity> =
       await this.getSavedJobByIdUsecase.execute(savedJobId);
 
-    // Handle the result and send a JSON response
     savedJob.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Saved job retrieved successfully");
       }
     );
   }
 
-  // Function to update a saved job
   async updateSavedJob(req: Request, res: Response): Promise<void> {
-    // Extract saved job ID from the request parameters
     const savedJobId: string = req.params.id;
-    // Extract saved job data from the request body
     const savedJobData: SavedJobModel = req.body;
 
-    // Execute the getSavedJobByIdUsecase to fetch the existing saved job
     const existingSavedJob: Either<ErrorClass, SavedJobEntity> =
       await this.getSavedJobByIdUsecase.execute(savedJobId);
 
-    // Handle the result of fetching the existing saved job
     existingSavedJob.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       async (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
 
-        // Map the updated saved job data to an entity
         const updatedSavedJobEntity: SavedJobEntity = SavedJobMapper.toEntity(
           savedJobData,
           true,
           resData
         );
 
-        // Execute the updateSavedJobUsecase and handle the result using Either
         const updatedSavedJob: Either<ErrorClass, SavedJobEntity> =
           await this.updateSavedJobUsecase.execute(
             savedJobId,
             updatedSavedJobEntity
           );
 
-        // Handle the result and send a JSON response
         updatedSavedJob.cata(
           (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
           },
           (response: SavedJobEntity) => {
             const responseData = SavedJobMapper.toModel(response);
-
-            res.json(responseData);
+            this.sendSuccessResponse(res, responseData, "Saved job updated successfully");
           }
         );
       }
     );
   }
 
-  // Function to get all saved jobs
   async getAllSavedJobs(
     req: Request,
     res: Response,
@@ -153,19 +157,16 @@ export class SavedJobService {
     // Assign values to properties of the query object
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
-    // Execute the getAllSavedJobsUsecase and handle the result using Either
     const savedJobs: Either<ErrorClass, SavedJobEntity[]> =
       await this.getAllSavedJobsUsecase.execute(query);
 
-    // Handle the result and send a JSON response
     savedJobs.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (savedJobs: SavedJobEntity[]) => {
         const resData = savedJobs.map((savedJob: any) =>
           SavedJobMapper.toEntity(savedJob)
         );
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Saved jobs retrieved successfully");
       }
     );
   }

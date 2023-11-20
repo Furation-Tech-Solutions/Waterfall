@@ -135,7 +135,7 @@ const Job = sequelize.define("Job", {
   // Reason for deleting the job
   deleteReason: {
     type: DataTypes.STRING,
-    allowNull: false,
+    defaultValue: ""
   },
 
   // Coordinates of the job, stored as JSONB for better performance and flexibility
@@ -147,14 +147,12 @@ const Job = sequelize.define("Job", {
   // Boolean indicating the live status of the job
   liveStatus: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: true,
   },
 
   // Boolean indicating if the job has an urgent requirement
   urgentRequirement: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
 });

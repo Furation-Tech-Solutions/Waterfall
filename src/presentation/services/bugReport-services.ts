@@ -11,6 +11,8 @@ import { UpdateBugReportUsecase } from "@domain/bugReport/usecases/update-bugRep
 import { GetAllBugReportsUsecase } from "@domain/bugReport/usecases/get-all-bugReports";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
+import { not } from "joi";
+import { NOTFOUND } from "dns";
 
 // Define a class named BugReportService
 export class BugReportService {
@@ -103,7 +105,7 @@ export class BugReportService {
       (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: BugReportEntity) => {
         if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+          this.sendErrorResponse(res, new ApiError(400, " not found"));
         } else {
           const resData = BugReportMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "BugReport retrieved successfully");
