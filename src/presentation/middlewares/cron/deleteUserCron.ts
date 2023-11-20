@@ -4,7 +4,7 @@ import cron from "node-cron";
 export const deleteStatusWithCron = () => {
 
   try {
-    cron.schedule('*/1 * * * *', async function () {
+    cron.schedule('0 12 * * *', async function () {
       try {
         const userList = await Realtors.findAll({
           where: {
@@ -14,9 +14,8 @@ export const deleteStatusWithCron = () => {
           },
         })
         userList.map((item) => {
-
-          const deletedAtTimestamp:number = 1700225201300;
-          const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+          const deletedAtTimestamp:number = item.dataValues.deleteStatus.deletedAt;
+          const twoDaysInMillis = 30 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
 
           // Convert the deletedAt timestamp to a Date object
           const deletedAtDate:Date = new Date(deletedAtTimestamp);
@@ -26,14 +25,16 @@ export const deleteStatusWithCron = () => {
 
           // Calculate the difference in milliseconds
           const timeDifference:number = currentDate.getTime() - deletedAtDate.getTime();
-            console.log(timeDifference,"timediiference is this")
           // Check if the difference is greater than or equal to 2 days
           if (timeDifference >= twoDaysInMillis) {
             // Perform the desired operation
-            console.log("Do some operation because the deletedAt date is 2 or more days ago.");
+            Realtors.destroy({
+              where: {
+                id: item.dataValues.id,
+              },
+            });
           }
         })
-        console.log(userList, "userlist")
       }
       catch (err) {
         console.log(err)
