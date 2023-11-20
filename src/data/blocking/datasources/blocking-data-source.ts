@@ -69,13 +69,13 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       include: [
         {
           model: Realtors,
-          as: "from", // Alias for the first association
+          as: "fromRealtorData", // Alias for the first association
           foreignKey: "fromRealtor",
   
         },
         {
           model: Realtors,
-          as: "to", // Alias for the second association
+          as: "toRealtorData", // Alias for the second association
           foreignKey: "toRealtor",
         },
       ],
@@ -85,6 +85,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // Convert the Sequelize model instances to plain JavaScript objects before returning
     return data.map((blocking: any) => blocking.toJSON());
+
   }
 
   // Method to read a blocking entry by ID

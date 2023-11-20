@@ -15,6 +15,7 @@ import { supportRouter } from "@presentation/routes/support-routes";
 import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 import { paymentGatewayRouter } from "@presentation/routes/paymentGateway-routes";
 import { messagesRouter } from "@presentation/routes/messages-routes";
+import { mediaRoutes } from "@presentation/routes/media-upload-routes";
 // import { homepageRouter } from "@presentation/routes/screens/Home_Screens/Final_Home_Page_To_Apply_jobs";
 
 
@@ -49,6 +50,7 @@ export default (app: Express): void => {
   app.use("/api/v1/paymentGateways", paymentGatewayRouter);
   app.use("/api/v1/notInteresteds", notInterestedRouter);
   app.use("/api/v1/messages", messagesRouter);
+  app.use("/api/v1/uploadMedia", mediaRoutes);
   app.use(router);
 
   // -------------------------------------------------------------------

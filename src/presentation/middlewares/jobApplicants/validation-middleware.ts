@@ -19,76 +19,76 @@ interface JobApplicantInput {
 }
 
 // Define a function for validating job applicant input
-const jobApplicantValidator =  (
+const jobApplicantValidator = (
   input: JobApplicantInput,
   isUpdate: boolean = false
 
-)=> {
+) => {
   // Define a Joi schema for validating the input
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
     job: isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
+      ? Joi.number().optional()
+      : Joi.number().required(),
     applicant: isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
+      ? Joi.number().optional()
+      : Joi.number().required(),
     applicantStatus: isUpdate
-    ? Joi.string()
-      .valid(...Object.values(applicationStatusEnum))
-      .optional()
-      .messages({
-        "any.only": "Invalid applicantStatus",
-        "any.required": "applicantStatus is required",
-      })
+      ? Joi.string()
+        .valid(...Object.values(applicationStatusEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid applicantStatus",
+          "any.required": "applicantStatus is required",
+        })
       : Joi.string()
-      .valid(...Object.values(applicationStatusEnum))
-      .required()
-      .messages({
-        "any.only": "Invalid applicantStatus",
-        "any.required": "applicantStatus is required",
-      }),
+        .valid(...Object.values(applicationStatusEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid applicantStatus",
+          "any.required": "applicantStatus is required",
+        }),
     agreement: isUpdate
-    ?Joi.boolean().optional().messages({
-      "boolean.base": "Agreement must be a boolean",
-      "any.required": "Agreement is required",
-    })
-    : Joi.boolean().required().messages({
-      "boolean.base": "Agreement must be a boolean",
-      "any.required": "Agreement is required",
-    }),
-    jobStatus: isUpdate
-    ? Joi.string()
-      .valid(...Object.values(jobStatusEnum))
-      .optional()
-      .messages({
-        "any.only": "Invalid job status",
-        "any.required": "Job status is required",
+      ? Joi.boolean().optional().messages({
+        "boolean.base": "Agreement must be a boolean",
+        "any.required": "Agreement is required",
       })
-      : Joi.string()
-      .valid(...Object.values(jobStatusEnum))
-      .required()
-      .messages({
-        "any.only": "Invalid job status",
-        "any.required": "Job status is required",
+      : Joi.boolean().optional().messages({
+        "boolean.base": "Agreement must be a boolean",
+        "any.required": "Agreement is required",
       }),
+    jobStatus: isUpdate
+      ? Joi.string()
+        .valid(...Object.values(jobStatusEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid job status",
+          "any.required": "Job status is required",
+        })
+      : Joi.string()
+        .valid(...Object.values(jobStatusEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid job status",
+          "any.required": "Job status is required",
+        }),
     appliedTimestamp: isUpdate
-     ?Joi.date().optional().messages({
-      "date.base": "Applied timestamp must be a valid date",
-      "any.required": "Applied timestamp is required",
-    })
-    : Joi.date().required().messages({
-      "date.base": "Applied timestamp must be a valid date",
-      "any.required": "Applied timestamp is required",
-    }),
+      ? Joi.date().optional().messages({
+        "date.base": "Applied timestamp must be a valid date",
+        "any.required": "Applied timestamp is required",
+      })
+      : Joi.date().required().messages({
+        "date.base": "Applied timestamp must be a valid date",
+        "any.required": "Applied timestamp is required",
+      }),
     paymentStatus: isUpdate
-    ? Joi.boolean().optional().messages({
-      "boolean.base": "paymentStatus must be a boolean",
-      "any.required": "paymentStatus is required",
-    })
-    : Joi.boolean().required().messages({
-      "boolean.base": "paymentStatus must be a boolean",
-      "any.required": "paymentStatus is required",
-    }),
+      ? Joi.boolean().optional().messages({
+        "boolean.base": "paymentStatus must be a boolean",
+        "any.required": "paymentStatus is required",
+      })
+      : Joi.boolean().optional().messages({
+        "boolean.base": "paymentStatus must be a boolean",
+        "any.required": "paymentStatus is required",
+      }),
   });
 
   // Validate the input against the schema

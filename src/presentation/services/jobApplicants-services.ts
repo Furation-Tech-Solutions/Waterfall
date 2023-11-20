@@ -1,5 +1,4 @@
-// Import necessary modules and dependencies
-import { NextFunction, Request, Response, query } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   JobApplicantEntity,
   JobApplicantModel,
@@ -13,16 +12,13 @@ import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
 
-// Create a class called JobApplicantService
 export class JobApplicantService {
-  // Declare private properties to store use cases
   private readonly createJobApplicantUsecase: CreateJobApplicantUsecase;
   private readonly getJobApplicantByIdUsecase: GetJobApplicantByIdUsecase;
   private readonly getAllJobApplicantsUsecase: GetAllJobApplicantsUsecase;
   private readonly updateJobApplicantUsecase: UpdateJobApplicantUsecase;
   private readonly deleteJobApplicantUsecase: DeleteJobApplicantUsecase;
 
-  // Constructor to initialize use cases
   constructor(
     createJobApplicantUsecase: CreateJobApplicantUsecase,
     getJobApplicantByIdUsecase: GetJobApplicantByIdUsecase,
@@ -37,53 +33,71 @@ export class JobApplicantService {
     this.deleteJobApplicantUsecase = deleteJobApplicantUsecase;
   }
 
-  // Method to create a new job applicant
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   async createJobApplicant(req: Request, res: Response): Promise<void> {
-    // Extract job applicant data from the request body
     const jobApplicantData: JobApplicantModel = JobApplicantMapper.toModel(
       req.body
     );
 
-    // Execute the create job applicant use case and handle the result using Either
     const newJobApplicant: Either<ErrorClass, JobApplicantEntity> =
       await this.createJobApplicantUsecase.execute(jobApplicantData);
 
-    // Handle the result using cata function
     newJobApplicant.cata(
-      (
-        error: ErrorClass // Handle error case
-      ) => res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
       (result: JobApplicantEntity) => {
-        // Handle success case
         const resData = JobApplicantMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Job applicant created successfully",
+          201
+        );
       }
     );
   }
 
-  // Method to get a job applicant by ID
   async getJobApplicantById(req: Request, res: Response): Promise<void> {
-    // Extract the job applicant ID from the request parameters
     const jobId: string = req.params.id;
 
-    // Execute the get job applicant by ID use case and handle the result using Either
     const job: Either<ErrorClass, JobApplicantEntity> =
       await this.getJobApplicantByIdUsecase.execute(jobId);
 
-    // Handle the result using cata function
     job.cata(
-      (
-        error: ErrorClass // Handle error case
-      ) => res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       (result: JobApplicantEntity) => {
-        // Handle success case
         const resData = JobApplicantMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Job applicant retrieved successfully"
+        );
       }
     );
   }
 
-  // Method to get all jobApplicants
   async getAllJobApplicants(
     req: Request,
     res: Response,
@@ -92,99 +106,78 @@ export class JobApplicantService {
     let loginId = req.user;
     loginId = "3"; // For testing purposes, manually set loginId to "2"
 
-    // Create an empty query object
     const query: any = {};
 
-    // Assign values to properties of the query object
     query.q = req.query.q as string;
     query.id = parseInt(loginId, 10);
-    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
-    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
 
-    // Execute the getAllJobApplicantsUsecase to retrieve all job applicants
     const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
       await this.getAllJobApplicantsUsecase.execute(query);
 
-    // Handle the result using the Either monad's cata method
     jobApplicants.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
       (jobApplicants: JobApplicantEntity[]) => {
-        // Map jobApplicant entities to the desired format
         const resData = jobApplicants.map((jobApplicant: any) =>
           JobApplicantMapper.toEntity(jobApplicant)
         );
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData);
       }
     );
   }
 
-  // Method to update a job applicant
   async updateJobApplicant(req: Request, res: Response): Promise<void> {
-    // Extract the job applicant ID from the request parameters
     const jobApplicantId: string = req.params.id;
-
-    // Extract job applicant data from the request body
     const jobApplicantData: JobApplicantModel = req.body;
 
-    // Execute the get job applicant by ID use case and handle the result using Either
     const existingJobApplicant: Either<ErrorClass, JobApplicantEntity> =
       await this.getJobApplicantByIdUsecase.execute(jobApplicantId);
 
-    // Handle the result using cata function
     existingJobApplicant.cata(
-      (error: ErrorClass) => {
-        // Handle error case
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       async (result: JobApplicantEntity) => {
-        // Handle success case
         const resData = JobApplicantMapper.toEntity(result, true);
 
-        // Convert the updated job applicant data to an entity
         const updatedJobApplicantEntity: JobApplicantEntity =
           JobApplicantMapper.toEntity(jobApplicantData, true, resData);
 
-        // Execute the update job applicant use case and handle the result using Either
         const updatedJobApplicant: Either<ErrorClass, JobApplicantEntity> =
           await this.updateJobApplicantUsecase.execute(
             jobApplicantId,
             updatedJobApplicantEntity
           );
 
-        // Handle the result using cata function
         updatedJobApplicant.cata(
-          (error: ErrorClass) => {
-            // Handle error case
-            res.status(error.status).json({ error: error.message });
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
           (response: JobApplicantEntity) => {
-            // Handle success case
             const responseData = JobApplicantMapper.toModel(response);
-            res.json(responseData);
+            this.sendSuccessResponse(
+              res,
+              responseData,
+              "Job applicant updated successfully"
+            );
           }
         );
       }
     );
   }
 
-  // Method to delete a jobApplicant by ID
   async deleteJobApplicant(req: Request, res: Response): Promise<void> {
-    // Extract the jobApplicant ID from the request parameters
     const jobApplicantId: string = req.params.id;
 
-    // Execute the deleteJobApplicant use case and get an Either result
     const response: Either<ErrorClass, void> =
       await this.deleteJobApplicantUsecase.execute(jobApplicantId);
 
-    // Handle the result using Either's cata function
     response.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      // If successful, send a success message as a JSON response
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        return res.json({ message: "JobApplicant deleted successfully." });
+        this.sendSuccessResponse(
+          res,
+          {},
+          "Job applicant deleted successfully",
+          204
+        );
       }
     );
   }

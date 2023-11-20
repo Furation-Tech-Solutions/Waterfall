@@ -33,6 +33,21 @@ export class BlockingService {
     this.DeleteBlockingUsecase = DeleteBlockingUsecase;
   }
 
+  private sendSuccessResponse(res: Response, data: any, message: string = "Success", statusCode: number = 200): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number = 500): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Handler for creating a new blocking
   async createBlocking(req: Request, res: Response): Promise<void> {
     const blockingData: BlockingModel = BlockingMapper.toModel(req.body);
@@ -41,11 +56,10 @@ export class BlockingService {
       await this.CreateBlockingUsecase.execute(blockingData);
 
     newBlocking.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
       (result: BlockingEntity) => {
         const resData = BlockingMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Blocking created successfully", 201);
       }
     );
   }
@@ -70,17 +84,12 @@ export class BlockingService {
     const blockings: Either<ErrorClass, BlockingEntity[]> =
       await this.GetAllBlockingsUsecase.execute(query);
     blockings.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: BlockingEntity[]) => {
-        // Filter out blockings with del_status set to "Deleted"
-        // const nonDeletedBlockings = result.filter((blocking) => blocking.deleteStatus !== false);
-
-        // Convert non-deleted blockings from an array of BlockingEntity to an array of plain JSON objects using blockingMapper
-        const responseData = blockings.map((blocking) =>
+        const responseData = result.map((blocking) =>
           BlockingMapper.toEntity(blocking)
         );
-        return res.json(responseData);
+        this.sendSuccessResponse(res, responseData, "Blockings retrieved successfully");
       }
     );
   }
@@ -93,14 +102,14 @@ export class BlockingService {
       await this.GetBlockingByIdUsecase.execute(blockingId);
 
     blocking.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: BlockingEntity) => {
         if (!result) {
-          return res.json({ message: "Blocking Name not found." });
+          this.sendErrorResponse(res, ErrorClass.notFound());
+        } else {
+          const resData = BlockingMapper.toEntity(result);
+          this.sendSuccessResponse(res, resData, "Blocking retrieved successfully");
         }
-        const resData = BlockingMapper.toEntity(result);
-        return res.json(resData);
       }
     );
   }
@@ -114,9 +123,7 @@ export class BlockingService {
       await this.GetBlockingByIdUsecase.execute(blockingId);
 
     existingBlocking.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       async (existingBlockingData: BlockingEntity) => {
         const updatedBlockingEntity: BlockingEntity = BlockingMapper.toEntity(
           blockingData,
@@ -131,12 +138,10 @@ export class BlockingService {
           );
 
         updatedBlocking.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
           (result: BlockingEntity) => {
             const resData = BlockingMapper.toEntity(result, true);
-            res.json(resData);
+            this.sendSuccessResponse(res, resData, "Blocking updated successfully");
           }
         );
       }
@@ -147,16 +152,12 @@ export class BlockingService {
   async deleteBlocking(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    // Execute the deleteBlock use case to delete a blocking by ID
     const deleteBlock: Either<ErrorClass, void> =
       await this.DeleteBlockingUsecase.execute(id);
 
     deleteBlock.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: void) => {
-        return res.json({ message: "Blocking deleted successfully." });
-      }
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      (result: void) => this.sendSuccessResponse(res, {}, "Blocking deleted successfully", 204), // No Content
     );
   }
 }

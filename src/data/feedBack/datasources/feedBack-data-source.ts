@@ -51,8 +51,8 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
         { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
         { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
       ],
-      limit,
-      offset,
+      // limit,
+      // offset,
     });
 
     return data.map((feedBack: any) => feedBack.toJSON());
