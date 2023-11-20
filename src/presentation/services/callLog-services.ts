@@ -159,8 +159,11 @@ export class CallLogService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    let loginId = req.user;
+    loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object
     // Assign values to properties of the query object
+    query.id = parseInt(loginId, 10);
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 

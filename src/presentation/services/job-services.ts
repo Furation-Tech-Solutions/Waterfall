@@ -157,8 +157,8 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId = req.body.loginId;
-    loginId = "2"; // For testing purposes, manually set loginId to "2"
+    let loginId = req.user;
+    loginId = "3"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {}; // Create an empty query object
 
@@ -182,20 +182,20 @@ export class JobService {
       // If successful, map the results to Entities and send them as a JSON response
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
-        const emailService = new SESMailService()
+        const emailService = new SESMailService();
         const emailOption = {
           email: "shehzadmalik123.sm@gmail.com",
           subject: "Booking Request Confirmation",
           message: "this is testing email",
         };
-          emailService.sendEmail(emailOption)
-  
-          const smsService=new SMSService()
-          const smsOptions={
-             phoneNumber:"+919881239491",
-             message:"this is testing sms in node .ts"
-          }
-          smsService.sendSMS(smsOptions)
+        emailService.sendEmail(emailOption);
+
+        const smsService = new SMSService();
+        const smsOptions = {
+          phoneNumber: "+919881239491",
+          message: "this is testing sms in node .ts",
+        };
+        smsService.sendSMS(smsOptions);
         return res.json(resData);
       }
     );
@@ -203,7 +203,7 @@ export class JobService {
 
   // Method to get total job posted count
   async getTotalCount(req: Request, res: Response): Promise<void> {
-    let id: string = req.body.loginId;
+    let id: string = req.user;
     let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {}; // Create an empty query object

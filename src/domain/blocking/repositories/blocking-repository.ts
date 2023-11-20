@@ -1,5 +1,8 @@
 // Import necessary types and classes
-import { BlockingModel, BlockingEntity } from "@domain/blocking/entities/blocking";
+import {
+  BlockingModel,
+  BlockingEntity,
+} from "@domain/blocking/entities/blocking";
 import { Either } from "monet";
 import { ErrorClass } from "@presentation/error-handling/api-error";
 import { BlockQuery } from "@data/blocking/datasources/blocking-data-source";

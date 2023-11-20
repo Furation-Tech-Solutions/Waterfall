@@ -30,6 +30,7 @@ export interface SavedJobDataSource {
 
 // Define a SavedJobQuery object to encapsulate parameters
 export interface SavedJobQuery {
+  id: number;
   page: number;
   limit: number;
 }
@@ -79,7 +80,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
 
   // Implement the "getAll" method to retrieve all SavedJobEntity records from the database
   async getAll(query: SavedJobQuery): Promise<SavedJobEntity[]> {
-
+    let loginId = query.id;
     // Default to page 1 and 10 items per page if not specified in the query
     const currentPage = query.page || 1;
     const itemsPerPage = query.limit || 10;
@@ -94,6 +95,9 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           model: Realtors,
           as: "realtorData",
           foreignKey: "Realtor",
+          where: { 
+            Realtor: loginId
+          },
         },
         {
           model: Job,

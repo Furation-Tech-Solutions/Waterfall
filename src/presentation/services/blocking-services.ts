@@ -51,9 +51,17 @@ export class BlockingService {
   }
 
   // Handle for getting all blockings
-  async getAllBlockings(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAllBlockings(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    let loginId = req.user;
+    loginId = "3"; // For testing purposes, manually set loginId to "2"
+
     const query: any = {}; // Create an empty query object
 
+    query.id = parseInt(loginId, 10);
     // Assign values to properties of the query object
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
@@ -82,18 +90,18 @@ export class BlockingService {
     const blockingId: string = req.params.id;
 
     const blocking: Either<ErrorClass, BlockingEntity> =
-        await this.GetBlockingByIdUsecase.execute(blockingId);
+      await this.GetBlockingByIdUsecase.execute(blockingId);
 
     blocking.cata(
-        (error: ErrorClass) =>
-            res.status(error.status).json({ error: error.message }),
-        (result: BlockingEntity) => {
-            if (!result) {
-                return res.json({ message: "Blocking Name not found." });
-            }
-            const resData = BlockingMapper.toEntity(result);
-            return res.json(resData);
+      (error: ErrorClass) =>
+        res.status(error.status).json({ error: error.message }),
+      (result: BlockingEntity) => {
+        if (!result) {
+          return res.json({ message: "Blocking Name not found." });
         }
+        const resData = BlockingMapper.toEntity(result);
+        return res.json(resData);
+      }
     );
   }
 
@@ -103,52 +111,52 @@ export class BlockingService {
     const blockingData: BlockingModel = req.body;
 
     const existingBlocking: Either<ErrorClass, BlockingEntity> =
-        await this.GetBlockingByIdUsecase.execute(blockingId);
+      await this.GetBlockingByIdUsecase.execute(blockingId);
 
     existingBlocking.cata(
-        (error: ErrorClass) => {
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message });
+      },
+      async (existingBlockingData: BlockingEntity) => {
+        const updatedBlockingEntity: BlockingEntity = BlockingMapper.toEntity(
+          blockingData,
+          true,
+          existingBlockingData
+        );
+
+        const updatedBlocking: Either<ErrorClass, BlockingEntity> =
+          await this.UpdateBlockingUsecase.execute(
+            blockingId,
+            updatedBlockingEntity
+          );
+
+        updatedBlocking.cata(
+          (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
-        },
-        async (existingBlockingData: BlockingEntity) => {
-            const updatedBlockingEntity: BlockingEntity = BlockingMapper.toEntity(
-                blockingData,
-                true,
-                existingBlockingData
-            );
-
-            const updatedBlocking: Either<ErrorClass, BlockingEntity> =
-                await this.UpdateBlockingUsecase.execute(
-                    blockingId,
-                    updatedBlockingEntity
-                );
-
-            updatedBlocking.cata(
-                (error: ErrorClass) => {
-                    res.status(error.status).json({ error: error.message });
-                },
-                (result: BlockingEntity) => {
-                    const resData = BlockingMapper.toEntity(result, true);
-                    res.json(resData);
-                }
-            );
-        }
+          },
+          (result: BlockingEntity) => {
+            const resData = BlockingMapper.toEntity(result, true);
+            res.json(resData);
+          }
+        );
+      }
     );
   }
 
   // Handler for deleting a blocking by ID
   async deleteBlocking(req: Request, res: Response): Promise<void> {
-      const id: string = req.params.id;
-    
-      // Execute the deleteBlock use case to delete a blocking by ID
-      const deleteBlock: Either<ErrorClass, void> 
-        = await this.DeleteBlockingUsecase.execute(id);
+    const id: string = req.params.id;
 
-      deleteBlock.cata(
-        (error: ErrorClass) =>
+    // Execute the deleteBlock use case to delete a blocking by ID
+    const deleteBlock: Either<ErrorClass, void> =
+      await this.DeleteBlockingUsecase.execute(id);
+
+    deleteBlock.cata(
+      (error: ErrorClass) =>
         res.status(error.status).json({ error: error.message }),
-        (result: void) =>{
-          return res.json({ message: "Blocking deleted successfully." })
-        }
-      )
+      (result: void) => {
+        return res.json({ message: "Blocking deleted successfully." });
+      }
+    );
   }
 }

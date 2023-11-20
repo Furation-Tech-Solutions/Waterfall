@@ -20,6 +20,7 @@ export interface NotInterestedDataSource {
 
 // Define a NotInterestedQuery object to encapsulate parameters
 export interface NotInterestedQuery {
+  id: number;
   page: number;
   limit: number;
 }
@@ -76,6 +77,7 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
 
   // Implement the "getAll" method to retrieve all NotInterestedEntity records from the database
   async getAll(query: NotInterestedQuery): Promise<NotInterestedEntity[]> {
+    let loginId = query.id;
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
@@ -86,6 +88,9 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
           model: Realtors,
           as: "realtorData",
           foreignKey: "realtor",
+          where: {
+            realtor: loginId
+          },
         },
         {
           model: Job,

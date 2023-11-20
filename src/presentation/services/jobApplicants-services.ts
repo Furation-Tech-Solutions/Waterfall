@@ -89,8 +89,8 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId = req.body.loginId;
-    loginId = "2"; // For testing purposes, manually set loginId to "2"
+    let loginId = req.user;
+    loginId = "3"; // For testing purposes, manually set loginId to "2"
 
     // Create an empty query object
     const query: any = {};
