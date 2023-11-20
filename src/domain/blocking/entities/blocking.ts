@@ -2,7 +2,9 @@
 export class BlockingModel {
   constructor(
     public fromRealtor: number = 0,
-    public toRealtor: number = 0
+    public toRealtor: number = 0,
+    public fromRealtorData: {} = {},
+    public toRealtorData: {} = {},
   ) { }
 }
 
@@ -11,7 +13,9 @@ export class BlockingEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
     public fromRealtor: number,
-    public toRealtor: number
+    public toRealtor: number,
+    public fromRealtorData: object,
+    public toRealtorData: object,
   ) { }
 }
 
@@ -34,14 +38,16 @@ export class BlockingMapper {
         toRealtor:
           blockingData.toRealtor !== undefined
             ? blockingData.toRealtor
-            : existingBlocking.toRealtor
+            : existingBlocking.toRealtor,
       };
     } else {
       // If existingBlocking is not provided, create a new BlockingEntity using blockingData
       const blockingEntity: BlockingEntity = {
         id: includeId ? (blockingData.id ? blockingData.id : undefined) : blockingData.id,
         fromRealtor: blockingData.fromRealtor,
-        toRealtor: blockingData.toRealtor
+        toRealtor: blockingData.toRealtor,
+        fromRealtorData: blockingData.fromRealtorData,
+        toRealtorData: blockingData.toRealtorData
       };
       return blockingEntity;
     }
@@ -51,7 +57,9 @@ export class BlockingMapper {
   static toModel(blocking: BlockingEntity): any {
     return {
       fromRealtor: blocking.fromRealtor,
-      toRealtor: blocking.toRealtor
+      toRealtor: blocking.toRealtor,
+      fromRealtorData: blocking.fromRealtorData,
+      toRealtorData: blocking.toRealtorData
     };
   }
 }

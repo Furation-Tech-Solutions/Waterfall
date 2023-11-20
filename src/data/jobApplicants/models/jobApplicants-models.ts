@@ -36,7 +36,6 @@ const JobApplicant = sequelize.define("JobApplicant", {
   // Define the "applicantStatus" field with its data type and constraints
   applicantStatus: {
     type: DataTypes.STRING,
-    allowNull: false,
     defaultValue: "Pending",
     validate: {
       isIn: {
@@ -48,13 +47,11 @@ const JobApplicant = sequelize.define("JobApplicant", {
   // Define the "agreement" field with its data type and constraints
   agreement: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
   // Define the "jobStatus" field with its data type and constraints
   jobStatus: {
     type: DataTypes.ENUM(...Object.values(jobStatusEnum)),
-    allowNull: false,
     defaultValue: "Pending",
   },
   // Define the "appliedTimestamp" field with its data type and constraints
@@ -65,7 +62,6 @@ const JobApplicant = sequelize.define("JobApplicant", {
   // Define the "paymentStatus" field with its data type and constraints
   paymentStatus: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: false,
   },
 });

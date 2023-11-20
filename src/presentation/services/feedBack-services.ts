@@ -37,6 +37,32 @@ export class FeedBackService {
     this.GetFeedbackCountUsecase = GetFeedbackCountUsecase;
   }
 
+  // Helper method to send success response
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  // Helper method to send error response
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Handler for creating a new feedback
   async createFeedBack(req: Request, res: Response): Promise<void> {
     const feedBackData: FeedBackModel = FeedBackMapper.toModel(req.body);
@@ -45,11 +71,15 @@ export class FeedBackService {
       await this.CreateFeedBackUsecase.execute(feedBackData);
 
     newFeedBack.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
       (result: FeedBackEntity) => {
         const resData = FeedBackMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Feedback created successfully",
+          201
+        ); // Created
       }
     );
   }
@@ -74,17 +104,16 @@ export class FeedBackService {
       await this.GetAllFeedBacksUsecase.execute(query);
 
     feedBacks.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: FeedBackEntity[]) => {
-        // Filter out feedbacks with del_status set to "Deleted"
-        // const nonDeletedFeedBacks = result.filter((feedback) => feedback.deleteStatus !== false);
-
-        // Convert non-deleted feedbacks from an array of FeedBackEntity to an array of plain JSON objects using feedbackMapper
         const responseData = result.map((feedback) =>
           FeedBackMapper.toEntity(feedback)
         );
-        return res.json(responseData);
+        this.sendSuccessResponse(
+          res,
+          responseData,
+          "Feedbacks retrieved successfully"
+        );
       }
     );
   }
@@ -97,14 +126,18 @@ export class FeedBackService {
       await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     feedBack.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       (result: FeedBackEntity) => {
         if (!result) {
-          return res.json({ message: "FeedBack Name not found." });
+          this.sendErrorResponse(res, ErrorClass.notFound());
+        } else {
+          const resData = FeedBackMapper.toEntity(result);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Feedback retrieved successfully"
+          );
         }
-        const resData = FeedBackMapper.toEntity(result);
-        return res.json(resData);
       }
     );
   }
@@ -118,14 +151,14 @@ export class FeedBackService {
       await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     existingFeedBack.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       async (existingFeedBackData: FeedBackEntity) => {
+        const resData = FeedBackMapper.toEntity(existingFeedBackData, true);
+
         const updatedFeedBackEntity: FeedBackEntity = FeedBackMapper.toEntity(
           feedBackData,
           true,
-          existingFeedBackData
+          resData
         );
 
         const updatedFeedBack: Either<ErrorClass, FeedBackEntity> =
@@ -135,12 +168,14 @@ export class FeedBackService {
           );
 
         updatedFeedBack.cata(
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
           (result: FeedBackEntity) => {
             const resData = FeedBackMapper.toEntity(result, true);
-            res.json(resData);
+            this.sendSuccessResponse(
+              res,
+              resData,
+              "Feedback updated successfully"
+            );
           }
         );
       }
@@ -151,17 +186,20 @@ export class FeedBackService {
   async deleteFeedBack(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    // Execute the deleteFeedBack use case to delete a feedback by ID
-    const deleteFeedBack: Either<ErrorClass, void>
-      = await this.DeleteFeedBackUsecase.execute(id);
+    const deleteFeedBack: Either<ErrorClass, void> =
+      await this.DeleteFeedBackUsecase.execute(id);
 
     deleteFeedBack.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      (result: void) => {
-        return res.json({ message: "FeedBack deleted successfully." })
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      () => {
+        this.sendSuccessResponse(
+          res,
+          {},
+          "Feedback deleted successfully",
+          204
+        ); // No Content
       }
-    )
+    );
   }
 
   async getFeedbackCount(req: Request, res: Response): Promise<void> {
@@ -178,16 +216,13 @@ export class FeedBackService {
     query.year = parseInt(req.query.year as string, 10);
     query.month = parseInt(req.query.month as string, 10);
 
-    const count: Either<ErrorClass, number> = await this.GetFeedbackCountUsecase.execute(query);
+    const count: Either<ErrorClass, number> =
+      await this.GetFeedbackCountUsecase.execute(query);
     count.cata(
-      (error: ErrorClass) =>
-
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: number) => {
-        return res.json({ count: result });
+        this.sendSuccessResponse(res, { count: result });
       }
-    )
+    );
   }
-
-
 }

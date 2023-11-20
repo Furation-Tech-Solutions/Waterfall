@@ -12,7 +12,6 @@ import { GetAllSupportsUsecase } from "@domain/support/usecases/get-all-supports
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
-// Create a class for the SupportService
 export class SupportService {
   private readonly createSupportUsecase: CreateSupportUsecase;
   private readonly deleteSupportUsecase: DeleteSupportUsecase;
@@ -20,7 +19,6 @@ export class SupportService {
   private readonly updateSupportUsecase: UpdateSupportUsecase;
   private readonly getAllSupportsUsecase: GetAllSupportsUsecase;
 
-  // Constructor to initialize dependencies
   constructor(
     createSupportUsecase: CreateSupportUsecase,
     deleteSupportUsecase: DeleteSupportUsecase,
@@ -35,132 +33,128 @@ export class SupportService {
     this.getAllSupportsUsecase = getAllSupportsUsecase;
   }
 
-  // Function to create a new support
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   async createSupport(req: Request, res: Response): Promise<void> {
-    // Extract support data from the request body
     const supportData: SupportModel = SupportMapper.toModel(req.body);
 
-    // Execute the createSupportUsecase and handle the result using Either
     const newSupport: Either<ErrorClass, SupportEntity> =
       await this.createSupportUsecase.execute(supportData);
 
-    // Handle the result and send a JSON response
     newSupport.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
       (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Support created successfully", 201);
       }
     );
   }
 
-  // Function to delete a support
   async deleteSupport(req: Request, res: Response): Promise<void> {
-    // Extract support ID from the request parameters
     const supportId: string = req.params.id;
 
-    // Execute the deleteSupportUsecase and handle the result using Either
     const response: Either<ErrorClass, void> =
       await this.deleteSupportUsecase.execute(supportId);
 
-    // Handle the result and send a JSON response
     response.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        return res.json({ message: "Support deleted successfully." });
+        this.sendSuccessResponse(
+          res,
+          {},
+          "Saved job deleted successfully",
+          204
+        );
       }
     );
   }
 
-  // Function to get a support by ID
   async getSupportById(req: Request, res: Response): Promise<void> {
-    // Extract support ID from the request parameters
     const supportId: string = req.params.id;
 
-    // Execute the getSupportByIdUsecase and handle the result using Either
     const support: Either<ErrorClass, SupportEntity> =
       await this.getSupportByIdUsecase.execute(supportId);
 
-    // Handle the result and send a JSON response
     support.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Support retrieved successfully");
       }
     );
   }
 
-  // Function to update a support
   async updateSupport(req: Request, res: Response): Promise<void> {
-    // Extract support ID from the request parameters
     const supportId: string = req.params.id;
-    // Extract support data from the request body
     const supportData: SupportModel = req.body;
 
-    // Execute the getSupportByIdUsecase to fetch the existing support
     const existingSupport: Either<ErrorClass, SupportEntity> =
       await this.getSupportByIdUsecase.execute(supportId);
 
-    // Handle the result of fetching the existing support
     existingSupport.cata(
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       async (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
 
-        // Map the updated support data to an entity
         const updatedSupportEntity: SupportEntity = SupportMapper.toEntity(
           supportData,
           true,
           resData
         );
 
-        // Execute the updateSupportUsecase and handle the result using Either
         const updatedSupport: Either<ErrorClass, SupportEntity> =
-          await this.updateSupportUsecase.execute(
-            supportId,
-            updatedSupportEntity
-          );
+          await this.updateSupportUsecase.execute(supportId, updatedSupportEntity);
 
-        // Handle the result and send a JSON response
         updatedSupport.cata(
           (error: ErrorClass) => {
             res.status(error.status).json({ error: error.message });
           },
           (response: SupportEntity) => {
             const responseData = SupportMapper.toModel(response);
-
-            res.json(responseData);
+            this.sendSuccessResponse(res, responseData, "Support updated successfully");
           }
         );
       }
     );
   }
 
-  // Function to get all supports
   async getAllSupports(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    // Execute the getAllSupportsUsecase and handle the result using Either
     const supports: Either<ErrorClass, SupportEntity[]> =
       await this.getAllSupportsUsecase.execute();
 
-    // Handle the result and send a JSON response
     supports.cata(
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (supports: SupportEntity[]) => {
         const resData = supports.map((support: any) =>
           SupportMapper.toEntity(support)
         );
-        return res.json(resData);
+        this.sendSuccessResponse(res, resData, "Supports retrieved successfully");
       }
     );
   }

@@ -59,8 +59,14 @@ const realtorValidator = (
         "any.required": "lastName is required",
       }),
     contact: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().optional(),
+      ? Joi.string().optional().min(10).max(14).messages({
+        "string.min": "contact should have at least 10 characters",
+        "string.max": "contact should have less than 14 characters",
+      })
+      : Joi.string().optional().min(10).max(14).messages({
+        "string.min": "contact should have at least 10 characters",
+        "string.max": "contact should have less than 14 characters",
+      }),
     DOB: isUpdate
       ? Joi.string().optional().messages({
         'string.empty': 'Date of birth cannot be empty',

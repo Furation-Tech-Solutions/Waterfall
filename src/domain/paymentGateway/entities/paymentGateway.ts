@@ -53,7 +53,7 @@ export class PaymentGatewayMapper {
       const paymentGatewayEntity: PaymentGatewayEntity = {
         id: includeId
           ? paymentGatewayData.id
-            ? paymentGatewayData.id.toString()
+            ? paymentGatewayData.id
             : undefined
           : paymentGatewayData.id.toString(), // Set the ID if includeId is true
         jobId: paymentGatewayData.job,
