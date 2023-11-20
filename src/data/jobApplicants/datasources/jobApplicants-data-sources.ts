@@ -4,9 +4,7 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, {
-  jobStatusEnum,
-} from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -191,6 +189,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             model: Job,
             as: "jobdata",
             foreignKey: "job",
+            where: {
+              jobOwner: loginId, // Use the correct way to filter by jobOwner
+            },
           },
           {
             model: Realtors,
@@ -212,6 +213,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             model: Job,
             as: "jobdata",
             foreignKey: "job",
+            where: {
+              jobOwner: loginId, // Use the correct way to filter by jobOwner
+            },
           },
           {
             model: Realtors,
@@ -232,6 +236,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             model: Job,
             as: "jobdata",
             foreignKey: "job",
+            where: {
+              jobOwner: loginId, // Use the correct way to filter by jobOwner
+            },
           },
           {
             model: Realtors,
@@ -249,6 +256,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             model: Job,
             as: "jobData",
             foreignKey: "job",
+            where: {
+              jobOwner: loginId, // Use the correct way to filter by jobOwner
+            },
           },
           {
             model: Realtors,

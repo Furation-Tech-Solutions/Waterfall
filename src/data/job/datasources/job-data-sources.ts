@@ -32,7 +32,7 @@ export interface JobQuery {
   q: string;
   page: number;
   limit: number;
-  year?: number; 
+  year?: number;
   month?: number;
 }
 
@@ -129,7 +129,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-    //-----------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -153,7 +153,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-    //-----------------------------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------------------------
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
@@ -174,7 +174,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
-    //-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
@@ -199,6 +199,9 @@ export class JobDataSourceImpl implements JobDataSource {
           {
             model: JobApplicant,
             as: "applicantsData",
+            where: {
+              applicant: loginId,
+            },
           },
         ],
         limit: itemsPerPage,
@@ -208,6 +211,9 @@ export class JobDataSourceImpl implements JobDataSource {
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
+        where: {
+          jobOwner: loginId,
+        },
         include: [
           {
             model: Realtors,
@@ -252,8 +258,8 @@ export class JobDataSourceImpl implements JobDataSource {
 
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
-  
-  //-------------------------------------------------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------------------------------------------------
 
     if (query.q === "posted") {
       const count = await Job.count({
@@ -279,7 +285,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       return count;
-    //----------------------------------------------------------------------------------------------------------------------
+      //----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobsforowner") {
       const count = await Job.count({
         where: {
@@ -298,7 +304,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       return count;
-    //---------------------------------------------------------------------------------------------------------------------------------------
+      //---------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "scheduled") {
       const count = await Job.count({
         where: {
@@ -317,7 +323,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       return count;
-    //------------------------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "applied") {
       const count = await Job.count({
         include: [
@@ -331,7 +337,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       return count;
-    //----------------------------------------------------------------------------------------------------------------------------------------
+      //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "assigned") {
       const count = await Job.count({
         where: {
@@ -348,7 +354,7 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       return count;
-    //----------------------------------------------------------------------------------------------------------------------------------------
+      //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobforapplicant") {
       const count = await Job.count({
         where: {

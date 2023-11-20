@@ -169,10 +169,15 @@ export class CallLogService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const query: any = {};
-    query.page = parseInt(req.query.page as string, 10);
-    query.limit = parseInt(req.query.limit as string, 10);
+    let loginId = req.user;
+    loginId = "1"; // For testing purposes, manually set loginId to "2"
+    const query: any = {}; // Create an empty query object
+    // Assign values to properties of the query object
+    query.id = parseInt(loginId, 10);
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
+    // Execute the getAllCallLogs use case and get an Either result
     const callLogs: Either<ErrorClass, CallLogEntity[]> =
       await this.getAllCallLogsUsecase.execute(query);
 

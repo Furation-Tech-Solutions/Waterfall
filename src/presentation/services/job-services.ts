@@ -158,8 +158,8 @@ export class JobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId = req.body.loginId;
-    loginId = "2"; // For testing purposes, manually set loginId to "2"
+    let loginId = req.user;
+    loginId = "3"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
@@ -177,7 +177,7 @@ export class JobService {
       (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
-        const emailService = new SESMailService()
+        const emailService = new SESMailService();
         const emailOption = {
           email: "shehzadmalik123.sm@gmail.com",
           subject: "Booking Request Confirmation",
@@ -197,8 +197,8 @@ export class JobService {
   }
 
   async getTotalCount(req: Request, res: Response): Promise<void> {
-    let id: string = req.body.loginId;
-    let loginId = id || "1";
+    let id: string = req.user;
+    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
