@@ -39,12 +39,10 @@ export class MessagesRepositoryImpl implements MessagesRepository {
 
   // Delete a message entry by ID
   async deleteMessage(
-    loginId: string,
     id: string
   ): Promise<Either<ErrorClass, void>> {
     try {
       const result = await this.messageDataSource.deleteMsg(
-        loginId,
         id
       ); // Use the messages data source
 
@@ -59,13 +57,11 @@ export class MessagesRepositoryImpl implements MessagesRepository {
 
   // Update a message entry by ID
   async updateMessage(
-    loginId: string,
     id: string,
     data: MessageModel
   ): Promise<Either<ErrorClass, MessageEntity>> {
     try {
       const updatedMessages = await this.messageDataSource.updateMsg(
-        loginId,
         id,
         data
       ); // Use the Messages data source
@@ -97,12 +93,10 @@ export class MessagesRepositoryImpl implements MessagesRepository {
 
   // Retrieve a message entry by its ID
   async getMessageById(
-    loginId: string,
     id: string
   ): Promise<Either<ErrorClass, MessageEntity>> {
     try {
       const messages = await this.messageDataSource.read(
-        loginId,
         id
       ); // Use the messages data source
       return messages

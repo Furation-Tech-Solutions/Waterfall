@@ -4,7 +4,7 @@ import { MessagesRepository } from "../repositories/msg-repository"; // Import t
 import { Either, Right, Left } from "monet";
 
 export interface GetByIdMessageUsecase {
-  execute: (loginId: string, id: string) => Promise<Either<ErrorClass, MessageEntity>>;
+  execute: (id: string) => Promise<Either<ErrorClass, MessageEntity>>;
 }
 
 export class GetByIdMessage implements GetByIdMessageUsecase {
@@ -14,8 +14,8 @@ export class GetByIdMessage implements GetByIdMessageUsecase {
     this.messagesRepository = messagesRepository;
   }
 
-  async execute(loginId: string, id: string): Promise<Either<ErrorClass, MessageEntity>> {
-    return await this.messagesRepository.getMessageById(loginId, id);
+  async execute(id: string): Promise<Either<ErrorClass, MessageEntity>> {
+    return await this.messagesRepository.getMessageById(id);
   }
 }
 

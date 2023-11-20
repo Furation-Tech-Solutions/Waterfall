@@ -17,9 +17,9 @@ export interface Query {
 // Create MessageDataSource Interface
 export interface MessageDataSource {
     createMsg(msg: MessageModel): Promise<any>;
-    updateMsg(loginId: string, id: string, data: MessageModel): Promise<any>;
-    deleteMsg(loginId: string, id: string): Promise<void>;
-    read(loginId: string, id: string): Promise<any | null>;
+    updateMsg(id: string, data: MessageModel): Promise<any>;
+    deleteMsg(id: string): Promise<void>;
+    read(id: string): Promise<any | null>;
     getAll(loginId: string, query: Query): Promise<any[]>;
 }
 
@@ -33,7 +33,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         return createdMessages.toJSON(); // Convert to a plain JavaScript object before returning
     }
 
-    async deleteMsg(loginId: string, id: string): Promise<void> {
+    async deleteMsg(id: string): Promise<void> {
         // Delete the message record where the ID matches the provided ID
         const deletedMessage = await Message.destroy({
             where: {
@@ -42,7 +42,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         });
     }
 
-    async read(loginId: string, id: string): Promise<any | null> {
+    async read(id: string): Promise<any | null> {
         // Read a message record by ID
         const messages = await Message.findOne({
             where: {
@@ -158,7 +158,6 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     }
 
     async updateMsg(
-        loginId: string,
         id: string,
         updatedData: MessageModel
     ): Promise<any> {
