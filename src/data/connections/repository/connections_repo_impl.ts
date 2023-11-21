@@ -47,12 +47,11 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
   // Method to delete a connection
   async deleteRequest(
-    loginId: string,
     id: string
   ): Promise<Either<ErrorClass, void>> {
     try {
       // Use the ConnectionsDataSource to delete a connection
-      const result = await this.connectionsDataSource.deleteReq(loginId, id);
+      const result = await this.connectionsDataSource.deleteReq(id);
 
       // Return a Right if deletion was successful
       return Right<ErrorClass, void>(result);
@@ -67,14 +66,12 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
   // Method to update a connection
   async updateRequest(
-    loginId: string,
     id: string,
     data: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to update a connection
       const updatedConnections = await this.connectionsDataSource.updateReq(
-        loginId,
         id,
         data
       );
@@ -115,12 +112,11 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
   // Method to get a connection by ID
   async getById(
-    loginId: string,
     id: string
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to get a connection by ID
-      const connections = await this.connectionsDataSource.read(loginId, id);
+      const connections = await this.connectionsDataSource.read(id);
 
       // Return a Right with the connection entity if found, else return Left with notFound ApiError
       return connections

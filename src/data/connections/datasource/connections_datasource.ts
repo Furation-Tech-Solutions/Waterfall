@@ -15,9 +15,9 @@ export interface Query {
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
   createReq(connections: ConnectionsModel): Promise<any>;
-  updateReq(loginId: string, id: string, data: ConnectionsModel): Promise<any>;
-  deleteReq(loginId: string, id: string): Promise<void>;
-  read(loginId: string, id: string): Promise<any | null>;
+  updateReq(id: string, data: ConnectionsModel): Promise<any>;
+  deleteReq(id: string): Promise<void>;
+  read(id: string): Promise<any | null>;
   getAll(loginId: string, query: Query): Promise<any[]>;
 }
 
@@ -51,7 +51,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Delete a connection
-  async deleteReq(loginId: string, id: string): Promise<void> {
+  async deleteReq(id: string): Promise<void> {
     const deletedConnection = await Connections.destroy({
       where: {
         id,
@@ -64,7 +64,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Retrieve a connection by ID
-  async read(loginId: string, id: string): Promise<any | null> {
+  async read(id: string): Promise<any | null> {
     const connections = await Connections.findOne({
       where: {
         id,
@@ -191,7 +191,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
   // Update a connection by ID
   async updateReq(
-    loginId: string,
     id: string,
     updatedData: ConnectionsModel
   ): Promise<any> {
