@@ -5,7 +5,6 @@ import { Either, Right, Left } from "monet";
 
 export interface UpdateMessageUsecase {
   execute: (
-    loginId: string,
     id: string,
     Data: MessageEntity
   ) => Promise<Either<ErrorClass, MessageEntity>>;
@@ -19,10 +18,9 @@ export class UpdateMessage implements UpdateMessageUsecase {
   }
 
   async execute(
-    loginId: string,
     id: string,
     Data: MessageEntity
   ): Promise<Either<ErrorClass, MessageEntity>> {
-    return await this.messagesRepository.updateMessage(loginId, id, Data);
+    return await this.messagesRepository.updateMessage(id, Data);
   }
 }

@@ -1,4 +1,3 @@
-// Import necessary modules and dependencies
 import { NextFunction, Request, Response } from "express";
 import {
   CallLogEntity,
@@ -37,116 +36,127 @@ export class CallLogService {
     this.getAllCallLogsUsecase = getAllCallLogsUsecase;
   }
 
+  // Helper method to send success response
+  private sendSuccessResponse(
+    res: Response,
+    data: any,
+    message: string = "Success",
+    statusCode: number = 200
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  // Helper method to send error response
+  private sendErrorResponse(
+    res: Response,
+    error: ErrorClass,
+    statusCode: number = 500
+  ): void {
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   // Method to create a new CallLog
   async createCallLog(req: Request, res: Response): Promise<void> {
-    // Extract CallLog data from the request body and map it to a CallLogModel
     const callLogData: CallLogModel = CallLogMapper.toModel(req.body);
 
-    // Execute the createCallLog use case and get an Either result
     const newCallLog: Either<ErrorClass, CallLogEntity> =
       await this.createCallLogUsecase.execute(callLogData);
 
-    // Handle the result using Either's cata function
     newCallLog.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      // If successful, map the result to an Entity and send it as a JSON response
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
       (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "CallLog created successfully",
+          201
+        );
       }
     );
   }
 
   // Method to delete a CallLog by ID
   async deleteCallLog(req: Request, res: Response): Promise<void> {
-    // Extract the CallLog ID from the request parameters
     const callLogId: string = req.params.id;
 
-    // Execute the deleteCallLog use case and get an Either result
     const response: Either<ErrorClass, void> =
       await this.deleteCallLogUsecase.execute(callLogId);
 
-    // Handle the result using Either's cata function
     response.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      // If successful, send a success message as a JSON response
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       () => {
-        return res.json({ message: "CallLog deleted successfully." });
+        this.sendSuccessResponse(
+          res,
+          {},
+          "CallLog deleted successfully",
+          204
+        ); // No Content
       }
     );
   }
 
   // Method to get a CallLog by ID
   async getCallLogById(req: Request, res: Response): Promise<void> {
-    // Extract the CallLog ID from the request parameters
-    const callJobId: string = req.params.id;
+    const callLogId: string = req.params.id;
 
-    // Execute the getCallLogById use case and get an Either result
     const job: Either<ErrorClass, CallLogEntity> =
-      await this.getCallLogByIdUsecase.execute(callJobId);
+      await this.getCallLogByIdUsecase.execute(callLogId);
 
-    // Handle the result using Either's cata function
     job.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      // If successful, map the result to an Entity and send it as a JSON response
+      (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "CallLog retrieved successfully"
+        );
       }
     );
   }
 
   // Method to update a CallLog by ID
   async updateCallLog(req: Request, res: Response): Promise<void> {
-    // Extract the CallLog ID from the request parameters and CallLog data from the body
     const callLogId: string = req.params.id;
     const callLogData: CallLogModel = req.body;
 
-    // Execute the getCallLogById use case to retrieve the existing CallLog
     const existingCallLog: Either<ErrorClass, CallLogEntity> =
       await this.getCallLogByIdUsecase.execute(callLogId);
 
-    // Handle the result using Either's cata function
     existingCallLog.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) => {
-        res.status(error.status).json({ error: error.message });
-      },
-      // If successful, map the result to an Entity and proceed to update
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       async (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
 
-        // Map the updated data to an Entity
         const updatedCallLogEntity: CallLogEntity = CallLogMapper.toEntity(
           callLogData,
           true,
           resData
         );
 
-        // Execute the updateCallLog use case and get an Either result
         const updatedCallLog: Either<ErrorClass, CallLogEntity> =
           await this.updateCallLogUsecase.execute(
             callLogId,
             updatedCallLogEntity
           );
 
-        // Handle the result using Either's cata function
         updatedCallLog.cata(
-          // If there's an error, send an error response
-          (error: ErrorClass) => {
-            res.status(error.status).json({ error: error.message });
-          },
-          // If successful, map the result to a Model and send it as a JSON response
+          (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
           (response: CallLogEntity) => {
             const responseData = CallLogMapper.toModel(response);
-
-            res.json(responseData);
+            this.sendSuccessResponse(
+              res,
+              responseData,
+              "CallLog updated successfully"
+            );
           }
         );
       }
@@ -159,8 +169,11 @@ export class CallLogService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    let loginId = req.user;
+    loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object
     // Assign values to properties of the query object
+    query.id = parseInt(loginId, 10);
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 
@@ -168,17 +181,17 @@ export class CallLogService {
     const callLogs: Either<ErrorClass, CallLogEntity[]> =
       await this.getAllCallLogsUsecase.execute(query);
 
-    // Handle the result using Either's cata function
     callLogs.cata(
-      // If there's an error, send an error response
-      (error: ErrorClass) =>
-        res.status(error.status).json({ error: error.message }),
-      // If successful, map the results to Entities and send them as a JSON response
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (callLogs: CallLogEntity[]) => {
         const resData = callLogs.map((callLog: any) =>
           CallLogMapper.toEntity(callLog)
         );
-        return res.json(resData);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "CallLogs retrieved successfully"
+        );
       }
     );
   }

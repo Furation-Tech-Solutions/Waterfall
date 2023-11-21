@@ -4,7 +4,7 @@ export class RealtorModel {
     public firstName: string = "",
     public lastName: string = "",
     public email: string = "",
-    public contact: number = 0,
+    public contact: string = "",
     public DOB: string = "",
     public gender: string = "",
     public location: string = "",
@@ -13,7 +13,8 @@ export class RealtorModel {
     public countryCode: number = 0,
     public deleteStatus: {status:boolean,deletedAt:string}, // You might want to provide a default value here
     public coordinates: { latitude: string; longitude: string } | null = null,
-    public recoId: string = ""
+    public recoId: string = "",
+    public firebaseId: string = "",
   ) { }
 }
 
@@ -24,7 +25,7 @@ export class RealtorEntity {
     public firstName: string,
     public lastName: string,
     public email: string,
-    public contact: number,
+    public contact: string,
     public DOB: string,
     public gender: string,
     public location: string,
@@ -34,6 +35,7 @@ export class RealtorEntity {
     public deleteStatus: {status:boolean;deletedAt:string},
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
+    public firebaseId: string,
   ) { }
 }
 
@@ -49,50 +51,69 @@ export class RealtorMapper {
       return {
         ...existingRealtor,
         // Update each property based on whether it exists in realtorData
-        firstName: realtorData.firstName !== undefined
-          ? realtorData.firstName
-          : existingRealtor.firstName,
-        lastName: realtorData.lastName !== undefined
-          ? realtorData.lastName
-          : existingRealtor.lastName,
-        email: realtorData.email !== undefined
-          ? realtorData.email
-          : existingRealtor.email,
-        contact: realtorData.contact !== undefined
-          ? realtorData.contact
-          : existingRealtor.contact,
-        DOB: realtorData.DOB !== undefined
-          ? realtorData.DOB
-          : existingRealtor.DOB,
-        gender: realtorData.gender !== undefined
-          ? realtorData.gender
-          : existingRealtor.gender,
-        location: realtorData.location !== undefined
-          ? realtorData.location
-          : existingRealtor.location,
-        about: realtorData.about !== undefined
-          ? realtorData.about
-          : existingRealtor.about,
-        profileImage: realtorData.profileImage !== undefined
-          ? realtorData.profileImage
-          : existingRealtor.profileImage,
-        countryCode: realtorData.countryCode !== undefined
-          ? realtorData.countryCode
-          : existingRealtor.countryCode,
-        deleteStatus: realtorData.deleteStatus !== undefined
-          ? realtorData.deleteStatus
-          : existingRealtor.deleteStatus,
-        coordinates: realtorData.coordinates !== undefined
-          ? realtorData.coordinates
-          : existingRealtor.coordinates,
-        recoId: realtorData.recoId !== undefined
-          ? realtorData.recoId
-          : existingRealtor.recoId,
+        firstName:
+          realtorData.firstName !== undefined
+            ? realtorData.firstName
+            : existingRealtor.firstName,
+        lastName:
+          realtorData.lastName !== undefined
+            ? realtorData.lastName
+            : existingRealtor.lastName,
+        email:
+          realtorData.email !== undefined
+            ? realtorData.email
+            : existingRealtor.email,
+        contact:
+          realtorData.contact !== undefined
+            ? realtorData.contact
+            : existingRealtor.contact,
+        DOB:
+          realtorData.DOB !== undefined ? realtorData.DOB : existingRealtor.DOB,
+        gender:
+          realtorData.gender !== undefined
+            ? realtorData.gender
+            : existingRealtor.gender,
+        location:
+          realtorData.location !== undefined
+            ? realtorData.location
+            : existingRealtor.location,
+        about:
+          realtorData.about !== undefined
+            ? realtorData.about
+            : existingRealtor.about,
+        profileImage:
+          realtorData.profileImage !== undefined
+            ? realtorData.profileImage
+            : existingRealtor.profileImage,
+        countryCode:
+          realtorData.countryCode !== undefined
+            ? realtorData.countryCode
+            : existingRealtor.countryCode,
+        deleteStatus:
+          realtorData.deleteStatus !== undefined
+            ? realtorData.deleteStatus
+            : existingRealtor.deleteStatus,
+        coordinates:
+          realtorData.coordinates !== undefined
+            ? realtorData.coordinates
+            : existingRealtor.coordinates,
+        recoId:
+          realtorData.recoId !== undefined
+            ? realtorData.recoId
+            : existingRealtor.recoId,
+        firebaseId:
+          realtorData.firebaseId !== undefined
+            ? realtorData.firebaseId
+            : existingRealtor.firebaseId,
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
       const realtorEntity: RealtorEntity = {
-        id: includeId ? (realtorData.id ? realtorData.id : undefined) : realtorData.id,
+        id: includeId
+          ? realtorData.id
+            ? realtorData.id
+            : undefined
+          : realtorData.id,
         firstName: realtorData.firstName,
         lastName: realtorData.lastName,
         email: realtorData.email,
@@ -105,7 +126,8 @@ export class RealtorMapper {
         countryCode: realtorData.countryCode,
         deleteStatus: realtorData.deleteStatus,
         coordinates: realtorData.coordinates || null,
-        recoId: realtorData.recoId
+        recoId: realtorData.recoId,
+        firebaseId: realtorData.firebaseId,
       };
       return realtorEntity;
     }
@@ -126,7 +148,8 @@ export class RealtorMapper {
       countryCode: realtor.countryCode,
       deleteStatus: realtor.deleteStatus,
       coordinates: realtor.coordinates,
-      recoId: realtor.recoId
+      recoId: realtor.recoId,
+      firebaseId: realtor.firebaseId,
     };
   }
 }

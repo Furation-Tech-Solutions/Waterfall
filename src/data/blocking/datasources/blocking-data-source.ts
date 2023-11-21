@@ -25,13 +25,14 @@ export interface BlockingDataSource {
 
 // Define a BlockQuery object to encapsulate parameters
 export interface BlockQuery {
+  id: number;
   page: number;
   limit: number;
 }
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new blocking entry
   async create(blocking: any): Promise<any> {
@@ -55,21 +56,26 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
   // Method to retrieve all blocking entries
   async getAllBlockings(query: BlockQuery): Promise<any[]> {
+    let loginId = query.id;
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
 
     // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
+      where: {
+        fromRealtor: loginId
+      },
       include: [
         {
           model: Realtors,
-          as: "from", // Alias for the first association
+          as: "fromRealtorData", // Alias for the first association
           foreignKey: "fromRealtor",
+  
         },
         {
           model: Realtors,
-          as: "to", // Alias for the second association
+          as: "toRealtorData", // Alias for the second association
           foreignKey: "toRealtor",
         },
       ],
@@ -79,6 +85,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // Convert the Sequelize model instances to plain JavaScript objects before returning
     return data.map((blocking: any) => blocking.toJSON());
+
   }
 
   // Method to read a blocking entry by ID

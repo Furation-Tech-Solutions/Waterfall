@@ -6,7 +6,7 @@ import { Either, Right, Left } from "monet";
 
 // Define the interface for the DeleteMessages use case
 export interface DeleteMessagesUsecase {
-  execute: (fromId: string, toId: string) => Promise<Either<ErrorClass, void>>;
+  execute: (id: string) => Promise<Either<ErrorClass, void>>;
 }
 
 // Implement the Deletemessages use case
@@ -20,8 +20,8 @@ export class DeleteMessage implements DeleteMessagesUsecase {
 
   // Implementation of the execute method
   // This method takes an ID and returns a Promise with an Either result
-  async execute(loginId: string, id: string): Promise<Either<ErrorClass, void>> {
+  async execute(id: string): Promise<Either<ErrorClass, void>> {
     // Delegate the deletion of messages to the messagesRepository
-    return await this.messagesRepository.deleteMessage(loginId, id);
+    return await this.messagesRepository.deleteMessage(id);
   }
 }

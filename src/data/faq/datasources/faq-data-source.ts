@@ -13,6 +13,7 @@ export interface FAQDataSource {
   delete(id: string): Promise<void>;
 }
 
+
 // FAQ Data Source communicates with the database
 export class FAQDataSourceImpl implements FAQDataSource {
   constructor(private db: Sequelize) {}
