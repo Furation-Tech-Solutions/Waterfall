@@ -257,7 +257,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             as: "jobData",
             foreignKey: "job",
             where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
+              // jobOwner: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
