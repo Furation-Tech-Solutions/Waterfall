@@ -18,6 +18,7 @@ interface JobInput {
   fromTime: string;
   toTime: string;
   jobType: string;
+  
   clientEmail: string;
   clientPhoneNumber: string;
   feeType: string;
