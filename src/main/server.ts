@@ -4,6 +4,7 @@ import env from "@main/config/env";
 import ApiError from "@presentation/error-handling/api-error";
 import * as Message from "@presentation/error-handling/message-error";
 import { sequelize } from "@main/sequelizeClient";
+import { deleteStatusWithCron } from "@presentation/middlewares/cron/deleteUserCron";
 
 const app = setupApp();
 
@@ -16,11 +17,14 @@ try {
   }
 
   sequelize.sync().then(() => {
+
     app.listen(env.port, () => {
       console.log("Table synchronized successfully.");
       console.log(`${Message.SERVER_RUNNING} ${env.port}`);
     });
   });
+  deleteStatusWithCron()
+
 } catch (error) {
   console.log("error is this-", error, "error");
   if (error instanceof ApiError) {
