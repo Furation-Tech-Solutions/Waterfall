@@ -19,6 +19,7 @@ interface RealtorInput {
   friends: [];
   coordinates: { latitude: string; longitude: string } | null;
   recoId: string;
+  firebaseId: string;
 }
 
 // Define a validator function for Realtor input
@@ -30,29 +31,29 @@ const realtorValidator = (
   const realtorSchema = Joi.object<RealtorInput>({
     firstName: isUpdate
       ? Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "firstName should have at least 3 characters",
-        "string.max": "firstName should have less than 30 characters",
-      })
+          "string.min": "firstName should have at least 3 characters",
+          "string.max": "firstName should have less than 30 characters",
+        })
       : Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "firstName should have at least 3 characters",
-        "string.max": "firstName should have less than 30 characters",
-        "any.required": "firstName is required",
-      }),
+          "string.min": "firstName should have at least 3 characters",
+          "string.max": "firstName should have less than 30 characters",
+          "any.required": "firstName is required",
+        }),
     lastName: isUpdate
       ? Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-      })
+          "string.min": "lastName should have at least 3 characters",
+          "string.max": "lastName should have less than 30 characters",
+        })
       : Joi.string().min(3).max(30).optional().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-        "any.required": "lastName is required",
-      }),
+          "string.min": "lastName should have at least 3 characters",
+          "string.max": "lastName should have less than 30 characters",
+          "any.required": "lastName is required",
+        }),
     email: isUpdate
       ? Joi.string().email().min(3).max(30).optional().trim().messages({
-        "string.min": "lastName should have at least 3 characters",
-        "string.max": "lastName should have less than 30 characters",
-      })
+          "string.min": "lastName should have at least 3 characters",
+          "string.max": "lastName should have less than 30 characters",
+        })
       : Joi.string().email().min(3).max(30).required().trim().messages({
         "string.min": "lastName should have at least 3 characters",
         "string.max": "lastName should have less than 30 characters",
@@ -69,80 +70,88 @@ const realtorValidator = (
       }),
     DOB: isUpdate
       ? Joi.string().optional().messages({
-        'string.empty': 'Date of birth cannot be empty',
-      })
+          "string.empty": "Date of birth cannot be empty",
+        })
       : Joi.string().optional().messages({
-        'any.required': 'Date of birth is required',
-        'string.empty': 'Date of birth cannot be empty',
-      }),
+          "any.required": "Date of birth is required",
+          "string.empty": "Date of birth cannot be empty",
+        }),
     gender: isUpdate
       ? Joi.string().optional().messages({
-        'string.empty': 'Gender cannot be empty',
-      })
+          "string.empty": "Gender cannot be empty",
+        })
       : Joi.string().required().messages({
-        'any.required': 'Gender is required',
-        'string.empty': 'Gender cannot be empty',
-      }),
+          "any.required": "Gender is required",
+          "string.empty": "Gender cannot be empty",
+        }),
     location: isUpdate
       ? Joi.string().optional().messages({
-        'string.empty': 'Location cannot be empty',
-      })
+          "string.empty": "Location cannot be empty",
+        })
       : Joi.string().optional().messages({
-        'any.required': 'Location is required',
-        'string.empty': 'Location cannot be empty',
-      }),
+          "any.required": "Location is required",
+          "string.empty": "Location cannot be empty",
+        }),
     about: isUpdate
       ? Joi.string().optional().messages({
-        'string.empty': 'About cannot be empty',
-      })
+          "string.empty": "About cannot be empty",
+        })
       : Joi.string().optional().messages({
-        'any.required': 'About is required',
-        'string.empty': 'About cannot be empty',
-      }),
+          "any.required": "About is required",
+          "string.empty": "About cannot be empty",
+        }),
     profileImage: isUpdate
       ? Joi.string().optional().messages({
-        'string.empty': 'ProfileImage cannot be empty',
-      })
+          "string.empty": "ProfileImage cannot be empty",
+        })
       : Joi.string().optional().messages({
-        'any.required': 'ProfileImage is required',
-        'string.empty': 'ProfileImage cannot be empty',
-      }),
+          "any.required": "ProfileImage is required",
+          "string.empty": "ProfileImage cannot be empty",
+        }),
     countryCode: isUpdate
       ? Joi.number().optional().messages({
-        'string.empty': 'CountryCode cannot be empty',
-      })
+          "string.empty": "CountryCode cannot be empty",
+        })
       : Joi.number().optional().messages({
-        'any.required': 'CountryCode is required',
-        'string.empty': 'CountryCode cannot be empty',
-      }),
+          "any.required": "CountryCode is required",
+          "string.empty": "CountryCode cannot be empty",
+        }),
     deleteStatus: isUpdate
       ? Joi.boolean().optional()
       : Joi.boolean().optional().default(false),
     friends: Joi.array().items(Joi.number()).optional(),
     coordinates: isUpdate
       ? Joi.object({
-        latitude: Joi.string().optional(),
-        longitude: Joi.string().optional(),
-      }).optional().messages({
-        'string.empty': 'CountryCode cannot be empty',
-      })
+          latitude: Joi.string().optional(),
+          longitude: Joi.string().optional(),
+        })
+          .optional()
+          .messages({
+            "string.empty": "CountryCode cannot be empty",
+          })
       : Joi.object({
-        latitude: Joi.string().required(),
-        longitude: Joi.string().required(),
-      }).optional().messages({
-        'any.required': 'CountryCode is required',
-        'string.empty': 'CountryCode cannot be empty',
-      }),
+          latitude: Joi.string().required(),
+          longitude: Joi.string().required(),
+        })
+          .optional()
+          .messages({
+            "any.required": "CountryCode is required",
+            "string.empty": "CountryCode cannot be empty",
+          }),
     recoId: isUpdate
       ? Joi.string().optional().trim().messages({
-        "string.min": "recoId should have at least 3 characters",
-        "string.max": "recoId should have less than 30 characters",
-      })
+          "string.min": "recoId should have at least 3 characters",
+          "string.max": "recoId should have less than 30 characters",
+        })
       : Joi.string().required().trim().messages({
-        "string.min": "recoId should have at least 3 characters",
-        "string.max": "recoId should have less than 30 characters",
-        "any.required": "recoId is required",
-      }),
+          "string.min": "recoId should have at least 3 characters",
+          "string.max": "recoId should have less than 30 characters",
+          "any.required": "recoId is required",
+        }),
+    firebaseId:Joi.string().trim().messages({
+          "string.min": "recoId should have at least 3 characters",
+          "string.max": "recoId should have less than 30 characters",
+        }),
   });
 
   // Validate the input against the schema

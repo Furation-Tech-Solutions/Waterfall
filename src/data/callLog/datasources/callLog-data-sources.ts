@@ -24,6 +24,7 @@ export interface CallLogDataSource {
 
 // Define a CallLogQuery object to encapsulate parameters
 export interface CallLogQuery {
+  id: number;
   page: number;
   limit: number;
 }
@@ -74,6 +75,7 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
 
   // Method to retrieve all call logs
   async getAll(query: CallLogQuery): Promise<CallLogEntity[]> {
+    let loginId = query.id;
     // Set defaults for pagination
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
@@ -87,7 +89,10 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
         {
           model: JobApplicant,
           foreignKey: "jobApplicant",
-          as: "jobApplicantData"
+          as: "jobApplicantData",
+          where: {
+            applicant: loginId
+          },
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page
