@@ -47,7 +47,7 @@ class SESMailService {
         try {
             const command = new SendEmailCommand(params);
             const response = await this.sesClient.send(command);
-            console.log(response, "Email sent successfully");
+            // console.log(response, "Email sent successfully");
             
         } catch (error) {
             console.error("Error sending email:", error);
