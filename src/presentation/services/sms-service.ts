@@ -37,7 +37,7 @@ class SMSService {
         // Send the SMS message
         try {
             const data = await this.sns.publish(params).promise();
-            console.log('SMS sent successfully:', data.MessageId);
+            // console.log('SMS sent successfully:', data.MessageId);
         } catch (error) {
             console.error('Error sending SMS:', error);
             throw error;
