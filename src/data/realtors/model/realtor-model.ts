@@ -80,14 +80,25 @@ const Realtors = sequelize.define("Realtors", {
   },
   recoId: {
     type: DataTypes.STRING,
-    allowNull: false, // Set to allowNull: true if coordinates are optional
-    unique: true, // It must be unique
+    allowNull: false,
+    unique: true,
   },
   firebaseId: {
     type: DataTypes.STRING,
-    defaultValue: ""
-  }
-
+    defaultValue: "",
+  },
+  linkedIn: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
+  attachmentLink: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
+  licenseIssueDate: {
+    type: DataTypes.STRING, // Adjust the type based on your requirements
+    defaultValue: "",
+  },
 
 });
 
