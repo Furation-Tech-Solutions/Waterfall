@@ -119,7 +119,32 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       });
 
       return data.map((connection: any) => connection.toJSON());
-    } else if (query.q === "mutualfriends") {
+    } else if (query.q === "requests") {
+      // Retrieve Request list
+      const data = await Connections.findAll({
+        where: {
+          connected: false,
+          toId: loginID,
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "fromRealtor",
+            foreignKey: "fromId",
+          },
+          {
+            model: Realtors,
+            as: "toRealtor",
+            foreignKey: "toId",
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+
+      return data.map((connection: any) => connection.toJSON());
+    }
+    else if (query.q === "mutualfriends") {
       // Retrieve connections with mutual friends
       const friendId: number = query.toId;
       // console.log(friendId, "friendId from 123");
@@ -201,10 +226,10 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             [Op.not]: loginID, // Exclude the current user
             [Op.notIn]: myFriends.map((friend: any) => friend), // Exclude existing friends
           },
-          location: user.location
+          // location: user.location
         },
       });
-// console.log(suggestions,"---------");
+      // console.log(suggestions,"---------");
       return suggestions.map((connection: any) => connection.toJSON());
 
     }
