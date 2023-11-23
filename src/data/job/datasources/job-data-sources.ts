@@ -153,6 +153,8 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
+      console.log("completedJobTypes:",completedJobTypes);
+      
       //-----------------------------------------------------------------------------------------------------------------------------------------
 
       // Recommend jobs with the same jobType
@@ -170,6 +172,8 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
+      console.log("reccommendedJobs:",recommendedJobs);
+      
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
@@ -212,7 +216,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         where: {
-          jobOwner: loginId,
+          // jobOwner: loginId,
         },
         include: [
           {

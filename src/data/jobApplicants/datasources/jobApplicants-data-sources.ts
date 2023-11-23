@@ -181,13 +181,14 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
         where: {
-          applicantStatus: "Pending", // Filter by applicantStatus
+          applicantStatus: "Accept", // Filter by applicantStatus
           agreement: true, // Filter by agreement
+          paymentStatus: false
         },
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
@@ -211,7 +212,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
@@ -234,7 +235,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
@@ -257,7 +258,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             as: "jobData",
             foreignKey: "job",
             where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
+              // jobOwner: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
@@ -291,17 +292,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         "applicantStatusUpdateTime"
       );
 
-      if (
-        !applicantStatusUpdateTime || // If no update time is set
-        (currentTime.getTime() -
-          new Date(applicantStatusUpdateTime).getTime()) /
-          (1000 * 60) >
-          5
-      ) {
-        throw new Error(
-          "Agreement can only be set within 24 hours after Accepting"
-        );
-      }
+     if (
+       !applicantStatusUpdateTime || // If no update time is set
+       (currentTime.getTime() - new Date(applicantStatusUpdateTime).getTime()) /
+         (1000 * 60 * 60) >
+         24
+     ) {
+       throw new Error(
+         "Agreement can only be set within 24 hours after Accepting"
+       );
+     }
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------

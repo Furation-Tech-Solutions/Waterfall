@@ -89,7 +89,7 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
           as: "realtorData",
           foreignKey: "realtor",
           where: {
-            realtor: loginId
+            // realtor: loginId
           },
         },
         {
