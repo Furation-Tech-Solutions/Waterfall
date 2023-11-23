@@ -64,7 +64,7 @@ const realtorValidator = (
         "any.required": "email is required",
       }),
     contact: isUpdate
-      ? Joi.string().optional().min(10).max(14).messages({
+      ? Joi.string().optional().messages({
         "string.min": "contact should have at least 10 characters",
         "string.max": "contact should have less than 14 characters",
       })

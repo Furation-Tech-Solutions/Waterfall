@@ -31,9 +31,9 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING,
     allowNull: true, // It cannot be null
     unique: true, // It must be uniquevalidate: {
-    validate: {
-      len: [10, 14], // Validate length between 3 and 30 characters
-    },
+    // validate: {
+    //   len: [10, 14], // Validate length between 3 and 30 characters
+    // },
   },
   // Define the "DOB" field with a data type of STRING
   DOB: {

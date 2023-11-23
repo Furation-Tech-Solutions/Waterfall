@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { RealtorModel } from "@domain/realtors/entities/realtors";
+import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op } from "sequelize";
@@ -133,11 +133,22 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
     // Delete a Realtor entry by ID
     async delete(id: string): Promise<void> {
-        // Delete a Realtor record from the database based on its ID
-        await Realtor.destroy({
-            where: {
-                id,
-            },
+
+        // Find the Realtor to be soft-deleted
+        const realtor: any = await Realtor.findByPk(id);
+
+        // Check if the Realtor exists
+        if (!realtor) {
+            throw new Error('Realtor not found');
+        }
+        const updatedRealtor = await realtor.update({
+            firstName: `deleted-${realtor.firstName}`,
+            lastName: `deleted-${realtor.lastName}`,
+            email: `deleted-${realtor.email}`,
+            contact: `deleted-${realtor.contact}`,
         });
+
+        // Soft delete the Realtor (set deletedAt)
+        await updatedRealtor.destroy();
     }
 }
