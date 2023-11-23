@@ -154,7 +154,15 @@ const Job = sequelize.define("Job", {
   urgentRequirement: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  }, deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null,
   },
+}, {
+  // Enable soft deletes
+  paranoid: true,
+
 });
 
 // Define an association between Job and Realtors (jobOwner)

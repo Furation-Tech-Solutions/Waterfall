@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { RealtorModel } from "@domain/realtors/entities/realtors";
+import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op } from "sequelize";
@@ -51,13 +51,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         if (query.location != undefined) {
             const data = await Realtor.findAll({
                 where: {
-                    [Op.or]: [
-                        {
-                            location: {
-                                [Op.iLike]: `%${query.location}%`
-                            }
-                        }
-                    ]
+                    location: {
+                        [Op.iLike]: `%${query.location}%`
+                    },
                 },
                 limit: itemsPerPage, // Limit the number of results per page
                 offset: offset, // Calculate the offset based on the current page
@@ -67,13 +63,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         else if (query.gender != undefined) {
             const data = await Realtor.findAll({
                 where: {
-                    [Op.or]: [
-                        {
-                            gender: {
-                                [Op.iLike]: `%${query.gender}%`
-                            }
-                        }
-                    ]
+                    gender: {
+                        [Op.iLike]: `%${query.gender}%`
+                    }
                 },
                 limit: itemsPerPage, // Limit the number of results per page
                 offset: offset, // Calculate the offset based on the current page
@@ -120,11 +112,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Retrieve a Realtor entry by its ID
     async read(id: string): Promise<any | null> {
         // Find a Realtor record in the database by its ID
-        const realtor = await Realtor.findOne({
-            where: {
-                id: id,
-            },
-        });
+        const realtor = await Realtor.findByPk(id);
         return realtor ? realtor.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
@@ -145,11 +133,22 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
     // Delete a Realtor entry by ID
     async delete(id: string): Promise<void> {
-        // Delete a Realtor record from the database based on its ID
-        await Realtor.destroy({
-            where: {
-                id: id,
-            },
+
+        // Find the Realtor to be soft-deleted
+        const realtor: any = await Realtor.findByPk(id);
+
+        // Check if the Realtor exists
+        if (!realtor) {
+            throw new Error('Realtor not found');
+        }
+        const updatedRealtor = await realtor.update({
+            firstName: `deleted-${realtor.firstName}`,
+            lastName: `deleted-${realtor.lastName}`,
+            email: `deleted-${realtor.email}`,
+            contact: `deleted-${realtor.contact}`,
         });
+
+        // Soft delete the Realtor (set deletedAt)
+        await updatedRealtor.destroy();
     }
 }
