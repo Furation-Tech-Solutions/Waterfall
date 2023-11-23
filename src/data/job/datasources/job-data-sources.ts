@@ -130,7 +130,7 @@ export class JobDataSourceImpl implements JobDataSource {
       return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobCompleted") {
+    } else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
         include: [
@@ -153,14 +153,15 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      console.log("completedJobTypes:",completedJobTypes);
-      
+      console.log("completedJobTypes:", completedJobTypes);
+
       //-----------------------------------------------------------------------------------------------------------------------------------------
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
         where: {
           jobType: completedJobTypes, // Filter by the extracted jobTypes
+          liveStatus: true
         },
         include: [
           {
@@ -172,11 +173,36 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      console.log("reccommendedJobs:",recommendedJobs);
-      
+      console.log("reccommendedJobs:", recommendedJobs);
+
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
+
+      //-----------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "jobCompleted") {
+      // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
+      const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              jobStatus: "JobCompleted",
+              agreement: true,
+              paymentStatus: true,
+              applicant: loginId,
+            },
+          },
+        ],
+      });
+     
+      return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.year && query.month) {

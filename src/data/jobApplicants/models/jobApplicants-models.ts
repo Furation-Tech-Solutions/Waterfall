@@ -54,11 +54,6 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.ENUM(...Object.values(jobStatusEnum)),
     defaultValue: "Pending",
   },
-  // Define the "appliedTimestamp" field with its data type and constraints
-  appliedTimestamp: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   // Define the "paymentStatus" field with its data type and constraints
   paymentStatus: {
     type: DataTypes.BOOLEAN,

@@ -4,7 +4,7 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, { applicationStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -183,7 +183,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         where: {
           applicantStatus: "Accept", // Filter by applicantStatus
           agreement: true, // Filter by agreement
-          paymentStatus: false
+          paymentStatus: false,
         },
         include: [
           {
@@ -192,6 +192,9 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
+              date: {
+                [Op.gte]: new Date(), // Exclude jobs with dates that have passed
+              },
             },
           },
           {
@@ -285,23 +288,50 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     }
 
     //-----------------------------------------------------------------------------------------------------------
-    // Check if agreement is signed within 24 hours
+    // // Check if agreement is signed within 24 hours
+    // if (jobApplicant.agreement === false && updatedData.agreement === true) {
+    //   const currentTime = new Date();
+    //   const applicantStatusUpdateTime = jobApplicant.getDataValue(
+    //     "applicantStatusUpdateTime"
+    //   );
+    //   console.log(currentTime);
+    //   console.log(applicantStatusUpdateTime);
+
+    //   if (
+    //     jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT && // Check if the current status is "Accept"
+    //     (!applicantStatusUpdateTime || // If no update time is set
+    //       (currentTime.getTime() -
+    //         new Date(applicantStatusUpdateTime).getTime()) /
+    //         (1000 * 60 * 60) >
+    //         24)
+    //   ) {
+    //     throw new Error(
+    //       "Agreement can only be set within 24 hours after Accepting"
+    //     );
+    //   }
+    // }
+
+    // Check if agreement is signed within 5 minutes
     if (jobApplicant.agreement === false && updatedData.agreement === true) {
       const currentTime = new Date();
       const applicantStatusUpdateTime = jobApplicant.getDataValue(
         "applicantStatusUpdateTime"
       );
+      console.log(currentTime);
+      console.log(applicantStatusUpdateTime);
 
-     if (
-       !applicantStatusUpdateTime || // If no update time is set
-       (currentTime.getTime() - new Date(applicantStatusUpdateTime).getTime()) /
-         (1000 * 60 * 60) >
-         24
-     ) {
-       throw new Error(
-         "Agreement can only be set within 24 hours after Accepting"
-       );
-     }
+      if (
+        jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT && // Check if the current status is "Accept"
+        (!applicantStatusUpdateTime || // If no update time is set
+          (currentTime.getTime() -
+            new Date(applicantStatusUpdateTime).getTime()) /
+            (1000 * 60) > // Change from 24 hours to 5 minutes
+            5)
+      ) {
+        throw new Error(
+          "Agreement can only be set within 5 minutes after Accepting"
+        );
+      }
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------
@@ -325,7 +355,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           "Job Owner can accept only one application for this Job"
         );
       } else {
-    //----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------
         // Check if the updated values meet the criteria for setting liveStatus to false
 
         // Update the associated Job to set liveStatus to false

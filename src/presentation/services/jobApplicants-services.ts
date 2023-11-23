@@ -104,7 +104,7 @@ export class JobApplicantService {
     next: NextFunction
   ): Promise<void> {
     let loginId = req.user;
-    loginId = "3"; // For testing purposes, manually set loginId to "2"
+    loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
@@ -130,7 +130,7 @@ export class JobApplicantService {
   async updateJobApplicant(req: Request, res: Response): Promise<void> {
     const jobApplicantId: string = req.params.id;
     const jobApplicantData: JobApplicantModel = req.body;
-
+    
     const existingJobApplicant: Either<ErrorClass, JobApplicantEntity> =
       await this.getJobApplicantByIdUsecase.execute(jobApplicantId);
 
