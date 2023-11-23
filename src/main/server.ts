@@ -22,7 +22,8 @@ try {
       console.log(`${Message.SERVER_RUNNING} ${env.port}`);
     });
   });
-  deleteStatusWithCron()
+
+  deleteStatusWithCron();
 
 } catch (error) {
   console.log("error is this-", error, "error");
