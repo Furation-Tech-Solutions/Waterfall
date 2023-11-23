@@ -4,7 +4,9 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant, { applicationStatusEnum } from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, {
+  applicationStatusEnum,
+} from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -37,7 +39,6 @@ export interface JobApplicantQuery {
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) {}
-  
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
@@ -119,7 +120,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    //------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
@@ -149,7 +150,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    //------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
@@ -278,8 +279,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     }
   }
 
-  
-
   // Method to update an existing job applicant by ID
   async update(id: string, updatedData: JobApplicantModel): Promise<any> {
     // Find the job applicant record in the database by ID
@@ -289,6 +288,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Handle the case where the job applicant is not found
       throw new Error("Job Applicant not found");
     }
+//-------------------------------------------------------------------------------------------------------------------------
 
     // Retrieve the record to check the current applicantStatus
     const existingApplicant: any = await JobApplicant.findByPk(id);
@@ -298,7 +298,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Update the job applicant record with the provided data
       await jobApplicant.update({
         ...updatedData,
-        applicantStatusUpdateTime: new Date().toISOString(), // Set applicantStatusUpdateTime to the current date
+        applicantStatusUpdateTime: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Kolkata",
+        }),
+        // .toISOString(), // Set applicantStatusUpdateTime to the current date
       });
 
       // Fetch the updated job applicant record
@@ -308,6 +311,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
       return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
     }
+ //-----------------------------------------------------------------------------------------------------------------------------------------------------------------   
     // Retrieve the record to check the current paymentStatus
     const existingPaymentStatus: any = await JobApplicant.findByPk(id);
 
@@ -327,54 +331,36 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
     }
 
-    //-----------------------------------------------------------------------------------------------------------
-    // // Check if agreement is signed within 24 hours
-    // if (jobApplicant.agreement === false && updatedData.agreement === true) {
-    //   const currentTime = new Date();
-    //   const applicantStatusUpdateTime = jobApplicant.getDataValue(
-    //     "applicantStatusUpdateTime"
-    //   );
-    //   console.log(currentTime);
-    //   console.log(applicantStatusUpdateTime);
+//--------------------------------------------------------------------------------------------------------------------------------------------------
+    // Check if agreement is signed within 24 hours after Accepting
+    if (
+      jobApplicant.agreement === false &&
+      updatedData.agreement === true &&
+      jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT
+    ) {
+      const currentTime = new Date();
+      console.log(currentTime);
 
-    //   if (
-    //     jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT && // Check if the current status is "Accept"
-    //     (!applicantStatusUpdateTime || // If no update time is set
-    //       (currentTime.getTime() -
-    //         new Date(applicantStatusUpdateTime).getTime()) /
-    //         (1000 * 60 * 60) >
-    //         24)
-    //   ) {
-    //     throw new Error(
-    //       "Agreement can only be set within 24 hours after Accepting"
-    //     );
-    //   }
-    // }
+      const applicantStatusUpdateTime = jobApplicant.getDataValue(
+        "applicantStatusUpdateTime"
+      );
 
-    // // Check if agreement is signed within 5 minutes
-    // if (jobApplicant.agreement === false && updatedData.agreement === true) {
-    //   const currentTime = new Date();
-    //   const applicantStatusUpdateTime = jobApplicant.getDataValue(
-    //     "applicantStatusUpdateTime"
-    //   );
-    //   console.log(currentTime);
-    //   console.log(applicantStatusUpdateTime);
+      if (
+        !applicantStatusUpdateTime ||
+        (currentTime.getTime() -
+          new Date(applicantStatusUpdateTime).getTime()) /
+          (1000 * 60 * 60) >
+          24
+          // (1000 * 60) > // Change from 24 hours to 5 minutes
+          // 2
+      ) {
+        throw new Error(
+          "Agreement can only be set within 24 hours after Accepting"
+        );
+      }
+    }
 
-    //   if (
-    //     jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT && // Check if the current status is "Accept"
-    //     (!applicantStatusUpdateTime || // If no update time is set
-    //       (currentTime.getTime() -
-    //         new Date(applicantStatusUpdateTime).getTime()) /
-    //         (1000 * 60) > // Change from 24 hours to 5 minutes
-    //         5)
-    //   ) {
-    //     throw new Error(
-    //       "Agreement can only be set within 5 minutes after Accepting"
-    //     );
-    //   }
-    // }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------
 
     if (
       jobApplicant.applicantStatus === "Pending" &&
@@ -430,7 +416,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
 
-    //-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
 
     // // Check if the provided data includes changes to jobStatus
     // if (
