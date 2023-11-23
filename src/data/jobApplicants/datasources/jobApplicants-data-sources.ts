@@ -381,7 +381,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           "Job Owner can accept only one application for this Job"
         );
       } else {
-        //----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
         // Check if the updated values meet the criteria for setting liveStatus to false
 
         // Update the associated Job to set liveStatus to false
@@ -396,8 +396,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         }
       }
     }
-
-    //--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
     // Check if the provided data includes changes to agreement and jobStatus
     if (
       jobApplicant.jobStatus === "Pending" &&
@@ -435,7 +434,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     //   }
     // }
 
-    //--------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------
 
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);
