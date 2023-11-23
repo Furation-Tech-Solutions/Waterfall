@@ -31,9 +31,9 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING,
     allowNull: true, // It cannot be null
     unique: true, // It must be uniquevalidate: {
-    validate: {
-      len: [10, 14], // Validate length between 3 and 30 characters
-    },
+    // validate: {
+    //   len: [10, 14], // Validate length between 3 and 30 characters
+    // },
   },
   // Define the "DOB" field with a data type of STRING
   DOB: {
@@ -68,11 +68,6 @@ const Realtors = sequelize.define("Realtors", {
       len: [0, 15], // Validate length between 0 and 15 characters
     },
   },
-  // Define the "deleteStatus" field with a data type of BOOLEAN and a default value of false
-  deleteStatus: {
-    type: DataTypes.JSONB,
-    defaultValue: { status: false, deletedAt: null }, // Initial values
-  },
   // Define the "coordinates" field with a data type of JSONB
   coordinates: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
@@ -80,14 +75,33 @@ const Realtors = sequelize.define("Realtors", {
   },
   recoId: {
     type: DataTypes.STRING,
-    allowNull: false, // Set to allowNull: true if coordinates are optional
-    unique: true, // It must be unique
+    allowNull: false,
+    unique: true,
   },
   firebaseId: {
     type: DataTypes.STRING,
-    defaultValue: ""
-  }
-
+    defaultValue: "",
+  },
+  linkedIn: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
+  attachmentLink: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
+  licenseIssueDate: {
+    type: DataTypes.STRING, // Adjust the type based on your requirements
+    defaultValue: "",
+  },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null,
+  },
+}, {
+  // Enable soft deletes
+  paranoid: true,
 
 });
 

@@ -1,8 +1,10 @@
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, where } from "sequelize";
 import { ConnectionsModel } from "@domain/connections/entities/connections_entities";
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
+import { connections } from "mongoose";
+import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
@@ -98,6 +100,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       const data = await Connections.findAll({
         where: {
           connected: true,
+          [Op.or]: [{ toId: loginID }, { fromId: loginID }],
         },
         include: [
           {
@@ -116,23 +119,52 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       });
 
       return data.map((connection: any) => connection.toJSON());
-    } else if (query.q === "mutualfriends") {
+    } else if (query.q === "requests") {
+      // Retrieve Request list
+      const data = await Connections.findAll({
+        where: {
+          connected: false,
+          toId: loginID,
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "fromRealtor",
+            foreignKey: "fromId",
+          },
+          {
+            model: Realtors,
+            as: "toRealtor",
+            foreignKey: "toId",
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+
+      return data.map((connection: any) => connection.toJSON());
+    }
+    else if (query.q === "mutualfriends") {
       // Retrieve connections with mutual friends
       const friendId: number = query.toId;
+      // console.log(friendId, "friendId from 123");
+      // console.log(loginID, "login id from 124");
       const findFriendIds = async (id: number) => {
         const data = await Connections.findAll({
           where: {
             connected: true,
             [Op.or]: [{ toId: id }, { fromId: id }],
           },
+
         });
+        // console.log(data,"data"); working
 
         const friendIds: number[] = data
           .map((friend: any) =>
             friend.fromId === id ? friend.toId : friend.fromId
           )
           .filter((id: number | null) => id !== null);
-
+        // console.log(friendIds, "friendIds from 140");// working
         return friendIds;
       };
 
@@ -140,33 +172,68 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         findFriendIds(loginID),
         findFriendIds(friendId),
       ]);
+      // console.log(myFriends, "myfriends  from 146");
+      // console.log(otherFriends, "myfriends  from 147");
 
       const commonFriends: number[] = myFriends.filter((id: number) =>
         otherFriends.includes(id)
       );
-
+      // console.log(commonFriends, "common");
       const friendsArray: any[] = await Promise.all(
         commonFriends.map(async (commonFriendId: number) => {
-          const data: any = await Connections.findByPk(commonFriendId, {
-            include: [
-              {
-                model: Realtors,
-                as: "fromRealtor",
-                foreignKey: "fromId",
-              },
-              {
-                model: Realtors,
-                as: "toRealtor",
-                foreignKey: "toId",
-              },
-            ],
-          });
+          // console.log(commonFriendId, "inside"); // working
+          const data: any = await Realtors.findByPk(commonFriendId);
+          // console.log(data, "datavalue");
           return data?.dataValues;
         })
       );
-
+      // console.log(friendsArray, "friendsarray");
       return friendsArray.filter(Boolean);
-    } else {
+    } else if (query.q === "friend-suggestions") {
+      // loginID; 
+      // Retrieve connected connections
+      // console.log(loginID);
+      const user: any = await Realtors.findByPk(loginID);
+      // console.log(user.id, "user");
+      const findFriendIds = async (id: number) => {
+        const data = await Connections.findAll({
+          where: {
+            connected: true,
+            [Op.or]: [{ toId: id }, { fromId: id }],
+          },
+
+        });
+        // console.log(data,"data"); working
+
+        const friendIds: number[] = data
+          .map((friend: any) =>
+            friend.fromId === id ? friend.toId : friend.fromId
+          )
+          .filter((id: number | null) => id !== null);
+        // console.log(friendIds, "friendIds from 140");// working
+        return friendIds;
+      };
+
+      const [myFriends] = await Promise.all([
+        findFriendIds(loginID),
+      ]);
+      // console.log(myFriends);
+
+      // Get suggestions based on mutual friends and location
+      const suggestions = await Realtors.findAll({
+        where: {
+          id: {
+            [Op.not]: loginID, // Exclude the current user
+            [Op.notIn]: myFriends.map((friend: any) => friend), // Exclude existing friends
+          },
+          // location: user.location
+        },
+      });
+      // console.log(suggestions,"---------");
+      return suggestions.map((connection: any) => connection.toJSON());
+
+    }
+    else {
       // Retrieve all connections
       const data = await Connections.findAll({
         include: [
