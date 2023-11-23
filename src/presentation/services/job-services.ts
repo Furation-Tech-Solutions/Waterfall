@@ -159,7 +159,7 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     let loginId = req.user;
-    loginId = "2"; // For testing purposes, manually set loginId to "2"
+    loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 

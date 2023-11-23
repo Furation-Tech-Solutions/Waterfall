@@ -201,11 +201,35 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       });
-     
+
       return jobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.year && query.month) {
+    //-----------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "appliedJobs") {
+      // Find jobs where the applicant ID matches the provided ID
+      const appliedJobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicant: loginId,
+            },
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+
+      return appliedJobs.map((job: any) => job.toJSON());
+
+    //----------------------------------------------------------------------------------------------------------------------------
+        } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
         where: {
