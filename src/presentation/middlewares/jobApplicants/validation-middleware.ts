@@ -12,10 +12,11 @@ interface JobApplicantInput {
   job: number;
   applicant: number;
   applicantStatus: string;
-  applicantStatusUpdateTime: Date;
+  applicantStatusUpdateTime: string;
   agreement: boolean;
   jobStatus: string;
   paymentStatus: boolean;
+  paymentStatusUpdateTime: string;
 }
 
 // Define a function for validating job applicant input
@@ -43,10 +44,9 @@ const jobApplicantValidator = (
             "any.only": "Invalid applicantStatus",
             "any.required": "applicantStatus is required",
           }),
-    applicantStatusUpdateTime: 
-          Joi.date().optional().messages({
-        "date.base": "Date must be a valid date"
-      }),
+    applicantStatusUpdateTime: Joi.string().optional().messages({
+      "string.base": "Data must be a string",
+    }),
     agreement: isUpdate
       ? Joi.boolean().optional().messages({
           "boolean.base": "Agreement must be a boolean",
@@ -80,6 +80,9 @@ const jobApplicantValidator = (
           "boolean.base": "paymentStatus must be a boolean",
           "any.required": "paymentStatus is required",
         }),
+    paymentStatusUpdateTime: Joi.string().optional().messages({
+      "string.base": "Data must be a string",
+    }),
   });
 
   // Validate the input against the schema
