@@ -44,6 +44,12 @@ const JobApplicant = sequelize.define("JobApplicant", {
       },
     },
   },
+
+  // Define the "applicantStatusUpdateTime" field with its data type
+  applicantStatusUpdateTime: {
+    type: DataTypes.STRING,
+  },
+
   // Define the "agreement" field with its data type and constraints
   agreement: {
     type: DataTypes.BOOLEAN,
@@ -58,6 +64,10 @@ const JobApplicant = sequelize.define("JobApplicant", {
   paymentStatus: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  // Define the "paymentStatusUpdateTime" field with its data type
+  paymentStatusUpdateTime: {
+    type: DataTypes.STRING,
   },
 });
 
