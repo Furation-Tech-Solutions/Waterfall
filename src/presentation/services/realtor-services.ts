@@ -145,24 +145,18 @@ export class RealtorService {
   async deleteRealtor(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
-      { deleteStatus: { status: true, deletedAt: Date.now() } },
-      true
-    );
+    const deletedRealtors: Either<ErrorClass, void> =
+      await this.deleteRealtorUsecase.execute(id);
 
-    const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.updateRealtorUsecase.execute(
-      id,
-      updatedRealtorEntity
-    );
-    updatedRealtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+    deletedRealtors.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       () => {
         this.sendSuccessResponse(
           res,
           {},
           "Realtor deleted successfully",
           204
-        );
+        ); // No Content
       }
     );
   }
