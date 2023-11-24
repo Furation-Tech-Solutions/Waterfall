@@ -17,6 +17,7 @@ try {
   }
 
   sequelize.sync().then(() => {
+
     app.listen(env.port, () => {
       console.log("Table synchronized successfully.");
       console.log(`${Message.SERVER_RUNNING} ${env.port}`);
