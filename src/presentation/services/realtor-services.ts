@@ -144,7 +144,7 @@ export class RealtorService {
     const id: string = req.params.id;
 
     const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
-      { deleteStatus: {status:true,deletedAt:Date.now()} },
+      { deleteStatus: {status:true,deletedAt:new Date().toISOString()} },
       true
     );
 
