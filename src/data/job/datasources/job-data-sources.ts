@@ -39,7 +39,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -50,15 +50,40 @@ export class JobDataSourceImpl implements JobDataSource {
     return createdJob.toJSON();
   }
 
+  // // Method to delete a job record by ID
+  // async delete(id: string): Promise<void> {
+  //   // Delete the job record where the ID matches the provided ID
+  //   await Job.destroy({
+  //     where: {
+  //       id: id,
+
+  //     },
+
+  //   });
+  // }
+
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
+    // Check if there are JobApplicants with agreement=true for the given job
+    const hasApplicants = await JobApplicant.findOne({
+      where: {
+        job: id,
+        agreement: true,
+      },
+    });
+
+    // If there are applicants with agreement=true, prevent deletion
+    if (hasApplicants) {
+      throw new Error(
+        "Cannot delete job with applicants having agreement=true"
+      );
+    }
+
     // Delete the job record where the ID matches the provided ID
     await Job.destroy({
       where: {
         id: id,
-        
       },
-      
     });
   }
 
@@ -163,7 +188,7 @@ export class JobDataSourceImpl implements JobDataSource {
       const recommendedJobs = await Job.findAll({
         where: {
           jobType: completedJobTypes, // Filter by the extracted jobTypes
-          liveStatus: true
+          liveStatus: true,
         },
         include: [
           {
@@ -175,8 +200,8 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      console.log("reccommendedJobs:",recommendedJobs);
-      
+      console.log("reccommendedJobs:", recommendedJobs);
+
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
@@ -206,7 +231,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-    //-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "appliedJobs") {
       // Find jobs where the applicant ID matches the provided ID
       const appliedJobs = await Job.findAll({
@@ -230,8 +255,8 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return appliedJobs.map((job: any) => job.toJSON());
 
-    //----------------------------------------------------------------------------------------------------------------------------
-        } else if (query.year && query.month) {
+      //----------------------------------------------------------------------------------------------------------------------------
+    } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
         where: {
