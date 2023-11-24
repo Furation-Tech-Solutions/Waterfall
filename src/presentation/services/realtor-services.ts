@@ -77,6 +77,8 @@ export class RealtorService {
     const query: any = {}; // Create an empty query object
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+    query.location = req.query.location as string;
+    query.gender = req.query.gender as string;
     query.q = req.query.q as string;
 
     const realtors: Either<ErrorClass, RealtorEntity[]> =
@@ -143,24 +145,18 @@ export class RealtorService {
   async deleteRealtor(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
 
-    const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
-      { deleteStatus: {status:true,deletedAt:new Date().toISOString()} },
-      true
-    );
+    const deletedRealtors: Either<ErrorClass, void> =
+      await this.deleteRealtorUsecase.execute(id);
 
-    const updatedRealtor: Either<ErrorClass, RealtorEntity> = await this.updateRealtorUsecase.execute(
-      id,
-      updatedRealtorEntity
-    );
-    updatedRealtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+    deletedRealtors.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
       () => {
         this.sendSuccessResponse(
           res,
           {},
           "Realtor deleted successfully",
           204
-        );
+        ); // No Content
       }
     );
   }

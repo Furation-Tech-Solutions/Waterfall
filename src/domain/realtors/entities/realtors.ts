@@ -11,10 +11,14 @@ export class RealtorModel {
     public about: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: {status:boolean,deletedAt:string}, // You might want to provide a default value here
+    public deleteStatus: { status: boolean, deletedAt: string }, // You might want to provide a default value here
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = "",
     public firebaseId: string = "",
+    public linkedIn: string = "",
+    public attachmentLink: string = "",
+    public licenseIssueDate: string = "",
+
   ) { }
 }
 
@@ -32,10 +36,13 @@ export class RealtorEntity {
     public about: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: {status:boolean;deletedAt:string},
+    public deleteStatus: { status: boolean; deletedAt: string },
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
     public firebaseId: string,
+    public linkedIn: string,
+    public attachmentLink: string,
+    public licenseIssueDate: string
   ) { }
 }
 
@@ -105,6 +112,18 @@ export class RealtorMapper {
           realtorData.firebaseId !== undefined
             ? realtorData.firebaseId
             : existingRealtor.firebaseId,
+        linkedIn:
+          realtorData.linkedIn !== undefined
+            ? realtorData.linkedIn
+            : existingRealtor.linkedIn,
+        attachmentLink:
+          realtorData.attachmentLink !== undefined
+            ? realtorData.attachmentLink
+            : existingRealtor.attachmentLink,
+        licenseIssueDate:
+          realtorData.licenseIssueDate !== undefined
+            ? realtorData.licenseIssueDate
+            : existingRealtor.licenseIssueDate,
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -128,6 +147,9 @@ export class RealtorMapper {
         coordinates: realtorData.coordinates || null,
         recoId: realtorData.recoId,
         firebaseId: realtorData.firebaseId,
+        linkedIn: realtorData.linkedIn,
+        attachmentLink: realtorData.attachmentLink,
+        licenseIssueDate: realtorData.licenseIssueDate,
       };
       return realtorEntity;
     }
@@ -150,6 +172,9 @@ export class RealtorMapper {
       coordinates: realtor.coordinates,
       recoId: realtor.recoId,
       firebaseId: realtor.firebaseId,
+      linkedIn: realtor.linkedIn,
+      attachmentLink: realtor.attachmentLink,
+      licenseIssueDate: realtor.licenseIssueDate,
     };
   }
 }

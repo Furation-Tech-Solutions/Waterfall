@@ -3,7 +3,6 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
@@ -109,20 +108,13 @@ const Job = sequelize.define("Job", {
 
   // Description of the job
   description: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING
   },
 
   // Attachments for the job, stored as an array of strings
   attachments: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
-  },
-
-  // Deadline for applying to the job
-  applyBy: {
-    type: DataTypes.DATE,
-    allowNull: false,
   },
 
   // Timestamp representing the creation date of the job
@@ -154,7 +146,15 @@ const Job = sequelize.define("Job", {
   urgentRequirement: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  }, deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null,
   },
+}, {
+  // Enable soft deletes
+  paranoid: true,
+
 });
 
 // Define an association between Job and Realtors (jobOwner)

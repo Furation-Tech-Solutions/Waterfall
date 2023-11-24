@@ -24,7 +24,6 @@ interface JobInput {
   fee: string;
   description: string;
   attachments: string[];
-  applyBy: Date;
   deleteReason: string;
   coordinates: { latitude: string; longitude: string } | null;
   liveStatus: boolean;
@@ -209,17 +208,11 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
       }),
 
     // Validate description
-    description: isUpdate
-      ? Joi.string().optional().messages({
+    description:  Joi.string().optional().messages({
         "string.base": "Description must be a string",
         "string.empty": "Description is required",
         "any.required": "Description is required",
-      })
-      : Joi.string().required().messages({
-        "string.base": "Description must be a string",
-        "string.empty": "Description is required",
-        "any.required": "Description is required",
-      }),
+     }),
 
     // Validate attachments as an array of URIs
     attachments: isUpdate
@@ -231,18 +224,6 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
         "array.base": "Attachments must be an array of strings",
         "array.items": "Attachments must be valid URIs",
       }),
-
-    // Validate apply by date
-    applyBy: isUpdate
-      ? Joi.date().optional().messages({
-        "date.base": "Apply by date must be a valid date",
-        "any.required": "Apply by date is required",
-      })
-      : Joi.date().required().messages({
-        "date.base": "Apply by date must be a valid date",
-        "any.required": "Apply by date is required",
-      }),
-
     // Validate delete reason
     deleteReason: isUpdate
       ? Joi.string().optional().messages({
@@ -255,14 +236,9 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
         "string.empty": "Delete reason is required",
         "any.required": "Delete reason is required",
       }),
-    coordinates: isUpdate
-      ? Joi.object({
+    coordinates: Joi.object({
         latitude: Joi.string().optional(),
         longitude: Joi.string().optional(),
-      })
-      : Joi.object({
-        latitude: Joi.string().required(),
-        longitude: Joi.string().required(),
       }),
     liveStatus: isUpdate
       ? Joi.boolean().optional().messages({

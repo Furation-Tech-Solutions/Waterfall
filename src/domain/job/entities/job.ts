@@ -15,7 +15,6 @@ export class JobModel {
     public fee: string = "", // Fee amount
     public description: string = "", // Job description
     public attachments: string[] = [], // Job attachments
-    public applyBy: Date = new Date(), // Application deadline
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string = "", // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
@@ -42,7 +41,6 @@ export class JobEntity {
     public fee: string, // Fee amount
     public description: string, // Job description
     public attachments: string[], // Job attachments
-    public applyBy: Date, // Application deadline
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string, // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
@@ -105,8 +103,6 @@ export class JobMapper {
           jobData.attachments !== undefined
             ? jobData.attachments
             : existingJob.attachments,
-        applyBy:
-          jobData.applyBy !== undefined ? jobData.applyBy : existingJob.applyBy,
         createdAt:
           jobData.createdAt !== undefined
             ? jobData.createdAt
@@ -150,7 +146,6 @@ export class JobMapper {
         fee: jobData.fee,
         description: jobData.description,
         attachments: jobData.attachments,
-        applyBy: jobData.applyBy,
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
         coordinates: jobData.coordinates || null,
@@ -181,7 +176,6 @@ export class JobMapper {
       fee: job.fee,
       description: job.description,
       attachments: job.attachments,
-      applyBy: job.applyBy,
       createdAt: job.createdAt,
       deleteReason: job.deleteReason,
       coordinates: job.coordinates,

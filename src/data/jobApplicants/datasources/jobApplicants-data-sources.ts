@@ -4,7 +4,9 @@ import {
   JobApplicantEntity,
   JobApplicantModel,
 } from "@domain/jobApplicants/entites/jobApplicants"; // Import the JobModel
-import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import JobApplicant, {
+  applicationStatusEnum,
+} from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 
@@ -118,7 +120,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    //------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
@@ -148,7 +150,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    //------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
@@ -181,16 +183,20 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
         where: {
-          applicantStatus: "Pending", // Filter by applicantStatus
+          applicantStatus: "Accept", // Filter by applicantStatus
           agreement: true, // Filter by agreement
+          paymentStatus: false,
         },
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
+              date: {
+                [Op.gte]: new Date(), // Exclude jobs with dates that have passed
+              },
             },
           },
           {
@@ -211,7 +217,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
@@ -234,7 +240,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobdata",
+            as: "jobData",
             foreignKey: "job",
             where: {
               jobOwner: loginId, // Use the correct way to filter by jobOwner
@@ -257,7 +263,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             as: "jobData",
             foreignKey: "job",
             where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
+              // jobOwner: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
@@ -282,21 +288,71 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Handle the case where the job applicant is not found
       throw new Error("Job Applicant not found");
     }
+//-------------------------------------------------------------------------------------------------------------------------
 
-    //-----------------------------------------------------------------------------------------------------------
-    // Check if agreement is signed within 24 hours
-    if (jobApplicant.agreement === false && updatedData.agreement === true) {
+    // Retrieve the record to check the current applicantStatus
+    const existingApplicant: any = await JobApplicant.findByPk(id);
+
+    // Check if the current applicantStatus is different from the updatedData.applicantStatus
+    if (existingApplicant.applicantStatus !== updatedData.applicantStatus) {
+      // Update the job applicant record with the provided data
+      await jobApplicant.update({
+        ...updatedData,
+        applicantStatusUpdateTime: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Kolkata",
+        }),
+        // .toISOString(), // Set applicantStatusUpdateTime to the current date
+      });
+
+      // Fetch the updated job applicant record
+      const updatedJobApplicant: Model<any, any> | null =
+        await JobApplicant.findByPk(id);
+
+      // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
+      return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
+    }
+ //-----------------------------------------------------------------------------------------------------------------------------------------------------------------   
+    // Retrieve the record to check the current paymentStatus
+    const existingPaymentStatus: any = await JobApplicant.findByPk(id);
+
+    // Check if the current paymentStatus is different from the updatedData.paymentStatus
+    if (existingPaymentStatus.paymentStatus !== updatedData.paymentStatus) {
+      // Update the job applicant record with the provided data
+      await jobApplicant.update({
+        ...updatedData,
+        paymentStatusUpdateTime: new Date().toISOString(), // Set paymentStatusUpdateTime to the current date
+      });
+
+      // Fetch the updated job applicant record
+      const updatedJobApplicant: Model<any, any> | null =
+        await JobApplicant.findByPk(id);
+
+      // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
+      return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
+    }
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------
+    // Check if agreement is signed within 24 hours after Accepting
+    if (
+      jobApplicant.agreement === false &&
+      updatedData.agreement === true &&
+      jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT
+    ) {
       const currentTime = new Date();
+      console.log(currentTime);
+
       const applicantStatusUpdateTime = jobApplicant.getDataValue(
         "applicantStatusUpdateTime"
       );
 
       if (
-        !applicantStatusUpdateTime || // If no update time is set
+        !applicantStatusUpdateTime ||
         (currentTime.getTime() -
           new Date(applicantStatusUpdateTime).getTime()) /
-          (1000 * 60) >
-          5
+          (1000 * 60 * 60) >
+          24
+          // (1000 * 60) > // Change from 24 hours to 5 minutes
+          // 2
       ) {
         throw new Error(
           "Agreement can only be set within 24 hours after Accepting"
@@ -304,7 +360,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
 
-    //-----------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------
 
     if (
       jobApplicant.applicantStatus === "Pending" &&
@@ -325,7 +381,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           "Job Owner can accept only one application for this Job"
         );
       } else {
-    //----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
         // Check if the updated values meet the criteria for setting liveStatus to false
 
         // Update the associated Job to set liveStatus to false
@@ -340,8 +396,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         }
       }
     }
-
-    //--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
     // Check if the provided data includes changes to agreement and jobStatus
     if (
       jobApplicant.jobStatus === "Pending" &&
@@ -360,7 +415,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
 
-    //-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
 
     // // Check if the provided data includes changes to jobStatus
     // if (
@@ -379,7 +434,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     //   }
     // }
 
-    //--------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------
 
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);

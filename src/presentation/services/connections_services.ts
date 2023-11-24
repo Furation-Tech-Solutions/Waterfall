@@ -137,20 +137,21 @@ export class ConnectionsServices {
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.toId = req.query.toId;
+    query.toId = req.body.toId;
 
-    const clientConnections: Either<ErrorClass, ConnectionsEntity[]> =
+    const clientConnections: Either<ErrorClass, any[]> =
       await this.getAllUsecase.execute(loginId, query);
 
     clientConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
       (result: ConnectionsEntity[]) => {
-        const responseData = result.map((connection) =>
-          ConnectionMapper.toEntity(connection)
-        );
+        // console.log(result, "clientConnections");
+        // const responseData = result.map((connection) =>
+        //   ConnectionMapper.toEntity(connection)
+        // );
         this.sendSuccessResponse(
           res,
-          responseData,
+          result,
           "Connections retrieved successfully"
         );
       }

@@ -1,7 +1,7 @@
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model"
 import cron from "node-cron";
-import { Op, literal } from 'sequelize'
+import { Op, literal,fn } from 'sequelize'
 
 
 export const deleteStatusWithCron = () => {
@@ -9,7 +9,6 @@ export const deleteStatusWithCron = () => {
   try {
     cron.schedule('*/1 * * * *', async function () {
       try {
-        console.log("inside cron job")
         // const userList = await Realtors.findAll({
         //   where: {
         //     deleteStatus: {
@@ -61,20 +60,15 @@ export const deleteStatusWithCron = () => {
         //cron job on expire job
         try{
          
-          const currentDate = new Date();
-const isoDate = currentDate.toISOString();
-      
-          console.log(isoDate,"currentDate")
+         
           const jobData = await Job.findAll({
             where: {
               // Assuming your Job model has a 'date' attribute
               date: {
-                [Op.lt]: literal('CURRENT_DATE'), // Use CURRENT_DATE to represent today's date
+                [Op.lt]: fn('DATE', literal('CURRENT_DATE')), // Use CURRENT_DATE to represent today's date
               },
             },
           });
-          console.log(jobData,"jobData")
-          // Update the liveStatus to false for the jobs that need to be marked as expired
   // Update the liveStatus to false for the jobs that need to be marked as expired
   const jobIdsToUpdate = await Promise.all(
     jobData.map(async (job) => {
@@ -83,7 +77,6 @@ const isoDate = currentDate.toISOString();
     })
     
   );
-  console.log(jobIdsToUpdate,"jobid ")
         }
         catch(error){
           console.log(error)

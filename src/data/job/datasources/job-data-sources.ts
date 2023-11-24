@@ -39,7 +39,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -56,7 +56,9 @@ export class JobDataSourceImpl implements JobDataSource {
     await Job.destroy({
       where: {
         id: id,
+        
       },
+      
     });
   }
 
@@ -130,7 +132,7 @@ export class JobDataSourceImpl implements JobDataSource {
       return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobCompleted") {
+    } else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
         include: [
@@ -153,12 +155,15 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
+      console.log("completedJobTypes:", completedJobTypes);
+
       //-----------------------------------------------------------------------------------------------------------------------------------------
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
         where: {
           jobType: completedJobTypes, // Filter by the extracted jobTypes
+          liveStatus: true
         },
         include: [
           {
@@ -170,12 +175,63 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
+      console.log("reccommendedJobs:",recommendedJobs);
+      
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.year && query.month) {
+    } else if (query.q === "jobCompleted") {
+      // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
+      const jobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              jobStatus: "JobCompleted",
+              agreement: true,
+              paymentStatus: true,
+              applicant: loginId,
+            },
+          },
+        ],
+      });
+
+      return jobs.map((job: any) => job.toJSON());
+
+    //-----------------------------------------------------------------------------------------------------------------------
+    } else if (query.q === "appliedJobs") {
+      // Find jobs where the applicant ID matches the provided ID
+      const appliedJobs = await Job.findAll({
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicant: loginId,
+            },
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+
+      return appliedJobs.map((job: any) => job.toJSON());
+
+    //----------------------------------------------------------------------------------------------------------------------------
+        } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
         where: {
@@ -212,7 +268,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         where: {
-          jobOwner: loginId,
+          // jobOwner: loginId,
         },
         include: [
           {
