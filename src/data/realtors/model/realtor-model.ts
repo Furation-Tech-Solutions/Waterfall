@@ -94,15 +94,10 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING, // Adjust the type based on your requirements
     defaultValue: "",
   },
-  deletedAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-    defaultValue: null,
+  deletedStatus: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
-}, {
-  // Enable soft deletes
-  paranoid: true,
-
 });
 
 export default Realtors; // Export the Realtors model as the default export
