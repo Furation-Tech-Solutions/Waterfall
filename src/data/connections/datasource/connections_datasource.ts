@@ -189,7 +189,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       );
       // console.log(friendsArray, "friendsarray");
       return friendsArray.filter(Boolean);
-    } else if (query.q === "friend-suggestions") {
+    } else if (query.q === "connection-suggestions") {
       // loginID; 
       // Retrieve connected connections
       // console.log(loginID);

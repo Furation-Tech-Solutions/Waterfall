@@ -44,6 +44,12 @@ const JobApplicant = sequelize.define("JobApplicant", {
       },
     },
   },
+
+  // Define the "applicantStatusUpdateTime" field with its data type
+  applicantStatusUpdateTime: {
+    type: DataTypes.STRING,
+  },
+
   // Define the "agreement" field with its data type and constraints
   agreement: {
     type: DataTypes.BOOLEAN,
@@ -54,15 +60,14 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.ENUM(...Object.values(jobStatusEnum)),
     defaultValue: "Pending",
   },
-  // Define the "appliedTimestamp" field with its data type and constraints
-  appliedTimestamp: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   // Define the "paymentStatus" field with its data type and constraints
   paymentStatus: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  // Define the "paymentStatusUpdateTime" field with its data type
+  paymentStatusUpdateTime: {
+    type: DataTypes.STRING,
   },
 });
 
