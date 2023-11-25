@@ -86,16 +86,18 @@ export class FeedBackService {
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    let id: string = req.body.loginId;
-    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    // let id: string = req.body.loginId;
+    // let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    let Id = req.headers.id;
+
 
     const query: any = {}; // Create an empty query object
 
     // Assign values to properties of the query object
+    query.id = Id;
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
     query.year = parseInt(req.query.year as string, 10);
     query.month = parseInt(req.query.month as string, 10);
 

@@ -124,15 +124,21 @@ export class MessagesServices {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId = req.body.fromId;
+    let toId = req.headers.toid;
+
+    let loginId = req.headers.fromid as string;
+
 
     const query: Query = {};
 
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.toId = parseInt(req.query.toId as string, 10);
+    // query.toId = parseInt(req.query.toId as string, 10);
     query.searchList = req.query.search as string;
+    // query.toId = toId;
+    query.toId = toId ? parseInt(toId as string, 10) : undefined;
+
 
     const clientMessages: Either<ErrorClass, MessageEntity[]> =
       await this.getAllMessageUsecase.execute(loginId, query);

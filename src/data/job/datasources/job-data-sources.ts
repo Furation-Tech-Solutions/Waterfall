@@ -293,7 +293,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         where: {
-          // jobOwner: loginId,
+          jobOwner: loginId,
         },
         include: [
           {
