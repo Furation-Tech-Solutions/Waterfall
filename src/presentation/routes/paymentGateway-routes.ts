@@ -39,7 +39,7 @@ export const paymentGatewayRouter = Router();
 // Route handling for creating a new PaymentGateway
 paymentGatewayRouter.post(
   "/", // Endpoint for creating a new PaymentGateway
-  validatePaymentGatewayInputMiddleware, // Apply input validation middleware
+  validatePaymentGatewayInputMiddleware(false), // Apply input validation middleware
   paymentGatewayService.createPaymentGateway.bind(paymentGatewayService) // Bind the createPaymentGateway method to handle the route
 );
 
@@ -47,7 +47,7 @@ paymentGatewayRouter.post(
 paymentGatewayRouter.get("/:id", paymentGatewayService.getPaymentGatewayById.bind(paymentGatewayService));
 
 // Route handling for updating a PaymentGateway by ID
-paymentGatewayRouter.put("/:id", paymentGatewayService.updatePaymentGateway.bind(paymentGatewayService));
+paymentGatewayRouter.put("/:id",validatePaymentGatewayInputMiddleware(true), paymentGatewayService.updatePaymentGateway.bind(paymentGatewayService));
 
 // Route handling for deleting a PaymentGateway by ID
 paymentGatewayRouter.delete("/:id", paymentGatewayService.deletePaymentGateway.bind(paymentGatewayService));

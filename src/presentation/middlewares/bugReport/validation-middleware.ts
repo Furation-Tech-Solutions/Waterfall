@@ -14,26 +14,23 @@ interface BugReportInput {
 const bugReportValidator = (
   input: BugReportInput,
   isUpdate: boolean = false
-  ) => {
+) => {
   // Define a Joi schema for BugReportInput
   const bugReportSchema = Joi.object<BugReportInput>({
-    realtor
-    : isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
+    realtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
     description: isUpdate
-    ? Joi.string().optional().max(1000).messages({
-      "string.base": "Description must be a string",
-      "string.empty": "Description is required",
-      "string.max": "Description should be at most 1000 characters",
-      "any.required": "Description is required",
-    })
-    : Joi.string().required().max(1000).messages({
-      "string.base": "Description must be a string",
-      "string.empty": "Description is required",
-      "string.max": "Description should be at most 1000 characters",
-      "any.required": "Description is required",
-    }),
+      ? Joi.string().optional().max(1000).messages({
+          "string.base": "Description must be a string",
+          "string.empty": "Description is required",
+          "string.max": "Description should be at most 1000 characters",
+          "any.required": "Description is required",
+        })
+      : Joi.string().required().max(1000).messages({
+          "string.base": "Description must be a string",
+          "string.empty": "Description is required",
+          "string.max": "Description should be at most 1000 characters",
+          "any.required": "Description is required",
+        }),
     attachments: Joi.array().items(Joi.string().uri()).allow(null).messages({
       "array.base": "Attachments must be an array of strings",
       "array.items": "Attachments must be valid URIs",
@@ -48,12 +45,11 @@ const bugReportValidator = (
     abortEarly: false,
   });
 
-  // If there are validation errors, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -61,34 +57,27 @@ const bugReportValidator = (
     );
   }
 
-  // Return the validated input
-  return value;
+  return value; // Return the validated input
 };
 
-// Define a middleware for validating BugReportInput
-export const validateBugReportInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating bugReport input
+export const validateBugReportInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the report input using the bugReportValidator
-    const validatedInput: BugReportInput = bugReportValidator(body);
+      // Validate the client's bugReport input using the bugReportValidator
+      const validatedInput: BugReportInput = bugReportValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // Respond with a custom error if not an ApiError
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-export default bugReportValidator; // Export the bugReportValidator for reuse

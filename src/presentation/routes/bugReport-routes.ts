@@ -39,7 +39,7 @@ export const bugReportRouter = Router();
 // Route handling for creating a new BugReport
 bugReportRouter.post(
   "/",
-  validateBugReportInputMiddleware, // Apply input validation middleware
+  validateBugReportInputMiddleware(false), // Apply input validation middleware
   bugReportService.createBugReport.bind(bugReportService) // Bind the createBugReport method to handle the route
 );
 
@@ -51,7 +51,7 @@ bugReportRouter.get(
 
 // Route handling for updating a BugReport by ID
 bugReportRouter.put(
-  "/:id",
+  "/:id",validateBugReportInputMiddleware(true),
   bugReportService.updateBugReport.bind(bugReportService)
 );
 

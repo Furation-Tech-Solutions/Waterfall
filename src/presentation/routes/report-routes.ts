@@ -39,7 +39,7 @@ export const reportRouter = Router();
 // Route handling for creating a new Report
 reportRouter.post(
   "/",
-  validateReportInputMiddleware, // Apply input validation middleware
+  validateReportInputMiddleware(false), // Apply input validation middleware
   reportService.createReport.bind(reportService) // Bind the createReport method to handle the route
 );
 
@@ -47,7 +47,7 @@ reportRouter.post(
 reportRouter.get("/:id", reportService.getReportById.bind(reportService));
 
 // Route handling for updating a Report by ID
-reportRouter.put("/:id", reportService.updateReport.bind(reportService));
+reportRouter.put("/:id",validateReportInputMiddleware(true), reportService.updateReport.bind(reportService));
 
 // Route handling for deleting a Report by ID
 reportRouter.delete("/:id", reportService.deleteReport.bind(reportService));
