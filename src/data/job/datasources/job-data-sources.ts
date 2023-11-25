@@ -121,7 +121,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
 
-    //------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
       const currentDate = new Date(); // Current date
@@ -156,7 +156,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -182,8 +182,6 @@ export class JobDataSourceImpl implements JobDataSource {
       const completedJobTypes = jobs.map((job: any) => job.jobType);
       console.log("completedJobTypes:", completedJobTypes);
 
-      //-----------------------------------------------------------------------------------------------------------------------------------------
-
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
         where: {
@@ -206,7 +204,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -231,7 +229,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-      //-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "appliedJobs") {
       // Find jobs where the applicant ID matches the provided ID
       const appliedJobs = await Job.findAll({
@@ -255,7 +253,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return appliedJobs.map((job: any) => job.toJSON());
 
-      //----------------------------------------------------------------------------------------------------------------------------
+ //----------------------------------------------------------------------------------------------------------------------------
     } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
@@ -289,6 +287,34 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return jobs.map((job: any) => job.toJSON());
+//---------------------------------------------------------------------------------------------------------------
+    }else if (query.q == "active") {
+  // Check if the query parameter is "active"
+  const jobs = await Job.findAll({
+    where: {
+      date: {
+        [Op.gt]: new Date(),
+      },
+      liveStatus: true,
+    },
+    include: [
+      {
+        model: Realtors,
+        as: "owner",
+        foreignKey: "jobOwner",
+      },
+      {
+        model: JobApplicant,
+        as: "applicantsData",
+      },
+    ],
+    limit: itemsPerPage,
+    offset: offset,
+  });
+  return jobs.map((job: any) => job.toJSON());
+
+
+//------------------------------------------------------------------------------------------------------------------------------ 
     } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
