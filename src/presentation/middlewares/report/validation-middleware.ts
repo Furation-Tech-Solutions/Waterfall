@@ -12,9 +12,7 @@ interface ReportInput {
 }
 
 // Define a function to validate the report input
-const reportValidator = (
-  input: ReportInput, 
-  isUpdate: boolean = false) => {
+const reportValidator = (input: ReportInput, isUpdate: boolean = false) => {
   // Define a Joi schema to validate the input
   const reportSchema = Joi.object<ReportInput>({
     fromRealtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
@@ -44,12 +42,11 @@ const reportValidator = (
     abortEarly: false,
   });
 
-  // If validation errors exist, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -60,30 +57,24 @@ const reportValidator = (
   return value; // Return the validated input
 };
 
-// Define a middleware function to validate report input in requests
-export const validateReportInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating report input
+export const validateReportInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the report input using the reportValidator
-    const validatedInput: ReportInput = reportValidator(body);
+      // Validate the client's report input using the reportValidator
+      const validatedInput: ReportInput = reportValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message); // Respond with ApiError details
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // Respond with a custom error in case of unexpected errors
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-export default reportValidator; // Export the reportValidator function for external use

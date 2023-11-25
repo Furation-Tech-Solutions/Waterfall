@@ -39,7 +39,7 @@ export const notInterestedRouter = Router();
 // Route handling for creating a new Job
 notInterestedRouter.post(
     "/", // Define the route URL
-    validateNotInterestedInputMiddleware, // Apply input validation middleware
+    validateNotInterestedInputMiddleware(false), // Apply input validation middleware
     notInterestedService.createNotInterested.bind(notInterestedService) // Bind the createNotInterested method to handle the route
 );
 
@@ -51,7 +51,7 @@ notInterestedRouter.get(
 
 // Route handling for updating a NotInterested by ID
 notInterestedRouter.put(
-    "/:id",
+    "/:id", validateNotInterestedInputMiddleware(true),
     notInterestedService.updateNotInterested.bind(notInterestedService)
 );
 

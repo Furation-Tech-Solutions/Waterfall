@@ -103,14 +103,13 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let loginId = req.body.applicant;
-    // let loginId = req.user;
-    // loginId = "1"; // For testing purposes, manually set loginId to "2"
+    let Id = req.headers.id;
+    
 
     const query: any = {};
 
     query.q = req.query.q as string;
-    query.id = parseInt(loginId, 10);
+    query.id = Id;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
 

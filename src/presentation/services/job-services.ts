@@ -159,7 +159,7 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     // let loginId = req.user;
-    let loginId = req.body.jobOwner;
+    let Id = req.headers.id;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
@@ -167,7 +167,7 @@ export class JobService {
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
+    query.id = Id;
     query.year = parseInt(req.query.year as string, 10);
     query.month = parseInt(req.query.month as string, 10);
 

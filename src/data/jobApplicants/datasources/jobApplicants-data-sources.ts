@@ -91,7 +91,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
     const offset = (currentPage - 1) * itemsPerPage;
-    //-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
 
     if (query.q === "upcomingTask") {
       {
@@ -120,7 +120,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-      //------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
@@ -150,7 +150,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-      //------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
@@ -179,34 +179,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-    } else if (query.q == "active") {
-      // Check if the query parameter is "active"
-      const jobApplicant = await JobApplicant.findAll({
-        where: {
-          applicantStatus: "Accept", // Filter by applicantStatus
-          agreement: true, // Filter by agreement
-          paymentStatus: false,
-        },
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "job",
-            where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
-              date: {
-                [Op.gte]: new Date(), // Exclude jobs with dates that have passed
-              },
-            },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
-          },
-        ],
-      });
-      return jobApplicant.map((jobA: any) => jobA.toJSON());
+//------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "PaymentPending") {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
@@ -231,6 +204,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         ],
       });
       return jobApplicant.map((jobA: any) => jobA.toJSON());
+//-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "Completed") {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
@@ -254,6 +228,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         ],
       });
       return jobApplicant.map((jobA: any) => jobA.toJSON());
+//-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
       const jobApplicant = await JobApplicant.findAll({
@@ -414,26 +389,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         });
       }
     }
-
-//-------------------------------------------------------------------------------------------------------------
-
-    // // Check if the provided data includes changes to jobStatus
-    // if (
-    //   jobApplicant.jobStatus !== updatedData.jobStatus &&
-    //   updatedData.jobStatus === "JobCompleted"
-    // ) {
-    //   // Check if the current time is within 24 hours after toTime
-    //   const currentTime: any = new Date();
-    //   const toTime: any = new Date(jobApplicant.getDataValue("toTime"));
-    //   const hoursDifference = Math.abs(currentTime - toTime) / 36e5;
-
-    //   if (hoursDifference > 24) {
-    //     throw new Error(
-    //       "Job can only be marked as completed within 24 hours after toTime"
-    //     );
-    //   }
-    // }
-
 //--------------------------------------------------------------------------------------------------------------------------------------
 
     // Update the job applicant record with the provided data

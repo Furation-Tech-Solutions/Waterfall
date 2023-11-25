@@ -39,7 +39,7 @@ export const supportRouter = Router();
 // Route handling for creating a new Support
 supportRouter.post(
   "/", // Endpoint for creating a new Support
-  validateSupportInputMiddleware, // Apply input validation middleware
+  validateSupportInputMiddleware(false), // Apply input validation middleware
   supportService.createSupport.bind(supportService) // Bind the createSupport method to handle the route
 );
 
@@ -47,7 +47,11 @@ supportRouter.post(
 supportRouter.get("/:id", supportService.getSupportById.bind(supportService));
 
 // Route handling for updating a Support by ID
-supportRouter.put("/:id", supportService.updateSupport.bind(supportService));
+supportRouter.put(
+  "/:id",
+  validateSupportInputMiddleware(true),
+  supportService.updateSupport.bind(supportService)
+);
 
 // Route handling for deleting a Support by ID
 supportRouter.delete("/:id", supportService.deleteSupport.bind(supportService));

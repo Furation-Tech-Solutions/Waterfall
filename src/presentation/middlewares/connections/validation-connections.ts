@@ -71,7 +71,7 @@ export const validateConnectionsInputMiddleware = (
       // Continue to the next middleware or route handler
       next();
     } catch (error: any) {
-      res.status(500).json({
+      res.status(400).json({
         success: false,
         message: error.message
       })
