@@ -56,9 +56,9 @@ export class JobDataSourceImpl implements JobDataSource {
     await Job.destroy({
       where: {
         id: id,
-        
+
       },
-      
+
     });
   }
 
@@ -175,8 +175,8 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      console.log("reccommendedJobs:",recommendedJobs);
-      
+      console.log("reccommendedJobs:", recommendedJobs);
+
       // console.log("recommendedJobs:", recommendedJobs);
 
       return recommendedJobs.map((job: any) => job.toJSON());
@@ -206,7 +206,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-    //-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "appliedJobs") {
       // Find jobs where the applicant ID matches the provided ID
       const appliedJobs = await Job.findAll({
@@ -230,8 +230,8 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return appliedJobs.map((job: any) => job.toJSON());
 
-    //----------------------------------------------------------------------------------------------------------------------------
-        } else if (query.year && query.month) {
+      //----------------------------------------------------------------------------------------------------------------------------
+    } else if (query.year && query.month) {
       // Fetch jobs that match the specified year and month
       const jobs = await Job.findAll({
         where: {
