@@ -315,29 +315,34 @@ export class JobDataSourceImpl implements JobDataSource {
 
 
 //------------------------------------------------------------------------------------------------------------------------------ 
-    } else {
-      // Handle other cases or provide default logic
-      const jobs = await Job.findAll({
-        where: {
-          jobOwner: loginId,
-        },
-        include: [
-          {
-            model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
-          },
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-          },
-        ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
+    }else {
+  // Handle other cases or provide default logic
+  const jobs = await Job.findAll({
+    where: {
+      jobOwner: loginId,
+    },
+    include: [
+      {
+        model: Realtors,
+        as: "owner",
+        foreignKey: "jobOwner",
+      },
+      {
+        model: JobApplicant,
+        as: "applicantsData",
+      },
+    ],
+    order: [
+      // Then, sort by date in ascending order
+      ["date", "ASC"],
+    ],
+    limit: itemsPerPage,
+    offset: offset,
+  });
 
-      return jobs.map((job: any) => job.toJSON());
-    }
+  return jobs.map((job: any) => job.toJSON());
+}
+
   }
 
   // Method to update a job record by ID

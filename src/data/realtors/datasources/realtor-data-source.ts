@@ -46,7 +46,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         const currentPage = query.page || 1; // Default to page 1
         const itemsPerPage = query.limit || 10; // Default to 10 items per page
         const offset = (currentPage - 1) * itemsPerPage;
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
         // Check for different query parameters and filter data accordingly
         if (query.location != undefined) {
             const data = await Realtor.findAll({
@@ -60,6 +60,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         else if (query.gender != undefined) {
             const data = await Realtor.findAll({
                 where: {
@@ -72,6 +73,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         else if (query.q != undefined) {
             const data = await Realtor.findAll({
                 where: {
@@ -97,7 +99,9 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                 offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
-        } else {
+        }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+        else {
             // Handle other cases when 'location' is not provided (e.g., return all records)
             const data = await Realtor.findAll({
                 limit: itemsPerPage, // Limit the number of results per page
