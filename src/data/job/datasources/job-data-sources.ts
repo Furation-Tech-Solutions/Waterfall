@@ -83,7 +83,9 @@ export class JobDataSourceImpl implements JobDataSource {
     await Job.destroy({
       where: {
         id: id,
+
       },
+
     });
   }
 
