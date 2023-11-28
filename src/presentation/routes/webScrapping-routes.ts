@@ -4,6 +4,7 @@ import { GetScrapper } from "@domain/scrapping/usecases/get-scrapper";
 import { WebScrapping } from "@presentation/services/web-scrapping-services";
 import { Router } from "express";
 import { sequelize } from "@main/sequelizeClient";
+import { validateScrappingInputMiddleware } from "@presentation/middlewares/scrapper/validation-middleware";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -25,4 +26,4 @@ const scrapperService = new WebScrapping(
 export const scrapperRouter = Router();
 
 // Route handling for creating a new realtor
-scrapperRouter.post("/", scrapperService.checkRecoNumber.bind(scrapperService));
+scrapperRouter.post("/",validateScrappingInputMiddleware(false), scrapperService.checkRecoNumber.bind(scrapperService));
