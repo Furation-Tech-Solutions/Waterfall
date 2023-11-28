@@ -51,7 +51,7 @@ export const jobApplicantRouter = Router();
 // Route handling for creating a new Job Applicant
 jobApplicantRouter.post(
   "/", // HTTP POST request to create a new job applicant
-  validateJobApplicantInputMiddleware, // Apply validation middleware before processing the request
+  validateJobApplicantInputMiddleware(false), // Apply validation middleware before processing the request
   jobApplicantService.createJobApplicant.bind(jobApplicantService) // Bind the createJobApplicant method from the service to handle the route
 );
 
@@ -69,7 +69,7 @@ jobApplicantRouter.get(
 
 // Route handling for updating a Job Applicant by ID
 jobApplicantRouter.put(
-  "/:id",
+  "/:id",validateJobApplicantInputMiddleware(true),
   jobApplicantService.updateJobApplicant.bind(jobApplicantService)
 ); // HTTP PUT request to update a job applicant by ID
 

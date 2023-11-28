@@ -46,7 +46,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
         const currentPage = query.page || 1; // Default to page 1
         const itemsPerPage = query.limit || 10; // Default to 10 items per page
         const offset = (currentPage - 1) * itemsPerPage;
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
         // Check for different query parameters and filter data accordingly
         if (query.location != undefined) {
             const data = await Realtor.findAll({
@@ -54,27 +54,32 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                     location: {
                         [Op.iLike]: `%${query.location}%`
                     },
+                    deletedStatus: false,
                 },
                 limit: itemsPerPage, // Limit the number of results per page
                 offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         else if (query.gender != undefined) {
             const data = await Realtor.findAll({
                 where: {
                     gender: {
                         [Op.iLike]: `%${query.gender}%`
-                    }
+                    },
+                    deletedStatus: false,
                 },
                 limit: itemsPerPage, // Limit the number of results per page
                 offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
         }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         else if (query.q != undefined) {
             const data = await Realtor.findAll({
                 where: {
+                    deletedStatus: false,
                     [Op.or]: [
                         {
                             firstName: {
@@ -97,9 +102,14 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
                 offset: offset, // Calculate the offset based on the current page
             });
             return data.map((realtor: any) => realtor.toJSON());
-        } else {
+        }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+        else {
             // Handle other cases when 'location' is not provided (e.g., return all records)
             const data = await Realtor.findAll({
+                where: {
+                    deletedStatus: false,
+                },
                 limit: itemsPerPage, // Limit the number of results per page
                 offset: offset, // Calculate the offset based on the current page
             });
@@ -112,14 +122,14 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Retrieve a Realtor entry by its ID
     async read(id: string): Promise<any | null> {
         // Find a Realtor record in the database by its ID
-        const realtor = await Realtor.findByPk(id);
+        const realtor = await Realtor.findOne({ where: { id, deletedStatus: false, } });
         return realtor ? realtor.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
     // Update a Realtor entry by ID
     async update(id: string, updatedData: RealtorModel): Promise<any> {
         // Find the record by ID
-        const realtor = await Realtor.findByPk(id);
+        const realtor = await Realtor.findOne({ where: { id, deletedStatus: false, } });
 
         // Update the record with the provided data if it exists
         if (realtor) {
@@ -132,23 +142,52 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     // Delete a Realtor entry by ID
-    async delete(id: string): Promise<void> {
+    // async delete(id: string): Promise<void> {
 
+    //     // Find the Realtor to be soft-deleted
+    //     const realtor: any = await Realtor.findByPk(id);
+
+    //     // Check if the Realtor exists
+    //     if (!realtor) {
+    //         throw new Error('Realtor not found');
+    //     }
+    //     const updatedRealtor = await realtor.update({
+    //         firstName: `deleted-${realtor.firstName}`,
+    //         lastName: `deleted-${realtor.lastName}`,
+    //         email: `deleted-${realtor.email}`,
+    //         contact: `deleted-${realtor.contact}`,
+    //     });
+
+    //     // Soft delete the Realtor (set deletedAt)
+    //     await updatedRealtor.destroy();
+    // }
+
+    async delete(id: string): Promise<void> {
         // Find the Realtor to be soft-deleted
-        const realtor: any = await Realtor.findByPk(id);
+        const realtor: any = await Realtor.findOne({ where: { id, deletedStatus: false, } });
 
         // Check if the Realtor exists
         if (!realtor) {
             throw new Error('Realtor not found');
         }
-        const updatedRealtor = await realtor.update({
-            firstName: `deleted-${realtor.firstName}`,
-            lastName: `deleted-${realtor.lastName}`,
-            email: `deleted-${realtor.email}`,
-            contact: `deleted-${realtor.contact}`,
+
+        // Update the Realtor's data and save changes
+        await realtor.update({
+            firstName: `Not-available-${realtor.firstName}`,
+            lastName: `Not-available-${realtor.lastName}`,
+            email: `Not-available-${realtor.email}`,
+            contact: `Not-available-${realtor.contact}`,
+            recoId: `Not-available-${realtor.recoId}`,
+            deletedStatus: true,
         });
 
+        // Fetch the updated record
+        const updatedRealtor = await Realtor.findByPk(id);
+        console.log(updatedRealtor?.toJSON());
+
         // Soft delete the Realtor (set deletedAt)
-        await updatedRealtor.destroy();
+
+        console.log('Realtor soft-deleted successfully');
     }
+
 }

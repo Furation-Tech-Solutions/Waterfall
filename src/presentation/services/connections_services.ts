@@ -130,14 +130,17 @@ export class ConnectionsServices {
 
   // Handler for getting all connections
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    let loginId = req.body.fromId;
+        let toId = req.headers.toid;
+        let loginId = req.headers.fromid as string;
+        
+
 
     const query: any = {};
 
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.toId = req.body.toId;
+    query.toId = toId;
 
     const clientConnections: Either<ErrorClass, any[]> =
       await this.getAllUsecase.execute(loginId, query);
