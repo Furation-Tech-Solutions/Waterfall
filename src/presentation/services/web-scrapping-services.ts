@@ -51,7 +51,7 @@ export class WebScrapping{
         (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
         (result: ScrapperEntity) => {
           // const resData = SupportMapper.toEntity(result, true);
-          this.sendSuccessResponse(res, result, "Support created successfully", 201);
+          this.sendSuccessResponse(res, result, "User verified Successfully", 201);
         }
       );
     }
