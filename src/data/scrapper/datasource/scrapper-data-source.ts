@@ -31,7 +31,7 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
        const page = await browser.newPage();
    
        // Navigate to the website
-       const websiteData = await page.goto('https://www.reco.on.ca/RegistrantSearch/RegistrantSearch/', { timeout: 6000 });
+       const websiteData = await page.goto('https://www.reco.on.ca/RegistrantSearch/RegistrantSearch/');
        //    const websiteDataAfterLoad= await page.waitForSelector(webisteData);
    
        // Get the content of the page
@@ -105,9 +105,9 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
    
     if (createdRecoNumber) {
       createdRecoNumber = new ScrapperEntity(
-        matchingDivData.recoNumber,
-        matchingDivData.status,
-        matchingDivData.expiryDate
+        matchingDivData?.recoNumber,
+        matchingDivData?.status,
+        matchingDivData?.expiryDate
       );
       return createdRecoNumber;
     } else {
