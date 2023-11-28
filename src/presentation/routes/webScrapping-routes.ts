@@ -4,10 +4,7 @@ import { GetScrapper } from "@domain/scrapping/usecases/get-scrapper";
 import { WebScrapping } from "@presentation/services/web-scrapping-services";
 import { Router } from "express";
 import { sequelize } from "@main/sequelizeClient";
-<<<<<<< HEAD
 import { validateScrappingInputMiddleware } from "@presentation/middlewares/scrapper/validation-middleware";
-=======
->>>>>>> 0ae9a7fc62df1c52258bcc65d124eb02613493f1
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
