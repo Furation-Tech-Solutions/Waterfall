@@ -12,31 +12,31 @@ interface NotInterestedInput {
 const notInterestedValidator = (
   input: NotInterestedInput,
   isUpdate: boolean = false
-  ) => {
+) => {
   // Define a Joi schema for validation
   const notInterestedSchema = Joi.object<NotInterestedInput>({
     realtor: isUpdate
-    ?Joi.number().optional().messages({
-      "string.base": "Realtor must be a number",
-      "string.empty": "Realtor is required",
-      "any.required": "Realtor is required",
-    })
-    : Joi.number().required().messages({
-      "string.base": "Realtor must be a number",
-      "string.empty": "Realtor is required",
-      "any.required": "Realtor is required",
-    }),
+      ? Joi.number().optional().messages({
+          "string.base": "Realtor must be a number",
+          "string.empty": "Realtor is required",
+          "any.required": "Realtor is required",
+        })
+      : Joi.number().required().messages({
+          "string.base": "Realtor must be a number",
+          "string.empty": "Realtor is required",
+          "any.required": "Realtor is required",
+        }),
     job: isUpdate
-    ? Joi.number().optional().messages({
-      "string.base": "Job must be a number",
-      "string.empty": "Job is required",
-      "any.required": "Job is required",
-    })
-    : Joi.number().required().messages({
-      "string.base": "Job must be a number",
-      "string.empty": "Job is required",
-      "any.required": "Job is required",
-    }),
+      ? Joi.number().optional().messages({
+          "string.base": "Job must be a number",
+          "string.empty": "Job is required",
+          "any.required": "Job is required",
+        })
+      : Joi.number().required().messages({
+          "string.base": "Job must be a number",
+          "string.empty": "Job is required",
+          "any.required": "Job is required",
+        }),
   });
 
   // Validate the input against the schema
@@ -44,12 +44,11 @@ const notInterestedValidator = (
     abortEarly: false,
   });
 
-  // If there are validation errors, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -57,35 +56,27 @@ const notInterestedValidator = (
     );
   }
 
-  // If validation passes, return the validated value
-  return value;
+  return value; // Return the validated input
 };
 
-// Middleware function for validating NotInterestedInput
-export const validateNotInterestedInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating notInterested input
+export const validateNotInterestedInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the agreement input using the notInterestedValidator
-    const validatedInput: NotInterestedInput = notInterestedValidator(body);
+      // Validate the client's notInterested input using the notInterestedValidator
+      const validatedInput: NotInterestedInput = notInterestedValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    // Handle errors during validation
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // Respond with a custom error for other types of errors
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-export default notInterestedValidator; // Export the validator function

@@ -20,30 +20,26 @@ const paymentGatewayValidator = (
 ) => {
   // Define a Joi schema for validating the input
   const paymentGatewaySchema = Joi.object<PaymentGatewayInput>({
-    jobId: isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
+    jobId: isUpdate ? Joi.number().optional() : Joi.number().required(),
     jobApplicantId: isUpdate
-    ?Joi.number().optional()
-    :Joi.number().required(),
-    amount: isUpdate
-    ?Joi.string().optional()
-    :Joi.string().required(),
+      ? Joi.number().optional()
+      : Joi.number().required(),
+    amount: isUpdate ? Joi.string().optional() : Joi.string().required(),
     paymentMethod: isUpdate
-    ?Joi.string()
-      .valid(...Object.values(paymentMethodEnum))
-      .optional()
-      .messages({
-        "any.only": "Invalid payment method",
-        "any.required": "Payment method is required",
-      })
+      ? Joi.string()
+          .valid(...Object.values(paymentMethodEnum))
+          .optional()
+          .messages({
+            "any.only": "Invalid payment method",
+            "any.required": "Payment method is required",
+          })
       : Joi.string()
-      .valid(...Object.values(paymentMethodEnum))
-      .required()
-      .messages({
-        "any.only": "Invalid payment method",
-        "any.required": "Payment method is required",
-      }),
+          .valid(...Object.values(paymentMethodEnum))
+          .required()
+          .messages({
+            "any.only": "Invalid payment method",
+            "any.required": "Payment method is required",
+          }),
   });
 
   // Validate the input against the schema
@@ -51,14 +47,11 @@ const paymentGatewayValidator = (
     abortEarly: false,
   });
 
-  // If there are validation errors, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
-    // Extract validation error messages
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
-    // Throw a custom ApiError with a bad request status
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -66,36 +59,27 @@ const paymentGatewayValidator = (
     );
   }
 
-  // If validation passes, return the validated input
-  return value;
+  return value; // Return the validated input
 };
 
-// Export a middleware function to validate payment gateway input
-export const validatePaymentGatewayInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating paymentGateway input
+export const validatePaymentGatewayInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the payment gateway input using the paymentGatewayValidator
-    const validatedInput: PaymentGatewayInput = paymentGatewayValidator(body);
+      // Validate the client's paymentGateway input using the paymentGatewayValidator
+      const validatedInput: PaymentGatewayInput = paymentGatewayValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    // Handle errors, including ApiError
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // If it's not an ApiError, respond with a custom bad request error
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-// Export the paymentGatewayValidator function
-export default paymentGatewayValidator;

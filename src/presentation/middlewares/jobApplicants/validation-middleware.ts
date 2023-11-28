@@ -23,7 +23,6 @@ interface JobApplicantInput {
 const jobApplicantValidator = (
   input: JobApplicantInput,
   isUpdate: boolean = false
-
 ) => {
   // Define a Joi schema for validating the input
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
@@ -90,14 +89,11 @@ const jobApplicantValidator = (
     abortEarly: false,
   });
 
-  // If there are validation errors, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
-    // Extract validation error messages
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
-    // Throw a custom ApiError with a bad request status
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -105,36 +101,27 @@ const jobApplicantValidator = (
     );
   }
 
-  // If validation passes, return the validated input
-  return value;
+  return value; // Return the validated input
 };
 
-// Export a middleware function to validate job applicant input
-export const validateJobApplicantInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating jobApplicant input
+export const validateJobApplicantInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the job applicant input using the jobApplicantValidator
-    const validatedInput: JobApplicantInput = jobApplicantValidator(body);
+      // Validate the client's jobApplicant input using the jobApplicantValidator
+      const validatedInput: JobApplicantInput = jobApplicantValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    // Handle errors, including ApiError
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // If it's not an ApiError, respond with a custom bad request error
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-// Export the jobApplicantValidator function
-export default jobApplicantValidator;

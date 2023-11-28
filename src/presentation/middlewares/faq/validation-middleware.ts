@@ -63,7 +63,7 @@ export const validateFAQInputMiddleware = (
       next();
     } catch (error: any) {
       // Handle errors, e.g., respond with a custom error message
-      res.status(500).json({
+      res.status(400).json({
         success: false,
         message: error.message
       });

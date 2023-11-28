@@ -9,17 +9,11 @@ interface SavedJobInput {
 }
 
 // Define a validator function for SavedJobInput
-const savedJobValidator = (
-  input: SavedJobInput,
-  isUpdate: boolean = false) => {
+const savedJobValidator = (input: SavedJobInput, isUpdate: boolean = false) => {
   // Define a Joi schema for validation
   const savedJobSchema = Joi.object<SavedJobInput>({
-    Realtor: isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
-    Job: isUpdate
-    ? Joi.number().optional()
-    : Joi.number().required(),
+    Realtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    Job: isUpdate ? Joi.number().optional() : Joi.number().required(),
   });
 
   // Validate the input against the schema
@@ -27,12 +21,11 @@ const savedJobValidator = (
     abortEarly: false,
   });
 
-  // If there are validation errors, throw an ApiError
+  // If validation fails, throw a custom ApiError
   if (error) {
     const validationErrors: string[] = error.details.map(
       (err: ValidationErrorItem) => err.message
     );
-
     throw new ApiError(
       ApiError.badRequest().status,
       validationErrors.join(", "),
@@ -40,35 +33,27 @@ const savedJobValidator = (
     );
   }
 
-  // If validation passes, return the validated value
-  return value;
+  return value; // Return the validated input
 };
 
-// Middleware function for validating SavedJobInput
-export const validateSavedJobInputMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Extract the request body
-    const { body } = req;
+// Define a middleware for validating savedJob input
+export const validateSavedJobInputMiddleware = (isUpdate: boolean = false) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Extract the request body
+      const { body } = req;
 
-    // Validate the agreement input using the savedJobValidator
-    const validatedInput: SavedJobInput = savedJobValidator(body);
+      // Validate the client's savedJob input using the savedJobValidator
+      const validatedInput: SavedJobInput = savedJobValidator(body, isUpdate);
 
-    // Continue to the next middleware or route handler
-    next();
-  } catch (error) {
-    // Handle errors during validation
-    if (error instanceof ApiError) {
-      return res.status(error.status).json(error.message);
+      // Continue to the next middleware or route handler
+      next();
+    } catch (error: any) {
+      // Handle errors, e.g., respond with a custom error message
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-
-    // Respond with a custom error for other types of errors
-    const err = ApiError.badRequest();
-    return res.status(err.status).json(err.message);
-  }
+  };
 };
-
-export default savedJobValidator; // Export the validator function

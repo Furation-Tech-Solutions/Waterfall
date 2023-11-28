@@ -39,7 +39,7 @@ export const callLogRouter = Router();
 // Route handling for creating a new CallLog
 callLogRouter.post(
   "/", // Route URL
-  validateCallLogInputMiddleware, // Middleware for input validation
+  validateCallLogInputMiddleware(false), // Middleware for input validation
   callLogService.createCallLog.bind(callLogService) // Handling function
 );
 
@@ -47,7 +47,7 @@ callLogRouter.post(
 callLogRouter.get("/:id", callLogService.getCallLogById.bind(callLogService));
 
 // Route handling for updating a CallLog by ID
-callLogRouter.put("/:id", callLogService.updateCallLog.bind(callLogService));
+callLogRouter.put("/:id",validateCallLogInputMiddleware(true), callLogService.updateCallLog.bind(callLogService));
 
 // Route handling for deleting a CallLog by ID
 callLogRouter.delete("/:id", callLogService.deleteCallLog.bind(callLogService));
