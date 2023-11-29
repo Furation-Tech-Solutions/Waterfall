@@ -39,7 +39,9 @@ const realtorService = new RealtorService(
 export const realtorRouter = Router();
 
 // Route handling for creating a new realtor
-realtorRouter.post("/", validateRealtorInputMiddleware(false), realtorService.createRealtor.bind(realtorService));
+realtorRouter.post("/",
+//  validateRealtorInputMiddleware(false),
+  realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
 realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));

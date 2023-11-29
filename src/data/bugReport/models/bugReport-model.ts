@@ -8,7 +8,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 const BugReport = sequelize.define("BugReport", {
   // Define a field "realtor" of type INTEGER and make it non-nullable
   realtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: 'id' }
     // You can optionally add references to another model here if needed

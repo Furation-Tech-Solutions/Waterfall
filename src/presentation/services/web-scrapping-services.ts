@@ -41,8 +41,24 @@ export class WebScrapping{
           }
 
       async checkRecoNumber(req:Request,res:Response):Promise<void>{
-   
-      const scrapperData: ScrapperModel =req.body;
+        const first_Name: string = req.query.firstName as string || '';
+        const last_Name: string = req.query.lastName as string || '';
+         const reco_Number: number = parseInt(req.query.recoNumber as string || '0', 10);
+         // Check if lastName and recoNumber are provided
+    if (!last_Name || isNaN(reco_Number)) {
+      const error = new ErrorClass(400,"lastName and recoNumber are required",
+      '');
+        this.sendErrorResponse(res, error, 400);
+      // this.sendErrorResponse(res, "lastName and recoNumber are required", 400);
+      return;
+  }
+         
+        const scrapperData=new ScrapperModel(
+              first_Name,
+              last_Name,
+              reco_Number
+        )
+      // const scrapperData: ScrapperModel =req.body;
   
       const newScrapperData: Either<ErrorClass, ScrapperEntity> =
         await this.getScrapperUsecase.execute(scrapperData);

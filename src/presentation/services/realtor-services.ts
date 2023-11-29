@@ -55,12 +55,11 @@ export class RealtorService {
 
   async createRealtor(req: Request, res: Response): Promise<void> {
     const realtorData: RealtorModel = RealtorMapper.toModel(req.body);
-
     const newRealtor: Either<ErrorClass, RealtorEntity> =
       await this.createRealtorUsecase.execute(realtorData);
-
     newRealtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, 400)},
       (result: RealtorEntity) => {
         const resData = RealtorMapper.toEntity(result, true);
         this.sendSuccessResponse(

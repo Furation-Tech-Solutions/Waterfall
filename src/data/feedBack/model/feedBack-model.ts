@@ -8,12 +8,12 @@ import Job from '@data/job/models/job-model';
 // Define a Sequelize model called 'FeedBacks' with several fields
 const FeedBacks = sequelize.define('FeedBacks', {
   fromRealtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: 'id' },
   },
   toRealtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: 'id' },
   },

@@ -8,14 +8,14 @@ import Realtors from "@data/realtors/model/realtor-model";
 const Report = sequelize.define("Report", {
   // Define a field "fromRealtor" of type INTEGER (assuming it's an ID), not nullable
   fromRealtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the 'id' field in the 'Realtors' model
   },
 
   // Define a field "toRealtor" of type INTEGER (assuming it's an ID), not nullable
   toRealtor: {
-    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by INTEGER in PostgreSQL
+    type: DataTypes.STRING, // Assuming 'Realtor' is represented by INTEGER in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the 'id' field in the 'Realtors' model
   },
