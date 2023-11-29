@@ -4,8 +4,8 @@ import { Request, Response, NextFunction } from "express";
 
 // Define the shape of the input data using an interface
 interface SupportInput {
-  realtor: number;
-  to: number;
+  realtor: string;
+  to: string;
   description: string;
   attachments: string[] | undefined;
   timestamp?: Date;
@@ -15,8 +15,8 @@ interface SupportInput {
 const supportValidator = (input: SupportInput, isUpdate: boolean = false) => {
   // Define a Joi schema to validate the SupportInput object
   const supportSchema = Joi.object<SupportInput>({
-    realtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
-    to: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    realtor: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    to: isUpdate ? Joi.string().optional() : Joi.string().required(),
     description: isUpdate
       ? Joi.string().optional().min(1).max(1000).messages({
           "string.base": "Description must be a string",

@@ -1,8 +1,8 @@
 // Express API request populate the ConnectionsModel
 export class ConnectionsModel {
   constructor(
-    public fromId: number = 0,
-    public toId: number = 0,
+    public fromId: string = "",
+    public toId: string = "",
     public fromRealtor: {} = {},
     public toRealtor: {} = {},
     public connected: boolean = false
@@ -13,8 +13,8 @@ export class ConnectionsModel {
 export class ConnectionsEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public fromId: number,
-    public toId: number,
+    public fromId: string,
+    public toId: string,
     public connected: boolean,
     public fromRealtor: {},
     public toRealtor: {}

@@ -40,7 +40,7 @@ export const realtorRouter = Router();
 
 // Route handling for creating a new realtor
 realtorRouter.post("/",
-//  validateRealtorInputMiddleware(false),
+ validateRealtorInputMiddleware(false),
   realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
