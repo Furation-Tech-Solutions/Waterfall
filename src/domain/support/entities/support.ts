@@ -4,7 +4,7 @@ export class SupportModel {
     // The name of the realtor associated with the support request
     public realtor: string = "",
     // The recipient of the support request
-    public to: number = 0,
+    public to: string = "",
     // A description of the support request
     public description: string = "",
     // An array of attachments (optional) related to the support request

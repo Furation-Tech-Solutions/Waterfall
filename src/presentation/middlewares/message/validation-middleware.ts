@@ -15,7 +15,7 @@ interface MessageInput {
 const messageValidator = async (input: MessageInput, isUpdate: boolean = false) => {
   // Define a schema for validating the input using Joi
   const messageSchema = Joi.object<MessageInput>({
-    // Validate sender
+    // Validate sender"
     sender: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate receiver
@@ -44,30 +44,6 @@ const messageValidator = async (input: MessageInput, isUpdate: boolean = false) 
     );
   }
 
-  // Check if sender and receiver IDs exist in the Realtors model
-  if (!isUpdate) {
-    const { sender, receiver } = value;
-
-    // Check if sender ID exists in Realtors
-    const senderExists = await Realtors.findByPk(sender);
-    if (!senderExists) {
-      throw new ApiError(
-        ApiError.badRequest().status,
-        "Sender ID does not exist in Realtors",
-        "ValidationError"
-      );
-    }
-
-    // Check if receiver ID exists in Realtors
-    const receiverExists = await Realtors.findByPk(receiver);
-    if (!receiverExists) {
-      throw new ApiError(
-        ApiError.badRequest().status,
-        "Receiver ID does not exist in Realtors",
-        "ValidationError"
-      );
-    }
-  }
 
   return value; // Return the validated input
 };
