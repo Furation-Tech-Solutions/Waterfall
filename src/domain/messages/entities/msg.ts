@@ -1,8 +1,8 @@
 // Define a class for the MessageModel, representing the structure of data sent in Express API requests
 export class MessageModel {
   constructor(
-    public sender: number = 0,
-    public receiver: number = 0,
+    public sender: string = "",
+    public receiver: string = "",
     public message: string = '',
     public senderData: {} = {},
     public ReceiverData: {} = {},
@@ -13,8 +13,8 @@ export class MessageModel {
 export class MessageEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public sender: number,
-    public receiver: number,
+    public sender: string,
+    public receiver: string,
     public message: string,
     public senderData: {},
     public ReceiverData: {},

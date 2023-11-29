@@ -203,11 +203,11 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
         // Fetch the updated record
         const updatedRealtor = await Realtor.findByPk(id);
-        console.log(updatedRealtor?.toJSON());
+        // console.log(updatedRealtor?.toJSON());
 
         // Soft delete the Realtor (set deletedAt)
 
-        console.log('Realtor soft-deleted successfully');
+        // console.log('Realtor soft-deleted successfully');
     }
 
 }

@@ -1,7 +1,7 @@
 // Express API request DTO
 export class JobModel {
   constructor(
-    public jobOwner: number = 0, // Owner of the job
+    public jobOwner: string = "", // Owner of the job
     public location: string = "", // Location of the job
     public address: string = "", // Address of the job
     public date: Date = new Date(), // Date of the job
@@ -27,7 +27,7 @@ export class JobModel {
 export class JobEntity {
   constructor(
     public id: number | undefined = undefined, // Job ID (optional)
-    public jobOwner: number, // Owner of the job
+    public jobOwner: string, // Owner of the job
     public location: string, // Location of the job
     public address: string, // Address of the job
     public date: Date, // Date of the job
