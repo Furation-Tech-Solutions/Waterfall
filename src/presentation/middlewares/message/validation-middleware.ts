@@ -15,7 +15,7 @@ interface MessageInput {
 const messageValidator = async (input: MessageInput, isUpdate: boolean = false) => {
   // Define a schema for validating the input using Joi
   const messageSchema = Joi.object<MessageInput>({
-    // Validate sender
+    // Validate sender"
     sender: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate receiver
