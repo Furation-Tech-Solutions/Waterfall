@@ -1,6 +1,7 @@
 // Define a class for the RealtorModel, which represents the structure of a Realtor
 export class RealtorModel {
   constructor(
+    public id: string = "",
     public firstName: string = "",
     public lastName: string = "",
     public email: string = "",
@@ -25,7 +26,7 @@ export class RealtorModel {
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
 export class RealtorEntity {
   constructor(
-    public id: number | undefined = undefined, // Set a default value for id
+    public id: string , // Set a default value for id
     public firstName: string,
     public lastName: string,
     public email: string,
@@ -58,6 +59,8 @@ export class RealtorMapper {
       return {
         ...existingRealtor,
         // Update each property based on whether it exists in realtorData
+        id: includeId && realtorData.id !== undefined ? realtorData.id : existingRealtor.id,
+       
         firstName:
           realtorData.firstName !== undefined
             ? realtorData.firstName
@@ -128,11 +131,12 @@ export class RealtorMapper {
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
       const realtorEntity: RealtorEntity = {
-        id: includeId
-          ? realtorData.id
-            ? realtorData.id
-            : undefined
-          : realtorData.id,
+        id:  realtorData.id,
+        // id: includeId
+        //   ? realtorData.id
+        //     ? realtorData.id
+        //     : undefined
+        //   : realtorData.id,
         firstName: realtorData.firstName,
         lastName: realtorData.lastName,
         email: realtorData.email,
@@ -158,6 +162,7 @@ export class RealtorMapper {
   static toModel(realtor: RealtorEntity): any {
     // Convert a RealtorEntity to a RealtorModel or plain object for the model
     return {
+      id:realtor.id,
       firstName: realtor.firstName,
       lastName: realtor.lastName,
       email: realtor.email,

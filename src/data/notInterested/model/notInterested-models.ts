@@ -9,7 +9,7 @@ import { notInterestedRouter } from "@presentation/routes/notInterested-routes";
 const NotInterested = sequelize.define("NotInterested", {
   // Define a field "Realtor" with a data type of INTEGER (assuming it's equivalent to ObjectId in PostgreSQL)
   realtor: {
-    type: DataTypes.INTEGER, // Data type for realtor is INTEGER
+    type: DataTypes.STRING, // Data type for realtor is INTEGER
     allowNull: false, // It cannot be null
     references: { model: Realtors, key: "id" }, // References the "id" column in the Realtors model
   },

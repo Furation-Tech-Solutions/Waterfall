@@ -7,13 +7,13 @@ import Realtors from "@data/realtors/model/realtor-model";
 const Message = sequelize.define('Message', {
   // Define the 'sender' field
   sender: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
   },
   // Define the 'receiver' field
   receiver: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
   },

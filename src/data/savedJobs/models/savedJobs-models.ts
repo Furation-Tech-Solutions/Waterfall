@@ -11,7 +11,7 @@ const SavedJob = sequelize.define("SavedJob", {
   // Define a field "Realtor" with a data type of INTEGER
   // This field represents the foreign key linking to the "Realtors" table
   Realtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false, // The field cannot be null
     references: { model: Realtors, key: 'id' } // Establish a foreign key relationship
   },

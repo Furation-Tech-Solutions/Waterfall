@@ -4,6 +4,10 @@ import { DataTypes } from "sequelize";
 
 // Define the Sequelize model for Realtors
 const Realtors = sequelize.define("Realtors", {
+  id: {
+    type: DataTypes.STRING, // Use STRING type for the id field
+    primaryKey: true,
+  },
   // Define the "firstName" field with a data type of STRING
   firstName: {
     type: DataTypes.STRING,

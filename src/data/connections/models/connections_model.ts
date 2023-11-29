@@ -9,13 +9,13 @@ import Realtors from "@data/realtors/model/realtor-model"; // Importing the Real
 const Connections = sequelize.define("Connections", {
   // Define the "fromId" field with an INTEGER data type, which cannot be null
   fromId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Establishing a foreign key reference to the Realtors model
   },
   // Define the "toId" field with an INTEGER data type, which cannot be null
   toId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Establishing a foreign key reference to the Realtors model
   },

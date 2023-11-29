@@ -29,7 +29,7 @@ const JobApplicant = sequelize.define("JobApplicant", {
   },
   // Define the "applicant" field with its data type and constraints
   applicant: {
-    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
+    type: DataTypes.STRING, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the Realtors model's id
   },
