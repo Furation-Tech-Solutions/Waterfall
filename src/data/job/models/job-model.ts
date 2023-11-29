@@ -35,7 +35,7 @@ const Job = sequelize.define("Job", {
 
   // UUID representing the job owner
   jobOwner: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" },
   },

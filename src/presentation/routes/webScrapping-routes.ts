@@ -26,4 +26,6 @@ const scrapperService = new WebScrapping(
 export const scrapperRouter = Router();
 
 // Route handling for creating a new realtor
-scrapperRouter.post("/",validateScrappingInputMiddleware(false), scrapperService.checkRecoNumber.bind(scrapperService));
+scrapperRouter.get("/",
+// validateScrappingInputMiddleware(false),
+ scrapperService.checkRecoNumber.bind(scrapperService));
