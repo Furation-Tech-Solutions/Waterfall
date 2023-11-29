@@ -64,7 +64,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
       where: {
-        // fromRealtor: loginId
+        fromRealtor: loginId
       },
       include: [
         {

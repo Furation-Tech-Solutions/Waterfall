@@ -96,7 +96,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           as: "realtorData",
           foreignKey: "Realtor",
           where: { 
-            // Realtor: loginId
+            Realtor: loginId
           },
         },
         {
