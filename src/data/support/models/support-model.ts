@@ -12,7 +12,7 @@ const Support = sequelize.define("Support", {
     allowNull: false,
     references: { model: Realtors, key: 'id' } // Adding a foreign key constraint referencing the 'id' field in the Realtors model
   },
-  // Define a "to" field with STRING data type, which cannot be null
+  // Define a "to" field with STRING data type, which cannot be null support email address
   to: {
     type: DataTypes.STRING,
     allowNull: false,

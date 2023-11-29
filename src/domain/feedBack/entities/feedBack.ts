@@ -1,8 +1,8 @@
 // Express API request populates the FeedBack Model
 export class FeedBackModel {
   constructor(
-    public fromRealtor: number = 0,
-    public toRealtor: number = 0,
+    public fromRealtor: string = "",
+    public toRealtor: string = "",
     public jobId: number = 0,
     public rating: number = 0,
     public description: string = ""
@@ -13,8 +13,8 @@ export class FeedBackModel {
 export class FeedBackEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public fromRealtor: number,
-    public toRealtor: number,
+    public fromRealtor: string,
+    public toRealtor: string,
     public jobId: number,
     public rating: number,
     public description: string

@@ -2,7 +2,7 @@
 export class JobApplicantModel {
   constructor(
     public job: number = 0,
-    public applicant: number = 0,
+    public applicant: string = "",
     public applicantStatus: string = "Pending",
     public applicantStatusUpdateTime: string = "", // Date of the jobApplicant
     public agreement: boolean = false,
@@ -17,7 +17,7 @@ export class JobApplicantEntity {
   constructor(
     public id: number | undefined = undefined,
     public job: number,
-    public applicant: number,
+    public applicant: string,
     public applicantStatus: string,
     public applicantStatusUpdateTime: string,
     public agreement: boolean,

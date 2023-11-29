@@ -314,7 +314,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT
     ) {
       const currentTime = new Date();
-      console.log(currentTime);
+      // console.log(currentTime);
 
       const applicantStatusUpdateTime = jobApplicant.getDataValue(
         "applicantStatusUpdateTime"

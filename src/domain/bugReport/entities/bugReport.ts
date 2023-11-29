@@ -1,7 +1,7 @@
 // Express API request DTO (Data Transfer Object)
 export class BugReportModel {
   constructor(
-    public realtor: number = 0, // Replace with the appropriate data type if needed
+    public realtor: string = "", // Replace with the appropriate data type if needed
     public description: string = "",
     public attachments: string[] | null = null,
     public timestamp: Date = new Date()
@@ -12,7 +12,7 @@ export class BugReportModel {
 export class BugReportEntity {
   constructor(
     public id: number | undefined = undefined,
-    public realtor: number, // Replace with the appropriate data type if needed
+    public realtor: string, // Replace with the appropriate data type if needed
     public description: string,
     public attachments: string[] | null,
     public timestamp: Date

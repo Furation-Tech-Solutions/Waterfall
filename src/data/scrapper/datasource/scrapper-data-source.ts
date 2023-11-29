@@ -21,7 +21,7 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
   
     // Implement the "create" method to insert a new SupportEntity
     async create(realtorData: ScrapperModel): Promise<ScrapperEntity> {
-      console.log(realtorData.recoNumber,"realtorData")
+      // console.log(realtorData.recoNumber,"realtorData")
       // Create a new SupportEntity record in the database
     //   const createdRecoNumber = await RecoNumber.create(recoNumber);
        // Launch a headless browser
