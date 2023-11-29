@@ -66,21 +66,16 @@ export class MessagesDataSourceImpl implements MessageDataSource {
 
     async getAll(loginId: string, query: Query): Promise<any[]> {
         // Get all message records based on the provided query parameters
+        console.log(+loginId, "login ID")
         const currentPage = query.page || 1;
         const itemsPerPage = query.limit || 10;
         const offset = (currentPage - 1) * itemsPerPage;
 
-        if (query.searchList) {
-            // If searchList is provided, apply search condition
+        if (query.q === "unread" && loginId) {
             const data = await Message.findAll({
                 where: {
-                    [Op.or]: [
-                        {
-                            message: {
-                                [Op.iLike]: `%${query.searchList}%`,
-                            },
-                        },
-                    ],
+                    receiver: +loginId,
+                    seen: false,
                 },
                 include: [
                     {
@@ -102,7 +97,22 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                 return data.map((msg: any) => msg.toJSON());
             }
 
-            const data1 = await Message.findAll({
+        }
+
+        if (query.searchList && loginId) {
+            // If searchList is provided, apply search condition
+
+            const data = await Message.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            sender: loginId
+                        },
+                        {
+                            receiver: loginId
+                        },
+                    ],
+                },
                 include: [
                     {
                         model: Realtors,
@@ -133,10 +143,90 @@ export class MessagesDataSourceImpl implements MessageDataSource {
                 offset: offset,
             });
 
+            if (data.length > 0) {
+                return data.map((msg: any) => msg.toJSON());
+            }
+
+            const data1 = await Message.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            sender: loginId
+                        },
+                        {
+                            receiver: loginId
+                        },
+                    ],
+                    message: {
+                        [Op.iLike]: `%${query.searchList}%`,
+                    },
+                },
+                include: [
+                    {
+                        model: Realtors,
+                        as: "senderData",
+                        foreignKey: "sender",
+                    },
+                    {
+                        model: Realtors,
+                        as: "receiverData",
+                        foreignKey: "receiver",
+                    },
+                ],
+                limit: itemsPerPage,
+                offset: offset,
+            });
+
             return data1.map((msg: any) => msg.toJSON());
-        } else {
+
+        } else if (query.q === "chatscreen" && query.toId && loginId) {
+
+            const data = await Message.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            sender: loginId,
+                            receiver: query.toId
+                        },
+                        {
+                            sender: query.toId,
+                            receiver: loginId
+                        }
+                    ],
+                },
+                include: [
+                    {
+                        model: Realtors,
+                        as: "senderData",
+                        foreignKey: "sender",
+                    },
+                    {
+                        model: Realtors,
+                        as: "receiverData",
+                        foreignKey: "receiver",
+                    },
+                ],
+                limit: itemsPerPage,
+                offset: offset,
+            });
+
+            return data.map((msg: any) => msg.toJSON());
+
+        }
+        else {
             // If no searchList, get all messages
             const data = await Message.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            sender: loginId
+                        },
+                        {
+                            receiver: loginId
+                        },
+                    ],
+
+                },
                 include: [
                     {
                         model: Realtors,

@@ -22,6 +22,10 @@ const Message = sequelize.define('Message', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  seen: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 // Establish associations with the 'Realtors' model using foreign keys

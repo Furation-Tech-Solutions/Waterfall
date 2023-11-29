@@ -47,6 +47,9 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     const offset = (page - 1) * limit;
 
     const data = await FeedBack.findAll({
+      where: {
+        toRealtor: query.id,
+      },
       include: [
         { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
         { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
