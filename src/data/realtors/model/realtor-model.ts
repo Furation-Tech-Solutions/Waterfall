@@ -29,6 +29,10 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING,
     allowNull: false, // It cannot be null
     unique: true, // It must be unique
+    set(value: String) {
+      // Set the email field to lowercase before validation
+      this.setDataValue('email', value.toLowerCase());
+    },
   },
   // Define the "contact" field with a data type of STRING
   contact: {
