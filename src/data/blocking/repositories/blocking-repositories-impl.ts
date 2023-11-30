@@ -63,9 +63,7 @@ export class BlockingRepositoryImpl implements BlockingRepository {
   ): Promise<Either<ErrorClass, BlockingEntity>> {
     try {
       const blocking = await this.blockingDataSource.read(id); // Use the tag blocking data source
-      return blocking
-        ? Right<ErrorClass, BlockingEntity>(blocking)
-        : Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+      return Right<ErrorClass, BlockingEntity>(blocking);
     } catch (e) {
       // Handle specific API error for not found
       if (e instanceof ApiError && e.name === "notfound") {

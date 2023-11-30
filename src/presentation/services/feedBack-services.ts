@@ -99,7 +99,7 @@ export class FeedBackService {
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = parseInt(req.query.months as string, 10);
 
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> =

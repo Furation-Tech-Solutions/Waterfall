@@ -132,7 +132,6 @@ export class ConnectionsServices {
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         let toId = req.headers.toid;
         let loginId = req.headers.fromid as string;
-        
 
 
     const query: any = {};

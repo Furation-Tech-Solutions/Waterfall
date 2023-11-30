@@ -66,7 +66,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
 
     async getAll(loginId: string, query: Query): Promise<any[]> {
         // Get all message records based on the provided query parameters
-        console.log(+loginId, "login ID")
+        // console.log(+loginId, "login ID")
         const currentPage = query.page || 1;
         const itemsPerPage = query.limit || 10;
         const offset = (currentPage - 1) * itemsPerPage;
