@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 
 // Define the structure of the input for Realtor
 interface RealtorInput {
+  id:string;
   firstName: string;
   lastName: string;
   email: string;
@@ -33,6 +34,14 @@ const realtorValidator = (
 ) => {
   // Define a schema for Realtor input using Joi
   const realtorSchema = Joi.object<RealtorInput>({
+    id: isUpdate
+    ? Joi.string().optional().messages({
+      "string.empty": "id cannot be empty",
+    })
+    : Joi.string().required().messages({
+      "any.required": "id is required",
+      "string.empty": "id cannot be empty",
+    }),
     firstName: isUpdate
       ? Joi.string().min(3).max(30).optional().trim().messages({
         "string.min": "firstName should have at least 3 characters",

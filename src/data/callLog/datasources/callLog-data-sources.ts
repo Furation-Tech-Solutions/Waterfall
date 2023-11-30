@@ -91,7 +91,7 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
           foreignKey: "jobApplicant",
           as: "jobApplicantData",
           where: {
-            // applicant: loginId
+            applicant: loginId
           },
         },
       ],

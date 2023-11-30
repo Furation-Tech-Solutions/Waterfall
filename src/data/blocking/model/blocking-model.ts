@@ -7,12 +7,12 @@ import Realtors from "@data/realtors/model/realtor-model";
 // Define a Sequelize model called 'Blocking' with two integer fields: 'fromRealtor' and 'toRealtor'
 const Blocking = sequelize.define('Blocking', {
   fromRealtor: {
-    type: DataTypes.INTEGER, // Define the data type as INTEGER
+    type: DataTypes.STRING, // Define the data type as INTEGER
     allowNull: false, // Ensure the field is not nullable
     references: { model: Realtors, key: 'id' } // Establish a foreign key relationship with the 'Realtors' model
   },
   toRealtor: {
-    type: DataTypes.INTEGER, // Define the data type as INTEGER
+    type: DataTypes.STRING, // Define the data type as INTEGER
     allowNull: false, // Ensure the field is not nullable
     references: { model: Realtors, key: 'id' } // Establish a foreign key relationship with the 'Realtors' model
   }

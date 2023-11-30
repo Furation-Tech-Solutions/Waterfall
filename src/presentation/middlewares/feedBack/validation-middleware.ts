@@ -5,8 +5,8 @@ import { Request, Response, NextFunction } from "express";
 
 // Define the structure of the input for feedback
 interface FeedBackInput {
-  fromRealtor: number;
-  toRealtor: number;
+  fromRealtor: string;
+  toRealtor: string;
   jobId: number;
   rating: number;
   description: string;
@@ -20,11 +20,11 @@ const feedBackValidator = (
   // Define a schema for feedback input using Joi
   const feedBackSchema = Joi.object<FeedBackInput>({
     fromRealtor: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().required(),
+      ? Joi.string().optional()
+      : Joi.string().required(),
     toRealtor: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().required(),
+      ? Joi.string().optional()
+      : Joi.string().required(),
     jobId: isUpdate
       ? Joi.number().optional()
       : Joi.number().required(),

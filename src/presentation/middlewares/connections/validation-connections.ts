@@ -3,8 +3,8 @@ import ApiError from "@presentation/error-handling/api-error";
 import { Request, Response, NextFunction } from "express";
 
 interface ConnectionsInput {
-  fromId: number;
-  toId: number;
+  fromId: string;
+  toId: string;
   connected: boolean;
 }
 
@@ -14,22 +14,22 @@ const connectionsValidator = (
 ) => {
   const connectionsSchema = Joi.object<ConnectionsInput>({
     fromId: isUpdate
-      ? Joi.number().optional().messages({
-          "number.integer": "fromId should be an integer",
+      ? Joi.string().optional().messages({
+          "string.integer": "fromId should be an string",
           "any.required": "fromId is required",
         })
-      : Joi.number().required().messages({
-          "number.integer": "fromId should be an integer",
+      : Joi.string().required().messages({
+          "string.integer": "fromId should be an string",
           "any.required": "fromId is required",
         }),
 
     toId: isUpdate
-      ? Joi.number().optional().messages({
-          "number.integer": "toId should be an integer",
+      ? Joi.string().optional().messages({
+          "string.integer": "toId should be an string",
           "any.required": "toId is required",
         })
-      : Joi.number().required().messages({
-          "number.integer": "toId should be an integer",
+      : Joi.string().required().messages({
+          "number.integer": "toId should be an string",
           "any.required": "toId is required",
         }),
 

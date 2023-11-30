@@ -1,7 +1,7 @@
 // Express API request DTO (Data Transfer Object) for NotInterested
 export class NotInterestedModel {
   constructor(
-    public realtor: number = 0, // Realtor name, default value is an empty string
+    public realtor: string = "", // Realtor name, default value is an empty string
     public job: number = 0, // Job name, default value is an empty string
     public jobData: {} = {},
     public realtorData: {} = {},
@@ -12,7 +12,7 @@ export class NotInterestedModel {
 export class NotInterestedEntity {
   constructor(
     public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
-    public realtor: number, // Realtor name
+    public realtor: string, // Realtor name
     public job: number, // Job name
     public jobData: {},
     public realtorData: {},

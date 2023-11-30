@@ -8,11 +8,11 @@ import Realtors from "@data/realtors/model/realtor-model"; // Importing the Real
 const Support = sequelize.define("Support", {
   // Define a "realtor" field with INTEGER data type, which cannot be null
   realtor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: 'id' } // Adding a foreign key constraint referencing the 'id' field in the Realtors model
   },
-  // Define a "to" field with STRING data type, which cannot be null
+  // Define a "to" field with STRING data type, which cannot be null support email address
   to: {
     type: DataTypes.STRING,
     allowNull: false,

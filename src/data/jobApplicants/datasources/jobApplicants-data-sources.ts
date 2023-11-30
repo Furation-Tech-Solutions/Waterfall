@@ -43,15 +43,31 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<any> {
     try {
-      // Create a new job applicant record in the database
-      const createdJobApplicant = await JobApplicant.create(jobApplicant);
-
       // Retrieve the associated Job based on jobApplicant's job ID
       const job: any = await Job.findByPk(jobApplicant.job);
 
-      return createdJobApplicant.toJSON();
+      // Check if the number of applicants exceeds the limit
+      const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
+
+      // Count the number of existing applicants with "Pending" status
+      const pendingApplicants = await JobApplicant.count({
+        where: {
+          job: jobApplicant.job,
+          applicantStatus: "Pending",
+        },
+      });
+
+      // Check if the new applicant can be created based on the status and limit
+      if (pendingApplicants < parseInt(numberOfApplicantsLimit)) {
+        // Create a new job applicant record in the database
+        const createdJobApplicant = await JobApplicant.create(jobApplicant);
+
+        return createdJobApplicant.toJSON();
+      } else {
+        // Throw an error if the limit is exceeded
+        throw new Error("Number of applicants exceeds the limit");
+      }
     } catch (error) {
-      // Handle any potential errors, e.g., validation errors or database issues
       throw error;
     }
   }
@@ -91,7 +107,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
 
     const offset = (currentPage - 1) * itemsPerPage;
-//-------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------
 
     if (query.q === "upcomingTask") {
       {
@@ -120,7 +136,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-//------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
@@ -150,7 +166,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-//------------------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
@@ -179,7 +195,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         return jobApplicant.map((jobA: any) => jobA.toJSON());
       }
-//------------------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "PaymentPending") {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
@@ -204,7 +220,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         ],
       });
       return jobApplicant.map((jobA: any) => jobA.toJSON());
-//-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "Completed") {
       // Check if the query parameter is "active"
       const jobApplicant = await JobApplicant.findAll({
@@ -228,7 +244,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         ],
       });
       return jobApplicant.map((jobA: any) => jobA.toJSON());
-//-----------------------------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
       const jobApplicant = await JobApplicant.findAll({
@@ -263,7 +279,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Handle the case where the job applicant is not found
       throw new Error("Job Applicant not found");
     }
-//-------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------
 
     // Retrieve the record to check the current applicantStatus
     const existingApplicant: any = await JobApplicant.findByPk(id);
@@ -286,7 +302,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
       return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
     }
- //-----------------------------------------------------------------------------------------------------------------------------------------------------------------   
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
     // Retrieve the record to check the current paymentStatus
     const existingPaymentStatus: any = await JobApplicant.findByPk(id);
 
@@ -306,7 +322,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
     }
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------------------------------------
     // Check if agreement is signed within 24 hours after Accepting
     if (
       jobApplicant.agreement === false &&
@@ -314,7 +330,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       jobApplicant.applicantStatus === applicationStatusEnum.ACCEPT
     ) {
       const currentTime = new Date();
-      console.log(currentTime);
+      // console.log(currentTime);
 
       const applicantStatusUpdateTime = jobApplicant.getDataValue(
         "applicantStatusUpdateTime"
@@ -326,8 +342,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           new Date(applicantStatusUpdateTime).getTime()) /
           (1000 * 60 * 60) >
           24
-          // (1000 * 60) > // Change from 24 hours to 5 minutes
-          // 2
+        // (1000 * 60) > // Change from 24 hours to 5 minutes
+        // 2
       ) {
         throw new Error(
           "Agreement can only be set within 24 hours after Accepting"
@@ -335,7 +351,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------
 
     if (
       jobApplicant.applicantStatus === "Pending" &&
@@ -356,7 +372,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           "Job Owner can accept only one application for this Job"
         );
       } else {
-//----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------
         // Check if the updated values meet the criteria for setting liveStatus to false
 
         // Update the associated Job to set liveStatus to false
@@ -371,7 +387,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         }
       }
     }
-//--------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------
     // Check if the provided data includes changes to agreement and jobStatus
     if (
       jobApplicant.jobStatus === "Pending" &&
@@ -389,7 +405,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         });
       }
     }
-//--------------------------------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------------------------
 
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);

@@ -4,6 +4,10 @@ import { DataTypes } from "sequelize";
 
 // Define the Sequelize model for Realtors
 const Realtors = sequelize.define("Realtors", {
+  id: {
+    type: DataTypes.STRING, // Use STRING type for the id field
+    primaryKey: true,
+  },
   // Define the "firstName" field with a data type of STRING
   firstName: {
     type: DataTypes.STRING,
@@ -25,6 +29,10 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING,
     allowNull: false, // It cannot be null
     unique: true, // It must be unique
+    set(value: String) {
+      // Set the email field to lowercase before validation
+      this.setDataValue('email', value.toLowerCase());
+    },
   },
   // Define the "contact" field with a data type of STRING
   contact: {
