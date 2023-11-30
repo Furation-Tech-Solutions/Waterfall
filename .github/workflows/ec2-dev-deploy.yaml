@@ -15,10 +15,9 @@ jobs:
   deploy:
     name: deploy backend
     runs-on: ubuntu-20.04
+    env:
+        SSH_PRIVATE_KEY: ${{secrets.WATERFALL_SSH_KEY}}
     steps:
-      - uses: bash
-        env:
-          SSH_PRIVATE_KEY: ${{secrets.WATERFALL_SSH_KEY}}
       - uses: actions/checkout@v4
       - name: Configure aws client
         uses: aws-actions/configure-aws-credentials@v4
