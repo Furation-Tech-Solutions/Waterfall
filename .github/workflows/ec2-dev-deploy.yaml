@@ -1,0 +1,52 @@
+name: Waterfall Deployment Dev
+run-name: Elastic Beanstalk Deployment Dev
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "ci/ssh-Dev-Deploy"
+  # pull_request:
+  #   types:
+  #     - "closed"
+  #   branches:
+  #     - "dev"
+
+jobs:
+  deploy:
+    name: deploy backend
+    runs-on: ubuntu-20.04
+    env:
+        SSH_PRIVATE_KEY: ${{secrets.WATERFALL_SSH_KEY}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure aws client
+        uses: aws-actions/configure-aws-credentials@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+      - run: yarn install
+      - name: Execute application build Script
+        run: yarn run build
+      - name: Build code bundle
+        run: zip distout.zip -r dist/
+      - name: write key to file
+        run: |
+          mkdir ~/.ssh && \
+          echo $SSH_PRIVATE_KEY | base64 -decode - > ~/.ssh/waterfall-key.pem && \
+          sudo 
+      - name: remove remote files
+        run: ssh -i "~/.ssh/waterfall-key.pem" ubuntu@waterfall-dev.furation.tech 'cd ~/waterfall/; rm -rf dist/ distOut.zip yarn.lock package.json'
+      - name: Copy files over at server
+        run: scp -r  -i "~/.ssh/waterfall-key.pem" distOut.zip package.json yarn.lock ubuntu@waterfall-dev.furation.tech:~/waterfall/
+      - name: export pm2 and restart pm2 with updated code
+        run: ssh -i "~/.ssh/waterfall-key.pem" ubuntu@waterfall-dev.furation.tech '. /etc/profile; export PATH=$PATH:$HOME/.nvm/versions/node/v18.18.0/bin; cd $HOME/waterfall/ && yarn install && unzip distOut.zip && pm2 restart 0'
+      - name: verify instance is running
+        run: |
+          echo "hello"
+      - name: clean up
+        run: |
+          rm distOut.zip && \
+          rm ~/.ssh/waterfall-key.pem
+      - name: Completion
+        run: echo "Completed"
