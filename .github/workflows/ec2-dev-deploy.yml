@@ -31,7 +31,7 @@ jobs:
       - name: Retrieve the secret and decode it to a file
         env:
           CERTIFICATE_BASE64: ${{ secrets.SSH_KEY }}
-          KNOWN_HOST: ${{ variable.KNOWN_HOST }}
+          KNOWN_HOST: ${{ vars.KNOWN_HOST }}
         run: |
           mkdir -p ~/.ssh/ && \
           echo $CERTIFICATE_BASE64 | base64 --decode > ~/.ssh/waterfall-key.pem && \
