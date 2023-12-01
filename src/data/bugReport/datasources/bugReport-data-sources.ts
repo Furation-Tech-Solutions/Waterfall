@@ -58,6 +58,7 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
     });
 
     return bugReport ? bugReport.toJSON() : null; // Convert to a plain JavaScript object before returning
+    
   }
 
   // Method to retrieve all bug reports from the database

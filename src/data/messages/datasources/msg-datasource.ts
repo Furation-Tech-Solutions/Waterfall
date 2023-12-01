@@ -87,12 +87,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     return messages ? messages.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-  async getAll(loginId: string, query: Query): Promise<any[]> {
-    // Get all message records based on the provided query parameters
-    // console.log(+loginId, "login ID")
-    const currentPage = query.page || 1;
-    const itemsPerPage = query.limit || 10;
-    const offset = (currentPage - 1) * itemsPerPage;
+    async getAll(loginId: string, query: Query): Promise<any[]> {
+        // Get all message records based on the provided query parameters
+        // console.log(+loginId, "login ID")
+        const currentPage = query.page || 1;
+        const itemsPerPage = query.limit || 10;
+        const offset = (currentPage - 1) * itemsPerPage;
 
     if (query.q === "unread" && loginId) {
       const data = await Message.findAll({

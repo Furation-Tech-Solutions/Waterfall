@@ -35,26 +35,6 @@ export interface BlockQuery {
 export class BlockingDataSourceImpl implements BlockingDataSource {
   constructor(private db: Sequelize) {}
 
-  // // Method to create a new blocking entry
-  // async create(blocking: any): Promise<any> {
-  //   // Check if a blocking entry with the same 'fromRealtor' and 'toRealtor' already exists
-  //   const existingBlockor = await Blocking.findOne({
-  //     where: {
-  //       fromRealtor: blocking.fromRealtor,
-  //       toRealtor: blocking.toRealtor,
-  //     },
-  //   });
-
-  //   // If a matching entry exists, throw an error
-  //   if (existingBlockor) {
-  //     throw ApiError.idBlocked(); // API error indicating ID is blocked
-  //   }
-
-  //   // Create a new blocking entry and return its JSON representation
-  //   const createdBlocking = await Blocking.create(blocking);
-  //   return createdBlocking.toJSON();
-  // }
-
   async create(blocking: any): Promise<any> {
     // Check if there is an existing connection between the users
     const existingConnection = (await Connections.findOne({

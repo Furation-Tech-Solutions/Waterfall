@@ -143,6 +143,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     async read(id: string): Promise<any | null> {
         // Find a Realtor record in the database by its ID
         const realtor = await Realtor.findOne({ where: { id, deletedStatus: false, } });
+        // console.log(realtor,"---------")
         return realtor ? realtor.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
