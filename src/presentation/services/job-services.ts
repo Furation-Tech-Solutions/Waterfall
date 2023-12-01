@@ -169,7 +169,7 @@ export class JobService {
     query.limit = parseInt(req.query.limit as string, 10);
     query.id = Id;
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = [parseInt(req.query.month as string, 10)];
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
@@ -208,7 +208,7 @@ export class JobService {
     query.limit = parseInt(req.query.limit as string, 10);
     query.id = parseInt(loginId, 10);
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = [parseInt(req.query.month as string, 10)];
 
     const count: Either<ErrorClass, number> =
       await this.gettotalCountUsecase.execute(query);

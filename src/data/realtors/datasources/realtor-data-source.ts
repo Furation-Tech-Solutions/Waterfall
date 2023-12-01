@@ -28,19 +28,19 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Create a new Realtor entry
     async create(realtor: any): Promise<any> {
         // Check if a Realtor with the same email already exists
-        console.log(realtor,"realtor in datasource")
+        // console.log(realtor,"realtor in datasource")
         const existingRealtors = await Realtor.findOne({
             where: {
                 email: realtor.email
             }
         });
-        console.log(existingRealtors,"existingrealtor in dtsrc")
+        // console.log(existingRealtors,"existingrealtor in dtsrc")
         if (existingRealtors) {
             throw ApiError.realtorExist();
         }
         // Create a new Realtor record in the database
         const createdRealtor = await Realtor.create(realtor);
-        console.log(createdRealtor,"realtor created in dtsrc")
+        // console.log(createdRealtor,"realtor created in dtsrc")
         return createdRealtor.toJSON(); // Return the newly created Realtor as a plain JavaScript object
     }
 
@@ -143,6 +143,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     async read(id: string): Promise<any | null> {
         // Find a Realtor record in the database by its ID
         const realtor = await Realtor.findOne({ where: { id, deletedStatus: false, } });
+        // console.log(realtor,"---------")
         return realtor ? realtor.toJSON() : null; // Convert to a plain JavaScript object before returning
     }
 
