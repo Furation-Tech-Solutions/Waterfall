@@ -30,7 +30,7 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
    )
 
    return createdRecoNumber
-   
+
     }
   }
 
