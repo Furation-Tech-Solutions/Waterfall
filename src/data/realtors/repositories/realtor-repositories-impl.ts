@@ -31,19 +31,19 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Get all Realtor entities
     async getRealtors(query: RealtorQuery): Promise<Either<ErrorClass, RealtorEntity[]>> {
         try {
-          const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
-          return Right<ErrorClass, RealtorEntity[]>(realtors);
+            const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+            return Right<ErrorClass, RealtorEntity[]>(realtors);
         } catch (error: any) {
-          // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
-          if (error instanceof ApiError && error.status === 404) {
-            // Return a Left monad with a not found error
-            return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
-          }
+            // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
+            if (error instanceof ApiError && error.status === 404) {
+                // Return a Left monad with a not found error
+                return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
+            }
 
-          // Return a Left monad with a custom error and the error message
-          return Left<ErrorClass, RealtorEntity[]>(
-            ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
-          );
+            // Return a Left monad with a custom error and the error message
+            return Left<ErrorClass, RealtorEntity[]>(
+                ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
+            );
         }
     }
 
@@ -51,9 +51,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     async getRealtorById(id: string): Promise<Either<ErrorClass, RealtorEntity>> {
         try {
             const realtor = await this.realtorDataSource.read(id); // Use the tag realtor data source
-            return realtor
-                ? Right<ErrorClass, RealtorEntity>(realtor)
-                : Left<ErrorClass, RealtorEntity>(ApiError.notFound());
+            return Right<ErrorClass, RealtorEntity>(realtor)
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {
                 return Left<ErrorClass, RealtorEntity>(ApiError.notFound());
@@ -81,7 +79,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Delete a Realtor entity by ID
     async deleteRealtor(id: string): Promise<Either<ErrorClass, void>> {
         try {
-            const result = await this.realtorDataSource.delete(id); // Use the tag realtor data source
+            const result = await this.realtorDataSource.delete(id); 
             return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {

@@ -119,9 +119,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
       const connections = await this.connectionsDataSource.read(id);
 
       // Return a Right with the connection entity if found, else return Left with notFound ApiError
-      return connections
-        ? Right<ErrorClass, ConnectionsEntity>(connections)
-        : Left<ErrorClass, ConnectionsEntity>(ApiError.notFound());
+      return Right<ErrorClass, ConnectionsEntity>(connections);
     } catch (e) {
       // Handle errors, return Left with appropriate ApiError
       if (e instanceof ApiError && e.name === "notfound") {
