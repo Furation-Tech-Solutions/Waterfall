@@ -11,6 +11,7 @@ import { GetAllJobs } from "@domain/job/usecases/get-all-jobs"; // Importing the
 import { UpdateJob } from "@domain/job/usecases/update-job"; // Importing the UpdateJob use case
 import { GettotalCount } from "@domain/job/usecases/get-total-counts"; // Importing the GettotalCount use case
 import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware"; // Importing a middleware for job input validation
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the JobDataSourceImpl and pass the Sequelize connection
 const jobDataSource = new JobDataSourceImpl(sequelize);
@@ -47,7 +48,9 @@ jobRouter.post(
 );
 
 // Route handling for getting all Jobs
-jobRouter.get("/", jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
+jobRouter.get("/", 
+verifyUser,
+jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
 
 // Route handling for getting the total feedback count
 jobRouter.get("/count", jobService.getTotalCount.bind(jobService));
