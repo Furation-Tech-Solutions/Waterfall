@@ -33,13 +33,13 @@ export interface JobQuery {
   page: number;
   limit: number;
   year?: number;
-  month?: number;
+  months?: Array<number>;
 }
 
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -49,18 +49,6 @@ export class JobDataSourceImpl implements JobDataSource {
     // Return the created job as a plain JavaScript object
     return createdJob.toJSON();
   }
-
-  // // Method to delete a job record by ID
-  // async delete(id: string): Promise<void> {
-  //   // Delete the job record where the ID matches the provided ID
-  //   await Job.destroy({
-  //     where: {
-  //       id: id,
-
-  //     },
-
-  //   });
-  // }
 
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
@@ -75,7 +63,7 @@ export class JobDataSourceImpl implements JobDataSource {
     // If there are applicants with agreement=true, prevent deletion
     if (hasApplicants) {
       throw new Error(
-        "Cannot delete job with applicants having agreement=true"
+        "Cannot delete job with applicants"
       );
     }
 
@@ -119,15 +107,46 @@ export class JobDataSourceImpl implements JobDataSource {
     let loginId = query.id;
 
     const currentPage = query.page || 1; // Default to page 1
-
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
 
-//------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
       const currentDate = new Date(); // Current date
       currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+          date: {
+            [Op.lt]: currentDate, // Filter jobs where the date is in the past
+          },
+        };
+      }
+      else {
+        whereCondition = {
+          date: {
+            [Op.lt]: currentDate, // Filter jobs where the date is in the past
+          },
+        };
+      }
 
       // Fetch jobs that are expired
       const jobs = await Job.findAll({
@@ -147,18 +166,14 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           },
         ],
-        where: {
-          date: {
-            [Op.lt]: currentDate, // Filter jobs where the date is in the past
-          },
-        },
+        where: whereCondition,
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
 
       return jobs.map((job: any) => job.toJSON());
 
-//-----------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
@@ -206,10 +221,34 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return recommendedJobs.map((job: any) => job.toJSON());
 
-//-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      };
+
       const jobs = await Job.findAll({
+        where: whereCondition,
         include: [
           {
             model: Realtors,
@@ -231,7 +270,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
 
-//-----------------------------------------------------------------------------------------------------------------------
+      //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "appliedJobs") {
       // Find jobs where the applicant ID matches the provided ID
       const appliedJobs = await Job.findAll({
@@ -255,22 +294,61 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return appliedJobs.map((job: any) => job.toJSON());
 
- //----------------------------------------------------------------------------------------------------------------------------
-    } else if (query.year && query.month) {
-      // Fetch jobs that match the specified year and month
+      //----------------------------------------------------------------------------------------------------------------------------
+    }
+    else if (query.q == "active") {
+      // Check if the query parameter is "active"
       const jobs = await Job.findAll({
         where: {
+          date: {
+            [Op.gt]: new Date(),
+          },
+          liveStatus: true,
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+      return jobs.map((job: any) => job.toJSON());
+
+      //------------------------------------------------------------------------------------------------------------------------------ 
+    } else if (query.q == "all") {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           [Op.and]: [
             Sequelize.where(
               Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
               query.year
             ),
-            Sequelize.where(
-              Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-              query.month
-            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
           ],
-        },
+        };
+      };
+
+      // Handle other cases or provide default logic
+      const jobs = await Job.findAll({
+        where: whereCondition,
         include: [
           {
             model: Realtors,
@@ -285,65 +363,43 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           },
         ],
+        order: [
+          // Then, sort by date in ascending order
+          ["date", "ASC"],
+        ],
         limit: itemsPerPage,
         offset: offset,
       });
+
       return jobs.map((job: any) => job.toJSON());
-//---------------------------------------------------------------------------------------------------------------
-    }else if (query.q == "active") {
-  // Check if the query parameter is "active"
-  const jobs = await Job.findAll({
-    where: {
-      date: {
-        [Op.gt]: new Date(),
-      },
-      liveStatus: true,
-    },
-    include: [
-      {
-        model: Realtors,
-        as: "owner",
-        foreignKey: "jobOwner",
-      },
-      {
-        model: JobApplicant,
-        as: "applicantsData",
-      },
-    ],
-    limit: itemsPerPage,
-    offset: offset,
-  });
-  return jobs.map((job: any) => job.toJSON());
+    }
+    else {
+      // Handle other cases or provide default logic
+      const jobs = await Job.findAll({
+        where: {
+          jobOwner: loginId,
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+        ],
+        order: [
+          // Then, sort by date in ascending order
+          ["date", "ASC"],
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
 
-
-//------------------------------------------------------------------------------------------------------------------------------ 
-    }else {
-  // Handle other cases or provide default logic
-  const jobs = await Job.findAll({
-    where: {
-      jobOwner: loginId,
-    },
-    include: [
-      {
-        model: Realtors,
-        as: "owner",
-        foreignKey: "jobOwner",
-      },
-      {
-        model: JobApplicant,
-        as: "applicantsData",
-      },
-    ],
-    order: [
-      // Then, sort by date in ascending order
-      ["date", "ASC"],
-    ],
-    limit: itemsPerPage,
-    offset: offset,
-  });
-
-  return jobs.map((job: any) => job.toJSON());
-}
+      return jobs.map((job: any) => job.toJSON());
+    }
 
   }
 
@@ -376,18 +432,73 @@ export class JobDataSourceImpl implements JobDataSource {
     //-------------------------------------------------------------------------------------------------------------------------------------
 
     if (query.q === "posted") {
-      const count = await Job.count({
-        where: {
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           jobOwner: loginId,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          jobOwner: loginId,
+        }
+      };
+
+      const count = await Job.count({
+        where: whereCondition,
       });
       return count;
     } else if (query.q === "accepted") {
-      const count = await Job.count({
-        where: {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          jobOwner: loginId,
+          liveStatus: false,
+        }
+      }
+
+
+      const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,
@@ -401,11 +512,39 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobsforowner") {
-      const count = await Job.count({
-        where: {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          jobOwner: loginId,
+          liveStatus: false,
+        }
+      }
+
+      const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,
@@ -420,11 +559,39 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //---------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "scheduled") {
-      const count = await Job.count({
-        where: {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          jobOwner: loginId,
+          liveStatus: false,
+        }
+      }
+
+      const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,
@@ -439,7 +606,31 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //------------------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "applied") {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      };
+
       const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,
@@ -453,10 +644,37 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "assigned") {
-      const count = await Job.count({
-        where: {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           liveStatus: false,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          liveStatus: false,
+        }
+      };
+
+      const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,
@@ -470,10 +688,37 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobforapplicant") {
-      const count = await Job.count({
-        where: {
+
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
           liveStatus: false,
-        },
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map(month => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+      else {
+        whereCondition = {
+          liveStatus: false,
+        }
+      };
+
+      const count = await Job.count({
+        where: whereCondition,
         include: [
           {
             model: JobApplicant,

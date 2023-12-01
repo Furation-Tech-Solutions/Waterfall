@@ -2,8 +2,9 @@
 import { BlockingModel } from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import Realtors from "@data/realtors/model/realtor-model";
+import Connections from "@data/connections/models/connections_model";
 
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
@@ -34,22 +35,33 @@ export interface BlockQuery {
 export class BlockingDataSourceImpl implements BlockingDataSource {
   constructor(private db: Sequelize) {}
 
-  // Method to create a new blocking entry
   async create(blocking: any): Promise<any> {
-    // Check if a blocking entry with the same 'fromRealtor' and 'toRealtor' already exists
-    const existingBlockor = await Blocking.findOne({
+    // Check if there is an existing connection between the users
+    const existingConnection = (await Connections.findOne({
       where: {
-        fromRealtor: blocking.fromRealtor,
-        toRealtor: blocking.toRealtor,
+        [Op.or]: [
+          {
+            fromId: blocking.fromRealtor,
+            toId: blocking.toRealtor,
+          },
+          {
+            fromId: blocking.toRealtor,
+            toId: blocking.fromRealtor,
+          },
+        ],
       },
-    });
+    })) as any;
 
-    // If a matching entry exists, throw an error
-    if (existingBlockor) {
-      throw ApiError.idBlocked(); // API error indicating ID is blocked
+    if (existingConnection) {
+      // Connection exists, delete it before creating the blocking entry
+      await Connections.destroy({
+        where: {
+          id: existingConnection.id,
+        },
+      });
     }
 
-    // Create a new blocking entry and return its JSON representation
+    // Create a new blocking entry
     const createdBlocking = await Blocking.create(blocking);
     return createdBlocking.toJSON();
   }
@@ -64,14 +76,13 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
       where: {
-        fromRealtor: loginId
+        fromRealtor: loginId,
       },
       include: [
         {
           model: Realtors,
           as: "fromRealtorData", // Alias for the first association
           foreignKey: "fromRealtor",
-  
         },
         {
           model: Realtors,
@@ -85,7 +96,6 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // Convert the Sequelize model instances to plain JavaScript objects before returning
     return data.map((blocking: any) => blocking.toJSON());
-
   }
 
   // Method to read a blocking entry by ID

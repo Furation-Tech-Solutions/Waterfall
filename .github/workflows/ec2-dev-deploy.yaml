@@ -4,21 +4,23 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "dev"
-  pull_request:
-    types:
-      - "closed"
-    branches:
-      - "dev"
+      - "ci/ssh-Dev-Deploy"
+  # pull_request:
+  #   types:
+  #     - "closed"
+  #   branches:
+  #     - "dev"
 
 jobs:
   deploy:
     name: deploy backend
     runs-on: ubuntu-20.04
     env:
-        SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
+        SSH_PRIVATE_KEY: ${{secrets.WATERFALL_SSH_KEY}}
     steps:
       - uses: actions/checkout@v4
+      - name: Configure aws client
+        uses: aws-actions/configure-aws-credentials@v4
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -28,14 +30,11 @@ jobs:
         run: yarn run build
       - name: Build code bundle
         run: zip distout.zip -r dist/
-      - name: Retrieve the secret and decode it to a file
-        env:
-          CERTIFICATE_BASE64: ${{ secrets.SSH_KEY }}
-          KNOWN_HOST: ${{ variable.KNOWN_HOST }}
+      - name: write key to file
         run: |
-          mkdir -p ~/.ssh/ && \
-          echo $CERTIFICATE_BASE64 | base64 --decode > ~/.ssh/waterfall-key.pem && \
-          echo $KNOW_HOST | base64 --decode >> ~/.ssh/known_hosts
+          mkdir ~/.ssh && \
+          echo $SSH_PRIVATE_KEY | base64 -decode - > ~/.ssh/waterfall-key.pem && \
+          sudo 
       - name: remove remote files
         run: ssh -i "~/.ssh/waterfall-key.pem" ubuntu@waterfall-dev.furation.tech 'cd ~/waterfall/; rm -rf dist/ distOut.zip yarn.lock package.json'
       - name: Copy files over at server
