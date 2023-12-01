@@ -6,12 +6,12 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
-  FROM1TO5: "1To5",
-  FROM5TO10: "5To10",
-  FROM10TO15: "10To15",
-  FROM15TO20: "15To20",
-  FROM20TO25: "20To25",
-  FROM25TO30: "25To30",
+  FROM1TO5: "5",
+  FROM5TO10: "10",
+  FROM10TO15: "15",
+  FROM15TO20: "20",
+  FROM20TO25: "25",
+  FROM25TO30: "30",
 };
 
 export const jobTypeEnum = {

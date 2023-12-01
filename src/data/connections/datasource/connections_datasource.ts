@@ -5,6 +5,7 @@ import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
 import { connections } from "mongoose";
 import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
+import Blocking from "@data/blocking/model/blocking-model";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
@@ -46,6 +47,27 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     if (existingConnection) {
       throw ApiError.emailExist();
+    }
+
+    const isBlocked = await Blocking.findOne({
+      where: {
+        [Op.or]: [
+          {
+            fromRealtor: newConnection.fromId,
+            toRealtor: newConnection.toId,
+          },
+          {
+            fromRealtor: newConnection.toId,
+            toRealtor: newConnection.fromId,
+          },
+        ],
+      },
+    });
+
+    if (isBlocked) {
+      throw new Error(
+        "Connection cannot be created as sender or receiver is blocked."
+      );
     }
 
     const createdConnections = await Connections.create(newConnection);

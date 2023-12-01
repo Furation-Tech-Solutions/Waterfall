@@ -97,7 +97,7 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
      
 
     } else {
-      console.log('No match found for registration number', registrationNumberToFind);
+      // console.log('No match found for registration number', registrationNumberToFind);
     }
     
    
