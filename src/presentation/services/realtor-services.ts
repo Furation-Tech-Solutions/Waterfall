@@ -96,7 +96,7 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error,error.status),
       (result: RealtorEntity) => {
         if (!result) {
           this.sendErrorResponse(res, ErrorClass.notFound());
