@@ -31,9 +31,11 @@ jobs:
       - name: Retrieve the secret and decode it to a file
         env:
           CERTIFICATE_BASE64: ${{ secrets.SSH_KEY }}
+          KNOWN_HOST: ${{ vars.KNOWN_HOST }}
         run: |
           mkdir -p ~/.ssh/ && \
-          echo $CERTIFICATE_BASE64 | base64 --decode > ~/.ssh/waterfall-key.pem
+          echo $CERTIFICATE_BASE64 | base64 --decode > ~/.ssh/waterfall-key.pem && \
+          echo $KNOW_HOST | base64 --decode >> ~/.ssh/known_hosts
       - name: remove remote files
         run: ssh -i "~/.ssh/waterfall-key.pem" ubuntu@waterfall-dev.furation.tech 'cd ~/waterfall/; rm -rf dist/ distOut.zip yarn.lock package.json'
       - name: Copy files over at server
