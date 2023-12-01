@@ -48,9 +48,9 @@ jobRouter.post(
 );
 
 // Route handling for getting all Jobs
-jobRouter.get("/", 
-verifyUser,
-jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
+jobRouter.get("/",
+  verifyUser,
+  jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
 
 // Route handling for getting the total feedback count
 jobRouter.get("/count", jobService.getTotalCount.bind(jobService));

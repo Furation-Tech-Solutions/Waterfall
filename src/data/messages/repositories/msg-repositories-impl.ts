@@ -99,9 +99,7 @@ export class MessagesRepositoryImpl implements MessagesRepository {
       const messages = await this.messageDataSource.read(
         id
       ); // Use the messages data source
-      return messages
-        ? Right<ErrorClass, MessageEntity>(messages)
-        : Left<ErrorClass, MessageEntity>(ApiError.notFound());
+      return Right<ErrorClass, MessageEntity>(messages);
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, MessageEntity>(ApiError.notFound());

@@ -44,7 +44,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
   async getFeedBackById(id: string): Promise<Either<ErrorClass, FeedBackEntity>> {
     try {
       const feedBack = await this.feedBackDataSource.read(id); // Use the tag feedBack data source
-      return feedBack ? Right<ErrorClass, FeedBackEntity>(feedBack) : Left<ErrorClass, FeedBackEntity>(ApiError.notFound());
+      return Right<ErrorClass, FeedBackEntity>(feedBack) 
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, FeedBackEntity>(ApiError.notFound());
