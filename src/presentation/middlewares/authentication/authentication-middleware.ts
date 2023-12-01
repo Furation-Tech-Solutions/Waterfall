@@ -12,7 +12,7 @@ admin.initializeApp({
   // databaseURL: "https://your-project-id.firebaseio.com",
 });
 
-const verifyUser=async(
+ export const verifyUser=async(
     req: Request,
     res: Response,
     next: NextFunction
@@ -27,17 +27,17 @@ const verifyUser=async(
     const user = await admin.auth().verifyIdToken(idToken);
 
     // If verification is successful, the user is authenticated
-    if (user) {
-      req.user = user.email;
+    // if (user) {
+      req.user = user.uid;
       next();
-    } else {
+    // } else {
       // User is not authenticated
-      res.status(401).send("Unauthorized");
+      // }
+      
+      
     }
-
-
-   }
-   catch(err){
+    catch(err){
+     res.status(401).send("Unauthorized");
     console.log(err)
    }
 
