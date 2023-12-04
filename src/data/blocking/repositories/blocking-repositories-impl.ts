@@ -62,7 +62,7 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     id: string
   ): Promise<Either<ErrorClass, BlockingEntity>> {
     try {
-      const blocking = await this.blockingDataSource.read(id); // Use the tag blocking data source
+      const blocking: BlockingEntity = await this.blockingDataSource.read(id); // Use the tag blocking data source
       return Right<ErrorClass, BlockingEntity>(blocking);
     } catch (e) {
       // Handle specific API error for not found
@@ -71,8 +71,9 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       }
       // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
+      
     }
-  }
+  } 
 
   // Update a blocking entry by ID
   async updateBlocking(
@@ -80,7 +81,8 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     data: BlockingModel
   ): Promise<Either<ErrorClass, BlockingEntity>> {
     try {
-      const updatedBlocking = await this.blockingDataSource.update(id, data); // Use the tag blocking data source
+      const updatedBlocking: BlockingEntity =
+        await this.blockingDataSource.update(id, data); // Use the tag blocking data source
       return Right<ErrorClass, BlockingEntity>(updatedBlocking);
     } catch (e) {
       // Handle specific API error for conflict

@@ -1,5 +1,7 @@
 import { Op, Sequelize, where } from "sequelize";
+
 import { ConnectionsEntity, ConnectionMapper, ConnectionsModel } from "@domain/connections/entities/connections_entities";
+
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -17,19 +19,20 @@ export interface Query {
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
-  createReq(connections: ConnectionsModel): Promise<ConnectionsEntity>;
-  updateReq(id: string, data: ConnectionsModel): Promise<any>;
+
+  createReq(connections: any): Promise<ConnectionsEntity>;
+  updateReq(id: string, data: any): Promise<ConnectionsEntity>;
   deleteReq(id: string): Promise<void>;
-  read(id: string): Promise<ConnectionsEntity | null>;
+  read(id: string): Promise<ConnectionsEntity>;
   getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
 }
 
 // Connections Data Source communicates with the database
 export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Create a new connection
-  async createReq(newConnection: any): Promise<any> {
+  async createReq(newConnection: any): Promise<ConnectionsEntity> {
     const existingConnection = await Connections.findOne({
       where: {
         [Op.or]: [
@@ -88,7 +91,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Retrieve a connection by ID
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<ConnectionsEntity> {
     const connections = await Connections.findOne({
       where: {
         id,
@@ -106,8 +109,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         },
       ],
     });
+    if (connections === null) {
+      throw ApiError.notFound();
+    }
 
-    return connections ? connections.toJSON() : null;
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return connections.toJSON();
   }
 
   // Retrieve connections based on a query
@@ -165,8 +172,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       });
 
       return data.map((connection: any) => connection.toJSON());
-    }
-    else if (query.q === "mutualfriends") {
+    } else if (query.q === "mutualfriends") {
       // Retrieve connections with mutual friends
       const friendId: number = query.toId;
       // console.log(friendId, "friendId from 123");
@@ -177,7 +183,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             connected: true,
             [Op.or]: [{ toId: id }, { fromId: id }],
           },
-
         });
         // console.log(data,"data"); working
 
@@ -212,7 +217,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       // console.log(friendsArray, "friendsarray");
       return friendsArray.filter(Boolean);
     } else if (query.q === "connection-suggestions") {
-      // loginID; 
+      // loginID;
       // Retrieve connected connections
       // console.log(loginID);
       const user: any = await Realtors.findByPk(loginID);
@@ -223,7 +228,6 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             connected: true,
             [Op.or]: [{ toId: id }, { fromId: id }],
           },
-
         });
         // console.log(data,"data"); working
 
@@ -236,9 +240,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return friendIds;
       };
 
-      const [myFriends] = await Promise.all([
-        findFriendIds(loginID),
-      ]);
+      const [myFriends] = await Promise.all([findFriendIds(loginID)]);
       // console.log(myFriends);
 
       // Get suggestions based on mutual friends and location
@@ -253,9 +255,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       });
       // console.log(suggestions,"---------");
       return suggestions.map((connection: any) => connection.toJSON());
-
-    }
-    else {
+    } else {
       // Retrieve all connections
       const data = await Connections.findAll({
         include: [
@@ -279,10 +279,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Update a connection by ID
-  async updateReq(
-    id: string,
-    updatedData: ConnectionsModel
-  ): Promise<any> {
+  async updateReq(id: string, updatedData: any): Promise<ConnectionsEntity> {
     const connection: any = await Connections.findOne({
       where: {
         id,
@@ -298,6 +295,9 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       },
     });
 
-    return updatedConnections ? updatedConnections.toJSON() : null;
+    if (updatedConnections == null) {
+      throw ApiError.notFound();
+    }
+    return updatedConnections.toJSON();
   }
 }
