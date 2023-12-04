@@ -8,7 +8,7 @@ import { Sequelize, Op } from "sequelize";
 export interface RealtorDataSource {
   create(realtor: any): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity
   getAllRealtors(query: RealtorQuery): Promise<RealtorEntity[]>; // Return type should be Promise of an array of RealtorEntity
-  read(id: string): Promise<RealtorEntity | null>; // Return type should be Promise of RealtorEntity or null
+  read(id: string): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity or null
   update(id: string, realtor: any): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity
   delete(id: string): Promise<void>;
 }
@@ -138,13 +138,17 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
   }
 
   // Retrieve a Realtor entry by its ID
-  async read(id: string): Promise<RealtorEntity | null> {
+  async read(id: string): Promise<RealtorEntity> {
     // Find a Realtor record in the database by its ID
     const realtor = await Realtor.findOne({
       where: { id, deletedStatus: false },
     });
-    // console.log(realtor,"---------")
-    return realtor ? realtor.toJSON() : null; // Convert to a plain JavaScript object before returning
+    if (realtor === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return realtor.toJSON();
   }
 
   // Update a Realtor entry by ID

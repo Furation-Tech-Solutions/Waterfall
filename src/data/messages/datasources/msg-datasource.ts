@@ -20,7 +20,7 @@ export interface MessageDataSource {
   createMsg(msg: any): Promise<MessageEntity>;
   updateMsg(id: string, data: any): Promise<MessageEntity>;
   deleteMsg(id: string): Promise<void>;
-  read(id: string): Promise<MessageEntity | null>;
+  read(id: string): Promise<MessageEntity>;
   getAll(loginId: string, query: Query): Promise<MessageEntity[]>;
 }
 
@@ -65,7 +65,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     });
   }
 
-  async read(id: string): Promise<MessageEntity | null> {
+  async read(id: string): Promise<MessageEntity> {
     // Read a message record by ID
     const messages = await Message.findOne({
       where: {
@@ -84,7 +84,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         },
       ],
     });
-    return messages ? messages.toJSON() : null; // Convert to a plain JavaScript object before returning
+    if (messages === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return messages.toJSON();
   }
 
   async getAll(loginId: string, query: Query): Promise<MessageEntity[]> {

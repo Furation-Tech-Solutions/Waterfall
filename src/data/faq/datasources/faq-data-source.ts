@@ -8,7 +8,7 @@ import { Sequelize } from "sequelize";
 export interface FAQDataSource {
   create(faq: any): Promise<FAQEntity>; // Return type should be Promise of FAQEntity
   getAllFAQs(): Promise<FAQEntity[]>; // Return type should be Promise of an array of FAQEntity
-  read(id: string): Promise<FAQEntity | null>; // Return type should be Promise of FAQEntity or null
+  read(id: string): Promise<FAQEntity>; // Return type should be Promise of FAQEntity or null
   update(id: string, faq: any): Promise<FAQEntity>; // Return type should be Promise of FAQEntity
   delete(id: string): Promise<void>;
 }
@@ -39,14 +39,19 @@ export class FAQDataSourceImpl implements FAQDataSource {
   }
 
   // Retrieve an FAQ entry by its ID
-  async read(id: string): Promise<FAQEntity | null> {
+  async read(id: string): Promise<FAQEntity> {
     const faq = await FAQ.findOne({
       where: {
         id: id,
       },
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
-    return faq ? faq.toJSON() : null; // Convert to a plain JavaScript object before returning
+    if (faq === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return faq.toJSON();
   }
 
   // Update an FAQ entry by ID

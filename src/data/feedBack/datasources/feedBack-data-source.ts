@@ -19,7 +19,7 @@ export interface Query {
 export interface FeedBackDataSource {
   create(feedBack: any): Promise<FeedBackEntity>;
   getAllFeedBacks(query: Query): Promise<FeedBackEntity[]>;
-  read(id: string): Promise<FeedBackEntity | null>;
+  read(id: string): Promise<FeedBackEntity>;
   update(id: string, updatedData: any): Promise<FeedBackEntity>;
   delete(id: string): Promise<void>;
   count(query: Query): Promise<number>;
@@ -64,7 +64,7 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   }
 
   // Retrieve a feedback entry by its ID
-  async read(id: string): Promise<FeedBackEntity | null> {
+  async read(id: string): Promise<FeedBackEntity> {
     const feedBack = await FeedBack.findOne({
       where: { id },
       include: [
@@ -74,7 +74,12 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       ],
     });
 
-    return feedBack ? feedBack.toJSON() : null;
+    if (feedBack === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return feedBack.toJSON();
   }
 
   // Update a feedback entry by ID
