@@ -1,5 +1,5 @@
 import { Op, Sequelize, where } from "sequelize";
-import { ConnectionsModel } from "@domain/connections/entities/connections_entities";
+import { ConnectionsEntity, ConnectionMapper, ConnectionsModel } from "@domain/connections/entities/connections_entities";
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -17,11 +17,11 @@ export interface Query {
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
-  createReq(connections: ConnectionsModel): Promise<any>;
+  createReq(connections: ConnectionsModel): Promise<ConnectionsEntity>;
   updateReq(id: string, data: ConnectionsModel): Promise<any>;
   deleteReq(id: string): Promise<void>;
-  read(id: string): Promise<any | null>;
-  getAll(loginId: string, query: Query): Promise<any[]>;
+  read(id: string): Promise<ConnectionsEntity | null>;
+  getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
 }
 
 // Connections Data Source communicates with the database
@@ -111,7 +111,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Retrieve connections based on a query
-  async getAll(loginId: string, query: Query): Promise<any[]> {
+  async getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]> {
     const loginID = parseInt(loginId);
     const currentPage = query.page || 1;
     const itemsPerPage = query.limit || 10;

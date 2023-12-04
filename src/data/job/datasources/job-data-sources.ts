@@ -226,7 +226,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // Fetch a realtor by primary key
       const realtor: any = await Realtors.findByPk(loginId);
-      
+
       if (!realtor.location) {
         return [];
       }
