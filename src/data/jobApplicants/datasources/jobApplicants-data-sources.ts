@@ -9,20 +9,21 @@ import JobApplicant, {
 } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
   // Method to create a new job applicant
-  create(jobApplicant: JobApplicantModel): Promise<any>;
+  create(jobApplicant: any): Promise<JobApplicantEntity>;
 
   // Method to update an existing job applicant by ID
-  update(id: string, updatedData: JobApplicantModel): Promise<any>;
+  update(id: string, updatedData: any): Promise<JobApplicantEntity>;
 
   // Method to read a job applicant by ID
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(query: JobApplicantQuery): Promise<any[]>;
+  getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
@@ -41,7 +42,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) {}
 
   // Method to create a new job applicant
-  async create(jobApplicant: any): Promise<any> {
+  async create(jobApplicant: any): Promise<JobApplicantEntity> {
     try {
       // Retrieve the associated Job based on jobApplicant's job ID
       const job: any = await Job.findByPk(jobApplicant.job);
@@ -99,7 +100,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   }
 
   // Method to get all job applicants based on query parameters
-  async getAll(query: JobApplicantQuery): Promise<any[]> {
+  async getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]> {
     //-------------------------------------------------------------------------------------------------------------
     // Extract relevant information from the query parameters
     let loginId = query.id;
@@ -271,7 +272,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   }
 
   // Method to update an existing job applicant by ID
-  async update(id: string, updatedData: JobApplicantModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: JobApplicantModel
+  ): Promise<JobApplicantEntity> {
     // Find the job applicant record in the database by ID
     const jobApplicant: any = await JobApplicant.findByPk(id);
 
@@ -299,8 +303,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       const updatedJobApplicant: Model<any, any> | null =
         await JobApplicant.findByPk(id);
 
-      // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
-      return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
+      if (updatedJobApplicant == null) {
+        throw ApiError.notFound();
+      }
+      return updatedJobApplicant.toJSON();
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
     // Retrieve the record to check the current paymentStatus
@@ -318,8 +324,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       const updatedJobApplicant: Model<any, any> | null =
         await JobApplicant.findByPk(id);
 
-      // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
-      return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
+      if (updatedJobApplicant == null) {
+        throw ApiError.notFound();
+      }
+      return updatedJobApplicant.toJSON();
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -414,10 +422,11 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     const updatedJobApplicant: Model<any, any> | null =
       await JobApplicant.findByPk(id);
 
-    // If an updated job applicant record is found, convert it to a plain JavaScript object before returning
-    return updatedJobApplicant ? updatedJobApplicant.toJSON() : null;
+    if (updatedJobApplicant == null) {
+      throw ApiError.notFound();
+    }
+    return updatedJobApplicant.toJSON();
   }
-
   // Method to delete a jobApplicant record by ID
   async delete(id: string): Promise<void> {
     // Delete the jobApplicant record where the ID matches the provided ID

@@ -85,7 +85,7 @@ export class BlockingService {
     const blockings: Either<ErrorClass, BlockingEntity[]> =
       await this.GetAllBlockingsUsecase.execute(query);
     blockings.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: BlockingEntity[]) => {
         const responseData = result.map((blocking) =>
           BlockingMapper.toEntity(blocking)

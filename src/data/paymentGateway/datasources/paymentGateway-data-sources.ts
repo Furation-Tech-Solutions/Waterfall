@@ -8,12 +8,13 @@ import PaymentGateway from "@data/paymentGateway/models/paymentGateway-models"; 
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create PaymentGatewayDataSource Interface
 export interface PaymentGatewayDataSource {
   // Define methods for data operations on PaymentGateway entities
-  create(paymentGateway: PaymentGatewayModel): Promise<PaymentGatewayEntity>;
-  update(id: string, paymentGateway: PaymentGatewayModel): Promise<any>;
+  create(paymentGateway: any): Promise<PaymentGatewayEntity>;
+  update(id: string, paymentGateway: any): Promise<PaymentGatewayEntity>;
   delete(id: string): Promise<void>;
   read(id: string): Promise<PaymentGatewayEntity | null>;
   getAll(): Promise<PaymentGatewayEntity[]>;
@@ -21,7 +22,7 @@ export interface PaymentGatewayDataSource {
 
 // PaymentGateway Data Source communicates with the database
 export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Implement the "create" method to insert a new PaymentGatewayEntity
   async create(paymentGateway: any): Promise<PaymentGatewayEntity> {
@@ -91,7 +92,10 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
   }
 
   // Implement the "update" method to update a PaymentGatewayEntity by ID
-  async update(id: string, updatedData: PaymentGatewayModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: any
+  ): Promise<PaymentGatewayEntity> {
     // Find the PaymentGatewayEntity record in the database by its ID
     const paymentGateway = await PaymentGateway.findByPk(id);
 
@@ -103,7 +107,9 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
     // Fetch the updated PaymentGatewayEntity record
     const updatedPaymentGateway = await PaymentGateway.findByPk(id);
 
-    // Convert the updated PaymentGatewayEntity to a plain JavaScript object before returning
-    return updatedPaymentGateway ? updatedPaymentGateway.toJSON() : null;
+    if (updatedPaymentGateway == null) {
+      throw ApiError.notFound();
+    }
+    return updatedPaymentGateway.toJSON();
   }
 }

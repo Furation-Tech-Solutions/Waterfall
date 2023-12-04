@@ -1,4 +1,4 @@
-import { FeedBackModel } from "@domain/feedBack/entities/feedBack";
+import { FeedBackEntity, FeedBackModel } from "@domain/feedBack/entities/feedBack";
 import FeedBack from "../model/feedBack-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize } from "sequelize";
@@ -17,21 +17,23 @@ export interface Query {
 
 // Define the interface for the FeedBackDataSource
 export interface FeedBackDataSource {
-  create(feedBack: any): Promise<any>;
-  getAllFeedBacks(query: Query): Promise<any[]>;
-  read(id: string): Promise<any | null>;
-  update(id: string, updatedData: FeedBackModel): Promise<any>;
+  create(feedBack: any): Promise<FeedBackEntity>;
+  getAllFeedBacks(query: Query): Promise<FeedBackEntity[]>;
+  read(id: string): Promise<FeedBackEntity | null>;
+  update(id: string, updatedData: any): Promise<FeedBackEntity>;
   delete(id: string): Promise<void>;
   count(query: Query): Promise<number>;
 }
 
 // Implementation of the FeedBackDataSource interface
 export class FeedBackDataSourceImpl implements FeedBackDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Create a new feedback entry
-  async create(feedBack: any): Promise<any> {
-    const existingFeedBack = await FeedBack.findOne({ where: { jobId: feedBack.jobId } });
+  async create(feedBack: any): Promise<FeedBackEntity> {
+    const existingFeedBack = await FeedBack.findOne({
+      where: { jobId: feedBack.jobId },
+    });
 
     if (existingFeedBack) {
       throw ApiError.feedBackGiven();
@@ -42,7 +44,7 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   }
 
   // Retrieve all feedback entries
-  async getAllFeedBacks(query: Query): Promise<any[]> {
+  async getAllFeedBacks(query: Query): Promise<FeedBackEntity[]> {
     const { page = 1, limit = 10 } = query;
     const offset = (page - 1) * limit;
 
@@ -62,7 +64,7 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   }
 
   // Retrieve a feedback entry by its ID
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<FeedBackEntity | null> {
     const feedBack = await FeedBack.findOne({
       where: { id },
       include: [
@@ -76,7 +78,10 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   }
 
   // Update a feedback entry by ID
-  async update(id: string, updatedData: FeedBackModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: any
+  ): Promise<FeedBackEntity> {
     const feedBack = await FeedBack.findByPk(id);
 
     if (feedBack) {
@@ -84,7 +89,10 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     }
 
     const updatedFeedBack = await FeedBack.findByPk(id);
-    return updatedFeedBack ? updatedFeedBack.toJSON() : null;
+    if (updatedFeedBack == null) {
+      throw ApiError.notFound();
+    }
+    return updatedFeedBack.toJSON();
   }
 
   // Delete a feedback entry by ID

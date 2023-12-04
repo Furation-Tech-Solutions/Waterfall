@@ -1,6 +1,6 @@
 // Import necessary modules and dependencies
 import { Op, Sequelize, where } from "sequelize";
-import { MessageModel } from "@domain/messages/entities/msg"; // Import the MessageModel
+import { MessageEntity, MessageModel } from "@domain/messages/entities/msg"; // Import the MessageModel
 import Message from "../model/msg-model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -17,18 +17,18 @@ export interface Query {
 
 // Create MessageDataSource Interface
 export interface MessageDataSource {
-    createMsg(msg: MessageModel): Promise<any>;
-    updateMsg(id: string, data: MessageModel): Promise<any>;
-    deleteMsg(id: string): Promise<void>;
-    read(id: string): Promise<any | null>;
-    getAll(loginId: string, query: Query): Promise<any[]>;
+  createMsg(msg: any): Promise<MessageEntity>;
+  updateMsg(id: string, data: any): Promise<MessageEntity>;
+  deleteMsg(id: string): Promise<void>;
+  read(id: string): Promise<MessageEntity | null>;
+  getAll(loginId: string, query: Query): Promise<MessageEntity[]>;
 }
 
 // Message Data Source communicates with the database
 export class MessagesDataSourceImpl implements MessageDataSource {
   constructor(private db: Sequelize) {}
 
-  async createMsg(msg: any): Promise<any> {
+  async createMsg(msg: any): Promise<MessageEntity> {
     // Check if the sender and receiver are blocked
     const isBlocked = await Blocking.findOne({
       where: {
@@ -65,7 +65,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     });
   }
 
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<MessageEntity | null> {
     // Read a message record by ID
     const messages = await Message.findOne({
       where: {
@@ -87,12 +87,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     return messages ? messages.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
 
-    async getAll(loginId: string, query: Query): Promise<any[]> {
-        // Get all message records based on the provided query parameters
-        // console.log(+loginId, "login ID")
-        const currentPage = query.page || 1;
-        const itemsPerPage = query.limit || 10;
-        const offset = (currentPage - 1) * itemsPerPage;
+  async getAll(loginId: string, query: Query): Promise<MessageEntity[]> {
+    // Get all message records based on the provided query parameters
+    // console.log(+loginId, "login ID")
+    const currentPage = query.page || 1;
+    const itemsPerPage = query.limit || 10;
+    const offset = (currentPage - 1) * itemsPerPage;
 
     if (query.q === "unread" && loginId) {
       const data = await Message.findAll({
@@ -264,7 +264,10 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     }
   }
 
-  async updateMsg(id: string, updatedData: MessageModel): Promise<any> {
+  async updateMsg(
+    id: string,
+    updatedData: any
+  ): Promise<MessageEntity> {
     // Update a message record by ID
     const message: any = await Message.findOne({
       where: {
@@ -283,6 +286,9 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       },
     });
 
-    return updatedMessages ? updatedMessages.toJSON() : null; // Convert to a plain JavaScript object before returning
+    if (updatedMessages == null) {
+      throw ApiError.notFound();
+    }
+    return updatedMessages.toJSON();
   }
 }
