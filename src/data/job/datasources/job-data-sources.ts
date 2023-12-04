@@ -226,7 +226,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // Fetch a realtor by primary key
       const realtor: any = await Realtors.findByPk(loginId);
-      
+
       if (!realtor.location) {
         return [];
       }
@@ -340,6 +340,7 @@ export class JobDataSourceImpl implements JobDataSource {
             [Op.gt]: new Date(),
           },
           liveStatus: true,
+          jobOwner: loginId,
         },
         include: [
           {
