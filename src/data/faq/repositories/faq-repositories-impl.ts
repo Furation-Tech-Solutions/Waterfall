@@ -46,9 +46,8 @@ export class FAQRepositoryImpl implements FAQRepository {
   async getFAQById(id: string): Promise<Either<ErrorClass, FAQEntity>> {
     try {
       const faq = await this.faqDataSource.read(id); // Use the tag faq data source
-      return faq
-        ? Right<ErrorClass, FAQEntity>(faq)
-        : Left<ErrorClass, FAQEntity>(ApiError.notFound());
+      return Right<ErrorClass, FAQEntity>(faq)
+
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, FAQEntity>(ApiError.notFound());

@@ -1,9 +1,11 @@
 // Import necessary modules and dependencies
-import { Op, Sequelize, where } from "sequelize";
+import { Model, Op, Sequelize, where } from "sequelize";
 import { JobEntity, JobModel } from "@domain/job/entities/job";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import realtorModel from "@data/realtors/model/realtor-model";
+import { RealtorEntity, RealtorMapper, RealtorModel } from "@domain/realtors/entities/realtors";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -218,8 +220,42 @@ export class JobDataSourceImpl implements JobDataSource {
       // console.log("reccommendedJobs:", recommendedJobs);
 
       // console.log("recommendedJobs:", recommendedJobs);
+      if (recommendedJobs.length > 0) {
+        return recommendedJobs.map((job: any) => job.toJSON());
+      }
 
-      return recommendedJobs.map((job: any) => job.toJSON());
+      // Fetch a realtor by primary key
+      const realtor: any = await Realtors.findByPk(loginId);
+      
+      if (!realtor.location) {
+        return [];
+      }
+
+      const Jobsforyou = await Job.findAll({
+        where: {
+          date: {
+            [Op.gt]: new Date(),
+          },
+          liveStatus: true,
+          location: realtor.location,
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "owner",
+            foreignKey: "jobOwner",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+      return Jobsforyou.map((job: any) => job.toJSON());
+
+
 
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
