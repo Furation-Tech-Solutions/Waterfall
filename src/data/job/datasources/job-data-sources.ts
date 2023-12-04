@@ -340,6 +340,7 @@ export class JobDataSourceImpl implements JobDataSource {
             [Op.gt]: new Date(),
           },
           liveStatus: true,
+          jobOwner: loginId,
         },
         include: [
           {
