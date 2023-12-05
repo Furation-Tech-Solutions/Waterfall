@@ -3,16 +3,17 @@ import { Sequelize } from "sequelize";
 import { SupportEntity, SupportModel } from "@domain/support/entities/support"; // Import the SupportModel
 import Support from "..//models/support-model"; // Import the Support model
 import Realtors from "@data/realtors/model/realtor-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create SupportDataSource Interface
 export interface SupportDataSource {
   // Define methods for data operations on Support entities
 
   // Method to create a new SupportEntity
-  create(support: SupportModel): Promise<SupportEntity>;
+  create(support: any): Promise<SupportEntity>;
 
   // Method to update a SupportEntity by ID
-  update(id: string, support: SupportModel): Promise<any>;
+  update(id: string, support: any): Promise<SupportEntity>;
 
   // Method to delete a SupportEntity by ID
   delete(id: string): Promise<void>;
@@ -26,7 +27,7 @@ export interface SupportDataSource {
 
 // Support Data Source communicates with the database
 export class SupportDataSourceImpl implements SupportDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Implement the "create" method to insert a new SupportEntity
   async create(support: any): Promise<SupportEntity> {
@@ -60,7 +61,7 @@ export class SupportDataSourceImpl implements SupportDataSource {
           foreignKey: "realtor",
           as: "realtorData",
         },
-      ]
+      ],
       // include: 'tags', // You can include associations here if needed
     });
 
@@ -78,7 +79,7 @@ export class SupportDataSourceImpl implements SupportDataSource {
           foreignKey: "realtor",
           as: "realtorData",
         },
-      ]
+      ],
     });
 
     // Convert the SupportEntities to plain JavaScript objects before returning
@@ -86,7 +87,7 @@ export class SupportDataSourceImpl implements SupportDataSource {
   }
 
   // Implement the "update" method to update a SupportEntity by ID
-  async update(id: string, updatedData: SupportModel): Promise<any> {
+  async update(id: string, updatedData: any): Promise<SupportEntity> {
     // Find the SupportEntity record in the database by its ID
     const support = await Support.findByPk(id);
 
@@ -98,7 +99,9 @@ export class SupportDataSourceImpl implements SupportDataSource {
     // Fetch the updated SupportEntity record
     const updatedSupport = await Support.findByPk(id);
 
-    // Convert the updated SupportEntity to a plain JavaScript object before returning
-    return updatedSupport ? updatedSupport.toJSON() : null;
+    if (updatedSupport == null) {
+      throw ApiError.notFound();
+    }
+    return updatedSupport.toJSON();
   }
 }

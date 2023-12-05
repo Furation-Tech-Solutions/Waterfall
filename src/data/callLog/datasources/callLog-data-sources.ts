@@ -3,14 +3,15 @@ import { Sequelize } from "sequelize";
 import { CallLogEntity, CallLogModel } from "@domain/callLog/entities/callLog"; // Import the CallLogModel
 import CallLog from "@data/callLog/models/callLog-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create CallLogDataSource Interface
 export interface CallLogDataSource {
   // Method to create a new call log
-  create(callLog: CallLogModel): Promise<CallLogEntity>;
+  create(callLog: any): Promise<CallLogEntity>;
 
   // Method to update an existing call log by ID
-  update(id: string, callLog: CallLogModel): Promise<any>;
+  update(id: string, callLog: any): Promise<CallLogEntity>;
 
   // Method to delete a call log by ID
   delete(id: string): Promise<void>;
@@ -104,7 +105,7 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
   }
 
   // Method to update an existing call log by ID
-  async update(id: string, updatedData: CallLogModel): Promise<any> {
+  async update(id: string, updatedData: any): Promise<CallLogEntity> {
     // Find the call log record in the database by ID
     const callLog = await CallLog.findByPk(id);
 
@@ -116,7 +117,9 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
     // Fetch the updated call log record
     const updatedCallLog = await CallLog.findByPk(id);
 
-    // Convert the updated call log to a plain JavaScript object before returning
-    return updatedCallLog ? updatedCallLog.toJSON() : null;
+    if (updatedCallLog == null) {
+      throw ApiError.notFound();
+    }
+    return updatedCallLog.toJSON();
   }
 }

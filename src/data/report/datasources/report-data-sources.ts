@@ -3,14 +3,15 @@ import { Sequelize } from "sequelize";
 import { ReportEntity, ReportModel } from "@domain/report/entities/report";
 import Report from "@data/report/models/report-model";
 import Realtors from "@data/realtors/model/realtor-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Define the ReportDataSource interface
 export interface ReportDataSource {
   // Method to create a new report
-  create(report: ReportModel): Promise<ReportEntity>;
+  create(report: any): Promise<ReportEntity>;
 
   // Method to update an existing report by ID
-  update(id: string, report: ReportModel): Promise<any>;
+  update(id: string, report: any): Promise<ReportEntity>;
 
   // Method to delete a report by ID
   delete(id: string): Promise<void>;
@@ -95,7 +96,7 @@ export class ReportDataSourceImpl implements ReportDataSource {
   }
 
   // Implement the "update" method to update an existing report by ID in the database
-  async update(id: string, updatedData: ReportModel): Promise<any> {
+  async update(id: string, updatedData: any): Promise<ReportEntity> {
     // Find the report record in the database by ID
     const report = await Report.findByPk(id);
 
@@ -107,7 +108,9 @@ export class ReportDataSourceImpl implements ReportDataSource {
     // Fetch the updated record by ID
     const updatedReport = await Report.findByPk(id);
 
-    // If an updated report record is found, convert it to a plain JavaScript object before returning
-    return updatedReport ? updatedReport.toJSON() : null;
+    if (updatedReport == null) {
+      throw ApiError.notFound();
+    }
+    return updatedReport.toJSON();
   }
 }

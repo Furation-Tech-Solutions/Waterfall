@@ -6,14 +6,15 @@ import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import realtorModel from "@data/realtors/model/realtor-model";
 import { RealtorEntity, RealtorMapper, RealtorModel } from "@domain/realtors/entities/realtors";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
   // Method to create a new job record
-  create(job: JobModel): Promise<JobEntity>;
+  create(job: any): Promise<JobEntity>;
 
   // Method to update an existing job record by ID
-  update(id: string, job: JobModel): Promise<any>;
+  update(id: string, job: any): Promise<JobEntity>;
 
   // Method to delete a job record by ID
   delete(id: string): Promise<void>;
@@ -41,7 +42,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -64,18 +65,14 @@ export class JobDataSourceImpl implements JobDataSource {
 
     // If there are applicants with agreement=true, prevent deletion
     if (hasApplicants) {
-      throw new Error(
-        "Cannot delete job with applicants"
-      );
+      throw new Error("Cannot delete job with applicants");
     }
 
     // Delete the job record where the ID matches the provided ID
     await Job.destroy({
       where: {
         id: id,
-
       },
-
     });
   }
 
@@ -129,7 +126,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -141,8 +138,7 @@ export class JobDataSourceImpl implements JobDataSource {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
           },
         };
-      }
-      else {
+      } else {
         whereCondition = {
           date: {
             [Op.lt]: currentDate, // Filter jobs where the date is in the past
@@ -272,7 +268,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -281,7 +277,7 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      };
+      }
 
       const jobs = await Job.findAll({
         where: whereCondition,
@@ -331,8 +327,7 @@ export class JobDataSourceImpl implements JobDataSource {
       return appliedJobs.map((job: any) => job.toJSON());
 
       //----------------------------------------------------------------------------------------------------------------------------
-    }
-    else if (query.q == "active") {
+    } else if (query.q == "active") {
       // Check if the query parameter is "active"
       const jobs = await Job.findAll({
         where: {
@@ -358,9 +353,8 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       return jobs.map((job: any) => job.toJSON());
 
-      //------------------------------------------------------------------------------------------------------------------------------ 
+      //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "all") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -372,7 +366,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -381,7 +375,7 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      };
+      }
 
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
@@ -409,8 +403,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
 
       return jobs.map((job: any) => job.toJSON());
-    }
-    else {
+    } else {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         where: {
@@ -437,11 +430,10 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
     }
-
   }
 
   // Method to update a job record by ID
-  async update(id: string, updatedData: JobModel): Promise<any> {
+  async update(id: string, updatedData: JobModel): Promise<JobEntity> {
     // Find the job record by its ID
     const job = await Job.findByPk(id);
 
@@ -453,8 +445,10 @@ export class JobDataSourceImpl implements JobDataSource {
     // Fetch the updated job record
     const updatedJob = await Job.findByPk(id);
 
-    // If the updated job record is found, convert it to a plain JavaScript object and return it, otherwise return null
-    return updatedJob ? updatedJob.toJSON() : null;
+    if (updatedJob == null) {
+      throw ApiError.notFound();
+    }
+    return updatedJob.toJSON();
   }
 
   // Method to retrieve the total number of posted jobs
@@ -481,7 +475,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -490,19 +484,17 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           jobOwner: loginId,
-        }
-      };
+        };
+      }
 
       const count = await Job.count({
         where: whereCondition,
       });
       return count;
     } else if (query.q === "accepted") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -516,7 +508,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -525,14 +517,12 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        }
+        };
       }
-
 
       const count = await Job.count({
         where: whereCondition,
@@ -549,7 +539,6 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobsforowner") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -563,7 +552,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -572,12 +561,11 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        }
+        };
       }
 
       const count = await Job.count({
@@ -596,7 +584,6 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //---------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "scheduled") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -610,7 +597,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -619,12 +606,11 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           jobOwner: loginId,
           liveStatus: false,
-        }
+        };
       }
 
       const count = await Job.count({
@@ -643,7 +629,6 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //------------------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "applied") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -655,7 +640,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -664,7 +649,7 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      };
+      }
 
       const count = await Job.count({
         where: whereCondition,
@@ -681,7 +666,6 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "assigned") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -694,7 +678,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -703,12 +687,11 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           liveStatus: false,
-        }
-      };
+        };
+      }
 
       const count = await Job.count({
         where: whereCondition,
@@ -725,7 +708,6 @@ export class JobDataSourceImpl implements JobDataSource {
       return count;
       //----------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "completedjobforapplicant") {
-
       let whereCondition = {};
 
       if (query.year && query.months && query.months.length > 0) {
@@ -738,7 +720,7 @@ export class JobDataSourceImpl implements JobDataSource {
               query.year
             ),
             {
-              [Op.or]: query.months.map(month => {
+              [Op.or]: query.months.map((month) => {
                 return Sequelize.where(
                   Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
                   month
@@ -747,12 +729,11 @@ export class JobDataSourceImpl implements JobDataSource {
             },
           ],
         };
-      }
-      else {
+      } else {
         whereCondition = {
           liveStatus: false,
-        }
-      };
+        };
+      }
 
       const count = await Job.count({
         where: whereCondition,
