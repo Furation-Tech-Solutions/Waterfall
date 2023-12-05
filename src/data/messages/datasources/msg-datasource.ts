@@ -8,25 +8,25 @@ import Blocking from "@data/blocking/model/blocking-model";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
-    q?: string;
-    page?: number;
-    limit?: number;
-    toId?: number;
-    searchList?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+  toId?: string;
+  searchList?: string;
 }
 
 // Create MessageDataSource Interface
 export interface MessageDataSource {
-  createMsg(msg: any): Promise<MessageEntity>;
-  updateMsg(id: string, data: any): Promise<MessageEntity>;
+  createMsg(msg: MessageModel): Promise<any>;
+  updateMsg(id: string, data: MessageModel): Promise<any>;
   deleteMsg(id: string): Promise<void>;
-  read(id: string): Promise<MessageEntity>;
-  getAll(loginId: string, query: Query): Promise<MessageEntity[]>;
+  read(id: string): Promise<any | null>;
+  getAll(loginId: string, query: Query): Promise<any[]>;
 }
 
 // Message Data Source communicates with the database
 export class MessagesDataSourceImpl implements MessageDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   async createMsg(msg: any): Promise<MessageEntity> {
     // Check if the sender and receiver are blocked
@@ -91,8 +91,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     // If a matching entry is found, convert it to a plain JavaScript object before returning
     return messages.toJSON();
   }
-
-  async getAll(loginId: string, query: Query): Promise<MessageEntity[]> {
+  async getAll(loginId: string, query: Query): Promise<any[]> {
     // Get all message records based on the provided query parameters
     // console.log(+loginId, "login ID")
     const currentPage = query.page || 1;
@@ -102,7 +101,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     if (query.q === "unread" && loginId) {
       const data = await Message.findAll({
         where: {
-          receiver: +loginId,
+          receiver: loginId,
           seen: false,
         },
         include: [
@@ -125,8 +124,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         return data.map((msg: any) => msg.toJSON());
       }
     }
-
-    if (query.searchList && loginId) {
+    else if (query.searchList && loginId) {
       // If searchList is provided, apply search condition
 
       const data = await Message.findAll({
@@ -205,7 +203,8 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       });
 
       return data1.map((msg: any) => msg.toJSON());
-    } else if (query.q === "chatscreen" && query.toId && loginId) {
+    }
+    else if (query.q === "chatscreen" && query.toId && loginId) {
       const data = await Message.findAll({
         where: {
           [Op.or]: [
@@ -236,37 +235,37 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       });
 
       return data.map((msg: any) => msg.toJSON());
-    } else {
-      // If no searchList, get all messages
-      const data = await Message.findAll({
-        where: {
-          [Op.or]: [
-            {
-              sender: loginId,
-            },
-            {
-              receiver: loginId,
-            },
-          ],
-        },
-        include: [
+    }
+
+    // If no searchList, get all messages
+    const data = await Message.findAll({
+      where: {
+        [Op.or]: [
           {
-            model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            sender: loginId,
           },
           {
-            model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            receiver: loginId,
           },
         ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
+      },
+      include: [
+        {
+          model: Realtors,
+          as: "senderData",
+          foreignKey: "sender",
+        },
+        {
+          model: Realtors,
+          as: "receiverData",
+          foreignKey: "receiver",
+        },
+      ],
+      limit: itemsPerPage,
+      offset: offset,
+    });
 
-      return data.map((msg: any) => msg.toJSON());
-    }
+    return data.map((msg: any) => msg.toJSON());
   }
 
   async updateMsg(
