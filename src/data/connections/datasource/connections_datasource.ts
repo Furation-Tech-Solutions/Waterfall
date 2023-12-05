@@ -1,5 +1,5 @@
 import { Op, Sequelize, where } from "sequelize";
-import { ConnectionsEntity, ConnectionsModel } from "@domain/connections/entities/connections_entities";
+import { ConnectionsEntity, ConnectionMapper, ConnectionsModel } from "@domain/connections/entities/connections_entities";
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
