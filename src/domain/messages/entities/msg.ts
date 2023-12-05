@@ -3,7 +3,7 @@ export class MessageModel {
   constructor(
     public sender: string = "",
     public receiver: string = "",
-    public message: string = '',
+    public message: string = "",
     public senderData: {} = {},
     public ReceiverData: {} = {},
   ) { }
