@@ -1,6 +1,6 @@
 // Import necessary modules and dependencies
 import { Op, Sequelize, where } from "sequelize";
-import { MessageModel } from "@domain/messages/entities/msg"; // Import the MessageModel
+import { MessageEntity, MessageModel } from "@domain/messages/entities/msg"; // Import the MessageModel
 import Message from "../model/msg-model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -28,7 +28,7 @@ export interface MessageDataSource {
 export class MessagesDataSourceImpl implements MessageDataSource {
   constructor(private db: Sequelize) { }
 
-  async createMsg(msg: any): Promise<any> {
+  async createMsg(msg: any): Promise<MessageEntity> {
     // Check if the sender and receiver are blocked
     const isBlocked = await Blocking.findOne({
       where: {
@@ -65,7 +65,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     });
   }
 
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<MessageEntity> {
     // Read a message record by ID
     const messages = await Message.findOne({
       where: {
@@ -84,9 +84,13 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         },
       ],
     });
-    return messages ? messages.toJSON() : null; // Convert to a plain JavaScript object before returning
-  }
+    if (messages === null) {
+      throw ApiError.notFound();
+    }
 
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return messages.toJSON();
+  }
   async getAll(loginId: string, query: Query): Promise<any[]> {
     // Get all message records based on the provided query parameters
     // console.log(+loginId, "login ID")
@@ -264,7 +268,10 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     return data.map((msg: any) => msg.toJSON());
   }
 
-  async updateMsg(id: string, updatedData: MessageModel): Promise<any> {
+  async updateMsg(
+    id: string,
+    updatedData: any
+  ): Promise<MessageEntity> {
     // Update a message record by ID
     const message: any = await Message.findOne({
       where: {
@@ -283,6 +290,9 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       },
     });
 
-    return updatedMessages ? updatedMessages.toJSON() : null; // Convert to a plain JavaScript object before returning
+    if (updatedMessages == null) {
+      throw ApiError.notFound();
+    }
+    return updatedMessages.toJSON();
   }
 }

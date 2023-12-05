@@ -1,24 +1,31 @@
 // Import necessary modules and classes
-import { BlockingModel } from "@domain/blocking/entities/blocking";
+import {
+  BlockingModel,
+  BlockingEntity,
+} from "@domain/blocking/entities/blocking";
 import Blocking from "../model/blocking-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Op, Sequelize } from "sequelize";
 import Realtors from "@data/realtors/model/realtor-model";
 import Connections from "@data/connections/models/connections_model";
+import { AnyCnameRecord } from "dns";
 
 // Define an interface for the BlockingDataSource
 export interface BlockingDataSource {
   // Method to create a new blocking entry
-  create(blocking: BlockingModel): Promise<any>; // Promise of BlockingEntity
+  create(blocking: any): Promise<BlockingEntity>; // Promise of BlockingEntity
 
   // Method to retrieve all blocking entries
-  getAllBlockings(query: BlockQuery): Promise<any[]>; // Promise of an array of BlockingEntity
+  getAllBlockings(query: BlockQuery): Promise<BlockingEntity[]>; // Promise of an array of BlockingEntity
 
   // Method to read a blocking entry by ID
-  read(id: string): Promise<any | null>; // Promise of BlockingEntity or null
+  read(id: string): Promise<BlockingEntity>; // Promise of BlockingEntity or null
 
   // Method to update a blocking entry by ID
-  update(id: string, blocking: BlockingModel): Promise<any>; // Promise of BlockingEntity
+  update(
+    id: string,
+    blocking: BlockingModel
+  ): Promise<BlockingEntity >; // Promise of BlockingEntity
 
   // Method to delete a blocking entry by ID
   delete(id: string): Promise<void>;
@@ -35,7 +42,7 @@ export interface BlockQuery {
 export class BlockingDataSourceImpl implements BlockingDataSource {
   constructor(private db: Sequelize) {}
 
-  async create(blocking: any): Promise<any> {
+  async create(blocking: any): Promise<BlockingEntity> {
     // Check if there is an existing connection between the users
     const existingConnection = (await Connections.findOne({
       where: {
@@ -67,7 +74,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   }
 
   // Method to retrieve all blocking entries
-  async getAllBlockings(query: BlockQuery): Promise<any[]> {
+  async getAllBlockings(query: BlockQuery): Promise<BlockingEntity[]> {
     let loginId = query.id;
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
@@ -99,7 +106,7 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
   }
 
   // Method to read a blocking entry by ID
-  async read(id: string): Promise<any | null> {
+  async read(id: string): Promise<BlockingEntity> {
     // Find a blocking entry by its ID
     const blocking = await Blocking.findOne({
       where: {
@@ -118,13 +125,19 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
         },
       ],
     });
+     if (blocking===null) {
+       throw ApiError.notFound();
+     }
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning
-    return blocking ? blocking.toJSON() : null;
+    return  blocking.toJSON();
   }
 
   // Method to update a blocking entry by ID
-  async update(id: string, updatedData: BlockingModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: BlockingModel
+  ): Promise<BlockingEntity > {
     // Find the blocking entry by ID
     const blocking = await Blocking.findByPk(id);
 
@@ -135,7 +148,10 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
 
     // Fetch the updated blocking entry and convert it to a plain JavaScript object before returning
     const updatedBlocking = await Blocking.findByPk(id);
-    return updatedBlocking ? updatedBlocking.toJSON() : null;
+    if (updatedBlocking == null) {
+      throw ApiError.notFound();
+    }
+    return updatedBlocking.toJSON();
   }
 
   // Method to delete a blocking entry by ID

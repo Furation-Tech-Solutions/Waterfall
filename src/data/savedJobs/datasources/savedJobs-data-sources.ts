@@ -7,16 +7,17 @@ import {
 import SavedJob from "@data/savedJobs/models/savedJobs-models";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create a SavedJobDataSource Interface
 export interface SavedJobDataSource {
   // Define methods for data source operations
 
   // Method to create a new SavedJobModel in the database
-  create(savedJob: SavedJobModel): Promise<SavedJobEntity>;
+  create(savedJob: any): Promise<SavedJobEntity>;
 
   // Method to update a SavedJobModel in the database by ID
-  update(id: string, savedJob: SavedJobModel): Promise<any>;
+  update(id: string, savedJob: any): Promise<SavedJobEntity>;
 
   // Method to delete a SavedJobModel from the database by ID
   delete(id: string): Promise<void>;
@@ -37,7 +38,7 @@ export interface SavedJobQuery {
 
 // Implement the SavedJob Data Source that communicates with the database
 export class SavedJobDataSourceImpl implements SavedJobDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Implement the "create" method to insert a new SavedJobModel into the database
   async create(savedJob: any): Promise<SavedJobEntity> {
@@ -72,8 +73,8 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           model: Job,
           foreignKey: "Job",
           as: "jobData",
-        }
-      ]
+        },
+      ],
     });
     return savedJob ? savedJob.toJSON() : null; // Convert to a plain JavaScript object before returning
   }
@@ -95,8 +96,8 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           model: Realtors,
           as: "realtorData",
           foreignKey: "Realtor",
-          where: { 
-            Realtor: loginId
+          where: {
+            Realtor: loginId,
           },
         },
         {
@@ -114,7 +115,10 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
   }
 
   // Implement the "update" method to update a SavedJob record by ID with provided data
-  async update(id: string, updatedData: SavedJobModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: any
+  ): Promise<SavedJobEntity> {
     // Find the record by ID
     const savedJob = await SavedJob.findByPk(id);
 
@@ -126,7 +130,9 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
     // Fetch the updated record
     const updatedSavedJob = await SavedJob.findByPk(id);
 
-    // Convert to a plain JavaScript object before returning
-    return updatedSavedJob ? updatedSavedJob.toJSON() : null;
+    if (updatedSavedJob == null) {
+      throw ApiError.notFound();
+    }
+    return updatedSavedJob.toJSON();
   }
 }
