@@ -1,7 +1,9 @@
+# PENDING Merging and testing workflow file 
 name: Waterfall Deployment Dev
 run-name: Elastic Beanstalk Deployment Dev
 on:
   workflow_dispatch:
+  # TODO update trigger(to branch 'dev') after test 
   push:
     branches:
       - "ci/ssh-Dev-Deploy"
@@ -28,6 +30,7 @@ jobs:
         run: yarn run build
       - name: Build code bundle
         run: zip distout.zip -r dist/
+      # TODO: Add checks to terminate prematurly if Variables not set
       - name: Retrieve the secret and decode it to a file
         run: |
           mkdir ~/.ssh
