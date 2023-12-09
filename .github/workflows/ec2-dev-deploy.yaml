@@ -3,15 +3,14 @@ name: Waterfall Deployment Dev
 run-name: Elastic Beanstalk Deployment Dev
 on:
   workflow_dispatch:
-  # TODO update trigger(to branch 'dev') after test 
   push:
     branches:
-      - "ci/ssh-Dev-Deploy"
-  # pull_request:
-  #   types:
-  #     - "closed"
-  #   branches:
-  #     - "dev"
+      - "dev"
+  pull_request:
+    types:
+      - "closed"
+    branches:
+      - "dev"
 
 jobs:
   deploy:
@@ -29,8 +28,16 @@ jobs:
       - name: Execute application build Script
         run: yarn run build
       - name: Build code bundle
-        run: zip distout.zip -r dist/
-      # TODO: Add checks to terminate prematurly if Variables not set
+        run: zip distOut.zip -r dist/
+      - name: Check Certificate, host variable and keytype
+        run: |
+          if [ -z "$CERTIFICATE_BASE64" ]; 
+          then 
+            echo "Certificate is absent";
+            exit 1;
+          else 
+            echo "Certificate Present"; 
+          fi;
       - name: Retrieve the secret and decode it to a file
         run: |
           mkdir ~/.ssh
@@ -47,9 +54,6 @@ jobs:
         run: scp -r  -i "~/.ssh/waterfall-dev.pem" distOut.zip package.json yarn.lock ubuntu@${{vars.HOST}}:~/waterfall/
       - name: export pm2 and restart pm2 with updated code
         run: ssh -i "~/.ssh/waterfall-dev.pem" ubuntu@${{vars.HOST}} '. /etc/profile; export PATH=$PATH:$HOME/.nvm/versions/node/v18.18.0/bin; cd $HOME/waterfall/ && yarn install && unzip distOut.zip && pm2 restart 0'
-      - name: verify instance is running
-        run: |
-          echo "hello"
       - name: clean up
         run: |
           rm distOut.zip && \
