@@ -27,8 +27,8 @@ const Connections = sequelize.define("Connections", {
 });
 
 // Establish associations with the Realtors model using foreign keys
-Connections.belongsTo(Realtors, { foreignKey: "fromId", as: "fromRealtor" }); // Association for the "fromRealtor"
-Connections.belongsTo(Realtors, { foreignKey: "toId", as: "toRealtor" }); // Association for the "toRealtor"
+Connections.belongsTo(Realtors, { foreignKey: "fromId", as: "fromIdData" }); // Association for the "fromRealtor"
+Connections.belongsTo(Realtors, { foreignKey: "toId", as: "toIdData" }); // Association for the "toRealtor"
 
 // Export the Connections model as the default export
 export default Connections;

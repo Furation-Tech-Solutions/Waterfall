@@ -103,7 +103,9 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     
 
     const query: any = {};

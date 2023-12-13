@@ -1,5 +1,6 @@
 import { Op, Sequelize, where } from "sequelize";
 import { ConnectionsEntity, ConnectionMapper, ConnectionsModel } from "@domain/connections/entities/connections_entities";
+
 import Connections from "../models/connections_model";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -17,10 +18,11 @@ export interface Query {
 
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
-  createReq(connections: ConnectionsModel): Promise<ConnectionsEntity>;
-  updateReq(id: string, data: ConnectionsModel): Promise<any>;
+
+  createReq(connections: any): Promise<ConnectionsEntity>;
+  updateReq(id: string, data: any): Promise<ConnectionsEntity>;
   deleteReq(id: string): Promise<void>;
-  read(id: string): Promise<ConnectionsEntity | null>;
+  read(id: string): Promise<ConnectionsEntity>;
   getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
 }
 
@@ -53,12 +55,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       where: {
         [Op.or]: [
           {
-            fromRealtor: newConnection.fromId,
-            toRealtor: newConnection.toId,
+            fromRealtorId: newConnection.fromId,
+            toRealtorId: newConnection.toId,
           },
           {
-            fromRealtor: newConnection.toId,
-            toRealtor: newConnection.fromId,
+            fromRealtorId: newConnection.toId,
+            toRealtorId: newConnection.fromId,
           },
         ],
       },
@@ -96,12 +98,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtor",
+          as: "fromIdData",
           foreignKey: "fromId",
         },
         {
           model: Realtors,
-          as: "toRealtor",
+          as: "toIdData",
           foreignKey: "toId",
         },
       ],
@@ -131,12 +133,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],
@@ -155,12 +157,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],
@@ -258,12 +260,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],

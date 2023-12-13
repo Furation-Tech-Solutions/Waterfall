@@ -4,8 +4,8 @@ import { Request, Response, NextFunction } from "express";
 
 // Define an interface for the expected NotInterestedInput structure
 interface NotInterestedInput {
-  realtor: string;
-  job: number;
+  realtorId: string;
+  jobId: number;
 }
 
 // Define a validator function for NotInterestedInput
@@ -15,7 +15,7 @@ const notInterestedValidator = (
 ) => {
   // Define a Joi schema for validation
   const notInterestedSchema = Joi.object<NotInterestedInput>({
-    realtor: isUpdate
+    realtorId: isUpdate
       ? Joi.string().optional().messages({
           "string.base": "Realtor must be a string",
           "string.empty": "Realtor is required",
@@ -26,7 +26,7 @@ const notInterestedValidator = (
           "string.empty": "Realtor is required",
           "any.required": "Realtor is required",
         }),
-    job: isUpdate
+    jobId: isUpdate
       ? Joi.number().optional().messages({
           "string.base": "Job must be a number",
           "string.empty": "Job is required",

@@ -1,8 +1,8 @@
 // Express API request populates the FeedBack Model
 export class FeedBackModel {
   constructor(
-    public fromRealtor: string = "",
-    public toRealtor: string = "",
+    public fromRealtorId: string = "",
+    public toRealtorId: string = "",
     public jobId: number = 0,
     public rating: number = 0,
     public description: string = ""
@@ -13,8 +13,8 @@ export class FeedBackModel {
 export class FeedBackEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public fromRealtor: string,
-    public toRealtor: string,
+    public fromRealtorId: string,
+    public toRealtorId: string,
     public jobId: number,
     public rating: number,
     public description: string
@@ -32,14 +32,14 @@ export class FeedBackMapper {
       // If existingFeedBack is provided, merge the data from feedBackData with the existingFeedBack
       return {
         ...existingFeedBack,
-        fromRealtor:
-          feedBackData.fromRealtor !== undefined
-            ? feedBackData.fromRealtor
-            : existingFeedBack.fromRealtor,
-        toRealtor:
-          feedBackData.toRealtor !== undefined
-            ? feedBackData.toRealtor
-            : existingFeedBack.toRealtor,
+        fromRealtorId:
+          feedBackData.fromRealtorId !== undefined
+            ? feedBackData.fromRealtorId
+            : existingFeedBack.fromRealtorId,
+        toRealtorId:
+          feedBackData.toRealtorId !== undefined
+            ? feedBackData.toRealtorId
+            : existingFeedBack.toRealtorId,
         jobId:
           feedBackData.jobId !== undefined
             ? feedBackData.jobId
@@ -56,9 +56,13 @@ export class FeedBackMapper {
     } else {
       // If existingFeedBack is not provided, create a new FeedBackEntity using feedBackData
       const feedBackEntity: FeedBackEntity = {
-        id: includeId ? (feedBackData.id ? feedBackData.id : undefined) : feedBackData.id,
-        fromRealtor: feedBackData.fromRealtor,
-        toRealtor: feedBackData.toRealtor,
+        id: includeId
+          ? feedBackData.id
+            ? feedBackData.id
+            : undefined
+          : feedBackData.id,
+        fromRealtorId: feedBackData.fromRealtorId,
+        toRealtorId: feedBackData.toRealtorId,
         jobId: feedBackData.jobId,
         rating: feedBackData.rating,
         description: feedBackData.description,
@@ -69,8 +73,8 @@ export class FeedBackMapper {
 
   static toModel(feedBack: FeedBackEntity): any {
     return {
-      fromRealtor: feedBack.fromRealtor,
-      toRealtor: feedBack.toRealtor,
+      fromRealtorId: feedBack.fromRealtorId,
+      toRealtorId: feedBack.toRealtorId,
       jobId: feedBack.jobId,
       rating: feedBack.rating,
       description: feedBack.description,

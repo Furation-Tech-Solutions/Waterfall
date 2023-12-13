@@ -159,8 +159,8 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     // let loginId = req.user;
-    let Id = req.headers.id;
-    // let Id = req.user;
+    // let Id = req.headers.id;
+    let Id = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
@@ -179,6 +179,7 @@ export class JobService {
       (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+
         const emailService = new SESMailService();
         const emailOption = {
           email: "shehzadmalik123.sm@gmail.com",

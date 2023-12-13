@@ -11,6 +11,7 @@ import { GetBlockingById } from "@domain/blocking/usecases/get-blocking-by-id";
 import { UpdateBlocking } from "@domain/blocking/usecases/update-blocking";
 import { DeleteBlocking } from "@domain/blocking/usecases/delete-blocking";
 import {sequelize} from "@main/sequelizeClient";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 
 // Create an instance of the BlockingDataSourceImpl and pass the mongoose connection
@@ -42,7 +43,7 @@ export const blockingRouter = Router();
 blockingRouter.post("/", validateBlockingInputMiddleware(false), blockingService.createBlocking.bind(blockingService));
 
 // Route handling for getting all blockingsx`
-blockingRouter.get("/", blockingService.getAllBlockings.bind(blockingService));
+blockingRouter.get("/", verifyUser,blockingService.getAllBlockings.bind(blockingService));
 
 // Route handling for getting an Blocking by ID
 blockingRouter.get("/:id", blockingService.getBlockingById.bind(blockingService));

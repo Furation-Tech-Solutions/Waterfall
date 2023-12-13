@@ -14,11 +14,11 @@ export interface RealtorDataSource {
 }
 
 export interface RealtorQuery {
-    location?: string;
-    gender?: string;
-    q?: string;
-    page: number;
-    limit: number;
+  location?: string;
+  gender?: string;
+  q?: string;
+  page: number;
+  limit: number;
 }
 
 // Realtor Data Source communicates with the database

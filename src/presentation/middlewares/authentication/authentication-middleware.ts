@@ -17,28 +17,28 @@ admin.initializeApp({
     res: Response,
     next: NextFunction
   ): Promise<any> => {
-      const idToken: string | undefined = req.header("Authorization");
+      const authHeader: string | undefined = req.header("Authorization");
 
   try {
-    if (!idToken) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new Error("Unauthorized");
     }
 
+    const idToken = authHeader.split(" ")[1]; // Extracting the token part after "Bearer "
+
     const user = await admin.auth().verifyIdToken(idToken);
 
-    // If verification is successful, the user is authenticated
-    // if (user) {
+    if (user) {
       req.user = user.uid;
       next();
-    // } else {
-      // User is not authenticated
-      // }
-      
-      
+    } else {
+      throw new Error("Unauthorized");
     }
+  }
+    
     catch(err){
      res.status(401).send("Unauthorized");
-    console.log(err)
+    // console.log(err)
    }
 
 }

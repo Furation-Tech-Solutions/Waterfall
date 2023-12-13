@@ -1,8 +1,8 @@
 // Define a class for ReportModel, representing the data structure used for creating reports
 export class ReportModel {
   constructor(
-    public fromRealtor: string = "",
-    public toRealtor: string = "",
+    public fromRealtorId: string = "",
+    public toRealtorId: string = "",
     public description: string = "",
     public reportTimestamp: Date = new Date()
   ) {}
@@ -11,9 +11,9 @@ export class ReportModel {
 // Define a class for ReportEntity, representing the data structure used for storing reports in the database
 export class ReportEntity {
   constructor(
-    public id: number| undefined = undefined, // An optional unique identifier for the report
-    public fromRealtor: string, // The name of the reporting realtor
-    public toRealtor: string, // The name of the realtor being reported to
+    public id: number | undefined = undefined, // An optional unique identifier for the report
+    public fromRealtorId: string, // The name of the reporting realtor
+    public toRealtorId: string, // The name of the realtor being reported to
     public description: string, // The description or details of the report
     public reportTimestamp: Date // The timestamp when the report was created
   ) {}
@@ -31,14 +31,14 @@ export class ReportMapper {
       // If an existing report is provided, merge the data from reportData with the existing report
       return {
         ...existingReport,
-        fromRealtor:
-          reportData.fromRealtor !== undefined
-            ? reportData.fromRealtor
-            : existingReport.fromRealtor,
-        toRealtor:
-          reportData.toRealtor !== undefined
-            ? reportData.toRealtor
-            : existingReport.toRealtor,
+        fromRealtorId:
+          reportData.fromRealtorId !== undefined
+            ? reportData.fromRealtorId
+            : existingReport.fromRealtorId,
+        toRealtorId:
+          reportData.toRealtorId !== undefined
+            ? reportData.toRealtorId
+            : existingReport.toRealtorId,
         description:
           reportData.description !== undefined
             ? reportData.description
@@ -56,8 +56,8 @@ export class ReportMapper {
             ? reportData.id.toString() // Convert ID to string if it exists
             : undefined
           : reportData.id.toString(),
-        fromRealtor: reportData.fromRealtor,
-        toRealtor: reportData.toRealtor,
+        fromRealtorId: reportData.fromRealtorId,
+        toRealtorId: reportData.toRealtorId,
         description: reportData.description,
         reportTimestamp: reportData.reportTimestamp,
       };
@@ -69,8 +69,8 @@ export class ReportMapper {
   static toModel(report: ReportEntity): any {
     return {
       id: report.id, // Include the ID if available
-      fromRealtor: report.fromRealtor,
-      toRealtor: report.toRealtor,
+      fromRealtorId: report.fromRealtorId,
+      toRealtorId: report.toRealtorId,
       description: report.description,
       reportTimestamp: report.reportTimestamp,
     };
