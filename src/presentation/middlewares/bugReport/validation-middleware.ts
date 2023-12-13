@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express"; // Import Request, Re
 
 // Define the structure of BugReportInput
 interface BugReportInput {
-  realtor: string;
+  realtorId: string;
   description: string;
   attachments: string;
   timestamp?: Date; // Optional field, adjust as needed
@@ -17,7 +17,7 @@ const bugReportValidator = (
 ) => {
   // Define a Joi schema for BugReportInput
   const bugReportSchema = Joi.object<BugReportInput>({
-    realtor: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    realtorId: isUpdate ? Joi.string().optional() : Joi.string().required(),
     description: isUpdate
       ? Joi.string().optional().max(1000).messages({
           "string.base": "Description must be a string",

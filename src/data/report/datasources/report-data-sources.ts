@@ -57,13 +57,13 @@ export class ReportDataSourceImpl implements ReportDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData", // Alias for the first association
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData", // Alias for the second association
+          foreignKey: "toRealtorId",
         },
       ],
     });
@@ -80,13 +80,13 @@ export class ReportDataSourceImpl implements ReportDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData", // Alias for the first association
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData", // Alias for the second association
+          foreignKey: "toRealtorId",
         },
       ],
     });

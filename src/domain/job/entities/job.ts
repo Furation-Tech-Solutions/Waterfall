@@ -1,7 +1,7 @@
 // Express API request DTO
 export class JobModel {
   constructor(
-    public jobOwner: string = "", // Owner of the job
+    public jobOwnerId: string = "", // Owner of the job
     public location: string = "", // Location of the job
     public address: string = "", // Address of the job
     public date: Date = new Date(), // Date of the job
@@ -27,7 +27,7 @@ export class JobModel {
 export class JobEntity {
   constructor(
     public id: number | undefined = undefined, // Job ID (optional)
-    public jobOwner: string, // Owner of the job
+    public jobOwnerId: string, // Owner of the job
     public location: string, // Location of the job
     public address: string, // Address of the job
     public date: Date, // Date of the job
@@ -61,10 +61,10 @@ export class JobMapper {
       // Merge properties one by one, using jobData if defined, or fall back to existingJob's properties
       return {
         ...existingJob,
-        jobOwner:
-          jobData.jobOwner !== undefined
-            ? jobData.jobOwner
-            : existingJob.jobOwner,
+        jobOwnerId:
+          jobData.jobOwnerId !== undefined
+            ? jobData.jobOwnerId
+            : existingJob.jobOwnerId,
         location:
           jobData.location !== undefined
             ? jobData.location
@@ -132,7 +132,7 @@ export class JobMapper {
             ? jobData.id.toString()
             : undefined
           : jobData.id.toString(),
-        jobOwner: jobData.jobOwner,
+        jobOwnerId: jobData.jobOwnerId,
         location: jobData.location,
         address: jobData.address,
         date: jobData.date,
@@ -162,7 +162,7 @@ export class JobMapper {
     // Map properties one by one
     return {
       id: job.id,
-      jobOwner: job.jobOwner,
+      jobOwnerId: job.jobOwnerId,
       location: job.location,
       address: job.address,
       date: job.date,

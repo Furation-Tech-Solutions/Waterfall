@@ -50,8 +50,8 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "realtor",
-          as: "RealtorData",
+          foreignKey: "realtorId",
+          as: "realtorIdData",
         },
       ],
     });
@@ -66,8 +66,8 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "realtor",
-          as: "RealtorData",
+          foreignKey: "realtorId",
+          as: "realtorIdData",
         },
       ],
     });

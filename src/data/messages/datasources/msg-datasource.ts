@@ -34,12 +34,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       where: {
         [Op.or]: [
           {
-            fromRealtor: msg.sender,
-            toRealtor: msg.receiver,
+            fromRealtorId: msg.senderId,
+            toRealtorId: msg.receiverId,
           },
           {
-            fromRealtor: msg.receiver,
-            toRealtor: msg.sender,
+            fromRealtorId: msg.receiverId,
+            toRealtorId: msg.senderId,
           },
         ],
       },
@@ -47,7 +47,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
 
     if (isBlocked) {
       throw new Error(
-        "Message cannot be created as sender or receiver is blocked."
+        "Message cannot be created as senderId or receiverId is blocked."
       );
     }
 
@@ -74,13 +74,13 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       include: [
         {
           model: Realtors,
-          as: "senderData", // Alias for the first association
-          foreignKey: "sender",
+          as: "senderIdData", // Alias for the first association
+          foreignKey: "senderId",
         },
         {
           model: Realtors,
-          as: "receiverData", // Alias for the second association
-          foreignKey: "receiver",
+          as: "receiverIdData", // Alias for the second association
+          foreignKey: "receiverId",
         },
       ],
     });
@@ -102,19 +102,19 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     if (query.q === "unread" && loginId) {
       const data = await Message.findAll({
         where: {
-          receiver: +loginId,
+          receiverId: +loginId,
           seen: false,
         },
         include: [
           {
             model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            as: "senderIdData",
+            foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            as: "receiverIdData",
+            foreignKey: "receiverId",
           },
         ],
         limit: itemsPerPage,
@@ -133,18 +133,18 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         where: {
           [Op.or]: [
             {
-              sender: loginId,
+              senderId: loginId,
             },
             {
-              receiver: loginId,
+              receiverId: loginId,
             },
           ],
         },
         include: [
           {
             model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            as: "senderIdData",
+            foreignKey: "senderId",
             where: {
               [Op.or]: [
                 {
@@ -162,8 +162,8 @@ export class MessagesDataSourceImpl implements MessageDataSource {
           },
           {
             model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            as: "receiverIdData",
+            foreignKey: "receiverId",
           },
         ],
         limit: itemsPerPage,
@@ -178,10 +178,10 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         where: {
           [Op.or]: [
             {
-              sender: loginId,
+              senderId: loginId,
             },
             {
-              receiver: loginId,
+              receiverId: loginId,
             },
           ],
           message: {
@@ -191,13 +191,13 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            as: "senderIdData",
+            foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            as: "receiverIdData",
+            foreignKey: "receiverId",
           },
         ],
         limit: itemsPerPage,
@@ -210,25 +210,25 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         where: {
           [Op.or]: [
             {
-              sender: loginId,
-              receiver: query.toId,
+              senderId: loginId,
+              receiverId: query.toId,
             },
             {
-              sender: query.toId,
-              receiver: loginId,
+              senderId: query.toId,
+              receiverId: loginId,
             },
           ],
         },
         include: [
           {
             model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            as: "senderIdData",
+            foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            as: "receiverIdData",
+            foreignKey: "receiverId",
           },
         ],
         limit: itemsPerPage,
@@ -242,23 +242,23 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         where: {
           [Op.or]: [
             {
-              sender: loginId,
+              senderId: loginId,
             },
             {
-              receiver: loginId,
+              receiverId: loginId,
             },
           ],
         },
         include: [
           {
             model: Realtors,
-            as: "senderData",
-            foreignKey: "sender",
+            as: "senderIdData",
+            foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiver",
+            as: "receiverIdData",
+            foreignKey: "receiverId",
           },
         ],
         limit: itemsPerPage,

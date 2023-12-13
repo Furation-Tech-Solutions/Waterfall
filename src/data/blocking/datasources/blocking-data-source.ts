@@ -48,12 +48,12 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       where: {
         [Op.or]: [
           {
-            fromId: blocking.fromRealtor,
-            toId: blocking.toRealtor,
+            fromId: blocking.fromRealtorId,
+            toId: blocking.toRealtorId,
           },
           {
-            fromId: blocking.toRealtor,
-            toId: blocking.fromRealtor,
+            fromId: blocking.toRealtorId,
+            toId: blocking.fromRealtorId,
           },
         ],
       },
@@ -83,18 +83,18 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
       where: {
-        fromRealtor: loginId,
+        fromRealtorId: loginId,
       },
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData", // Alias for the first association
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData", // Alias for the second association
+          foreignKey: "toRealtorId",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page
@@ -115,13 +115,13 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData",
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData",
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData",
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData",
+          foreignKey: "toRealtorId",
         },
       ],
     });

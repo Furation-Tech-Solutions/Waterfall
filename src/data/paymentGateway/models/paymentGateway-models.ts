@@ -44,12 +44,12 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
 // Define associations with other models
 PaymentGateway.belongsTo(Job, {
   foreignKey: "jobId",
-  as: "jobData",
+  as: "jobIdData",
 });
 
 PaymentGateway.belongsTo(JobApplicant, {
   foreignKey: "jobApplicantId",
-  as: "jobApplicantData",
+  as: "jobApplicantIdData",
 });
 
 // Export the "PaymentGateway" model as the default export

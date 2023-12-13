@@ -55,12 +55,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       where: {
         [Op.or]: [
           {
-            fromRealtor: newConnection.fromId,
-            toRealtor: newConnection.toId,
+            fromRealtorId: newConnection.fromId,
+            toRealtorId: newConnection.toId,
           },
           {
-            fromRealtor: newConnection.toId,
-            toRealtor: newConnection.fromId,
+            fromRealtorId: newConnection.toId,
+            toRealtorId: newConnection.fromId,
           },
         ],
       },
@@ -98,12 +98,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtor",
+          as: "fromIdData",
           foreignKey: "fromId",
         },
         {
           model: Realtors,
-          as: "toRealtor",
+          as: "toIdData",
           foreignKey: "toId",
         },
       ],
@@ -133,12 +133,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],
@@ -157,12 +157,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],
@@ -260,12 +260,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromRealtor",
+            as: "fromIdData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toRealtor",
+            as: "toIdData",
             foreignKey: "toId",
           },
         ],

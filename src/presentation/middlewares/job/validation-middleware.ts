@@ -10,7 +10,7 @@ import {
 
 // Define the structure of the expected input data
 interface JobInput {
-  jobOwner: string;
+  jobOwnerId: string;
   location: string;
   address: string;
   date: Date;
@@ -35,7 +35,7 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
   // Define a schema for validating the input using Joi
   const jobSchema = Joi.object<JobInput>({
     // Validate job owner
-    jobOwner: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    jobOwnerId: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate location
     location: isUpdate
