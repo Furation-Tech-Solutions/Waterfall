@@ -159,8 +159,8 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     // let loginId = req.user;
-    let Id = req.headers.id;
-    // let Id = req.user;
+    // let Id = req.headers.id;
+    let Id = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};

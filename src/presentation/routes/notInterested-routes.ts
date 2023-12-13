@@ -10,6 +10,7 @@ import { GetNotInterestedById } from "@domain/notInterested/usecases/get-notInte
 import { GetAllNotInteresteds } from "@domain/notInterested/usecases/get-all-notInterested";
 import { UpdateNotInterested } from "@domain/notInterested/usecases/update-notInterested";
 import { validateNotInterestedInputMiddleware } from "@presentation/middlewares/notInterested/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the NotInterestedDataSourceImpl and pass the sequelize connection
 const notInterestedDataSource = new NotInterestedDataSourceImpl(sequelize);
@@ -62,4 +63,4 @@ notInterestedRouter.delete(
 );
 
 // Route handling for getting all NotInteresteds
-notInterestedRouter.get("/", notInterestedService.getAllNotInteresteds.bind(notInterestedService));
+notInterestedRouter.get("/", verifyUser,notInterestedService.getAllNotInteresteds.bind(notInterestedService));
