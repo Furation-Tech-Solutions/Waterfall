@@ -3,10 +3,10 @@ export class ConnectionsModel {
   constructor(
     public fromId: string = "",
     public toId: string = "",
-    public fromRealtor: {} = {},
-    public toRealtor: {} = {},
+    public fromIdData: {} = {},
+    public toIdData: {} = {},
     public connected: boolean = false
-  ) { }
+  ) {}
 }
 
 // ConnectionsEntity provided by Connections Repository is converted to Express API Response
@@ -16,9 +16,9 @@ export class ConnectionsEntity {
     public fromId: string,
     public toId: string,
     public connected: boolean,
-    public fromRealtor: {},
-    public toRealtor: {}
-  ) { }
+    public fromIdData: {},
+    public toIdData: {}
+  ) {}
 }
 
 /* ConnectionsMapper provided by Connections Repository is converted to Express API Response */
@@ -49,13 +49,15 @@ export class ConnectionMapper {
       // Create a new ConnectionsEntity
       const connectionEntity: ConnectionsEntity = {
         id: includeId
-          ? connectionData.id ? connectionData.id : undefined
+          ? connectionData.id
+            ? connectionData.id
+            : undefined
           : connectionData.id,
         fromId: connectionData.fromId,
         toId: connectionData.toId,
         connected: connectionData.connected,
-        toRealtor: connectionData.toRealtor,
-        fromRealtor: connectionData.fromRealtor,
+        toIdData: connectionData.toIdData,
+        fromIdData: connectionData.fromIdData,
       };
       return connectionEntity;
     }
@@ -67,8 +69,8 @@ export class ConnectionMapper {
       fromId: connection.fromId,
       toId: connection.toId,
       connected: connection.connected,
-      fromRealtor: connection.fromRealtor,
-      toRealtor: connection.toRealtor,
+      fromIdData: connection.fromIdData,
+      toIdData: connection.toIdData,
     };
   }
 }

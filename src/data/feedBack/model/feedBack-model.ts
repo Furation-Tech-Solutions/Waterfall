@@ -6,21 +6,21 @@ import Realtors from '@data/realtors/model/realtor-model';
 import Job from '@data/job/models/job-model';
 
 // Define a Sequelize model called 'FeedBacks' with several fields
-const FeedBacks = sequelize.define('FeedBacks', {
-  fromRealtor: {
+const FeedBacks = sequelize.define("FeedBacks", {
+  fromRealtorId: {
     type: DataTypes.STRING,
     allowNull: false,
-    references: { model: Realtors, key: 'id' },
+    references: { model: Realtors, key: "id" },
   },
-  toRealtor: {
+  toRealtorId: {
     type: DataTypes.STRING,
     allowNull: false,
-    references: { model: Realtors, key: 'id' },
+    references: { model: Realtors, key: "id" },
   },
   jobId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: Job, key: 'id' },
+    references: { model: Job, key: "id" },
   },
   rating: {
     type: DataTypes.INTEGER,
@@ -31,9 +31,15 @@ const FeedBacks = sequelize.define('FeedBacks', {
 });
 
 // Establish associations with the Realtors and Job models using foreign keys
-FeedBacks.belongsTo(Realtors, { foreignKey: 'fromRealtor', as: 'fromRealtorData' });
-FeedBacks.belongsTo(Realtors, { foreignKey: 'toRealtor', as: 'toRealtorData' });
-FeedBacks.belongsTo(Job, { foreignKey: 'jobId', as: 'JobData' });
+FeedBacks.belongsTo(Realtors, {
+  foreignKey: "fromRealtorId",
+  as: "fromRealtorIdData",
+});
+FeedBacks.belongsTo(Realtors, {
+  foreignKey: "toRealtorId",
+  as: "toRealtorIdData",
+});
+FeedBacks.belongsTo(Job, { foreignKey: "jobId", as: "jobIdData" });
 
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;

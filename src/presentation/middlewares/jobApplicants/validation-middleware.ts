@@ -9,8 +9,8 @@ import {
 
 // Define the interface for the expected input data
 interface JobApplicantInput {
-  job: number;
-  applicant: string;
+  jobId: number;
+  applicantId: string;
   applicantStatus: string;
   applicantStatusUpdateTime: string;
   agreement: boolean;
@@ -26,8 +26,8 @@ const jobApplicantValidator = (
 ) => {
   // Define a Joi schema for validating the input
   const jobApplicantSchema = Joi.object<JobApplicantInput>({
-    job: isUpdate ? Joi.number().optional() : Joi.number().required(),
-    applicant: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    jobId: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    applicantId: isUpdate ? Joi.string().optional() : Joi.string().required(),
     applicantStatus: isUpdate
       ? Joi.string()
           .valid(...Object.values(applicationStatusEnum))

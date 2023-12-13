@@ -25,7 +25,7 @@ export interface BlockingDataSource {
   update(
     id: string,
     blocking: BlockingModel
-  ): Promise<BlockingEntity >; // Promise of BlockingEntity
+  ): Promise<BlockingEntity>; // Promise of BlockingEntity
 
   // Method to delete a blocking entry by ID
   delete(id: string): Promise<void>;
@@ -40,7 +40,7 @@ export interface BlockQuery {
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   async create(blocking: any): Promise<BlockingEntity> {
     // Check if there is an existing connection between the users
@@ -48,12 +48,12 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       where: {
         [Op.or]: [
           {
-            fromId: blocking.fromRealtor,
-            toId: blocking.toRealtor,
+            fromId: blocking.fromRealtorId,
+            toId: blocking.toRealtorId,
           },
           {
-            fromId: blocking.toRealtor,
-            toId: blocking.fromRealtor,
+            fromId: blocking.toRealtorId,
+            toId: blocking.fromRealtorId,
           },
         ],
       },
@@ -83,18 +83,18 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     // Fetch all blocking entries from the database
     const data = await Blocking.findAll({
       where: {
-        fromRealtor: loginId,
+        fromRealtorId: loginId,
       },
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData", // Alias for the first association
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData", // Alias for the second association
+          foreignKey: "toRealtorId",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page
@@ -115,29 +115,29 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorData",
-          foreignKey: "fromRealtor",
+          as: "fromRealtorIdData",
+          foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorData",
-          foreignKey: "toRealtor",
+          as: "toRealtorIdData",
+          foreignKey: "toRealtorId",
         },
       ],
     });
-     if (blocking===null) {
-       throw ApiError.notFound();
-     }
+    if (blocking === null) {
+      throw ApiError.notFound();
+    }
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning
-    return  blocking.toJSON();
+    return blocking.toJSON();
   }
 
   // Method to update a blocking entry by ID
   async update(
     id: string,
     updatedData: BlockingModel
-  ): Promise<BlockingEntity > {
+  ): Promise<BlockingEntity> {
     // Find the blocking entry by ID
     const blocking = await Blocking.findByPk(id);
 

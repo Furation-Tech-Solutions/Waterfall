@@ -4,7 +4,7 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 interface EmailOptions {
     email: string;
     subject: string;
-    message: string | null  ;
+    message: string | null;
 }
 
 class SESMailService {
@@ -19,8 +19,8 @@ class SESMailService {
         });
     }
 
-    async sendEmail(mailOptions:EmailOptions):Promise<void> {
-    
+    async sendEmail(mailOptions: EmailOptions): Promise<void> {
+
 
         const params = {
             Source: "shahzad.shaikh@furation.tech", // Change to your SES verified email address
@@ -48,7 +48,7 @@ class SESMailService {
             const command = new SendEmailCommand(params);
             const response = await this.sesClient.send(command);
             // console.log(response, "Email sent successfully");
-            
+
         } catch (error) {
             console.error("Error sending email:", error);
             throw error;

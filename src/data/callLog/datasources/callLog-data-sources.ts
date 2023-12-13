@@ -63,8 +63,8 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
       include: [
         {
           model: JobApplicant,
-          foreignKey: "jobApplicant",
-          as: "jobApplicantData"
+          foreignKey: "jobApplicantId",
+          as: "jobApplicantIdData"
         },
       ],
       // include: 'tags', // Replace 'tags' with the actual name of your association if needed
@@ -89,10 +89,10 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
       include: [
         {
           model: JobApplicant,
-          foreignKey: "jobApplicant",
-          as: "jobApplicantData",
+          foreignKey: "jobApplicantId",
+          as: "jobApplicantIdData",
           where: {
-            applicant: loginId
+            applicantId: loginId
           },
         },
       ],

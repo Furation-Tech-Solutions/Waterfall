@@ -1,6 +1,10 @@
 // Import necessary dependencies
 import { sequelize } from "@main/sequelizeClient";
 import { DataTypes } from "sequelize";
+// type Badge = {
+//   badgeName: string;
+//   timestamp: Date;
+// };
 
 // Define the Sequelize model for Realtors
 const Realtors = sequelize.define("Realtors", {
@@ -31,7 +35,7 @@ const Realtors = sequelize.define("Realtors", {
     unique: true, // It must be unique
     set(value: String) {
       // Set the email field to lowercase before validation
-      this.setDataValue('email', value.toLowerCase());
+      this.setDataValue("email", value.toLowerCase());
     },
   },
   // Define the "contact" field with a data type of STRING
@@ -105,6 +109,11 @@ const Realtors = sequelize.define("Realtors", {
   deletedStatus: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  badge: {
+    type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
+    allowNull: true, // Set to allowNull: true if coordinates are optional
+    defaultValue: []
   },
 });
 
