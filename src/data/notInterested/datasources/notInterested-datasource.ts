@@ -64,13 +64,13 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorData",
-          foreignKey: "realtor",
+          as: "realtorIdData",
+          foreignKey: "realtorId",
         },
         {
           model: Job,
-          as: "jobData",
-          foreignKey: "job",
+          as: "jobIdData",
+          foreignKey: "jobId",
         },
       ],
     });
@@ -90,16 +90,16 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorData",
-          foreignKey: "realtor",
+          as: "realtorIdData",
+          foreignKey: "realtorId",
           where: {
-            realtor: loginId,
+            realtorId: loginId,
           },
         },
         {
           model: Job,
-          as: "jobData",
-          foreignKey: "job",
+          as: "jobIdData",
+          foreignKey: "jobId",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page

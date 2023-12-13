@@ -23,7 +23,7 @@ export interface RealtorQuery {
 
 // Realtor Data Source communicates with the database
 export class RealtorDataSourceImpl implements RealtorDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Create a new Realtor entry
   async create(realtor: any): Promise<RealtorEntity> {
@@ -143,7 +143,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     const realtor = await Realtor.findOne({
       where: { id, deletedStatus: false },
     });
-    
     if (realtor === null) {
       throw ApiError.notFound();
     }

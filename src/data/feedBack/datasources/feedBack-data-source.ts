@@ -50,11 +50,11 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
 
     const data = await FeedBack.findAll({
       where: {
-        toRealtor: query.id,
+        toRealtorId: query.id,
       },
       include: [
-        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
-        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
+        { model: Realtors, as: "fromRealtorIdData", foreignKey: "fromRealtorId" },
+        { model: Realtors, as: "toRealtorIdData", foreignKey: "toRealtorId" },
       ],
       // limit,
       // offset,
@@ -68,9 +68,13 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     const feedBack = await FeedBack.findOne({
       where: { id },
       include: [
-        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtor" },
-        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtor" },
-        { model: Jobs, as: "JobData", foreignKey: "jobId" },
+        {
+          model: Realtors,
+          as: "fromRealtorIdData",
+          foreignKey: "fromRealtorId",
+        },
+        { model: Realtors, as: "toRealtorIdData", foreignKey: "toRealtorId" },
+        { model: Jobs, as: "jobIdData", foreignKey: "jobId" },
       ],
     });
 

@@ -1,8 +1,8 @@
 // Express API request DTO (Data Transfer Object) for Job Applicants
 export class JobApplicantModel {
   constructor(
-    public job: number = 0,
-    public applicant: string = "",
+    public jobId: number = 0,
+    public applicantId: string = "",
     public applicantStatus: string = "Pending",
     public applicantStatusUpdateTime: string = "", // Date of the jobApplicant
     public agreement: boolean = false,
@@ -16,8 +16,8 @@ export class JobApplicantModel {
 export class JobApplicantEntity {
   constructor(
     public id: number | undefined = undefined,
-    public job: number,
-    public applicant: string,
+    public jobId: number,
+    public applicantId: string,
     public applicantStatus: string,
     public applicantStatusUpdateTime: string,
     public agreement: boolean,
@@ -39,14 +39,14 @@ export class JobApplicantMapper {
       // If existingJobApplicant is provided, merge the data from jobApplicantData with the existingJobApplicant
       return {
         ...existingJobApplicant,
-        job:
-          jobApplicantData.job !== undefined
-            ? jobApplicantData.job
-            : existingJobApplicant.job,
-        applicant:
-          jobApplicantData.applicant !== undefined
-            ? jobApplicantData.applicant
-            : existingJobApplicant.applicant,
+        jobId:
+          jobApplicantData.jobId !== undefined
+            ? jobApplicantData.jobId
+            : existingJobApplicant.jobId,
+        applicantId:
+          jobApplicantData.applicantId !== undefined
+            ? jobApplicantData.applicantId
+            : existingJobApplicant.applicantId,
         applicantStatus:
           jobApplicantData.applicantStatus !== undefined
             ? jobApplicantData.applicantStatus
@@ -80,8 +80,8 @@ export class JobApplicantMapper {
             ? jobApplicantData.id.toString()
             : undefined
           : jobApplicantData.id.toString(),
-        job: jobApplicantData.job,
-        applicant: jobApplicantData.applicant,
+        jobId: jobApplicantData.jobId,
+        applicantId: jobApplicantData.applicantId,
         applicantStatus: jobApplicantData.applicantStatus,
         applicantStatusUpdateTime: jobApplicantData.applicantStatusUpdateTime,
         agreement: jobApplicantData.agreement,
@@ -97,8 +97,8 @@ export class JobApplicantMapper {
   static toModel(jobApplicant: JobApplicantEntity): any {
     return {
       id: jobApplicant.id,
-      job: jobApplicant.job,
-      applicant: jobApplicant.applicant,
+      jobId: jobApplicant.jobId,
+      applicantId: jobApplicant.applicantId,
       applicantStatus: jobApplicant.applicantStatus,
       applicantStatusUpdateTime: jobApplicant.applicantStatusUpdateTime,
       agreement: jobApplicant.agreement,

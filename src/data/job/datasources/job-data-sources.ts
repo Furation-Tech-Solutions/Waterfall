@@ -42,7 +42,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -86,8 +86,8 @@ export class JobDataSourceImpl implements JobDataSource {
       include: [
         {
           model: Realtors,
-          as: "owner",
-          foreignKey: "jobOwner",
+          as: "jobOwnerIdData",
+          foreignKey: "jobOwnerId",
         },
         {
           model: JobApplicant,
@@ -151,8 +151,8 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -160,7 +160,7 @@ export class JobDataSourceImpl implements JobDataSource {
             where: {
               agreement: true,
               jobStatus: "Pending",
-              applicant: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -178,8 +178,8 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -188,7 +188,7 @@ export class JobDataSourceImpl implements JobDataSource {
               jobStatus: "JobCompleted",
               agreement: true,
               paymentStatus: true,
-              applicant: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -206,8 +206,8 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
         ],
         limit: itemsPerPage, // Limit the number of results per page
@@ -238,8 +238,8 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -284,8 +284,8 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -294,7 +294,7 @@ export class JobDataSourceImpl implements JobDataSource {
               jobStatus: "JobCompleted",
               agreement: true,
               paymentStatus: true,
-              applicant: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -309,14 +309,14 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              applicant: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -335,13 +335,13 @@ export class JobDataSourceImpl implements JobDataSource {
             [Op.gt]: new Date(),
           },
           liveStatus: true,
-          jobOwner: loginId,
+          jobOwnerId: loginId,
         },
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -383,14 +383,14 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              applicant: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -407,13 +407,13 @@ export class JobDataSourceImpl implements JobDataSource {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         where: {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
         },
         include: [
           {
             model: Realtors,
-            as: "owner",
-            foreignKey: "jobOwner",
+            as: "jobOwnerIdData",
+            foreignKey: "jobOwnerId",
           },
           {
             model: JobApplicant,
@@ -468,7 +468,7 @@ export class JobDataSourceImpl implements JobDataSource {
       if (query.year && query.months && query.months.length > 0) {
         // If year and months are provided, filter by year and months
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           [Op.and]: [
             Sequelize.where(
               Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
@@ -486,7 +486,7 @@ export class JobDataSourceImpl implements JobDataSource {
         };
       } else {
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
         };
       }
 
@@ -500,7 +500,7 @@ export class JobDataSourceImpl implements JobDataSource {
       if (query.year && query.months && query.months.length > 0) {
         // If year and months are provided, filter by year and months
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
           [Op.and]: [
             Sequelize.where(
@@ -519,7 +519,7 @@ export class JobDataSourceImpl implements JobDataSource {
         };
       } else {
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
         };
       }
@@ -544,7 +544,7 @@ export class JobDataSourceImpl implements JobDataSource {
       if (query.year && query.months && query.months.length > 0) {
         // If year and months are provided, filter by year and months
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
           [Op.and]: [
             Sequelize.where(
@@ -563,7 +563,7 @@ export class JobDataSourceImpl implements JobDataSource {
         };
       } else {
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
         };
       }
@@ -589,7 +589,7 @@ export class JobDataSourceImpl implements JobDataSource {
       if (query.year && query.months && query.months.length > 0) {
         // If year and months are provided, filter by year and months
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
           [Op.and]: [
             Sequelize.where(
@@ -608,7 +608,7 @@ export class JobDataSourceImpl implements JobDataSource {
         };
       } else {
         whereCondition = {
-          jobOwner: loginId,
+          jobOwnerId: loginId,
           liveStatus: false,
         };
       }

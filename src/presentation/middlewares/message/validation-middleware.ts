@@ -6,8 +6,8 @@ import Realtors from "@data/realtors/model/realtor-model";
 
 // Define the structure of the expected input data for the Message model
 interface MessageInput {
-  sender: string;
-  receiver: string;
+  senderId: string;
+  receiverId: string;
   message: string;
 }
 
@@ -16,10 +16,10 @@ const messageValidator = async (input: MessageInput, isUpdate: boolean = false) 
   // Define a schema for validating the input using Joi
   const messageSchema = Joi.object<MessageInput>({
     // Validate sender"
-    sender: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    senderId: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate receiver
-    receiver: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    receiverId: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate message
     message: Joi.string().allow("").required().messages({

@@ -1,10 +1,10 @@
 // Define a data transfer object (DTO) for Express API requests
 export class CallLogModel {
   constructor(
-    public jobApplicant: number = 0, // Job applicant ID, defaulting to 0
+    public jobApplicantId: number = 0, // Job applicant ID, defaulting to 0
     public logActivity: string = "", // Log activity, defaulting to an empty string
     public logOutcome: string = "" // Log outcome, defaulting to an empty string
-  ) { }
+  ) {}
 }
 
 // Define an entity class to represent CallLog provided by the CallLog Repository
@@ -12,10 +12,10 @@ export class CallLogModel {
 export class CallLogEntity {
   constructor(
     public id: number | undefined = undefined, // Log ID, defaulting to undefined
-    public jobApplicant: number, // Job applicant ID
+    public jobApplicantId: number, // Job applicant ID
     public logActivity: string, // Log activity
     public logOutcome: string // Log outcome
-  ) { }
+  ) {}
 }
 
 // Create a mapper class to convert between different representations of CallLog data
@@ -30,10 +30,10 @@ export class CallLogMapper {
       // If an existing CallLogEntity is provided, merge data from callLogData with it
       return {
         ...existingCallLog,
-        jobApplicant:
-          callLogData.jobApplicant !== undefined
-            ? callLogData.jobApplicant
-            : existingCallLog.jobApplicant,
+        jobApplicantId:
+          callLogData.jobApplicantId !== undefined
+            ? callLogData.jobApplicantId
+            : existingCallLog.jobApplicantId,
         logActivity:
           callLogData.logActivity !== undefined
             ? callLogData.logActivity
@@ -51,7 +51,7 @@ export class CallLogMapper {
             ? callLogData.id.toString() // Convert the ID to a string if available
             : undefined
           : callLogData.id.toString(),
-        jobApplicant: callLogData.jobApplicant,
+        jobApplicantId: callLogData.jobApplicantId,
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
       };
@@ -63,7 +63,7 @@ export class CallLogMapper {
   static toModel(callLog: CallLogEntity): any {
     return {
       id: callLog.id, // ID of the log
-      jobApplicant: callLog.jobApplicant, // Job applicant ID
+      jobApplicantId: callLog.jobApplicantId, // Job applicant ID
       logActivity: callLog.logActivity, // Log activity
       logOutcome: callLog.logOutcome, // Log outcome
     };
