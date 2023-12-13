@@ -146,7 +146,7 @@ const Job = sequelize.define("Job", {
   urgentRequirement: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
-  }, 
+  },
   deletedAt: {
     type: DataTypes.DATE,
     allowNull: true,
