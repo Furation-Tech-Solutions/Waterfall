@@ -116,7 +116,7 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to get a connection by ID
-      const connections = await this.connectionsDataSource.read(id);
+      let connections: any = await this.connectionsDataSource.read(id);
 
       // Return a Right with the connection entity if found, else return Left with notFound ApiError
       return Right<ErrorClass, ConnectionsEntity>(connections);

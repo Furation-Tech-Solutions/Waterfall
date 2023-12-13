@@ -179,6 +179,7 @@ export class JobService {
       (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+
         const emailService = new SESMailService();
         const emailOption = {
           email: "shehzadmalik123.sm@gmail.com",

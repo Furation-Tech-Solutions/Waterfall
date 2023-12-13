@@ -25,7 +25,7 @@ export interface BlockingDataSource {
   update(
     id: string,
     blocking: BlockingModel
-  ): Promise<BlockingEntity >; // Promise of BlockingEntity
+  ): Promise<BlockingEntity>; // Promise of BlockingEntity
 
   // Method to delete a blocking entry by ID
   delete(id: string): Promise<void>;
@@ -40,7 +40,7 @@ export interface BlockQuery {
 
 // Blocking Data Source communicates with the database
 export class BlockingDataSourceImpl implements BlockingDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   async create(blocking: any): Promise<BlockingEntity> {
     // Check if there is an existing connection between the users
@@ -125,19 +125,19 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
         },
       ],
     });
-     if (blocking===null) {
-       throw ApiError.notFound();
-     }
+    if (blocking === null) {
+      throw ApiError.notFound();
+    }
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning
-    return  blocking.toJSON();
+    return blocking.toJSON();
   }
 
   // Method to update a blocking entry by ID
   async update(
     id: string,
     updatedData: BlockingModel
-  ): Promise<BlockingEntity > {
+  ): Promise<BlockingEntity> {
     // Find the blocking entry by ID
     const blocking = await Blocking.findByPk(id);
 

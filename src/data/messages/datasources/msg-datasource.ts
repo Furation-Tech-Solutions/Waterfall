@@ -8,19 +8,19 @@ import Blocking from "@data/blocking/model/blocking-model";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
-    q?: string;
-    page?: number;
-    limit?: number;
-    toId?: number;
-    searchList?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+  toId?: string;
+  searchList?: string;
 }
 
 // Create MessageDataSource Interface
 export interface MessageDataSource {
-  createMsg(msg: any): Promise<MessageEntity>;
-  updateMsg(id: string, data: any): Promise<MessageEntity>;
+  createMsg(msg: MessageModel): Promise<any>;
+  updateMsg(id: string, data: MessageModel): Promise<any>;
   deleteMsg(id: string): Promise<void>;
-  read(id: string): Promise<MessageEntity>;
+  read(id: string): Promise<any | null>;
   getAll(loginId: string, query: Query): Promise<MessageEntity[]>;
 }
 
@@ -124,9 +124,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       if (data.length > 0) {
         return data.map((msg: any) => msg.toJSON());
       }
-    }
-
-    if (query.searchList && loginId) {
+    } else if (query.searchList && loginId) {
       // If searchList is provided, apply search condition
 
       const data = await Message.findAll({
@@ -236,7 +234,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       });
 
       return data.map((msg: any) => msg.toJSON());
-    } else {
+    } 
       // If no searchList, get all messages
       const data = await Message.findAll({
         where: {
@@ -266,13 +264,10 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       });
 
       return data.map((msg: any) => msg.toJSON());
-    }
+    
   }
 
-  async updateMsg(
-    id: string,
-    updatedData: any
-  ): Promise<MessageEntity> {
+  async updateMsg(id: string, updatedData: any): Promise<MessageEntity> {
     // Update a message record by ID
     const message: any = await Message.findOne({
       where: {
