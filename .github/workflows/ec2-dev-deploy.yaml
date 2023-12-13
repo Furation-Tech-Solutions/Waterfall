@@ -3,15 +3,11 @@ name: Waterfall Deployment Dev
 run-name: Elastic Beanstalk Deployment Dev
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "dev"
   pull_request:
     types:
       - "closed"
     branches:
       - "dev"
-
 jobs:
   deploy:
     name: deploy backend
@@ -53,7 +49,7 @@ jobs:
       - name: Copy files over at server
         run: scp -r  -i "~/.ssh/waterfall-dev.pem" distOut.zip package.json yarn.lock ubuntu@${{vars.HOST}}:~/waterfall/
       - name: export pm2 and restart pm2 with updated code
-        run: ssh -i "~/.ssh/waterfall-dev.pem" ubuntu@${{vars.HOST}} '. /etc/profile; export PATH=$PATH:$HOME/.nvm/versions/node/v18.18.0/bin; cd $HOME/waterfall/ && yarn install && unzip distOut.zip && pm2 restart 0'
+        run: ssh -i "~/.ssh/waterfall-dev.pem" ubuntu@${{vars.HOST}} '. /etc/profile; export PATH=$PATH:$HOME/.nvm/versions/node/v18.18.0/bin; cd $HOME/waterfall/ && yarn install && unzip -o distOut.zip && pm2 restart 0'
       - name: clean up
         run: |
           rm distOut.zip && \
