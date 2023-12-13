@@ -162,7 +162,9 @@ export class NotInterestedService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object

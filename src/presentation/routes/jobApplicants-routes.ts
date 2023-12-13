@@ -10,6 +10,7 @@ import { UpdateJobApplicant } from "@domain/jobApplicants/usecases/update-jobApp
 import { CreateJobApplicant } from "@domain/jobApplicants/usecases/create-jobApplicants"; // Import the use case to create a job applicant
 import { validateJobApplicantInputMiddleware } from "@presentation/middlewares/jobApplicants/validation-middleware"; // Import a middleware for validating job applicant input
 import { DeleteJobApplicant } from "@domain/jobApplicants/usecases/delete-jobApplicant"; // Import the use case to delete a job applicant
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the JobApplicantDataSourceImpl and pass the sequelize connection
 const jobApplicantDataSource = new JobApplicantDataSourceImpl(sequelize);
@@ -64,6 +65,7 @@ jobApplicantRouter.get(
 // Route handling for getting all Job Applicants
 jobApplicantRouter.get(
   "/",
+  verifyUser,
   jobApplicantService.getAllJobApplicants.bind(jobApplicantService)
 ); // HTTP GET request to retrieve all job applicants
 

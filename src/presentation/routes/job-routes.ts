@@ -49,7 +49,7 @@ jobRouter.post(
 
 // Route handling for getting all Jobs
 jobRouter.get("/",
-  // verifyUser,
+  verifyUser,
   jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
 
 // Route handling for getting the total feedback count

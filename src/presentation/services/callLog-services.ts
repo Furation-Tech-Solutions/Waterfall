@@ -169,7 +169,9 @@ export class CallLogService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     const query: any = {}; // Create an empty query object
     // Assign values to properties of the query object
     query.id = Id;

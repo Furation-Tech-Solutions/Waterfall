@@ -11,6 +11,7 @@ import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
 import { GetFeedbackCount } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
 import { sequelize } from "@main/sequelizeClient";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the FeedBackDataSourceImpl and pass the mongoose connection
 const feedBackDataSource = new FeedBackDataSourceImpl(sequelize);
@@ -43,7 +44,7 @@ export const feedBackRouter = Router();
 feedBackRouter.post("/", validateFeedBackInputMiddleware(false), feedBackService.createFeedBack.bind(feedBackService));
 
 // Route handling for getting all feedBacksx`
-feedBackRouter.get("/", feedBackService.getAllFeedBacks.bind(feedBackService));
+feedBackRouter.get("/", verifyUser,feedBackService.getAllFeedBacks.bind(feedBackService));
 
 // Route handling for getting the total feedback count
 feedBackRouter.get("/count/", feedBackService.getFeedbackCount.bind(feedBackService));
