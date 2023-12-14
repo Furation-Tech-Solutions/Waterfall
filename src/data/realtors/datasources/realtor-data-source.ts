@@ -150,7 +150,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
       where: { id, deletedStatus: false },
     });
     if (realtor === null) {
-      throw ApiError.notFound();
+      throw ApiError.dataNotFound();
     }
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning

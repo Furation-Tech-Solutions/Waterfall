@@ -96,11 +96,15 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error,error.status),
+      (error: ErrorClass) =>{
+         this.sendErrorResponse(res, error,error.status)
+      },
       (result: RealtorEntity) => {
         if (!result) {
           this.sendErrorResponse(res, ErrorClass.notFound());
+
         } else {
+          
           const resData = RealtorMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
         }
