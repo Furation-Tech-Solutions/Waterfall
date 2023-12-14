@@ -181,6 +181,13 @@ class ApiError extends ErrorClass {
       "no user found"
     );
   }
+  static dataNotFound(): ApiError {
+    return new ApiError(
+      HttpStatus.NOT_FOUND,
+      ErrorMessage.NO_DATA_FOUND,
+      "data not found"
+    );
+  }
 
   
   static idBlocked(): ApiError {
