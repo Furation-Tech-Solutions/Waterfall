@@ -86,7 +86,7 @@ export class FAQService {
       await this.GetAllFAQsUsecase.execute();
 
     faqs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FAQEntity[]) => {
         const responseData = result.map((faq) => FAQMapper.toEntity(faq));
         this.sendSuccessResponse(

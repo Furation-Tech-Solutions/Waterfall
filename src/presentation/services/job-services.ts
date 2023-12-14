@@ -176,7 +176,7 @@ export class JobService {
       await this.getAllJobsUsecase.execute(query);
 
     jobs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
 
@@ -186,14 +186,14 @@ export class JobService {
           subject: "Booking Request Confirmation",
           message: "this is testing email",
         };
-        emailService.sendEmail(emailOption)
+        emailService.sendEmail(emailOption);
 
-        const smsService = new SMSService()
+        const smsService = new SMSService();
         const smsOptions = {
           phoneNumber: "+919881239491",
-          message: "this is testing sms in node .ts"
-        }
-        smsService.sendSMS(smsOptions)
+          message: "this is testing sms in node .ts",
+        };
+        smsService.sendSMS(smsOptions);
         this.sendSuccessResponse(res, resData);
       }
     );

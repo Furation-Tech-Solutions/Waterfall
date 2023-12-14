@@ -50,7 +50,7 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       // Check if the data length is zero
       if (blockings.length === 0) {
         // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, BlockingEntity[]>(ApiError.notFound());
+        return Left<ErrorClass, BlockingEntity[]>(ApiError.dataNotFound());
       }
 
       // Return the data if it exists

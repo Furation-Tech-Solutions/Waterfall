@@ -82,7 +82,7 @@ export class BugReportRepositoryImpl implements BugReportRepository {
       // Check if the data length is zero
       if (response.length === 0) {
         // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, BugReportEntity[]>(ApiError.notFound());
+        return Left<ErrorClass, BugReportEntity[]>(ApiError.dataNotFound());
       }
 
       return Right<ErrorClass, BugReportEntity[]>(response);
