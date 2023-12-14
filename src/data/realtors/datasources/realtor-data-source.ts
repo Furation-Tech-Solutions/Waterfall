@@ -11,6 +11,8 @@ export interface RealtorDataSource {
   read(id: string): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity or null
   update(id: string, realtor: any): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity
   delete(id: string): Promise<void>;
+  realtorLogin(email: string, firebaseDeviceToken: string):Promise<any| null>;
+
 }
 
 export interface RealtorQuery {
@@ -220,5 +222,41 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Soft delete the Realtor (set deletedAt)
 
     // console.log('Realtor soft-deleted successfully');
+
+
+  }
+
+  async realtorLogin(email:string, firebaseDeviceToken:string): Promise<any | null> {
+    try {
+      const realtorData:any = await Realtor.findOne({ where: { email:email } });
+  
+      if (realtorData) {
+      
+        if (firebaseDeviceToken !== undefined && firebaseDeviceToken !== "") {
+          const tokenExists = await Realtor.findOne({
+            where: {
+              id: realtorData.id,
+              firebaseDeviceToken: { [Sequelize.Op.contains]: [firebaseDeviceToken] },
+            },
+          });
+  
+          if (!tokenExists) {
+            realtorData.firebaseDeviceToken = [...realtorData.firebaseDeviceToken, firebaseDeviceToken];
+            try {
+              await realtorData.save(); // Attempt to save the updated document with the new token
+            } catch (tokenSaveError) {
+              // Handle token save error (optional)
+              console.error("Error saving Firebase token:", tokenSaveError);
+            }
+          }
+        }
+        return realtorData.toJSON();
+      }
+  
+      return null;
+    } catch (error) {
+      console.error("Error in userLogin:", error);
+      throw new Error("Error occurred during realtor login");
+    }
   }
 }

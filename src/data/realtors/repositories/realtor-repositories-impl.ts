@@ -88,4 +88,15 @@ export class RealtorRepositoryImpl implements RealtorRepository {
             return Left<ErrorClass, void>(ApiError.badRequest());
         }
     }
+    async loginRealtor(email:string, firebaseDeviceToken: string): Promise<Either<ErrorClass, RealtorEntity>>{
+        try{
+          const request = await this.realtorDataSource.realtorLogin(email, firebaseDeviceToken); // Use the booking request data source
+          return request
+              ? Right<ErrorClass, RealtorEntity>(request)
+              : Left<ErrorClass, RealtorEntity>(ApiError.notFound());
+        }
+        catch(err){
+          return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
+        }
+      }
 }
