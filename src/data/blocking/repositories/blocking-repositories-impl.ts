@@ -45,13 +45,17 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     query: BlockQuery
   ): Promise<Either<ErrorClass, BlockingEntity[]>> {
     try {
-      const blockings = await this.blockingDataSource.getAllBlockings(query); // Use the tag blocking data source
-      return Right<ErrorClass, BlockingEntity[]>(blockings);
-    } catch (e) {
-      // Handle specific API error for not found
-      if (e instanceof ApiError && e.name === "notfound") {
+      const blockings = await this.blockingDataSource.getAllBlockings(query);
+
+      // Check if the data length is zero
+      if (blockings.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
         return Left<ErrorClass, BlockingEntity[]>(ApiError.notFound());
       }
+
+      // Return the data if it exists
+      return Right<ErrorClass, BlockingEntity[]>(blockings);
+    } catch (e) {
       // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity[]>(ApiError.badRequest());
     }
@@ -71,9 +75,8 @@ export class BlockingRepositoryImpl implements BlockingRepository {
       }
       // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
-      
     }
-  } 
+  }
 
   // Update a blocking entry by ID
   async updateBlocking(
