@@ -11,6 +11,7 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { NotificationSender } from "./notification-services";
 
 export class RealtorService {
   private readonly createRealtorUsecase: CreateRealtorUsecase;
@@ -87,6 +88,8 @@ export class RealtorService {
       (error: ErrorClass) => this.sendErrorResponse(res, error),
       (result: RealtorEntity[]) => this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
     );
+    const notification=new NotificationSender()
+    notification.customNotification()
   }
 
   async getRealtorById(req: Request, res: Response): Promise<void> {
