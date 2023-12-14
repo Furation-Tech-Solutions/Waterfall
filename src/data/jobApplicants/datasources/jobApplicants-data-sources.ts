@@ -283,7 +283,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Handle the case where the job applicant is not found
       throw new Error("Job Applicant not found");
     }
-//-------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------
 
     // Retrieve the record to check the current applicantStatus
     const existingApplicant: any = await JobApplicant.findByPk(id);
@@ -319,6 +319,48 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         ...updatedData,
         paymentStatusUpdateTime: new Date().toISOString(), // Set paymentStatusUpdateTime to the current date
       });
+
+      // Check if the updated paymentStatus is true and if the milestone is reached
+      if (updatedData.paymentStatus) {
+        const jobCount = await JobApplicant.count({
+          where: {
+            applicantId: jobApplicant.applicantId,
+            paymentStatus: true,
+          },
+        });
+
+        // Check if the jobCount is a multiple of 5
+        if (jobCount % 5 === 0) {
+          // Find the associated Realtor record
+          const realtor: any = await Realtors.findByPk(
+            jobApplicant.applicantId
+          );
+
+          if (realtor) {
+            // Calculate the milestone badge name
+            const milestoneBadgeName = `${jobCount}+ Successful Projects`;
+
+            // Check if the milestone badge already exists in the badges array
+            const existingBadgeIndex = realtor.badge.findIndex(
+              (badge: string | { badgeName: string; timestamp: string }) =>
+                typeof badge === "string" && badge === milestoneBadgeName
+            );
+
+            if (existingBadgeIndex === -1) {
+              // Add the milestone badge as an object to the badges array
+              await realtor.update({
+                badge: [
+                  ...realtor.badge,
+                  {
+                    badgeName: milestoneBadgeName,
+                    timestamp: new Date().toISOString(),
+                  },
+                ],
+              });
+            }
+          }
+        }
+      }
 
       // Fetch the updated job applicant record
       const updatedJobApplicant: Model<any, any> | null =
