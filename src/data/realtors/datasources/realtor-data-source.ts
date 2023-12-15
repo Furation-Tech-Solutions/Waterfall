@@ -2,7 +2,7 @@
 import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { Sequelize, Op } from "sequelize";
+import { Sequelize, Op ,DataTypes} from "sequelize";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
@@ -11,6 +11,8 @@ export interface RealtorDataSource {
   read(id: string): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity or null
   update(id: string, realtor: any): Promise<RealtorEntity>; // Return type should be Promise of RealtorEntity
   delete(id: string): Promise<void>;
+  realtorLogin(email: string, firebaseDeviceToken: string):Promise<any| null>;
+
 }
 
 export interface RealtorQuery {
@@ -226,5 +228,38 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Soft delete the Realtor (set deletedAt)
 
     // console.log('Realtor soft-deleted successfully');
+
+
+  }
+
+  async realtorLogin(reatorEmail:string, firebaseDeviceToken:string): Promise<any | null> {
+    
+      const realtorData:any = await Realtor.findOne({ where: { email:reatorEmail } });
+      if (realtorData) {
+           
+        if (firebaseDeviceToken !== undefined && firebaseDeviceToken !== "") {
+          const tokenExists = await Realtor.findOne({
+            where: {
+              id: realtorData.id,
+              firebaseDeviceToken: {  [Op.contains]: [firebaseDeviceToken]},
+            
+            },
+          });
+  
+          if (!tokenExists) {
+            realtorData.firebaseDeviceToken = [...realtorData.firebaseDeviceToken, firebaseDeviceToken];
+            try {
+              await realtorData.save(); // Attempt to save the updated document with the new token
+            } catch (tokenSaveError) {
+              // Handle token save error (optional)
+              console.error("Error saving Firebase token:", tokenSaveError);
+            }
+          }
+        }
+        return realtorData.toJSON();
+      }
+  
+      return null;
+    
   }
 }
