@@ -12,6 +12,7 @@ import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import { NotificationSender } from "./notification-services";
+import { LoginRealtorUsecase } from "@domain/realtors/usecases/login-realtor";
 
 export class RealtorService {
   private readonly createRealtorUsecase: CreateRealtorUsecase;
@@ -19,6 +20,9 @@ export class RealtorService {
   private readonly getRealtorByIdUsecase: GetRealtorByIdUsecase;
   private readonly updateRealtorUsecase: UpdateRealtorUsecase;
   private readonly deleteRealtorUsecase: DeleteRealtorUsecase;
+  private readonly loginRealtorUsecase: LoginRealtorUsecase;
+  
+
 
   constructor(
     createRealtorUsecase: CreateRealtorUsecase,
@@ -26,12 +30,15 @@ export class RealtorService {
     getRealtorByIdUsecase: GetRealtorByIdUsecase,
     updateRealtorUsecase: UpdateRealtorUsecase,
     deleteRealtorUsecase: DeleteRealtorUsecase,
+    loginRealtorUsecase: LoginRealtorUsecase,
   ) {
     this.createRealtorUsecase = createRealtorUsecase;
     this.getAllRealtorsUsecase = getAllRealtorsUsecase;
     this.getRealtorByIdUsecase = getRealtorByIdUsecase;
     this.updateRealtorUsecase = updateRealtorUsecase;
     this.deleteRealtorUsecase = deleteRealtorUsecase;
+    this.loginRealtorUsecase = loginRealtorUsecase;
+
   }
 
   private sendSuccessResponse(
@@ -165,5 +172,26 @@ export class RealtorService {
         ); // No Content
       }
     );
+  }
+
+
+  async loginRealtor(req: Request, res: Response): Promise<void> {
+    const { email, firebaseDeviceToken } = req.body;
+  
+    const user: Either<ErrorClass, RealtorEntity> =
+        await this.loginRealtorUsecase.execute(email, firebaseDeviceToken);
+  
+        user.cata(
+          (error: ErrorClass) =>{
+              res.status(error.status).json({ error: error.message })
+          },
+          (result: RealtorEntity) => {
+              if (result == undefined) {
+                  return res.status(404).json({ message: "Data Not Found" });
+              }
+              const resData = RealtorMapper.toEntity(result);
+              return res.status(200).cookie('email', resData.email).json(resData);
+          }
+      );
   }
 }

@@ -2,7 +2,7 @@
 import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { Sequelize, Op } from "sequelize";
+import { Sequelize, Op ,DataTypes} from "sequelize";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
@@ -226,17 +226,17 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
   }
 
-  async realtorLogin(email:string, firebaseDeviceToken:string): Promise<any | null> {
-    try {
-      const realtorData:any = await Realtor.findOne({ where: { email:email } });
-  
+  async realtorLogin(reatorEmail:string, firebaseDeviceToken:string): Promise<any | null> {
+    
+      const realtorData:any = await Realtor.findOne({ where: { email:reatorEmail } });
       if (realtorData) {
-      
+           
         if (firebaseDeviceToken !== undefined && firebaseDeviceToken !== "") {
           const tokenExists = await Realtor.findOne({
             where: {
               id: realtorData.id,
-              firebaseDeviceToken: { [Sequelize.Op.contains]: [firebaseDeviceToken] },
+              firebaseDeviceToken: {  [Op.contains]: [firebaseDeviceToken]},
+            
             },
           });
   
@@ -254,9 +254,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
       }
   
       return null;
-    } catch (error) {
-      console.error("Error in userLogin:", error);
-      throw new Error("Error occurred during realtor login");
-    }
+    
   }
 }
