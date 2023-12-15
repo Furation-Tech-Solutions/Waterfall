@@ -20,6 +20,8 @@ export class RealtorModel {
     public attachmentLink: string = "",
     public licenseIssueDate: string = "",
     public badge: { badgeName: string, timestamp: Date },
+    public firebaseDeviceToken: string = ""
+
 
   ) { }
 }
@@ -45,7 +47,9 @@ export class RealtorEntity {
     public linkedIn: string,
     public attachmentLink: string,
     public licenseIssueDate: string,
-    public badge: {badgeName: string; timestamp: Date}
+    public badge: {badgeName: string; timestamp: Date},
+    public firebaseDeviceToken: string
+
 
   ) { }
 }
@@ -137,6 +141,10 @@ export class RealtorMapper {
           realtorData.badge !== undefined
             ? realtorData.badge
             : existingRealtor.badge,
+            firebaseDeviceToken:
+            realtorData.firebaseDeviceToken !== undefined
+              ? realtorData.firebaseDeviceToken
+              : existingRealtor.firebaseDeviceToken
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -165,6 +173,8 @@ export class RealtorMapper {
         attachmentLink: realtorData.attachmentLink,
         licenseIssueDate: realtorData.licenseIssueDate,
         badge: realtorData.badge,
+        firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
+
       };
       return realtorEntity;
     }
@@ -192,6 +202,7 @@ export class RealtorMapper {
       attachmentLink: realtor.attachmentLink,
       licenseIssueDate: realtor.licenseIssueDate,
       badge: realtor.badge,
+      firebaseDeviceToken:realtor.firebaseDeviceToken
     };
   }
 }
