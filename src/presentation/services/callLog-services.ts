@@ -169,7 +169,9 @@ export class CallLogService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     const query: any = {}; // Create an empty query object
     // Assign values to properties of the query object
     query.id = Id;
@@ -181,7 +183,7 @@ export class CallLogService {
       await this.getAllCallLogsUsecase.execute(query);
 
     callLogs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (callLogs: CallLogEntity[]) => {
         const resData = callLogs.map((callLog: any) =>
           CallLogMapper.toEntity(callLog)

@@ -1,17 +1,17 @@
 // Express API request DTO (Data Transfer Object) for SavedJobs
 export class SavedJobModel {
   constructor(
-    public Realtor: string = "", // Realtor name, default value is an empty string
-    public Job: number = 0 // Job name, default value is an empty string
+    public realtorId: string = "", // Realtor name, default value is an empty string
+    public jobId: number = 0 // Job name, default value is an empty string
   ) {}
 }
 
 // SavedJobs Entity provided by SavedJobs Repository is converted to Express API Response
 export class SavedJobEntity {
   constructor(
-    public id: number| undefined = undefined, // Unique identifier for the saved job, initially undefined
-    public Realtor: string, // Realtor name
-    public Job: number // Job name
+    public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
+    public realtorId: string, // Realtor name
+    public jobId: number // Job name
   ) {}
 }
 
@@ -26,14 +26,14 @@ export class SavedJobMapper {
       // If existingSavedJob is provided, merge the data from SavedJobData with the existingSavedJob
       return {
         ...existingSavedJob,
-        Realtor:
-          savedJobData.Realtor !== undefined
-            ? savedJobData.Realtor
-            : existingSavedJob.Realtor, // Use existing Realtor if not provided in savedJobData
-        Job:
-          savedJobData.Job !== undefined
-            ? savedJobData.Job
-            : existingSavedJob.Job, // Use existing Job if not provided in savedJobData
+        realtorId:
+          savedJobData.realtorId !== undefined
+            ? savedJobData.realtorId
+            : existingSavedJob.realtorId, // Use existing Realtor if not provided in savedJobData
+        jobId:
+          savedJobData.jobId !== undefined
+            ? savedJobData.jobId
+            : existingSavedJob.jobId, // Use existing Job if not provided in savedJobData
       };
     } else {
       // If existingSavedJob is not provided, create a new savedJobEntity using savedJobData
@@ -43,8 +43,8 @@ export class SavedJobMapper {
             ? savedJobData.id.toString()
             : undefined
           : savedJobData.id, // Set the ID if includeId is true
-        Realtor: savedJobData.Realtor, // Set Realtor from savedJobData
-        Job: savedJobData.Job, // Set Job from savedJobData
+        realtorId: savedJobData.realtorId, // Set Realtor from savedJobData
+        jobId: savedJobData.jobId, // Set Job from savedJobData
       };
       return savedJobData;
     }
@@ -54,8 +54,8 @@ export class SavedJobMapper {
   static toModel(savedJob: SavedJobEntity): any {
     return {
       id: savedJob.id, // Extract and include the ID
-      Realtor: savedJob.Realtor, // Extract and include Realtor
-      Job: savedJob.Job, // Extract and include Job
+      realtorId: savedJob.realtorId, // Extract and include Realtor
+      jobId: savedJob.jobId, // Extract and include Job
     };
   }
 }

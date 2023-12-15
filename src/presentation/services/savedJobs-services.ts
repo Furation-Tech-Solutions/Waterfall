@@ -152,7 +152,9 @@ export class SavedJobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object
@@ -165,12 +167,16 @@ export class SavedJobService {
       await this.getAllSavedJobsUsecase.execute(query);
 
     savedJobs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (savedJobs: SavedJobEntity[]) => {
         const resData = savedJobs.map((savedJob: any) =>
           SavedJobMapper.toEntity(savedJob)
         );
-        this.sendSuccessResponse(res, resData, "Saved jobs retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved jobs retrieved successfully"
+        );
       }
     );
   }

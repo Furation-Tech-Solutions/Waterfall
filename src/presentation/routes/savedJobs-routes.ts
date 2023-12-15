@@ -10,6 +10,7 @@ import { GetSavedJobById } from "@domain/savedJobs/usecases/get-savedJobs-by-id"
 import { GetAllSavedJobs } from "@domain/savedJobs/usecases/get-all-savedJobs";
 import { UpdateSavedJob } from "@domain/savedJobs/usecases/update-savedJobs";
 import { validateSavedJobInputMiddleware } from "@presentation/middlewares/savedJobs/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the SavedJobDataSourceImpl and pass the sequelize connection
 const savedJobDataSource = new SavedJobDataSourceImpl(sequelize);
@@ -62,4 +63,4 @@ savedJobRouter.delete(
 );
 
 // Route handling for getting all SavedJobs
-savedJobRouter.get("/", savedJobService.getAllSavedJobs.bind(savedJobService));
+savedJobRouter.get("/",verifyUser, savedJobService.getAllSavedJobs.bind(savedJobService));

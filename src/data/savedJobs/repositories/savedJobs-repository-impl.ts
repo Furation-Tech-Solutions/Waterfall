@@ -92,6 +92,11 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
     try {
       // Retrieve all saved jobs using the "dataSource" and return them as Right
       const allSavedJobs = await this.dataSource.getAll(query);
+      // Check if the data length is zero
+      if (allSavedJobs.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, SavedJobEntity[]>(ApiError.dataNotFound());
+      }
       return Right<ErrorClass, SavedJobEntity[]>(allSavedJobs);
     } catch (error: any) {
       // Handle error cases:

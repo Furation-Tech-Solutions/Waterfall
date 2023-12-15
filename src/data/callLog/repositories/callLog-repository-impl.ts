@@ -78,6 +78,12 @@ export class CallLogRepositoryImpl implements CallLogRepository {
     try {
       // Call the data source's getAll method and await the result
       const callLogs = await this.dataSource.getAll(query);
+
+      // Check if the data length is zero
+      if (callLogs.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, CallLogEntity[]>(ApiError.dataNotFound());
+      }
       // Return a Right with an array of CallLogEntity objects on success
       return Right<ErrorClass, CallLogEntity[]>(callLogs);
     } catch (error: any) {

@@ -45,7 +45,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   async create(jobApplicant: any): Promise<JobApplicantEntity> {
     try {
       // Retrieve the associated Job based on jobApplicant's job ID
-      const job: any = await Job.findByPk(jobApplicant.job);
+      const job: any = await Job.findByPk(jobApplicant.jobId);
 
       // Check if the number of applicants exceeds the limit
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
@@ -53,7 +53,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Count the number of existing applicants with "Pending" status
       const pendingApplicants = await JobApplicant.count({
         where: {
-          job: jobApplicant.job,
+          jobId: jobApplicant.jobId,
           applicantStatus: "Pending",
         },
       });
@@ -83,13 +83,13 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "applicant",
-          as: "applicantData",
+          foreignKey: "applicantId",
+          as: "applicantIdData",
         },
         {
           model: Job,
-          foreignKey: "job",
-          as: "jobData",
+          foreignKey: "jobId",
+          as: "jobIdData",
         },
       ],
       // include: 'tags', // Replace 'tags' with the actual name of your association
@@ -117,18 +117,18 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           where: {
             agreement: true, // Now, it's a boolean
             jobStatus: "Pending",
-            applicant: loginId,
+            applicantId: loginId,
           },
           include: [
             {
               model: Job,
-              as: "jobData",
-              foreignKey: "job",
+              as: "jobIdData",
+              foreignKey: "jobId",
             },
             {
               model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
+              as: "applicantIdData",
+              foreignKey: "applicantId",
             },
           ],
           limit: itemsPerPage, // Limit the number of results per page
@@ -149,16 +149,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           include: [
             {
               model: Job,
-              as: "jobData",
-              foreignKey: "job",
+              as: "jobIdData",
+              foreignKey: "jobId",
               where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
+                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
               },
             },
             {
               model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
+              as: "applicantIdData",
+              foreignKey: "applicantId",
             },
           ],
           limit: itemsPerPage, // Limit the number of results per page
@@ -178,16 +178,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           include: [
             {
               model: Job,
-              as: "jobData",
-              foreignKey: "job",
+              as: "jobIdData",
+              foreignKey: "jobId",
               where: {
-                jobOwner: loginId, // Use the correct way to filter by jobOwner
+                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
               },
             },
             {
               model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicant",
+              as: "applicantIdData",
+              foreignKey: "applicantId",
             },
           ],
           limit: itemsPerPage, // Limit the number of results per page
@@ -207,16 +207,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobData",
-            foreignKey: "job",
+            as: "jobIdData",
+            foreignKey: "jobId",
             where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
+              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
             model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
+            as: "applicantIdData",
+            foreignKey: "applicantId",
           },
         ],
       });
@@ -231,16 +231,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobData",
-            foreignKey: "job",
+            as: "jobIdData",
+            foreignKey: "jobId",
             where: {
-              jobOwner: loginId, // Use the correct way to filter by jobOwner
+              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
             model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
+            as: "applicantIdData",
+            foreignKey: "applicantId",
           },
         ],
       });
@@ -252,16 +252,16 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobData",
-            foreignKey: "job",
+            as: "jobIdData",
+            foreignKey: "jobId",
             where: {
-              // jobOwner: loginId, // Use the correct way to filter by jobOwner
+              // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
             },
           },
           {
             model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicant",
+            as: "applicantIdData",
+            foreignKey: "applicantId",
           },
         ],
         limit: itemsPerPage, // Limit the number of results per page
@@ -320,6 +320,48 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         paymentStatusUpdateTime: new Date().toISOString(), // Set paymentStatusUpdateTime to the current date
       });
 
+      // Check if the updated paymentStatus is true and if the milestone is reached
+      if (updatedData.paymentStatus) {
+        const jobCount = await JobApplicant.count({
+          where: {
+            applicantId: jobApplicant.applicantId,
+            paymentStatus: true,
+          },
+        });
+
+        // Check if the jobCount is a multiple of 5
+        if (jobCount % 5 === 0) {
+          // Find the associated Realtor record
+          const realtor: any = await Realtors.findByPk(
+            jobApplicant.applicantId
+          );
+
+          if (realtor) {
+            // Calculate the milestone badge name
+            const milestoneBadgeName = `${jobCount}+ Successful Projects`;
+
+            // Check if the milestone badge already exists in the badges array
+            const existingBadgeIndex = realtor.badge.findIndex(
+              (badge: string | { badgeName: string; timestamp: string }) =>
+                typeof badge === "string" && badge === milestoneBadgeName
+            );
+
+            if (existingBadgeIndex === -1) {
+              // Add the milestone badge as an object to the badges array
+              await realtor.update({
+                badge: [
+                  ...realtor.badge,
+                  {
+                    badgeName: milestoneBadgeName,
+                    timestamp: new Date().toISOString(),
+                  },
+                ],
+              });
+            }
+          }
+        }
+      }
+
       // Fetch the updated job applicant record
       const updatedJobApplicant: Model<any, any> | null =
         await JobApplicant.findByPk(id);
@@ -374,7 +416,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
       if (
         acceptedApplicant &&
-        acceptedApplicant.get("applicant") !== jobApplicant.get("applicant")
+        acceptedApplicant.get("applicantId") !== jobApplicant.get("applicantId")
       ) {
         throw new Error(
           "Job Owner can accept only one application for this Job"
@@ -385,7 +427,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
         // Update the associated Job to set liveStatus to false
         const associatedJob = await Job.findByPk(
-          jobApplicant.getDataValue("job")
+          jobApplicant.getDataValue("jobId")
         );
         if (associatedJob) {
           // Set liveStatus to false in the associated Job
@@ -403,7 +445,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     ) {
       // Update the associated Job to set liveStatus and urgentRequirement to true
       const associatedJob = await Job.findByPk(
-        jobApplicant.getDataValue("job")
+        jobApplicant.getDataValue("jobId")
       );
       if (associatedJob) {
         // Set liveStatus and urgentRequirement to true in the associated Job

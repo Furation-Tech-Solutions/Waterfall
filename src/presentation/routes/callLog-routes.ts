@@ -10,6 +10,7 @@ import { GetCallLogById } from "@domain/callLog/usecases/get-callLog-by-id";
 import { GetAllCallLogs } from "@domain/callLog/usecases/get-all-callLog";
 import { UpdateCallLog } from "@domain/callLog/usecases/update-callLog";
 import { validateCallLogInputMiddleware } from "@presentation/middlewares/callLog/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the CallLogDataSourceImpl and pass the sequelize connection
 const callLogDataSource = new CallLogDataSourceImpl(sequelize);
@@ -53,4 +54,4 @@ callLogRouter.put("/:id",validateCallLogInputMiddleware(true), callLogService.up
 callLogRouter.delete("/:id", callLogService.deleteCallLog.bind(callLogService));
 
 // Route handling for getting all CallLogs
-callLogRouter.get("/", callLogService.getAllCallLogs.bind(callLogService));
+callLogRouter.get("/",verifyUser, callLogService.getAllCallLogs.bind(callLogService));

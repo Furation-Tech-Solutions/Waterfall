@@ -12,13 +12,16 @@ export class RealtorModel {
     public about: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: { status: boolean, deletedAt: string }, // You might want to provide a default value here
+    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = "",
     public firebaseId: string = "",
     public linkedIn: string = "",
     public attachmentLink: string = "",
     public licenseIssueDate: string = "",
+    public badge: { badgeName: string, timestamp: Date },
+    public firebaseDeviceToken: string = ""
+
 
   ) { }
 }
@@ -37,13 +40,17 @@ export class RealtorEntity {
     public about: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: { status: boolean; deletedAt: string },
+    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
     public firebaseId: string,
     public linkedIn: string,
     public attachmentLink: string,
-    public licenseIssueDate: string
+    public licenseIssueDate: string,
+    public badge: {badgeName: string; timestamp: Date},
+    public firebaseDeviceToken: string
+
+
   ) { }
 }
 
@@ -59,8 +66,11 @@ export class RealtorMapper {
       return {
         ...existingRealtor,
         // Update each property based on whether it exists in realtorData
-        id: includeId && realtorData.id !== undefined ? realtorData.id : existingRealtor.id,
-       
+        id:
+          includeId && realtorData.id !== undefined
+            ? realtorData.id
+            : existingRealtor.id,
+
         firstName:
           realtorData.firstName !== undefined
             ? realtorData.firstName
@@ -127,11 +137,19 @@ export class RealtorMapper {
           realtorData.licenseIssueDate !== undefined
             ? realtorData.licenseIssueDate
             : existingRealtor.licenseIssueDate,
+        badge:
+          realtorData.badge !== undefined
+            ? realtorData.badge
+            : existingRealtor.badge,
+            firebaseDeviceToken:
+            realtorData.firebaseDeviceToken !== undefined
+              ? realtorData.firebaseDeviceToken
+              : existingRealtor.firebaseDeviceToken
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
       const realtorEntity: RealtorEntity = {
-        id:  realtorData.id,
+        id: realtorData.id,
         // id: includeId
         //   ? realtorData.id
         //     ? realtorData.id
@@ -154,6 +172,9 @@ export class RealtorMapper {
         linkedIn: realtorData.linkedIn,
         attachmentLink: realtorData.attachmentLink,
         licenseIssueDate: realtorData.licenseIssueDate,
+        badge: realtorData.badge,
+        firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
+
       };
       return realtorEntity;
     }
@@ -162,7 +183,7 @@ export class RealtorMapper {
   static toModel(realtor: RealtorEntity): any {
     // Convert a RealtorEntity to a RealtorModel or plain object for the model
     return {
-      id:realtor.id,
+      id: realtor.id,
       firstName: realtor.firstName,
       lastName: realtor.lastName,
       email: realtor.email,
@@ -180,6 +201,8 @@ export class RealtorMapper {
       linkedIn: realtor.linkedIn,
       attachmentLink: realtor.attachmentLink,
       licenseIssueDate: realtor.licenseIssueDate,
+      badge: realtor.badge,
+      firebaseDeviceToken:realtor.firebaseDeviceToken
     };
   }
 }

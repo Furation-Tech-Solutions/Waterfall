@@ -88,7 +88,8 @@ export class FeedBackService {
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
     // let id: string = req.body.loginId;
     // let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
 
 
     const query: any = {}; // Create an empty query object
@@ -106,7 +107,7 @@ export class FeedBackService {
       await this.GetAllFeedBacksUsecase.execute(query);
 
     feedBacks.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FeedBackEntity[]) => {
         const responseData = result.map((feedback) =>
           FeedBackMapper.toEntity(feedback)

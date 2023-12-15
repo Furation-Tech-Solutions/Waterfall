@@ -169,7 +169,7 @@ export class PaymentGatewayService {
       await this.getAllPaymentGatewaysUsecase.execute();
 
     paymentGateways.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: PaymentGatewayEntity[]) => {
         const resData = result.map((paymentGateway: any) =>
           PaymentGatewayMapper.toEntity(paymentGateway)

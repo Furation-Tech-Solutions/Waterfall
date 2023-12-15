@@ -11,6 +11,7 @@ import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { NotificationSender } from "./notification-services";
 
 export class RealtorService {
   private readonly createRealtorUsecase: CreateRealtorUsecase;
@@ -85,9 +86,12 @@ export class RealtorService {
       await this.getAllRealtorsUsecase.execute(query);
 
     realtors.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: RealtorEntity[]) => this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: RealtorEntity[]) =>
+        this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
     );
+    const notification=new NotificationSender()
+    notification.customNotification()
   }
 
   async getRealtorById(req: Request, res: Response): Promise<void> {
@@ -97,11 +101,15 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (error: ErrorClass) =>{
+         this.sendErrorResponse(res, error,error.status)
+      },
       (result: RealtorEntity) => {
         if (!result) {
           this.sendErrorResponse(res, ErrorClass.notFound());
+
         } else {
+          
           const resData = RealtorMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
         }

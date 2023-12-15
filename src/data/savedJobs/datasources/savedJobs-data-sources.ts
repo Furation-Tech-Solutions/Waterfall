@@ -66,13 +66,13 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "Realtor",
-          as: "realtorData",
+          foreignKey: "realtorId",
+          as: "realtorIdData",
         },
         {
           model: Job,
-          foreignKey: "Job",
-          as: "jobData",
+          foreignKey: "jobId",
+          as: "jobIdData",
         },
       ],
     });
@@ -94,16 +94,16 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorData",
-          foreignKey: "Realtor",
+          as: "realtorIdData",
+          foreignKey: "realtorId",
           where: {
-            Realtor: loginId,
+            realtorId: loginId,
           },
         },
         {
           model: Job,
-          as: "jobData",
-          foreignKey: "Job",
+          as: "jobIdData",
+          foreignKey: "jobId",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page

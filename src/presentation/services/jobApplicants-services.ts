@@ -103,7 +103,9 @@ export class JobApplicantService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     
 
     const query: any = {};
@@ -117,7 +119,7 @@ export class JobApplicantService {
       await this.getAllJobApplicantsUsecase.execute(query);
 
     jobApplicants.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobApplicants: JobApplicantEntity[]) => {
         const resData = jobApplicants.map((jobApplicant: any) =>
           JobApplicantMapper.toEntity(jobApplicant)

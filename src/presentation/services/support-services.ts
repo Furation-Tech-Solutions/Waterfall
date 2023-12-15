@@ -149,12 +149,16 @@ export class SupportService {
       await this.getAllSupportsUsecase.execute();
 
     supports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (supports: SupportEntity[]) => {
         const resData = supports.map((support: any) =>
           SupportMapper.toEntity(support)
         );
-        this.sendSuccessResponse(res, resData, "Supports retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Supports retrieved successfully"
+        );
       }
     );
   }

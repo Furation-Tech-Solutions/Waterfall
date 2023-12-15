@@ -7,14 +7,14 @@ import Realtors from "@data/realtors/model/realtor-model";
 // Define a Sequelize model named "Report"
 const Report = sequelize.define("Report", {
   // Define a field "fromRealtor" of type INTEGER (assuming it's an ID), not nullable
-  fromRealtor: {
+  fromRealtorId: {
     type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the 'id' field in the 'Realtors' model
   },
 
   // Define a field "toRealtor" of type INTEGER (assuming it's an ID), not nullable
-  toRealtor: {
+  toRealtorId: {
     type: DataTypes.STRING, // Assuming 'Realtor' is represented by INTEGER in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the 'id' field in the 'Realtors' model
@@ -41,10 +41,13 @@ const Report = sequelize.define("Report", {
 
 // Establish associations
 Report.belongsTo(Realtors, {
-  foreignKey: "fromRealtor",
-  as: "fromRealtorData",
+  foreignKey: "fromRealtorId",
+  as: "fromRealtorIdData",
 });
-Report.belongsTo(Realtors, { foreignKey: "toRealtor", as: "toRealtorData" });
+Report.belongsTo(Realtors, {
+  foreignKey: "toRealtorId",
+  as: "toRealtorIdData",
+});
 
 // Export the "Report" model as the default export of this module
 export default Report;

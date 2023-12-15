@@ -1,44 +1,37 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import admin from "firebase-admin"
+import admin from "../../../main/firebase-sdk/firebase-config"
 // import serviceAccount from "../../../../"
 import * as path from "path";
 
-// Assuming serviceAccount.json is in the app folder
-const serviceAccountPath = path.join(__dirname, "../../../../fire-base-service.json");
-const serviceAccount = require(serviceAccountPath);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: "https://your-project-id.firebaseio.com",
-});
 
  export const verifyUser=async(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<any> => {
-      const idToken: string | undefined = req.header("Authorization");
+      const authHeader: string | undefined = req.header("Authorization");
 
   try {
-    if (!idToken) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new Error("Unauthorized");
     }
 
+    const idToken = authHeader.split(" ")[1]; // Extracting the token part after "Bearer "
+
     const user = await admin.auth().verifyIdToken(idToken);
 
-    // If verification is successful, the user is authenticated
-    // if (user) {
+    if (user) {
       req.user = user.uid;
       next();
-    // } else {
-      // User is not authenticated
-      // }
-      
-      
+    } else {
+      throw new Error("Unauthorized");
     }
+  }
+    
     catch(err){
      res.status(401).send("Unauthorized");
-    console.log(err)
+    // console.log(err)
    }
 
 }

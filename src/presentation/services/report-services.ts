@@ -152,12 +152,16 @@ export class ReportService {
       await this.getAllReportsUsecase.execute();
 
     reports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (reports: ReportEntity[]) => {
         const resData = reports.map((report: any) =>
           ReportMapper.toEntity(report)
         );
-        this.sendSuccessResponse(res, resData, "Reports retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Reports retrieved successfully"
+        );
       }
     );
   }

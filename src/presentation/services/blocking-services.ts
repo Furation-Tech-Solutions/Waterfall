@@ -70,7 +70,9 @@ export class BlockingService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "3"; // For testing purposes, manually set loginId to "2"
 

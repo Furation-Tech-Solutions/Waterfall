@@ -6,6 +6,8 @@ export const CREATE_SUCCESS = "created successfully";
 
 export const NO_USERS_FOUND = "No users found";
 
+export const NO_DATA_FOUND = "data not found";
+
 export const GENERIC_ERROR = "An unexpected error occurred";
 
 export const DELETED_SUCCESS = "deleted successfully";
