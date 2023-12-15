@@ -77,10 +77,12 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     query: Query
   ): Promise<Either<ErrorClass, MessageEntity[]>> {
     try {
-      const messages = await this.messageDataSource.getAll(
-        loginId,
-        query
-      ); // Use the messages data source
+      const messages = await this.messageDataSource.getAll(loginId, query); // Use the messages data source
+      // Check if the data length is zero
+      if (messages.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, MessageEntity[]>(ApiError.dataNotFound());
+      }
       return Right<ErrorClass, MessageEntity[]>(messages);
     } catch (e: any) {
       if (e instanceof ApiError && e.name === "notfound") {

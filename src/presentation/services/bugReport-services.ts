@@ -164,7 +164,7 @@ export class BugReportService {
 
     // Handle the result using the Either monad's cata method
     bugReports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: BugReportEntity[]) => {
         const responseData = result.map((blocking) =>
           BugReportMapper.toEntity(blocking)
