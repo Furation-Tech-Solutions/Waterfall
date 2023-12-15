@@ -1,16 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import admin from "firebase-admin"
+import admin from "../../../main/firebase-sdk/firebase-config"
 // import serviceAccount from "../../../../"
 import * as path from "path";
 
-// Assuming serviceAccount.json is in the app folder
-const serviceAccountPath = path.join(__dirname, "../../../../fire-base-service.json");
-const serviceAccount = require(serviceAccountPath);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: "https://your-project-id.firebaseio.com",
-});
 
  export const verifyUser=async(
     req: Request,

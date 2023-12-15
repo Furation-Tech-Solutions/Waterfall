@@ -115,6 +115,10 @@ const Realtors = sequelize.define("Realtors", {
     allowNull: true, // Set to allowNull: true if coordinates are optional
     defaultValue: []
   },
+  firebaseDeviceToken: {
+    type:  DataTypes.ARRAY(DataTypes.STRING),
+    defaultValue: []
+  },
 });
 
 export default Realtors; // Export the Realtors model as the default export
