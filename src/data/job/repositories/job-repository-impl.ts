@@ -82,6 +82,11 @@ export class JobRepositoryImpl implements JobRepository {
     try {
       // Attempt to retrieve all jobs using the data source
       const response = await this.dataSource.getAll(query);
+      // Check if the data length is zero
+      if (response.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, JobEntity[]>(ApiError.dataNotFound());
+      }
       // Return a Right monad with an array of job entities on success
       return Right<ErrorClass, JobEntity[]>(response);
     } catch (error: any) {

@@ -183,7 +183,7 @@ export class CallLogService {
       await this.getAllCallLogsUsecase.execute(query);
 
     callLogs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (callLogs: CallLogEntity[]) => {
         const resData = callLogs.map((callLog: any) =>
           CallLogMapper.toEntity(callLog)

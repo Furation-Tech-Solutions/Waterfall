@@ -28,21 +28,27 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
   // Create a new Realtor entry
   async create(realtor: any): Promise<RealtorEntity> {
     // Check if a Realtor with the same email already exists
-    // console.log(realtor,"realtor in datasource")
     const existingRealtors = await Realtor.findOne({
       where: {
         email: realtor.email,
       },
     });
-    // console.log(existingRealtors,"existingrealtor in dtsrc")
+
     if (existingRealtors) {
       throw ApiError.realtorExist();
     }
+
     // Create a new Realtor record in the database
     const createdRealtor = await Realtor.create(realtor);
-    // console.log(createdRealtor,"realtor created in dtsrc")
+
+    // Create a default badge for the new Realtor
+    const defaultBadge = { badgeName: "Member", timestamp: new Date() };
+
+    // Update the Realtor's badge field with the default badge
+    await createdRealtor.update({ badge: [defaultBadge] });
+
     return createdRealtor.toJSON(); // Return the newly created Realtor as a plain JavaScript object
-  }
+  } 
 
   async getAllRealtors(query: RealtorQuery): Promise<RealtorEntity[]> {
     const currentPage = query.page || 1; // Default to page 1

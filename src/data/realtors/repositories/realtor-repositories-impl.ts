@@ -31,8 +31,13 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Get all Realtor entities
     async getRealtors(query: RealtorQuery): Promise<Either<ErrorClass, RealtorEntity[]>> {
         try {
-            const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
-            return Right<ErrorClass, RealtorEntity[]>(realtors);
+          const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+          // Check if the data length is zero
+          if (realtors.length === 0) {
+            // If data length is zero, throw a "404 Not Found" error
+            return Left<ErrorClass, RealtorEntity[]>(ApiError.dataNotFound());
+          }
+          return Right<ErrorClass, RealtorEntity[]>(realtors);
         } catch (error: any) {
             // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
             if (error instanceof ApiError && error.status === 404) {

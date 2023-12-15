@@ -178,7 +178,7 @@ export class NotInterestedService {
       await this.getAllNotInterestedsUsecase.execute(query);
 
     notInteresteds.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: NotInterestedEntity[]) => {
         const resData = result.map((notInterested: any) =>
           NotInterestedMapper.toEntity(notInterested)

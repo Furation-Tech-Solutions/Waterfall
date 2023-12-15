@@ -85,8 +85,9 @@ export class RealtorService {
       await this.getAllRealtorsUsecase.execute(query);
 
     realtors.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: RealtorEntity[]) => this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: RealtorEntity[]) =>
+        this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
     );
     const notification=new NotificationSender()
     notification.customNotification()
