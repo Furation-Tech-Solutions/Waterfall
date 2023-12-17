@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import admin from "../../../main/firebase-sdk/firebase-config"
 // import serviceAccount from "../../../../"
 import * as path from "path";
+import ApiError from "@presentation/error-handling/api-error";
 
 
 
@@ -12,9 +13,12 @@ import * as path from "path";
   ): Promise<any> => {
       const authHeader: string | undefined = req.header("Authorization");
 
-  try {
+  
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new Error("Unauthorized");
+      // throw ApiError.customError(401,"you are not authorized");
+      return res
+      .status(401)
+      .json({ message: "You are not Authorized" });
     }
 
     const idToken = authHeader.split(" ")[1]; // Extracting the token part after "Bearer "
@@ -25,13 +29,13 @@ import * as path from "path";
       req.user = user.uid;
       next();
     } else {
-      throw new Error("Unauthorized");
+      // throw ApiError.unAuthorized()
+      return res
+      .status(401)
+      .json({ message: "You are not Authorized" });
+      
     }
-  }
-    
-    catch(err){
-     res.status(401).send("Unauthorized");
-    // console.log(err)
-   }
+  
+  
 
 }

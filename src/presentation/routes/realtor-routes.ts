@@ -11,6 +11,7 @@ import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtor } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
 import {sequelize} from "@main/sequelizeClient";
+import { LoginRealtor } from "@domain/realtors/usecases/login-realtor";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -25,6 +26,7 @@ const getAllRealtorsUsecase = new GetAllRealtors(realtorRepository);
 const getRealtorByIdUsecase = new GetRealtorById(realtorRepository);
 const updateRealtorUsecase = new UpdateRealtor(realtorRepository);
 const deleteRealtorUsecase = new DeleteRealtor(realtorRepository);
+const loginRealtorUsecase = new LoginRealtor(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
@@ -32,7 +34,8 @@ const realtorService = new RealtorService(
   getAllRealtorsUsecase,
   getRealtorByIdUsecase,
   updateRealtorUsecase,
-  deleteRealtorUsecase
+  deleteRealtorUsecase,
+  loginRealtorUsecase
 );
 
 // Create an Express router
@@ -54,3 +57,9 @@ realtorRouter.put("/:id", validateRealtorInputMiddleware(true), realtorService.u
 
 // Route handling for deleting an realtor by ID
 realtorRouter.delete("/:id", realtorService.deleteRealtor.bind(realtorService));
+
+// Route handling for login realtor by email for deviceToken
+realtorRouter.post(
+  "/login",
+  realtorService.loginRealtor.bind(realtorService)
+)

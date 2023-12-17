@@ -33,6 +33,11 @@ export class FAQRepositoryImpl implements FAQRepository {
   async getFAQs(): Promise<Either<ErrorClass, FAQEntity[]>> {
     try {
       const faqs = await this.faqDataSource.getAllFAQs(); // Use the tag faq data source
+      // Check if the data length is zero
+      if (faqs.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, FAQEntity[]>(ApiError.dataNotFound());
+      }
       return Right<ErrorClass, FAQEntity[]>(faqs);
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {

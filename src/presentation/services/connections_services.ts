@@ -145,7 +145,7 @@ export class ConnectionsServices {
       await this.getAllUsecase.execute(loginId, query);
 
     clientConnections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: ConnectionsEntity[]) => {
         // console.log(result, "clientConnections");
         // const responseData = result.map((connection) =>

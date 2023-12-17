@@ -107,7 +107,7 @@ export class FeedBackService {
       await this.GetAllFeedBacksUsecase.execute(query);
 
     feedBacks.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FeedBackEntity[]) => {
         const responseData = result.map((feedback) =>
           FeedBackMapper.toEntity(feedback)

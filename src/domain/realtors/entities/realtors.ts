@@ -12,7 +12,7 @@ export class RealtorModel {
     public about: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: { status: boolean, deletedAt: string }, // You might want to provide a default value here
+    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = "",
     public firebaseId: string = "",
@@ -40,7 +40,7 @@ export class RealtorEntity {
     public about: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: { status: boolean; deletedAt: string },
+    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
     public firebaseId: string,

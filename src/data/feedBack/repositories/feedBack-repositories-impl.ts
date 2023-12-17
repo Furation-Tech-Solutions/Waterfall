@@ -31,6 +31,11 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
   async getFeedBacks(query: Query): Promise<Either<ErrorClass, FeedBackEntity[]>> {
     try {
       const feedBacks = await this.feedBackDataSource.getAllFeedBacks(query); // Use the tag feedBack data source
+      // Check if the data length is zero
+      if (feedBacks.length === 0) {
+        // If data length is zero, throw a "404 Not Found" error
+        return Left<ErrorClass, FeedBackEntity[]>(ApiError.dataNotFound());
+      }
       return Right<ErrorClass, FeedBackEntity[]>(feedBacks);
     } catch (e: any) {
       if (e instanceof ApiError && e.name === "notfound") {

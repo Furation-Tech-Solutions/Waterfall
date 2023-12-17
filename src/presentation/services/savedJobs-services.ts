@@ -167,12 +167,16 @@ export class SavedJobService {
       await this.getAllSavedJobsUsecase.execute(query);
 
     savedJobs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (savedJobs: SavedJobEntity[]) => {
         const resData = savedJobs.map((savedJob: any) =>
           SavedJobMapper.toEntity(savedJob)
         );
-        this.sendSuccessResponse(res, resData, "Saved jobs retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved jobs retrieved successfully"
+        );
       }
     );
   }

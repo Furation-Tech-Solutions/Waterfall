@@ -144,7 +144,7 @@ export class MessagesServices {
       await this.getAllMessageUsecase.execute(loginId, query);
 
     clientMessages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity[]) => {
         const responseData = result.map((message) =>
           MessageMapper.toEntity(message)
