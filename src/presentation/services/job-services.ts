@@ -172,6 +172,7 @@ export class JobService {
     query.year = parseInt(req.query.year as string, 10);
     query.months = [parseInt(req.query.month as string, 10)];
     query.jobType = req.query.jobType as string;
+    query.feeType = req.query.feeType as string;
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
