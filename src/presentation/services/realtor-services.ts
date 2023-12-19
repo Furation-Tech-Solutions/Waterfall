@@ -96,8 +96,8 @@ export class RealtorService {
       (result: RealtorEntity[]) =>
         this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
     );
-    const notification=new NotificationSender()
-    notification.customNotification()
+    // const notification=new NotificationSender()
+    // notification.customNotification()
   }
 
   async getRealtorById(req: Request, res: Response): Promise<void> {
