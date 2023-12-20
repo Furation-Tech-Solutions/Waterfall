@@ -24,12 +24,12 @@ const NotInterested = sequelize.define("NotInterested", {
 // Establish associations
 NotInterested.belongsTo(Job, {
   foreignKey: "jobId", // Establish a foreign key relationship with the Job model
-  as: "jobIdData", // Alias for the associated Job model data
+  as: "jobData", // Alias for the associated Job model data
 });
 
 NotInterested.belongsTo(Realtors, {
   foreignKey: "realtorId", // Establish a foreign key relationship with the Realtors model
-  as: "realtorIdData", // Alias for the associated Realtors model data
+  as: "realtorData", // Alias for the associated Realtors model data
 });
 
 // Export the "NotInterested" model as the default export

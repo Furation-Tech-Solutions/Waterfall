@@ -37,8 +37,6 @@ export interface JobQuery {
   limit: number;
   year?: number;
   months?: Array<number>;
-  jobType: string;
-  feeType: string;
 }
 
 // Implementation of the JobDataSource interface
@@ -88,7 +86,7 @@ export class JobDataSourceImpl implements JobDataSource {
       include: [
         {
           model: Realtors,
-          as: "jobOwnerIdData",
+          as: "jobOwnerData",
           foreignKey: "jobOwnerId",
         },
         {
@@ -110,10 +108,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
-    // Initialize an empty object for jobType filter
-    let jobTypeFilter = {};
-    let feeTypeFilter = {};
-
+    
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
@@ -156,7 +151,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -183,7 +178,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -211,7 +206,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
         ],
@@ -243,7 +238,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -287,7 +282,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -312,7 +307,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -343,7 +338,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -386,7 +381,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -407,71 +402,13 @@ export class JobDataSourceImpl implements JobDataSource {
 
       return jobs.map((job: any) => job.toJSON());
       //-------------------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.jobType) {
-      // If jobType is specified in the query, add it to the filter
-      jobTypeFilter = {
-        jobType: query.jobType,
-      };
-
-      // Retrieve all job applicants with optional pagination and jobType filter
-      const jobs = await Job.findAll({
-        where: jobTypeFilter,
-        include: [
-          {
-            model: Realtors,
-            as: "jobOwnerIdData",
-            foreignKey: "jobOwnerId",
-          },
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-          },
-        ],
-        order: [
-          // Then, sort by date in ascending order
-          ["date", "ASC"],
-        ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
-
-      return jobs.map((job: any) => job.toJSON());
-    } else if (query.feeType) {
-      // If feeType is specified in the query, add it to the filter
-      feeTypeFilter = {
-        feeType: query.feeType,
-      };
-
-      // Retrieve all job applicants with optional pagination and jobType filter
-      const jobs = await Job.findAll({
-        where: feeTypeFilter,
-        include: [
-          {
-            model: Realtors,
-            as: "jobOwnerIdData",
-            foreignKey: "jobOwnerId",
-          },
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-          },
-        ],
-        order: [
-          // Then, sort by date in ascending order
-          ["date", "ASC"],
-        ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
-
-      return jobs.map((job: any) => job.toJSON());
     } else if (query.q === "getAll") {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {
@@ -480,6 +417,7 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
         order: [
+          
           // Then, sort by date in ascending order
           ["date", "ASC"],
         ],
@@ -498,7 +436,7 @@ export class JobDataSourceImpl implements JobDataSource {
         include: [
           {
             model: Realtors,
-            as: "jobOwnerIdData",
+            as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
           {

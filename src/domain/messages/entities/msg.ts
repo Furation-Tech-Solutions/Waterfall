@@ -4,8 +4,8 @@ export class MessageModel {
     public senderId: string = "",
     public receiverId: string = "",
     public message: string = "",
-    public senderIdData: {} = {},
-    public receiverIdData: {} = {}
+    public senderData: {} = {},
+    public receiverData: {} = {}
   ) {}
 }
 
@@ -16,8 +16,8 @@ export class MessageEntity {
     public senderId: string,
     public receiverId: string,
     public message: string,
-    public senderIdData: {},
-    public receiverIdData: {}
+    public senderData: {},
+    public receiverData: {}
   ) {}
 }
 
@@ -56,8 +56,8 @@ export class MessageMapper {
         senderId: messageData.senderId,
         receiverId: messageData.receiverId,
         message: messageData.message,
-        senderIdData: messageData.senderIdData,
-        receiverIdData: messageData.receiverIdData,
+        senderData: messageData.senderData,
+        receiverData: messageData.receiverData,
       };
       return messageEntity;
     }
@@ -69,8 +69,8 @@ export class MessageMapper {
       senderId: message.senderId,
       receiverId: message.receiverId,
       message: message.message,
-      senderIdData: message.senderIdData,
-      receiverIdData: message.receiverIdData,
+      senderData: message.senderData,
+      receiverData: message.receiverData,
     };
   }
 }

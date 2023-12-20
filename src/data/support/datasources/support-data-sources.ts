@@ -59,7 +59,7 @@ export class SupportDataSourceImpl implements SupportDataSource {
         {
           model: Realtors,
           foreignKey: "realtorId",
-          as: "realtorIdData",
+          as: "realtorData",
         },
       ],
       // include: 'tags', // You can include associations here if needed
@@ -77,7 +77,7 @@ export class SupportDataSourceImpl implements SupportDataSource {
         {
           model: Realtors,
           foreignKey: "realtorId",
-          as: "realtorIdData",
+          as: "realtorData",
         },
       ],
     });

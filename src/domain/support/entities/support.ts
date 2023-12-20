@@ -8,7 +8,9 @@ export class SupportModel {
     // A description of the support request
     public description: string = "",
     // An array of attachments (optional) related to the support request
-    public attachments: string[] | undefined = undefined
+    public attachments: string[] | undefined = undefined,
+
+    public realtorData:{}={},
   ) {}
 }
 
@@ -26,7 +28,9 @@ export class SupportEntity {
     // An array of attachments (optional) related to the support request
     public attachments: string[] | undefined = undefined,
     // The timestamp when the support request was created (default to current date)
-    public timestamp: Date = new Date()
+    public timestamp: Date = new Date(),
+
+    public realtorData:{},
   ) {}
 }
 
@@ -74,8 +78,9 @@ export class SupportMapper {
         description: supportData.description,
         attachments: supportData.attachments,
         timestamp: supportData.timestamp,
+        realtorData: supportData.realtorData,
       };
-      return supportData;
+      return supportEntity;
     }
   }
 
@@ -88,6 +93,7 @@ export class SupportMapper {
       description: support.description,
       attachments: support.attachments,
       timestamp: support.timestamp,
+      realtorData: support.realtorData,
     };
   }
 }

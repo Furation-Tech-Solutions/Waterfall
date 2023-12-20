@@ -79,12 +79,12 @@ Job.hasMany(JobApplicant, {
 
 JobApplicant.belongsTo(Job, {
   foreignKey: "jobId",
-  as: "jobIdData",
+  as: "jobData",
 });
 
 JobApplicant.belongsTo(Realtors, {
   foreignKey: "applicantId",
-  as: "applicantIdData",
+  as: "applicantData",
 });
 
 // Export the "JobApplicant" model as the default export

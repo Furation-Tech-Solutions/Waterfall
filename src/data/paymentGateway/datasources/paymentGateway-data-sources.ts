@@ -54,12 +54,12 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
         {
           model: JobApplicant,
           foreignKey: "jobApplicantId",
-          as: "jobApplicantIdData",
+          as: "jobApplicantData",
         },
         {
           model: Job,
           foreignKey: "jobId",
-          as: "jobIdData",
+          as: "jobData",
         },
       ],
       // include: 'tags', // You can include associations here if needed
@@ -77,12 +77,12 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
         {
           model: JobApplicant,
           foreignKey: "jobApplicantId",
-          as: "jobApplicantIdData",
+          as: "jobApplicantData",
         },
         {
           model: Job,
           foreignKey: "jobId",
-          as: "jobIdData",
+          as: "jobData",
         },
       ],
     });

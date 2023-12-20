@@ -33,13 +33,13 @@ const FeedBacks = sequelize.define("FeedBacks", {
 // Establish associations with the Realtors and Job models using foreign keys
 FeedBacks.belongsTo(Realtors, {
   foreignKey: "fromRealtorId",
-  as: "fromRealtorIdData",
+  as: "fromRealtorData",
 });
 FeedBacks.belongsTo(Realtors, {
   foreignKey: "toRealtorId",
-  as: "toRealtorIdData",
+  as: "toRealtorData",
 });
-FeedBacks.belongsTo(Job, { foreignKey: "jobId", as: "jobIdData" });
+FeedBacks.belongsTo(Job, { foreignKey: "jobId", as: "jobData" });
 
 // Export the 'FeedBacks' model for use in other parts of the application
 export default FeedBacks;

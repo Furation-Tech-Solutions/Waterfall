@@ -2,7 +2,9 @@
 export class SavedJobModel {
   constructor(
     public realtorId: string = "", // Realtor name, default value is an empty string
-    public jobId: number = 0 // Job name, default value is an empty string
+    public jobId: number = 0, // Job name, default value is an empty string
+    public jobData: {} = {},
+    public realtorData: {} = {}
   ) {}
 }
 
@@ -11,7 +13,9 @@ export class SavedJobEntity {
   constructor(
     public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
     public realtorId: string, // Realtor name
-    public jobId: number // Job name
+    public jobId: number, // Job name
+    public jobData: {},
+    public realtorData: {}
   ) {}
 }
 
@@ -45,8 +49,10 @@ export class SavedJobMapper {
           : savedJobData.id, // Set the ID if includeId is true
         realtorId: savedJobData.realtorId, // Set Realtor from savedJobData
         jobId: savedJobData.jobId, // Set Job from savedJobData
+        jobData: savedJobData.jobData,
+        realtorData: savedJobData.realtorData,
       };
-      return savedJobData;
+      return savedJobEntity;
     }
   }
 
@@ -56,6 +62,8 @@ export class SavedJobMapper {
       id: savedJob.id, // Extract and include the ID
       realtorId: savedJob.realtorId, // Extract and include Realtor
       jobId: savedJob.jobId, // Extract and include Job
+      jobData: savedJob.jobData,
+      realtorData: savedJob.realtorData,
     };
   }
 }
