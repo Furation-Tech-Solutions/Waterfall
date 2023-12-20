@@ -58,7 +58,7 @@ export class BugReportMapper {
         realtorId: bugReportData.realtorId,
         description: bugReportData.description,
         attachments: bugReportData.attachments,
-        timestamp: bugReportData.timestamp,
+        timestamp: bugReportData.timestamp
       };
       // return bugReportEntity;
       return bugReportData; // Consider uncommenting the line above if you want to return the created entity
