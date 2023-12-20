@@ -64,7 +64,7 @@ export class BugReportMapper {
         RealtorData: bugReportData.RealtorData,
       };
       // return bugReportEntity;
-      return bugReportEntity; // Consider uncommenting the line above if you want to return the created entity
+      return bugReportData; // Consider uncommenting the line above if you want to return the created entity
     }
   }
 
