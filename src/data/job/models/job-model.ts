@@ -15,18 +15,18 @@ export const numberOfApplicantsEnum = {
 };
 
 export const jobTypeEnum = {
-  SHOWINGPROPERTYtTOCLIENT: "Showing property to client",
-  ONETIMEVISIT: "One time visit",
-  HELPWITHOPENHOUSE: "Help with open house",
-  WRITINGCMA: "Writing CMA",
-  WRITINGANOFFER: "Writing an offer",
-  HELPINGWITHMOREINSPECTION: "Helping with more inspection",
+  SHOWINGPROPERTYtTOCLIENT: "Showing-property-to-client",
+  ONETIMEVISIT: "One-time-visit",
+  HELPWITHOPENHOUSE: "Help-with-open-house",
+  WRITINGCMA: "Writing-CMA",
+  WRITINGANOFFER: "Writing-an-offer",
+  HELPINGWITHMOREINSPECTION: "Helping-with-more-inspection",
   OTHERS: "Others",
 };
 
 export const feeTypeEnum = {
-  FIXRATE: "Hourly Rate",
-  FLATFEE: "Flat Fee",
+  FIXRATE: "Hourly-Rate",
+  FLATFEE: "Flat-Fee",
 };
 
 // Define a Sequelize model named "Job"
@@ -164,7 +164,7 @@ const Job = sequelize.define(
 // Define an association between Job and Realtors (jobOwner)
 Job.belongsTo(Realtors, {
   foreignKey: "jobOwnerId",
-  as: "jobOwnerIdData", // Optional alias for the association
+  as: "jobOwnerData", // Optional alias for the association
 });
 
 // Export the "Job" model as the default export of this module

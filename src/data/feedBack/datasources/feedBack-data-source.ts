@@ -53,8 +53,8 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
         toRealtorId: query.id,
       },
       include: [
-        { model: Realtors, as: "fromRealtorIdData", foreignKey: "fromRealtorId" },
-        { model: Realtors, as: "toRealtorIdData", foreignKey: "toRealtorId" },
+        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtorId" },
+        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtorId" },
       ],
       // limit,
       // offset,
@@ -70,11 +70,11 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorIdData",
+          as: "fromRealtorData",
           foreignKey: "fromRealtorId",
         },
-        { model: Realtors, as: "toRealtorIdData", foreignKey: "toRealtorId" },
-        { model: Jobs, as: "jobIdData", foreignKey: "jobId" },
+        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtorId" },
+        { model: Jobs, as: "jobData", foreignKey: "jobId" },
       ],
     });
 

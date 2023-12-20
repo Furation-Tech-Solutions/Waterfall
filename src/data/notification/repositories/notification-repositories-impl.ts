@@ -9,7 +9,7 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { string } from "joi";
 import { NotificationRepository } from "@domain/notification/repositories/notification-repository";
 import { NotificationDataSource } from "../datasource/notification-datasource";
-import { NotificationEntity } from "@domain/notification/entities/notification_entity";
+import { NotificationEntity, NotificationModel } from "@domain/notification/entities/notification_entity";
 
 // Implementation of the MessagesRepository interface
 export class NotificationRepositoryImpl implements NotificationRepository {
@@ -21,7 +21,7 @@ export class NotificationRepositoryImpl implements NotificationRepository {
 
   // Create a new message entry
   async createNotification(
-    data: MessageModel
+    data: NotificationModel
   ): Promise<Either<ErrorClass, NotificationEntity>> {
     try {
       const createdNotification = await this.notificationDataSource.createNotification(

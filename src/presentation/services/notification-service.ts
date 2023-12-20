@@ -70,7 +70,7 @@ export class NotificationServices {
 
       newNotification.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
-      (result: MessageEntity) => {
+      (result: NotificationEntity) => {
         const resData = NotificationMapper.toEntity(result, true);
         this.sendSuccessResponse(
           res,
@@ -109,7 +109,7 @@ export class NotificationServices {
 
     NotificationData.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
-      (result: MessageEntity) => {
+      (result: NotificationEntity) => {
         if (!result) {
           return this.sendSuccessResponse(res, {}, "Message not found");
         }

@@ -74,12 +74,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       include: [
         {
           model: Realtors,
-          as: "senderIdData", // Alias for the first association
+          as: "senderData", // Alias for the first association
           foreignKey: "senderId",
         },
         {
           model: Realtors,
-          as: "receiverIdData", // Alias for the second association
+          as: "receiverData", // Alias for the second association
           foreignKey: "receiverId",
         },
       ],
@@ -108,12 +108,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],
@@ -141,7 +141,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
             where: {
               [Op.or]: [
@@ -160,7 +160,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],
@@ -189,12 +189,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],
@@ -220,12 +220,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],
@@ -250,12 +250,12 @@ export class MessagesDataSourceImpl implements MessageDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],

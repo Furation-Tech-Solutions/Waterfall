@@ -21,12 +21,12 @@ const Blocking = sequelize.define('Blocking', {
 // Establish associations between the 'Blocking' model and the 'Realtors' model
 Blocking.belongsTo(Realtors, {
   foreignKey: "fromRealtorId", // Define the foreign key for the 'fromRealtorData' association
-  as: "fromRealtorIdData" // Alias for the association to distinguish from the actual foreign key
+  as: "fromRealtorData" // Alias for the association to distinguish from the actual foreign key
 });
 
 Blocking.belongsTo(Realtors, {
   foreignKey: "toRealtorId", // Define the foreign key for the 'toRealtorData' association
-  as: "toRealtorIdData" // Alias for the association to distinguish from the actual foreign key
+  as: "toRealtorData" // Alias for the association to distinguish from the actual foreign key
 });
 
 // Export the 'Blocking' model for use in other parts of the application

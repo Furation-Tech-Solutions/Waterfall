@@ -29,8 +29,8 @@ const Message = sequelize.define("Message", {
 });
 
 // Establish associations with the 'Realtors' model using foreign keys
-Message.belongsTo(Realtors, { foreignKey: "senderId", as: "senderIdData" });
-Message.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverIdData" });
+Message.belongsTo(Realtors, { foreignKey: "senderId", as: "senderData" });
+Message.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverData" });
 
 // Export the 'Message' model for use in other parts of the application
 export default Message;

@@ -19,7 +19,8 @@ export class JobModel {
     public deleteReason: string = "", // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean = false,
-    public urgentRequirement: boolean = false
+    public urgentRequirement: boolean = false,
+    public jobOwnerData: {} = {}
   ) {}
 }
 
@@ -45,7 +46,8 @@ export class JobEntity {
     public deleteReason: string, // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean,
-    public urgentRequirement: boolean
+    public urgentRequirement: boolean,
+    public jobOwnerData: {}
   ) {}
 }
 
@@ -151,8 +153,9 @@ export class JobMapper {
         coordinates: jobData.coordinates || null,
         liveStatus: jobData.liveStatus,
         urgentRequirement: jobData.urgentRequirement,
+        jobOwnerData: jobData.jobOwnerData,
       };
-      return jobData;
+      return jobEntity;
     }
   }
 
@@ -181,6 +184,7 @@ export class JobMapper {
       coordinates: job.coordinates,
       liveStatus: job.liveStatus,
       urgentRequirement: job.urgentRequirement,
+      jobOwnerData: job.jobOwnerData,
     };
   }
 }
