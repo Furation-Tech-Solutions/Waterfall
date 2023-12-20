@@ -80,7 +80,7 @@ export class SupportMapper {
         timestamp: supportData.timestamp,
         realtorData: supportData.realtorData,
       };
-      return supportEntity;
+      return supportData;
     }
   }
 

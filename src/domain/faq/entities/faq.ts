@@ -42,7 +42,7 @@ export class FAQMapper {
         question: faqData.question,
         answer: faqData.answer
       };
-      return faqEntity;
+      return faqData;
     }
   }
 
