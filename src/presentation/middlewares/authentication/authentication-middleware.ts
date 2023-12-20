@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import admin from "../../../main/firebase-sdk/firebase-config"
+import admin from "../../../main/firebase-sdk/firebase-config";
 // import serviceAccount from "../../../../"
 import * as path from "path";
 import ApiError from "@presentation/error-handling/api-error";
@@ -52,7 +52,6 @@ import { sequelize } from "@main/sequelizeClient";
       }
     }
   
-  
+  }
   
 
-}

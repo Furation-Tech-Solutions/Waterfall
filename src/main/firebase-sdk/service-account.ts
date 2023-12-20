@@ -1,4 +1,4 @@
-import { ServiceAccount } from 'firebase-admin';
+import { ServiceAccount } from "firebase-admin";
 
 export const serviceAccount: ServiceAccount =
 {

@@ -130,7 +130,6 @@ export class NotificationServices {
   ): Promise<void> {
 
     let loginId = req.user;
-    console.log("notification service get all")
 
     const query: Query = {};
 
@@ -148,7 +147,6 @@ export class NotificationServices {
       notificationData.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: NotificationEntity[]) => {
-        console.log(result,"result inside service")
         const responseData = result.map((notification) =>
           NotificationMapper.toEntity(notification)
         );

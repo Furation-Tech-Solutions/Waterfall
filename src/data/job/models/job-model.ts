@@ -25,7 +25,7 @@ export const jobTypeEnum = {
 };
 
 export const feeTypeEnum = {
-  FIXRATE: "Fix Rate",
+  FIXRATE: "Hourly Rate",
   FLATFEE: "Flat Fee",
 };
 
