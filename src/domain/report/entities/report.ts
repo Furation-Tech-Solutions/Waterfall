@@ -67,7 +67,7 @@ export class ReportMapper {
         fromRealtorData: reportData.fromRealtorData,
         toRealtorData: reportData.toRealtorData,
       };
-      return reportData;
+      return reportEntity;
     }
   }
 

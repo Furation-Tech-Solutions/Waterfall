@@ -58,7 +58,7 @@ export class CallLogMapper {
         logOutcome: callLogData.logOutcome,
         jobApplicantData: callLogData.jobApplicantData,
       };
-      return callLogData; // Should return callLogEntity instead of callLogData
+      return callLogEntity; // Should return callLogEntity instead of callLogData
     }
   }
 

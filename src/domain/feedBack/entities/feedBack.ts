@@ -76,7 +76,7 @@ export class FeedBackMapper {
         toRealtorData: feedBackData.toRealtorData,
         jobData: feedBackData.jobData,
       };
-      return feedBackData;
+      return feedBackEntity;
     }
   }
 

@@ -155,7 +155,7 @@ export class JobMapper {
         urgentRequirement: jobData.urgentRequirement,
         jobOwnerData: jobData.jobOwnerData,
       };
-      return jobData;
+      return jobEntity;
     }
   }
 
