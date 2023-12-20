@@ -95,7 +95,7 @@ export class JobApplicantMapper {
         jobData: jobApplicantData.jobData,
         applicantData: jobApplicantData.applicantData,
       };
-      return jobApplicantEntity;
+      return jobApplicantData;
     }
   }
 

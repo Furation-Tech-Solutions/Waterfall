@@ -52,7 +52,7 @@ export class SavedJobMapper {
         jobData: savedJobData.jobData,
         realtorData: savedJobData.realtorData,
       };
-      return savedJobEntity;
+      return savedJobData;
     }
   }
 
