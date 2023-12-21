@@ -84,12 +84,12 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         {
           model: Realtors,
           foreignKey: "applicantId",
-          as: "applicantIdData",
+          as: "applicantData",
         },
         {
           model: Job,
           foreignKey: "jobId",
-          as: "jobIdData",
+          as: "jobData",
         },
       ],
       // include: 'tags', // Replace 'tags' with the actual name of your association
@@ -122,12 +122,12 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           include: [
             {
               model: Job,
-              as: "jobIdData",
+              as: "jobData",
               foreignKey: "jobId",
             },
             {
               model: Realtors,
-              as: "applicantIdData",
+              as: "applicantData",
               foreignKey: "applicantId",
             },
           ],
@@ -149,7 +149,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           include: [
             {
               model: Job,
-              as: "jobIdData",
+              as: "jobData",
               foreignKey: "jobId",
               where: {
                 jobOwnerId: loginId, // Use the correct way to filter by jobOwner
@@ -157,7 +157,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             },
             {
               model: Realtors,
-              as: "applicantIdData",
+              as: "applicantData",
               foreignKey: "applicantId",
             },
           ],
@@ -178,7 +178,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           include: [
             {
               model: Job,
-              as: "jobIdData",
+              as: "jobData",
               foreignKey: "jobId",
               where: {
                 jobOwnerId: loginId, // Use the correct way to filter by jobOwner
@@ -186,7 +186,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             },
             {
               model: Realtors,
-              as: "applicantIdData",
+              as: "applicantData",
               foreignKey: "applicantId",
             },
           ],
@@ -207,7 +207,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobIdData",
+            as: "jobData",
             foreignKey: "jobId",
             where: {
               jobOwnerId: loginId, // Use the correct way to filter by jobOwner
@@ -215,7 +215,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           {
             model: Realtors,
-            as: "applicantIdData",
+            as: "applicantData",
             foreignKey: "applicantId",
           },
         ],
@@ -231,7 +231,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobIdData",
+            as: "jobData",
             foreignKey: "jobId",
             where: {
               jobOwnerId: loginId, // Use the correct way to filter by jobOwner
@@ -239,7 +239,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           {
             model: Realtors,
-            as: "applicantIdData",
+            as: "applicantData",
             foreignKey: "applicantId",
           },
         ],
@@ -252,7 +252,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         include: [
           {
             model: Job,
-            as: "jobIdData",
+            as: "jobData",
             foreignKey: "jobId",
             where: {
               // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
@@ -260,7 +260,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           },
           {
             model: Realtors,
-            as: "applicantIdData",
+            as: "applicantData",
             foreignKey: "applicantId",
           },
         ],

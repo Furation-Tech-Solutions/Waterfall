@@ -43,7 +43,7 @@ const CallLog = sequelize.define("CallLog", {
 // Define an association between CallLog and JobApplicant models, specifying the foreign key and alias
 CallLog.belongsTo(JobApplicant, {
   foreignKey: "jobApplicantId",
-  as: "jobApplicantIdData"
+  as: "jobApplicantData"
 });
 
 // Export the CallLog model as the default export

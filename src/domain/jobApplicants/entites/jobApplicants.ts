@@ -8,7 +8,9 @@ export class JobApplicantModel {
     public agreement: boolean = false,
     public jobStatus: string = "Pending",
     public paymentStatus: boolean = false,
-    public paymentStatusUpdateTime: string = "" // Date of the jobApplicant
+    public paymentStatusUpdateTime: string = "", // Date of the jobApplicant
+    public jobData: {} = {},
+    public applicantData: {} = {}
   ) {}
 }
 
@@ -23,7 +25,9 @@ export class JobApplicantEntity {
     public agreement: boolean,
     public jobStatus: string,
     public paymentStatus: boolean,
-    public paymentStatusUpdateTime: string
+    public paymentStatusUpdateTime: string,
+    public jobData: {},
+    public applicantData: {}
   ) {}
 }
 
@@ -88,6 +92,8 @@ export class JobApplicantMapper {
         jobStatus: jobApplicantData.jobStatus,
         paymentStatus: jobApplicantData.paymentStatus,
         paymentStatusUpdateTime: jobApplicantData.paymentStatusUpdateTime,
+        jobData: jobApplicantData.jobData,
+        applicantData: jobApplicantData.applicantData,
       };
       return jobApplicantData;
     }
@@ -105,6 +111,8 @@ export class JobApplicantMapper {
       jobStatus: jobApplicant.jobStatus,
       paymentStatus: jobApplicant.paymentStatus,
       paymentStatusUpdateTime: jobApplicant.paymentStatusUpdateTime,
+      jobData: jobApplicant.jobData,
+      applicantData: jobApplicant.applicantData,
     };
   }
 }

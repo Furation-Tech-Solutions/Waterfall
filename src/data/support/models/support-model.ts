@@ -45,7 +45,7 @@ const Support = sequelize.define("Support", {
 // Establishing a foreign key relationship: Support belongs to Realtors
 Support.belongsTo(Realtors, {
   foreignKey: "realtorId", // Using the "realtor" field as the foreign key
-  as: "realtorIdData", // Alias for the relation to access realtor data, e.g., supportInstance.realtorData
+  as: "realtorData", // Alias for the relation to access realtor data, e.g., supportInstance.realtorData
 });
 
 // Export the "Support" model

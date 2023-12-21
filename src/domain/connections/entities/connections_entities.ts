@@ -3,8 +3,8 @@ export class ConnectionsModel {
   constructor(
     public fromId: string = "",
     public toId: string = "",
-    public fromIdData: {} = {},
-    public toIdData: {} = {},
+    public fromData: {} = {},
+    public toData: {} = {},
     public connected: boolean = false
   ) {}
 }
@@ -16,8 +16,8 @@ export class ConnectionsEntity {
     public fromId: string,
     public toId: string,
     public connected: boolean,
-    public fromIdData: {},
-    public toIdData: {}
+    public fromData: {},
+    public toData: {}
   ) {}
 }
 
@@ -56,8 +56,8 @@ export class ConnectionMapper {
         fromId: connectionData.fromId,
         toId: connectionData.toId,
         connected: connectionData.connected,
-        toIdData: connectionData.toIdData,
-        fromIdData: connectionData.fromIdData,
+        toData: connectionData.toData,
+        fromData: connectionData.fromData,
       };
       return connectionEntity;
     }
@@ -69,8 +69,8 @@ export class ConnectionMapper {
       fromId: connection.fromId,
       toId: connection.toId,
       connected: connection.connected,
-      fromIdData: connection.fromIdData,
-      toIdData: connection.toIdData,
+      fromData: connection.fromData,
+      toData: connection.toData,
     };
   }
 }

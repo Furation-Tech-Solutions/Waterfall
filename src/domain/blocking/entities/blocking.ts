@@ -3,8 +3,8 @@ export class BlockingModel {
   constructor(
     public fromRealtorId: string = "",
     public toRealtorId: string = "",
-    public fromRealtorIdData: {} = {},
-    public toRealtorIdData: {} = {}
+    public fromRealtorData: {} = {},
+    public toRealtorData: {} = {}
   ) {}
 }
 
@@ -14,8 +14,8 @@ export class BlockingEntity {
     public id: number | undefined = undefined, // Set a default value for id
     public fromRealtorId: string,
     public toRealtorId: string,
-    public fromRealtorIdData: object,
-    public toRealtorIdData: object
+    public fromRealtorData: object,
+    public toRealtorData: {}
   ) {}
 }
 
@@ -50,8 +50,8 @@ export class BlockingMapper {
           : blockingData.id,
         fromRealtorId: blockingData.fromRealtorId,
         toRealtorId: blockingData.toRealtorId,
-        fromRealtorIdData: blockingData.fromRealtorIdData,
-        toRealtorIdData: blockingData.toRealtorIdData,
+        fromRealtorData: blockingData.fromRealtorData,
+        toRealtorData: blockingData.toRealtorData,
       };
       return blockingEntity;
     }
@@ -62,8 +62,8 @@ export class BlockingMapper {
     return {
       fromRealtorId: blocking.fromRealtorId,
       toRealtorId: blocking.toRealtorId,
-      fromRealtorIdData: blocking.fromRealtorIdData,
-      toRealtorIdData: blocking.toRealtorIdData,
+      fromRealtorData: blocking.fromRealtorData,
+      toRealtorData: blocking.toRealtorData,
     };
   }
 }

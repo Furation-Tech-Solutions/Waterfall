@@ -67,12 +67,12 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
         {
           model: Realtors,
           foreignKey: "realtorId",
-          as: "realtorIdData",
+          as: "realtorData",
         },
         {
           model: Job,
           foreignKey: "jobId",
-          as: "jobIdData",
+          as: "jobData",
         },
       ],
     });
@@ -94,7 +94,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorIdData",
+          as: "realtorData",
           foreignKey: "realtorId",
           where: {
             realtorId: loginId,
@@ -102,7 +102,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
         },
         {
           model: Job,
-          as: "jobIdData",
+          as: "jobData",
           foreignKey: "jobId",
         },
       ],
@@ -115,10 +115,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
   }
 
   // Implement the "update" method to update a SavedJob record by ID with provided data
-  async update(
-    id: string,
-    updatedData: any
-  ): Promise<SavedJobEntity> {
+  async update(id: string, updatedData: any): Promise<SavedJobEntity> {
     // Find the record by ID
     const savedJob = await SavedJob.findByPk(id);
 

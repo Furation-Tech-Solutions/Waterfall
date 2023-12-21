@@ -28,12 +28,12 @@ const SavedJob = sequelize.define("SavedJob", {
 // Define associations between tables
 SavedJob.belongsTo(Job, {
   foreignKey: "jobId", // Define the foreign key in the "SavedJob" table
-  as: "jobIdData", // Alias for the associated data from the "Job" table
+  as: "jobData", // Alias for the associated data from the "Job" table
 });
 
 SavedJob.belongsTo(Realtors, {
   foreignKey: "realtorId", // Define the foreign key in the "SavedJob" table
-  as: "realtorIdData", // Alias for the associated data from the "Realtors" table
+  as: "realtorData", // Alias for the associated data from the "Realtors" table
 });
 
 // Export the "SavedJob" model as the default export
