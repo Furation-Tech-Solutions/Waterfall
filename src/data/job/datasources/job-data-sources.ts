@@ -37,6 +37,8 @@ export interface JobQuery {
   limit: number;
   year?: number;
   months?: Array<number>;
+  jobType?: string;
+  feeType?: string;
 }
 
 // Implementation of the JobDataSource interface
@@ -108,6 +110,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
+    // let whereCondition: any = {};
     
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
@@ -193,9 +196,13 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       });
+      console.log(jobs, "job:");
+      
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      // console.log("completedJobTypes:", completedJobTypes);
+      
+      
+      console.log("completedJobTypes:", completedJobTypes);
 
       // Recommend jobs with the same jobType
       const recommendedJobs = await Job.findAll({
@@ -213,14 +220,14 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      // console.log("reccommendedJobs:", recommendedJobs);
+      
+      console.log("reccommendedJobs:", recommendedJobs);
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
         return recommendedJobs.map((job: any) => job.toJSON());
-      }
+      } 
 
-      // Fetch a realtor by primary key
       const realtor: any = await Realtors.findByPk(loginId);
 
       if (!realtor.location) {
@@ -250,6 +257,7 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return Jobsforyou.map((job: any) => job.toJSON());
+    
 
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobCompleted") {
@@ -417,7 +425,6 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
         order: [
-          
           // Then, sort by date in ascending order
           ["date", "ASC"],
         ],
@@ -426,6 +433,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
 
       return jobs.map((job: any) => job.toJSON());
+
       //---------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Handle other cases or provide default logic
