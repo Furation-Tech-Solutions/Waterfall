@@ -78,6 +78,11 @@ const Job = sequelize.define(
       allowNull: false,
     },
 
+    applyBy: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+
     // Type of the job, with predefined values using ENUM
     jobType: {
       type: DataTypes.ENUM(...Object.values(jobTypeEnum)),

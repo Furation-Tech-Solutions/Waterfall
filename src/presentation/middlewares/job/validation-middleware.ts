@@ -17,6 +17,7 @@ interface JobInput {
   numberOfApplicants: string;
   fromTime: string;
   toTime: string;
+  applyBy: Date;
   jobType: string;
   clientEmail: string;
   clientPhoneNumber: string;
@@ -118,6 +119,14 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
           "string.base": "To time must be a string",
           "string.empty": "To time is required",
           "any.required": "To time is required",
+        }),
+    applyBy: isUpdate
+      ? Joi.date().optional().messages({
+          "applyBy.base": "applyBy must be a valid date"
+        })
+      : Joi.date().required().messages({
+          "applyBy.base": "applyBy must be a valid date",
+          "any.required": "applyBy is required",
         }),
 
     // Validate job type
