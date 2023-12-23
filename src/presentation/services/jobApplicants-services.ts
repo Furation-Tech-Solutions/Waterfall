@@ -11,6 +11,7 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
+import { NotificationSender } from "./push-notification-services";
 
 export class JobApplicantService {
   private readonly createJobApplicantUsecase: CreateJobApplicantUsecase;
@@ -75,8 +76,13 @@ export class JobApplicantService {
           "Job applicant created successfully",
           201
         );
+        console.log(result,"res",req.user)
+            const pushNotification=new NotificationSender()
+            pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
       }
     );
+    // const pushNotification=new NotificationSender()
+
   }
 
   async getJobApplicantById(req: Request, res: Response): Promise<void> {
@@ -159,10 +165,15 @@ export class JobApplicantService {
               responseData,
               "Job applicant updated successfully"
             );
+            console.log(res,"res")
+            const pushNotification=new NotificationSender()
+            // pushNotification.customNotification(result.fromRealtorId,result.toRealtorId,"feedback")
           }
         );
       }
     );
+    // const pushNotification=new NotificationSender()
+
   }
 
   async deleteJobApplicant(req: Request, res: Response): Promise<void> {
