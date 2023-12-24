@@ -11,6 +11,7 @@ import { GetFAQById } from "@domain/faq/usecases/get-faq-by-id";
 import { UpdateFAQ } from "@domain/faq/usecases/update-faq";
 import { DeleteFAQ } from "@domain/faq/usecases/delete-faq";
 import { sequelize } from "@main/sequelizeClient";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the FAQDataSourceImpl and pass the mongoose connection
 const faqDataSource = new FAQDataSourceImpl(sequelize);
@@ -40,22 +41,24 @@ export const faqRouter = Router();
 // Route handling for creating a new faq
 faqRouter.post(
   "/",
+  verifyUser,
   validateFAQInputMiddleware(false),
   faqService.createFAQ.bind(faqService)
 );
 
 // Route handling for getting all faqsx`
-faqRouter.get("/", faqService.getAllFAQs.bind(faqService));
+faqRouter.get("/",verifyUser, faqService.getAllFAQs.bind(faqService));
 
 // Route handling for getting an FAQ by ID
-faqRouter.get("/:id", faqService.getFAQById.bind(faqService));
+faqRouter.get("/:id",verifyUser, faqService.getFAQById.bind(faqService));
 
 // Route handling for updating an faq by ID
 faqRouter.put(
   "/:id",
+  verifyUser,
   validateFAQInputMiddleware(true),
   faqService.updateFAQ.bind(faqService)
 );
 
 // Route handling for deleting an faq by ID
-faqRouter.delete("/:id", faqService.deleteFAQ.bind(faqService));
+faqRouter.delete("/:id",verifyUser, faqService.deleteFAQ.bind(faqService));

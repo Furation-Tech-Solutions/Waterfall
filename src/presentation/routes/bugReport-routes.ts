@@ -63,11 +63,13 @@ bugReportRouter.put(
 // Route handling for deleting a BugReport by ID
 bugReportRouter.delete(
   "/:id",
+  verifyUser,
   bugReportService.deleteBugReport.bind(bugReportService)
 );
 
 // Route handling for getting all BugReports
 bugReportRouter.get(
   "/",
+  verifyUser,
   bugReportService.getAllBugReports.bind(bugReportService)
 );
