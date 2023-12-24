@@ -43,6 +43,7 @@ export const jobRouter = Router();
 // Route handling for creating a new Job
 jobRouter.post(
   "/", // Route URL for creating a new job
+  verifyUser,
   validateJobInputMiddleware(false), // Middleware for validating job input data
   jobService.createJob.bind(jobService) // Handling function for creating a new job
 );
@@ -53,13 +54,13 @@ jobRouter.get("/",
   jobService.getAllJobs.bind(jobService)); // Route URL for getting all jobs
 
 // Route handling for getting the total feedback count
-jobRouter.get("/count", jobService.getTotalCount.bind(jobService));
+jobRouter.get("/count",verifyUser, jobService.getTotalCount.bind(jobService));
 
 // Route handling for getting a Job by ID
-jobRouter.get("/:id", jobService.getJobById.bind(jobService)); // Route URL for getting a job by ID
+jobRouter.get("/:id",verifyUser, jobService.getJobById.bind(jobService)); // Route URL for getting a job by ID
 
 // Route handling for updating a Job by ID
-jobRouter.put("/:id", validateJobInputMiddleware(true), jobService.updateJob.bind(jobService)); // Route URL for updating a job by ID
+jobRouter.put("/:id",verifyUser, validateJobInputMiddleware(true), jobService.updateJob.bind(jobService)); // Route URL for updating a job by ID
 
 // Route handling for deleting a Job by ID
-jobRouter.delete("/:id", jobService.deleteJob.bind(jobService)); // Route URL for deleting a job by ID
+jobRouter.delete("/:id",verifyUser, jobService.deleteJob.bind(jobService)); // Route URL for deleting a job by ID

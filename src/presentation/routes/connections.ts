@@ -13,6 +13,7 @@ import { GetAll } from "@domain/connections/usecases/get_all";
 // import { GetAllConnections } from "@domain/connections/usecases/get_all_connections";
 
 import { validateConnectionsInputMiddleware } from "@presentation/middlewares/connections/validation-connections";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 // Create an instance of the ConnectionsDataSourceImpl and pass the Sequelize connection
 const connectionsDataSource = new ConnectionsDataSourceImpl(sequelize);
 
@@ -41,6 +42,7 @@ export const connectionsRouter = Router();
 // Route handling for creating a new connections
 connectionsRouter.post(
     "/",
+    verifyUser,
     validateConnectionsInputMiddleware(false),
     connectionsService.createRequest.bind(connectionsService)
 );
@@ -48,21 +50,24 @@ connectionsRouter.post(
 // Route handling for deleting a connections by ID
 connectionsRouter.delete(
     "/:id",
+    verifyUser,
     connectionsService.deleteRequest.bind(connectionsService)
 );
 
 // Route handling for getting a requests by ID
 connectionsRouter.get(
     "/:id",
+    verifyUser,
     connectionsService.getById.bind(connectionsService)
 );
 
 // Route handling for getting all connections
-connectionsRouter.get("/", connectionsService.getAll.bind(connectionsService));
+connectionsRouter.get("/", verifyUser,connectionsService.getAll.bind(connectionsService));
 
 // Route handling for updating a connections by ID
 connectionsRouter.put(
     "/:id",
+    verifyUser,
     validateConnectionsInputMiddleware(true),
     connectionsService.updateRequests.bind(connectionsService)
 );

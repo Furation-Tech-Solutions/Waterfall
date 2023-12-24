@@ -61,6 +61,7 @@ notificationRouter.post(
 // Route handling for getting a Messages by ID
 notificationRouter.get(
   "/:id",
+  verifyUser,
   notificationService.getByIdNotification.bind(notificationService)
 );
 

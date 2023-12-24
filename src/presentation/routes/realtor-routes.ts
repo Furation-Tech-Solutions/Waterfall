@@ -13,6 +13,7 @@ import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
 import { sequelize } from "@main/sequelizeClient";
 import { LoginRealtor } from "@domain/realtors/usecases/login-realtor";
 import { CheckRealtorByRecoId } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -50,16 +51,16 @@ realtorRouter.post("/",
   realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
-realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));
+realtorRouter.get("/",verifyUser, realtorService.getAllRealtors.bind(realtorService));
 
 // Route handling for getting an Realtor by ID
-realtorRouter.get("/:id", realtorService.getRealtorById.bind(realtorService));
+realtorRouter.get("/:id",verifyUser, realtorService.getRealtorById.bind(realtorService));
 
 // Route handling for updating an realtor by ID
-realtorRouter.put("/:id", validateRealtorInputMiddleware(true), realtorService.updateRealtor.bind(realtorService));
+realtorRouter.put("/:id",verifyUser, validateRealtorInputMiddleware(true), realtorService.updateRealtor.bind(realtorService));
 
 // Route handling for deleting an realtor by ID
-realtorRouter.delete("/:id", realtorService.deleteRealtor.bind(realtorService));
+realtorRouter.delete("/:id",verifyUser, realtorService.deleteRealtor.bind(realtorService));
 
 // Route handling for login realtor by email for deviceToken
 realtorRouter.post(
