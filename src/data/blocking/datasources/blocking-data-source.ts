@@ -88,12 +88,12 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorIdData", // Alias for the first association
+          as: "fromRealtorData", // Alias for the first association
           foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorIdData", // Alias for the second association
+          as: "toRealtorData", // Alias for the second association
           foreignKey: "toRealtorId",
         },
       ],
@@ -115,12 +115,12 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromRealtorIdData",
+          as: "fromRealtorData",
           foreignKey: "fromRealtorId",
         },
         {
           model: Realtors,
-          as: "toRealtorIdData",
+          as: "toRealtorData",
           foreignKey: "toRealtorId",
         },
       ],

@@ -4,7 +4,9 @@ export class ReportModel {
     public fromRealtorId: string = "",
     public toRealtorId: string = "",
     public description: string = "",
-    public reportTimestamp: Date = new Date()
+    public reportTimestamp: Date = new Date(),
+    public fromRealtorData: {} = {},
+    public toRealtorData: {} = {}
   ) {}
 }
 
@@ -15,8 +17,10 @@ export class ReportEntity {
     public fromRealtorId: string, // The name of the reporting realtor
     public toRealtorId: string, // The name of the realtor being reported to
     public description: string, // The description or details of the report
-    public reportTimestamp: Date // The timestamp when the report was created
-  ) {}
+    public reportTimestamp: Date, // The timestamp when the report was created
+    public fromRealtorData: {},
+    public toRealtorData: {}
+    ) {}
 }
 
 // Define a class for ReportMapper, responsible for mapping between ReportModel and ReportEntity
@@ -60,6 +64,8 @@ export class ReportMapper {
         toRealtorId: reportData.toRealtorId,
         description: reportData.description,
         reportTimestamp: reportData.reportTimestamp,
+        fromRealtorData: reportData.fromRealtorData,
+        toRealtorData: reportData.toRealtorData,
       };
       return reportData;
     }
@@ -73,6 +79,8 @@ export class ReportMapper {
       toRealtorId: report.toRealtorId,
       description: report.description,
       reportTimestamp: report.reportTimestamp,
+      fromRealtorData: report.fromRealtorData,
+      toRealtorData: report.toRealtorData,
     };
   }
 }

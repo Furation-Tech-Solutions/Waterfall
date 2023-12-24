@@ -42,11 +42,11 @@ const Report = sequelize.define("Report", {
 // Establish associations
 Report.belongsTo(Realtors, {
   foreignKey: "fromRealtorId",
-  as: "fromRealtorIdData",
+  as: "fromRealtorData",
 });
 Report.belongsTo(Realtors, {
   foreignKey: "toRealtorId",
-  as: "toRealtorIdData",
+  as: "toRealtorData",
 });
 
 // Export the "Report" model as the default export of this module

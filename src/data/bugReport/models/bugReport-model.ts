@@ -44,7 +44,7 @@ const BugReport = sequelize.define("BugReport", {
 // Establish an association between the "BugReport" model and the "Realtors" model
 BugReport.belongsTo(Realtors, {
   foreignKey: "realtorId",
-  as: "RealtorIdData" // Alias for the association to distinguish from the actual foreign key
+  as: "RealtorData" // Alias for the association to distinguish from the actual foreign key
 });
 
 // Export the "BugReport" model for use in other parts of the application

@@ -8,8 +8,6 @@ import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 export const paymentMethodEnum = {
   CREDITCARD: "Credit Card",
   DEBITCARD: "Debit Card",
-  PAYPAL: "Paypal",
-  BANKTRANSFER: "Bank Transfer",
 };
 
 // Define a Sequelize model named "PaymentGateway"
@@ -44,12 +42,12 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
 // Define associations with other models
 PaymentGateway.belongsTo(Job, {
   foreignKey: "jobId",
-  as: "jobIdData",
+  as: "jobData",
 });
 
 PaymentGateway.belongsTo(JobApplicant, {
   foreignKey: "jobApplicantId",
-  as: "jobApplicantIdData",
+  as: "jobApplicantData",
 });
 
 // Export the "PaymentGateway" model as the default export

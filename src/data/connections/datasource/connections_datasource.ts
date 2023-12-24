@@ -98,12 +98,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       include: [
         {
           model: Realtors,
-          as: "fromIdData",
+          as: "fromData",
           foreignKey: "fromId",
         },
         {
           model: Realtors,
-          as: "toIdData",
+          as: "toData",
           foreignKey: "toId",
         },
       ],
@@ -133,12 +133,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromIdData",
+            as: "fromData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toIdData",
+            as: "toData",
             foreignKey: "toId",
           },
         ],
@@ -157,12 +157,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromIdData",
+            as: "fromData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toIdData",
+            as: "toData",
             foreignKey: "toId",
           },
         ],
@@ -260,12 +260,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         include: [
           {
             model: Realtors,
-            as: "fromIdData",
+            as: "fromData",
             foreignKey: "fromId",
           },
           {
             model: Realtors,
-            as: "toIdData",
+            as: "toData",
             foreignKey: "toId",
           },
         ],

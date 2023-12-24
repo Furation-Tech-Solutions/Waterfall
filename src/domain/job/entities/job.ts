@@ -8,6 +8,7 @@ export class JobModel {
     public numberOfApplicants: string = "", // Number of applicants needed
     public fromTime: string = "", // Start time of the job
     public toTime: string = "", // End time of the job
+    public applyBy: Date = new Date(),
     public jobType: string = "", // Type of the job
     public clientEmail: string = "", // Client's email
     public clientPhoneNumber: string = "", // Client's phone number
@@ -19,7 +20,9 @@ export class JobModel {
     public deleteReason: string = "", // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean = false,
-    public urgentRequirement: boolean = false
+    public urgentRequirement: boolean = false,
+    public jobOwnerData: {} = {},
+    public applicantsData: []= [],
   ) {}
 }
 
@@ -34,6 +37,7 @@ export class JobEntity {
     public numberOfApplicants: string, // Number of applicants needed
     public fromTime: string, // Start time of the job
     public toTime: string, // End time of the job
+    public applyBy: Date,
     public jobType: string, // Type of the job
     public clientEmail: string, // Client's email
     public clientPhoneNumber: string, // Client's phone number
@@ -45,7 +49,9 @@ export class JobEntity {
     public deleteReason: string, // Reason for job deletion
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean,
-    public urgentRequirement: boolean
+    public urgentRequirement: boolean,
+    public jobOwnerData: {},
+    public applicantsData: [],
   ) {}
 }
 
@@ -84,6 +90,8 @@ export class JobMapper {
           jobData.toTime !== undefined ? jobData.toTime : existingJob.toTime,
         jobType:
           jobData.jobType !== undefined ? jobData.jobType : existingJob.jobType,
+        applyBy: 
+          jobData.applyBy !== undefined ? jobData.applyBy : existingJob.applyBy,
         clientEmail:
           jobData.clientEmail !== undefined
             ? jobData.clientEmail
@@ -123,6 +131,7 @@ export class JobMapper {
           jobData.urgentRequirement !== undefined
             ? jobData.urgentRequirement
             : existingJob.urgentRequirement,
+        
       };
     } else {
       // If an existingJob is not provided, create a new JobEntity using jobData
@@ -139,6 +148,7 @@ export class JobMapper {
         numberOfApplicants: jobData.numberOfApplicants,
         fromTime: jobData.fromTime,
         toTime: jobData.toTime,
+        applyBy: jobData.applyBy,
         jobType: jobData.jobType,
         clientEmail: jobData.clientEmail,
         clientPhoneNumber: jobData.clientPhoneNumber,
@@ -151,6 +161,8 @@ export class JobMapper {
         coordinates: jobData.coordinates || null,
         liveStatus: jobData.liveStatus,
         urgentRequirement: jobData.urgentRequirement,
+        jobOwnerData: jobData.jobOwnerData,
+        applicantsData: jobData.applicantsData,
       };
       return jobData;
     }
@@ -169,6 +181,7 @@ export class JobMapper {
       numberOfApplicants: job.numberOfApplicants,
       fromTime: job.fromTime,
       toTime: job.toTime,
+      applyBy:job.applyBy,
       jobType: job.jobType,
       clientEmail: job.clientEmail,
       clientPhoneNumber: job.clientPhoneNumber,
@@ -181,6 +194,8 @@ export class JobMapper {
       coordinates: job.coordinates,
       liveStatus: job.liveStatus,
       urgentRequirement: job.urgentRequirement,
+      jobOwnerData: job.jobOwnerData,
+      applicantsData: job.applicantsData,
     };
   }
 }

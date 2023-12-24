@@ -171,6 +171,9 @@ export class JobService {
     query.id = Id;
     query.year = parseInt(req.query.year as string, 10);
     query.months = [parseInt(req.query.month as string, 10)];
+    query.jobType = req.query.jobType as string;
+    query.feeType = req.query.feeType as string;
+    query.sortOrder = req.query.sortOrder as string;
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
@@ -180,20 +183,20 @@ export class JobService {
       (jobs: JobEntity[]) => {
         const resData = jobs.map((job: any) => JobMapper.toEntity(job));
 
-        const emailService = new SESMailService();
-        const emailOption = {
-          email: "shehzadmalik123.sm@gmail.com",
-          subject: "Booking Request Confirmation",
-          message: "this is testing email",
-        };
-        emailService.sendEmail(emailOption);
+        // const emailService = new SESMailService();
+        // const emailOption = {
+        //   email: "shehzadmalik123.sm@gmail.com",
+        //   subject: "Booking Request Confirmation",
+        //   message: "this is testing email",
+        // };
+        // emailService.sendEmail(emailOption);
 
-        const smsService = new SMSService();
-        const smsOptions = {
-          phoneNumber: "+919881239491",
-          message: "this is testing sms in node .ts",
-        };
-        smsService.sendSMS(smsOptions);
+        // const smsService = new SMSService();
+        // const smsOptions = {
+        //   phoneNumber: "+919881239491",
+        //   message: "this is testing sms in node .ts",
+        // };
+        // smsService.sendSMS(smsOptions);
         this.sendSuccessResponse(res, resData);
       }
     );

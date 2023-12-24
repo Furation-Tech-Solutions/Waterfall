@@ -51,7 +51,7 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
         {
           model: Realtors,
           foreignKey: "realtorId",
-          as: "realtorIdData",
+          as: "realtorData",
         },
       ],
     });
@@ -67,7 +67,7 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
         {
           model: Realtors,
           foreignKey: "realtorId",
-          as: "realtorIdData",
+          as: "realtorData",
         },
       ],
     });

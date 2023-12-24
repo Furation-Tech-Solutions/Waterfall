@@ -64,12 +64,12 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorIdData",
+          as: "realtorData",
           foreignKey: "realtorId",
         },
         {
           model: Job,
-          as: "jobIdData",
+          as: "jobData",
           foreignKey: "jobId",
         },
       ],
@@ -90,7 +90,7 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
       include: [
         {
           model: Realtors,
-          as: "realtorIdData",
+          as: "realtorData",
           foreignKey: "realtorId",
           where: {
             realtorId: loginId,
@@ -98,7 +98,7 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
         },
         {
           model: Job,
-          as: "jobIdData",
+          as: "jobData",
           foreignKey: "jobId",
         },
       ],

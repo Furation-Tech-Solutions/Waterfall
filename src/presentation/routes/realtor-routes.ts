@@ -10,8 +10,9 @@ import { GetAllRealtors } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtor } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 import { LoginRealtor } from "@domain/realtors/usecases/login-realtor";
+import { CheckRealtorByRecoId } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -27,6 +28,7 @@ const getRealtorByIdUsecase = new GetRealtorById(realtorRepository);
 const updateRealtorUsecase = new UpdateRealtor(realtorRepository);
 const deleteRealtorUsecase = new DeleteRealtor(realtorRepository);
 const loginRealtorUsecase = new LoginRealtor(realtorRepository);
+const CheckRealtorByRecoIdUsecase = new CheckRealtorByRecoId(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
@@ -35,7 +37,8 @@ const realtorService = new RealtorService(
   getRealtorByIdUsecase,
   updateRealtorUsecase,
   deleteRealtorUsecase,
-  loginRealtorUsecase
+  loginRealtorUsecase,
+  CheckRealtorByRecoIdUsecase
 );
 
 // Create an Express router
@@ -43,7 +46,7 @@ export const realtorRouter = Router();
 
 // Route handling for creating a new realtor
 realtorRouter.post("/",
- validateRealtorInputMiddleware(false),
+  validateRealtorInputMiddleware(false),
   realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
@@ -63,3 +66,6 @@ realtorRouter.post(
   "/login",
   realtorService.loginRealtor.bind(realtorService)
 )
+
+// Route handling for getting an Realtor by ID
+realtorRouter.get("/checkRecoId/:id", realtorService.CheckRecoId.bind(realtorService));

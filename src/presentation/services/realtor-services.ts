@@ -9,6 +9,7 @@ import { GetAllRealtorsUsecase } from "@domain/realtors/usecases/get-all-realtor
 import { GetRealtorByIdUsecase } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
+import { CheckRealtorByRecoIdUsecase } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import { NotificationSender } from "./push-notification-services";
@@ -21,7 +22,8 @@ export class RealtorService {
   private readonly updateRealtorUsecase: UpdateRealtorUsecase;
   private readonly deleteRealtorUsecase: DeleteRealtorUsecase;
   private readonly loginRealtorUsecase: LoginRealtorUsecase;
-  
+  private readonly checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase;
+
 
 
   constructor(
@@ -31,6 +33,7 @@ export class RealtorService {
     updateRealtorUsecase: UpdateRealtorUsecase,
     deleteRealtorUsecase: DeleteRealtorUsecase,
     loginRealtorUsecase: LoginRealtorUsecase,
+    checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase
   ) {
     this.createRealtorUsecase = createRealtorUsecase;
     this.getAllRealtorsUsecase = getAllRealtorsUsecase;
@@ -38,6 +41,7 @@ export class RealtorService {
     this.updateRealtorUsecase = updateRealtorUsecase;
     this.deleteRealtorUsecase = deleteRealtorUsecase;
     this.loginRealtorUsecase = loginRealtorUsecase;
+    this.checkRealtorByRecoIdUsecase = checkRealtorByRecoIdUsecase;
 
   }
 
@@ -67,7 +71,8 @@ export class RealtorService {
       await this.createRealtorUsecase.execute(realtorData);
     newRealtor.cata(
       (error: ErrorClass) => {
-        this.sendErrorResponse(res, error, 400)},
+        this.sendErrorResponse(res, error, 400)
+      },
       (result: RealtorEntity) => {
         const resData = RealtorMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -107,15 +112,15 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) =>{
-         this.sendErrorResponse(res, error,error.status)
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, error.status)
       },
       (result: RealtorEntity) => {
         if (!result) {
           this.sendErrorResponse(res, ErrorClass.notFound());
 
         } else {
-          
+
           const resData = RealtorMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
         }
@@ -178,21 +183,44 @@ export class RealtorService {
 
   async loginRealtor(req: Request, res: Response): Promise<void> {
     const { email, firebaseDeviceToken } = req.body;
-  
+
     const user: Either<ErrorClass, RealtorEntity> =
-        await this.loginRealtorUsecase.execute(email, firebaseDeviceToken);
-  
-        user.cata(
-          (error: ErrorClass) =>{
-              res.status(error.status).json({ error: error.message })
-          },
-          (result: RealtorEntity) => {
-              if (result == undefined) {
-                  return res.status(404).json({ message: "Data Not Found" });
-              }
-              const resData = RealtorMapper.toEntity(result);
-              return res.status(200).cookie('email', resData.email).json(resData);
-          }
-      );
+      await this.loginRealtorUsecase.execute(email, firebaseDeviceToken);
+
+    user.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message })
+      },
+      (result: RealtorEntity) => {
+        if (result == undefined) {
+          return res.status(404).json({ message: "Data Not Found" });
+        }
+        const resData = RealtorMapper.toEntity(result);
+        return res.status(200).cookie('email', resData.email).json(resData);
+      }
+    );
+  }
+
+  async CheckRecoId(req: Request, res: Response): Promise<void> {
+    const recoId: string = req.params.id;
+    console.log(recoId, ":service ");
+    const realtor: Either<ErrorClass, RealtorEntity> =
+      await this.checkRealtorByRecoIdUsecase.execute(recoId);
+
+    realtor.cata(
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, error.status)
+      },
+      (result: RealtorEntity) => {
+        if (!result) {
+          this.sendErrorResponse(res, ErrorClass.notFound());
+
+        } else {
+
+          const resData = RealtorMapper.toEntity(result);
+          this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
+        }
+      }
+    );
   }
 }

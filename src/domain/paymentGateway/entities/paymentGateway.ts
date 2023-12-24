@@ -4,8 +4,10 @@ export class PaymentGatewayModel {
     public jobId: number = 0, // ID of the job associated with the payment, default is 0
     public jobApplicantId: number = 0, // ID of the job applicant, default is 0
     public amount: string = "", // Payment amount, default is an empty string
-    public paymentMethod: string = "Paypal" // Payment method, default is 'Paypal'
-  ) { }
+    public paymentMethod: string = "Paypal", // Payment method, default is 'Paypal'
+    public jobData: {} = {},
+    public jobApplicantData: {} = {}
+  ) {}
 }
 
 // PaymentGateway Entity provided by PaymentGateway Repository is converted to Express API Response
@@ -15,7 +17,9 @@ export class PaymentGatewayEntity {
     public jobId: number, // ID of the job associated with the payment
     public jobApplicantId: number, // ID of the job applicant
     public amount: string, // Payment amount
-    public paymentMethod: string // Payment method
+    public paymentMethod: string, // Payment method
+    public jobData: {},
+    public jobApplicantData: {} 
   ) { }
 }
 
@@ -60,6 +64,8 @@ export class PaymentGatewayMapper {
         jobApplicantId: paymentGatewayData.jobApplicantId,
         amount: paymentGatewayData.amount,
         paymentMethod: paymentGatewayData.paymentMethod,
+        jobData: paymentGatewayData.jobData,
+        jobApplicantData: paymentGatewayData.jobApplicantData,
       };
       return paymentGatewayEntity;
     }
@@ -73,6 +79,8 @@ export class PaymentGatewayMapper {
       jobApplicantId: paymentGateway.jobApplicantId, // Extract and include the job applicant ID
       amount: paymentGateway.amount, // Extract and include the amount
       paymentMethod: paymentGateway.paymentMethod, // Extract and include the payment method
+      jobData: paymentGateway.jobData,
+      jobApplicantData: paymentGateway.jobApplicantData,
     };
   }
 }

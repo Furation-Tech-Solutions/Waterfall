@@ -4,7 +4,8 @@ export class BugReportModel {
     public realtorId: string = "", // Replace with the appropriate data type if needed
     public description: string = "",
     public attachments: string[] | null = null,
-    public timestamp: Date = new Date()
+    public timestamp: Date = new Date(),
+    public RealtorData: {} = {}
   ) {}
 }
 
@@ -15,7 +16,8 @@ export class BugReportEntity {
     public realtorId: string, // Replace with the appropriate data type if needed
     public description: string,
     public attachments: string[] | null,
-    public timestamp: Date
+    public timestamp: Date,
+    public RealtorData: {}
   ) {}
 }
 
@@ -58,7 +60,8 @@ export class BugReportMapper {
         realtorId: bugReportData.realtorId,
         description: bugReportData.description,
         attachments: bugReportData.attachments,
-        timestamp: bugReportData.timestamp
+        timestamp: bugReportData.timestamp,
+        RealtorData: bugReportData.RealtorData,
       };
       // return bugReportEntity;
       return bugReportData; // Consider uncommenting the line above if you want to return the created entity
@@ -73,6 +76,7 @@ export class BugReportMapper {
       description: bugReport.description,
       attachments: bugReport.attachments,
       timestamp: bugReport.timestamp,
+      RealtorData: bugReport.RealtorData,
     };
   }
 }

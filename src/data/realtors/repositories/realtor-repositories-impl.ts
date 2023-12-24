@@ -31,13 +31,13 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Get all Realtor entities
     async getRealtors(query: RealtorQuery): Promise<Either<ErrorClass, RealtorEntity[]>> {
         try {
-          const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
-          // Check if the data length is zero
-          if (realtors.length === 0) {
-            // If data length is zero, throw a "404 Not Found" error
-            return Left<ErrorClass, RealtorEntity[]>(ApiError.dataNotFound());
-          }
-          return Right<ErrorClass, RealtorEntity[]>(realtors);
+            const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+            // Check if the data length is zero
+            if (realtors.length === 0) {
+                // If data length is zero, throw a "404 Not Found" error
+                return Left<ErrorClass, RealtorEntity[]>(ApiError.dataNotFound());
+            }
+            return Right<ErrorClass, RealtorEntity[]>(realtors);
         } catch (error: any) {
             // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
             if (error instanceof ApiError && error.status === 404) {
@@ -84,7 +84,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     // Delete a Realtor entity by ID
     async deleteRealtor(id: string): Promise<Either<ErrorClass, void>> {
         try {
-            const result = await this.realtorDataSource.delete(id); 
+            const result = await this.realtorDataSource.delete(id);
             return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
         } catch (e) {
             if (e instanceof ApiError && e.name === "notfound") {
@@ -93,15 +93,28 @@ export class RealtorRepositoryImpl implements RealtorRepository {
             return Left<ErrorClass, void>(ApiError.badRequest());
         }
     }
-    async loginRealtor(email:string, firebaseDeviceToken: string): Promise<Either<ErrorClass, RealtorEntity>>{
-        try{
-          const request = await this.realtorDataSource.realtorLogin(email, firebaseDeviceToken); // Use the booking request data source
-          return request
-              ? Right<ErrorClass, RealtorEntity>(request)
-              : Left<ErrorClass, RealtorEntity>(ApiError.notFound());
+    async loginRealtor(email: string, firebaseDeviceToken: string): Promise<Either<ErrorClass, RealtorEntity>> {
+        try {
+            const request = await this.realtorDataSource.realtorLogin(email, firebaseDeviceToken); // Use the booking request data source
+            return request
+                ? Right<ErrorClass, RealtorEntity>(request)
+                : Left<ErrorClass, RealtorEntity>(ApiError.notFound());
         }
-        catch(err){
-          return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
+        catch (err) {
+            return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
         }
-      }
+    }
+
+    // Check a Realtor by RECO ID
+    async CheckRecoId(id: string): Promise<Either<ErrorClass, RealtorEntity>> {
+        try {
+            const realtor = await this.realtorDataSource.RecoId(id);// Use the tag realtor data source
+            return Right<ErrorClass, RealtorEntity>(realtor)
+        } catch (e) {
+            if (e instanceof ApiError && e.name === "Realtor not found") {
+                return Left<ErrorClass, RealtorEntity>(ApiError.dataNotFound());
+            }
+            return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
+        }
+    }
 }

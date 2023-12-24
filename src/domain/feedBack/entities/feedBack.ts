@@ -5,7 +5,10 @@ export class FeedBackModel {
     public toRealtorId: string = "",
     public jobId: number = 0,
     public rating: number = 0,
-    public description: string = ""
+    public description: string = "",
+    public fromRealtorData: {} = {},
+    public toRealtorData: {} = {},
+    public jobData: {} = {}
   ) {}
 }
 
@@ -17,7 +20,10 @@ export class FeedBackEntity {
     public toRealtorId: string,
     public jobId: number,
     public rating: number,
-    public description: string
+    public description: string,
+    public fromRealtorData: {},
+    public toRealtorData: {},
+    public jobData: {}
   ) {}
 }
 
@@ -66,6 +72,9 @@ export class FeedBackMapper {
         jobId: feedBackData.jobId,
         rating: feedBackData.rating,
         description: feedBackData.description,
+        fromRealtorData: feedBackData.fromRealtorData,
+        toRealtorData: feedBackData.toRealtorData,
+        jobData: feedBackData.jobData,
       };
       return feedBackData;
     }
@@ -78,6 +87,9 @@ export class FeedBackMapper {
       jobId: feedBack.jobId,
       rating: feedBack.rating,
       description: feedBack.description,
+      fromRealtorData: feedBack.fromRealtorData,
+      toRealtorData: feedBack.toRealtorData,
+      jobData: feedBack.jobData,
     };
   }
 }
