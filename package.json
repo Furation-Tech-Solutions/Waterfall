@@ -63,7 +63,8 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "puppeteer": "^21.5.2",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "stripe": "^14.10.0"
   },
   "_moduleAliases": {
     "@domain": "dist/domain",
