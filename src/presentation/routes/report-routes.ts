@@ -10,6 +10,7 @@ import { GetReportById } from "@domain/report/usecases/get-report-by-id";
 import { GetAllReports } from "@domain/report/usecases/get-all-reports";
 import { UpdateReport } from "@domain/report/usecases/update-report";
 import { validateReportInputMiddleware } from "@presentation/middlewares/report/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the ReportDataSourceImpl and pass the Sequelize connection
 const reportDataSource = new ReportDataSourceImpl(sequelize);
@@ -39,18 +40,19 @@ export const reportRouter = Router();
 // Route handling for creating a new Report
 reportRouter.post(
   "/",
+  verifyUser,
   validateReportInputMiddleware(false), // Apply input validation middleware
   reportService.createReport.bind(reportService) // Bind the createReport method to handle the route
 );
 
 // Route handling for getting a Report by ID
-reportRouter.get("/:id", reportService.getReportById.bind(reportService));
+reportRouter.get("/:id",verifyUser, reportService.getReportById.bind(reportService));
 
 // Route handling for updating a Report by ID
-reportRouter.put("/:id",validateReportInputMiddleware(true), reportService.updateReport.bind(reportService));
+reportRouter.put("/:id",verifyUser,validateReportInputMiddleware(true), reportService.updateReport.bind(reportService));
 
 // Route handling for deleting a Report by ID
-reportRouter.delete("/:id", reportService.deleteReport.bind(reportService));
+reportRouter.delete("/:id",verifyUser, reportService.deleteReport.bind(reportService));
 
 // Route handling for getting all Reports
-reportRouter.get("/", reportService.getAllReports.bind(reportService));
+reportRouter.get("/",verifyUser, reportService.getAllReports.bind(reportService));

@@ -40,16 +40,16 @@ const blockingService = new BlockingService(
 export const blockingRouter = Router();
 
 // Route handling for creating a new blocking
-blockingRouter.post("/", validateBlockingInputMiddleware(false), blockingService.createBlocking.bind(blockingService));
+blockingRouter.post("/", verifyUser,validateBlockingInputMiddleware(false), blockingService.createBlocking.bind(blockingService));
 
 // Route handling for getting all blockingsx`
 blockingRouter.get("/", verifyUser,blockingService.getAllBlockings.bind(blockingService));
 
 // Route handling for getting an Blocking by ID
-blockingRouter.get("/:id", blockingService.getBlockingById.bind(blockingService));
+blockingRouter.get("/:id",verifyUser, blockingService.getBlockingById.bind(blockingService));
 
 // Route handling for updating an blocking by ID
-blockingRouter.put("/:id", validateBlockingInputMiddleware(true), blockingService.updateBlocking.bind(blockingService));
+blockingRouter.put("/:id",verifyUser, validateBlockingInputMiddleware(true), blockingService.updateBlocking.bind(blockingService));
 
 // Route handling for deleting an blocking by ID
-blockingRouter.delete("/:id", blockingService.deleteBlocking.bind(blockingService));
+blockingRouter.delete("/:id",verifyUser, blockingService.deleteBlocking.bind(blockingService));
