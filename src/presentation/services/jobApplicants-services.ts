@@ -76,9 +76,9 @@ export class JobApplicantService {
           "Job applicant created successfully",
           201
         );
-        console.log(result,"res",req.user)
-            const pushNotification=new NotificationSender()
-            pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
+        // console.log(result,"res",req.user)
+            // const pushNotification=new NotificationSender()
+            // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
       }
     );
     // const pushNotification=new NotificationSender()

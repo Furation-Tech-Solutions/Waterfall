@@ -125,7 +125,7 @@ export class NotificationSender {
   async getSender(eventType:string, senderId:any) {
     let dataSource:any;
   
-  
+     console.log("inside sender",eventType,senderId);
     switch (eventType) {
       case 'connectionRequest':
         return await this.realtorDataSource.read(senderId)
@@ -151,6 +151,8 @@ export class NotificationSender {
  
 
   async getReceiver(eventType:string, receiverId:any) {
+    console.log("inside reciver",eventType,receiverId);
+
     switch (eventType) {
       case 'connectionRequest':
         return await this.realtorDataSource.read(receiverId)
@@ -241,7 +243,11 @@ export class NotificationSender {
     const sender = await this.getSender(eventType, senderId);
     const receiver = await this.getReceiver(eventType, receiverId);
 
+    console.log(sender,"sender is this")
+    console.log(receiver,"receiver is this")
+
     const { title, body } = await this.getTitleAndBody(eventType, sender, receiver);
+    console.log(title,body,"title and body is this")
     let deviceTokens:any
  
     if (receiver) {
