@@ -269,7 +269,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     const realtor = await Realtor.findOne({
       where: { recoId: id, deletedStatus: false },
     });
-    console.log(realtor,"asdas");
+    // console.log(realtor,"asdas");
     
     if (realtor === null) {
       throw ApiError.dataNotFound();
