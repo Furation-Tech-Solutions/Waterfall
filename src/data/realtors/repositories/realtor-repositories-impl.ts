@@ -111,7 +111,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
             const realtor = await this.realtorDataSource.RecoId(id);// Use the tag realtor data source
             return Right<ErrorClass, RealtorEntity>(realtor)
         } catch (e) {
-            if (e instanceof ApiError && e.name === "Realtor not found") {
+            if (e instanceof ApiError && e.name === "data not found") {
                 return Left<ErrorClass, RealtorEntity>(ApiError.dataNotFound());
             }
             return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
