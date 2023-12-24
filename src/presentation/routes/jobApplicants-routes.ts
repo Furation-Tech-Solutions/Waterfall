@@ -52,6 +52,7 @@ export const jobApplicantRouter = Router();
 // Route handling for creating a new Job Applicant
 jobApplicantRouter.post(
   "/", // HTTP POST request to create a new job applicant
+  verifyUser,
   validateJobApplicantInputMiddleware(false), // Apply validation middleware before processing the request
   jobApplicantService.createJobApplicant.bind(jobApplicantService) // Bind the createJobApplicant method from the service to handle the route
 );
@@ -59,6 +60,7 @@ jobApplicantRouter.post(
 // Route handling for getting a Job Applicant by ID
 jobApplicantRouter.get(
   "/:id",
+  verifyUser,
   jobApplicantService.getJobApplicantById.bind(jobApplicantService)
 ); // HTTP GET request to retrieve a job applicant by ID
 
@@ -71,12 +73,15 @@ jobApplicantRouter.get(
 
 // Route handling for updating a Job Applicant by ID
 jobApplicantRouter.put(
-  "/:id",validateJobApplicantInputMiddleware(true),
+  "/:id",
+  verifyUser,
+  validateJobApplicantInputMiddleware(true),
   jobApplicantService.updateJobApplicant.bind(jobApplicantService)
 ); // HTTP PUT request to update a job applicant by ID
 
 // Route handling for deleting a JobApplicant by ID
 jobApplicantRouter.delete(
   "/:id",
+  verifyUser,
   jobApplicantService.deleteJobApplicant.bind(jobApplicantService)
 ); // Route URL for deleting a job applicant by ID

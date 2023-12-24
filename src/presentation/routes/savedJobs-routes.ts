@@ -40,6 +40,7 @@ export const savedJobRouter = Router();
 // Route handling for creating a new Job
 savedJobRouter.post(
   "/", // Define the route URL
+  verifyUser,
   validateSavedJobInputMiddleware(false), // Apply input validation middleware
   savedJobService.createSavedJob.bind(savedJobService) // Bind the createSavedJob method to handle the route
 );
@@ -47,18 +48,22 @@ savedJobRouter.post(
 // Route handling for getting a SavedJob by ID
 savedJobRouter.get(
   "/:id",
+  verifyUser,
   savedJobService.getSavedJobById.bind(savedJobService)
 );
 
 // Route handling for updating a SavedJob by ID
 savedJobRouter.put(
-  "/:id",validateSavedJobInputMiddleware(true),
+  "/:id",
+  verifyUser,
+  validateSavedJobInputMiddleware(true),
   savedJobService.updateSavedJob.bind(savedJobService)
 );
 
 // Route handling for deleting a SavedJob by ID
 savedJobRouter.delete(
   "/:id",
+  verifyUser,
   savedJobService.deleteSavedJob.bind(savedJobService)
 );
 
