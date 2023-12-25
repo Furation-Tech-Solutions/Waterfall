@@ -24,6 +24,7 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
 
   async createNotification(notificationData: any): Promise<NotificationEntity> {
     // Check if the sender and receiver are blocked
+    console.log(notificationData,"inside dtsrc1")
     const isBlocked = await Blocking.findOne({
       where: {
         [Op.or]: [
@@ -46,6 +47,8 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
     }
 
     // Create a new message record using the provided data
+    console.log(notificationData,"inside dtsrc2")
+
     const createdNotification = await Notification.create(notificationData);
     return createdNotification.toJSON();
   }

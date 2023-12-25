@@ -51,7 +51,7 @@ realtorRouter.post("/",
   realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
-realtorRouter.get("/",verifyUser, realtorService.getAllRealtors.bind(realtorService));
+realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));
 
 // Route handling for getting an Realtor by ID
 realtorRouter.get("/:id",verifyUser, realtorService.getRealtorById.bind(realtorService));

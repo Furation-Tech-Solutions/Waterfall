@@ -137,9 +137,13 @@ export class NotificationSender {
         return await this.realtorDataSource.read(senderId)
 
       case 'appliedJob':
-        return await this.jobDataSource.read(senderId)
-  
+        return await this.realtorDataSource.read(senderId)
+
+        case 'sendMessage':
+          return await this.realtorDataSource.read(senderId)
       // Add other cases for different event types
+      case 'applicantStatus':
+        return await this.realtorDataSource.read(senderId)
   
       default:
         throw new Error('Invalid event type');
@@ -165,6 +169,13 @@ export class NotificationSender {
 
       case 'appliedJob':
         return await this.jobDataSource.read(receiverId)
+
+        case 'applicantStatus':
+        return await this.realtorDataSource.read(receiverId)
+
+      
+        case 'sendMessage':
+          return await this.realtorDataSource.read(receiverId)
   
       // Add other cases for different event types
   
@@ -201,6 +212,16 @@ export class NotificationSender {
         title = 'Applied Job Status';
         body = `${sender.firstName ?? 'user'} has applied on your job`;
         break;
+      
+        case 'sendMessage':
+        title = 'New Message';
+        body = `${sender.firstName ?? 'user'} has send you message`;
+        break;
+
+        case 'applicantStatus':
+        title = 'applied job status';
+        body = `${sender.firstName ?? 'user'} has accept your application for job`;
+        break;
 
       default:
         title = 'Default Title';
@@ -224,24 +245,31 @@ export class NotificationSender {
   }
 
   async sendInAppNotification(senderId:string,receiverId:string,title:string){
+    try{
   let notificationDataSource = new NotificationDataSourceImpl(sequelize)
 
        const notificationData={
           senderId,
           receiverId,
-          title
+          message:title
        }
-      const inAppNotifData=notificationDataSource.createNotification(notificationData)
+      const inAppNotifData=await notificationDataSource.createNotification(notificationData)
       console.log(inAppNotifData,"inappnotification data")
+    }
+    catch(error){
+      console.error("Error sending in-app notification:", error);
+
+    }
 
   }
   
 
   async customNotification(senderId:any, receiverId:any, eventType:string) {
-    console.log(eventType, 'eventType');
-
-    const sender = await this.getSender(eventType, senderId);
-    const receiver = await this.getReceiver(eventType, receiverId);
+  
+    let sender:any
+    let receiver:any
+     sender = await this.getSender(eventType, senderId);
+     receiver = await this.getReceiver(eventType, receiverId);
 
     console.log(sender,"sender is this")
     console.log(receiver,"receiver is this")
@@ -253,9 +281,9 @@ export class NotificationSender {
     if (receiver) {
       if ('firebaseDeviceToken' in receiver) {
         deviceTokens = receiver.firebaseDeviceToken ;
-      } else if ( 'jobOwnerIdData' in receiver &&  typeof receiver.jobOwnerIdData=== 'object'  &&'firebaseDeviceToken' in receiver.jobOwnerIdData!
+      } else if ( 'jobOwnerData' in receiver &&  typeof receiver.jobOwnerData=== 'object'  &&'firebaseDeviceToken' in receiver.jobOwnerData!
       ) {
-        deviceTokens = receiver.jobOwnerIdData.firebaseDeviceToken || [];
+        deviceTokens = receiver.jobOwnerData.firebaseDeviceToken || [];
       }
     }
 
@@ -273,7 +301,10 @@ export class NotificationSender {
 
         // call inappnotification
         console.log(receiverId, senderId, title, body);
-        // this.sendInAppNotification(senderId, receiverId, title);
+        if(eventType=="appliedJob"){
+          receiverId=receiver.jobOwnerId
+        }
+        this.sendInAppNotification(senderId, receiverId, title);
       });
     } else {
       console.log('No device tokens found for this realtor.');

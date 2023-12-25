@@ -76,9 +76,9 @@ export class JobApplicantService {
           "Job applicant created successfully",
           201
         );
-        // console.log(result,"res",req.user)
-            // const pushNotification=new NotificationSender()
-            // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
+        console.log(result,"res",req.user)
+            const pushNotification=new NotificationSender()
+            pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
       }
     );
     // const pushNotification=new NotificationSender()
@@ -165,9 +165,12 @@ export class JobApplicantService {
               responseData,
               "Job applicant updated successfully"
             );
-            console.log(res,"res")
-            const pushNotification=new NotificationSender()
-            // pushNotification.customNotification(result.fromRealtorId,result.toRealtorId,"feedback")
+            console.log(response,"res")
+            if(response.applicantStatus=="Accept" || response.applicantStatus=="Decline"){
+              const pushNotification=new NotificationSender()
+              pushNotification.customNotification(req.user,result.applicantId,"applicantStatus")
+
+            }
           }
         );
       }

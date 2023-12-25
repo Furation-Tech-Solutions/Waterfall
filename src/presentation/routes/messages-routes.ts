@@ -42,7 +42,7 @@ export const messagesRouter = Router();
 // Route handling for creating a new messages
 messagesRouter.post(
   "/",
-  verifyUser,
+  // verifyUser,
   validateMessageInputMiddleware(false),
   messagesService.createMessage.bind(messagesService)
 );
