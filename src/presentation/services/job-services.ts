@@ -66,15 +66,10 @@ export class JobService {
       await this.createJobUsecase.execute(jobData);
 
     newJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: JobEntity) => {
         const resData = JobMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Job created successfully",
-          201
-        );
+        this.sendSuccessResponse(res, resData, "Job created successfully", 201);
       }
     );
   }

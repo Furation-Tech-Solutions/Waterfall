@@ -64,10 +64,15 @@ export class SupportService {
       await this.createSupportUsecase.execute(supportData);
 
     newSupport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Support created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Support created successfully",
+          201
+        );
       }
     );
   }

@@ -56,10 +56,15 @@ export class BlockingService {
       await this.CreateBlockingUsecase.execute(blockingData);
 
     newBlocking.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: BlockingEntity) => {
         const resData = BlockingMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Blocking created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Blocking created successfully",
+          201
+        );
       }
     );
   }

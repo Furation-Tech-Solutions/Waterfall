@@ -64,10 +64,15 @@ export class BugReportService {
 
     // Handle the result using the Either monad's cata method
     newBugReport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: BugReportEntity) => {
         const resData = BugReportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "BugReport created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "BugReport created successfully",
+          201
+        );
       }
     );
   }

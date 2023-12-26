@@ -66,7 +66,7 @@ export class NotInterestedService {
       await this.createNotInterestedUsecase.execute(notInterestedData);
 
     newNotInterested.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
         this.sendSuccessResponse(

@@ -66,7 +66,7 @@ export class JobApplicantService {
       await this.createJobApplicantUsecase.execute(jobApplicantData);
 
     newJobApplicant.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: JobApplicantEntity) => {
         const resData = JobApplicantMapper.toEntity(result, true);
         this.sendSuccessResponse(

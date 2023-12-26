@@ -44,7 +44,7 @@ export interface JobQuery {
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -111,7 +111,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
     // let whereCondition: any = {};
-
+    
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
@@ -220,13 +220,12 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-
-      console.log("reccommendedJobs:", recommendedJobs);
+      // console.log("reccommendedJobs:", recommendedJobs);
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
         return recommendedJobs.map((job: any) => job.toJSON());
-      }
+      } 
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -257,6 +256,7 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return Jobsforyou.map((job: any) => job.toJSON());
+    
 
       //-----------------------------------------------------------------------------------------------------------------------
     }

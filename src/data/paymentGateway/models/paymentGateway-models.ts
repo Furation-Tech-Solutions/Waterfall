@@ -8,8 +8,6 @@ import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 export const paymentMethodEnum = {
   CREDITCARD: "Credit Card",
   DEBITCARD: "Debit Card",
-  PAYPAL: "Paypal",
-  BANKTRANSFER: "Bank Transfer",
 };
 
 // Define a Sequelize model named "PaymentGateway"

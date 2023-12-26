@@ -70,7 +70,7 @@ export class CallLogService {
       await this.createCallLogUsecase.execute(callLogData);
 
     newCallLog.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
         this.sendSuccessResponse(

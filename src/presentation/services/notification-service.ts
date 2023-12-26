@@ -69,17 +69,17 @@ export class NotificationServices {
       await this.createNotificationUsecase.execute(Data);
 
       newNotification.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
-      (result: NotificationEntity) => {
-        const resData = NotificationMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Message created successfully",
-          201
-        );
-      }
-    );
+        (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+        (result: NotificationEntity) => {
+          const resData = NotificationMapper.toEntity(result, true);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Message created successfully",
+            201
+          );
+        }
+      );
   }
 
 //   async deleteNotification(req: Request, res: Response): Promise<void> {

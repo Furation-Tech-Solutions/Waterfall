@@ -65,7 +65,7 @@ export class MessagesServices {
       await this.createMessagesUsecase.execute(Data);
 
     newMessages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity) => {
         const resData = MessageMapper.toEntity(result, true);
         this.sendSuccessResponse(

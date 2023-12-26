@@ -64,7 +64,7 @@ export class ReportService {
       await this.createReportUsecase.execute(reportData);
 
     newReport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: ReportEntity) => {
         const resData = ReportMapper.toEntity(result, true);
         this.sendSuccessResponse(

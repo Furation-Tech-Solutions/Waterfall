@@ -63,15 +63,10 @@ export class FAQService {
       await this.CreateFAQUsecase.execute(faqData);
 
     newFAQ.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: FAQEntity) => {
         const resData = FAQMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "FAQ created successfully",
-          201
-        ); // Created
+        this.sendSuccessResponse(res, resData, "FAQ created successfully", 201); // Created
       }
     );
   }

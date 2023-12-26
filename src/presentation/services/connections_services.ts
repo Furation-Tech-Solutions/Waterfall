@@ -70,7 +70,7 @@ export class ConnectionsServices {
       await this.createRequestUsecase.execute(Data);
 
     newConnections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: ConnectionsEntity) => {
         const resData = ConnectionMapper.toEntity(result, true);
         this.sendSuccessResponse(

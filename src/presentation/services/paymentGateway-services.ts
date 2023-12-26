@@ -66,7 +66,7 @@ export class PaymentGatewayService {
       await this.createPaymentGatewayUsecase.execute(paymentGatewayData);
 
     newPaymentGateway.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: PaymentGatewayEntity) => {
         const resData = PaymentGatewayMapper.toEntity(result, true);
         this.sendSuccessResponse(

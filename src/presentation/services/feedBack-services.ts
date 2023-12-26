@@ -71,7 +71,7 @@ export class FeedBackService {
       await this.CreateFeedBackUsecase.execute(feedBackData);
 
     newFeedBack.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: FeedBackEntity) => {
         const resData = FeedBackMapper.toEntity(result, true);
         this.sendSuccessResponse(

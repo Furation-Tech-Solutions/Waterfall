@@ -64,7 +64,7 @@ export class SavedJobService {
       await this.createSavedJobUsecase.execute(savedJobData);
 
     newSavedJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
         this.sendSuccessResponse(
