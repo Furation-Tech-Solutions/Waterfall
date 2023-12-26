@@ -6,111 +6,6 @@ import { sequelize } from "@main/sequelizeClient";
 import { NotificationDataSourceImpl } from "@data/notification/datasource/notification-datasource";
 import { JobDataSourceImpl } from "@data/job/datasources/job-data-sources";
 
-// Assuming serviceAccount.json is in the app folder
-
-
-// export class NotificationSender {
-//     constructor(sequelize) {
-//       this.realtorDataSource = new RealtorDataSourceImpl(sequelize);
-//     this.notificationSender = new NotificationSender();
-//         // Fetch the service account key JSON file content
-//   }
-
-//   sendNotification(registrationToken:string, title:string, body:string) {
-//     const message = {
-//       notification: {
-//         title: title || 'New Notification',
-//         body: body || 'This is a Firebase Cloud Messaging notification!'
-//       },
-//       token: registrationToken // Use the provided registration token
-//     };
-
-//     return admin.messaging().send(message);
-//   }
-
-//   async sendInAppNotification(senderId:string,receiverId:string,title:string){
-//   let notificationDataSource = new NotificationDataSourceImpl(sequelize)
-
-//        const notificationData={
-//           senderId,
-//           receiverId,
-//           title
-//        }
-//       const inAppNotifData=notificationDataSource.createNotification(notificationData)
-//       console.log(inAppNotifData,"inappnotification data")
-
-//   }
-  
-
-  
-//   async customNotification(senderId:string,receiverId:any,eventType:string){
-//   // Example usage:
-//   console.log(eventType,"eventType")
-
-//   let realtorDataSource = new RealtorDataSourceImpl(sequelize)
-//   const sender = await realtorDataSource.read(senderId)
-//   const receiver = await realtorDataSource.read(receiverId)
-//   console.log(sender,"sender",receiver,"reciver")
-
-//   const notificationSender = new NotificationSender();
-
-//   const deviceTokens:any=receiver.firebaseDeviceToken
-
-//    let body:string=""
-//    let title:string=""
-//   switch (eventType) {
-//     case 'connectionRequest':
-//       title="Connection Request"
-//       body = `You have a connection request from ${sender.firstName ?? 'Abhishek'}`;
-//       break;
-
-//     case 'connectionRequestResponse':
-//       title="Connection Request Status"
-//       body = `${sender.firstName??'user'} has accept your connection request`; 
-//       break;
-
-//       case 'feedback':
-//       title="Feedback on job"
-//       body = `${sender.firstName??'user'} has provided feedback on your job `; 
-//       break;
-
-//       case 'appliedJob':
-//         title="Applied Job Status "
-//         body = `${sender.firstName??'user'} has applied on your job `; 
-//         break;
-
-//     // Add cases for other event types with specific message construction
-
-//     default:
-//       title="Connection Request"
-//       body = 'Default message for unspecified events';
-//       break;
-//   }
-//     console.log(title,body,"title and body")
-//   if (deviceTokens && deviceTokens.length > 0) {
-//     deviceTokens.forEach((registrationToken:string) => {
-
-//       notificationSender.sendNotification(registrationToken, title, body)
-
-//         .then((response:any) => {
-//           console.log('Notification sent successfully:', response);
-//         })
-//         .catch((error:any) => {
-//           console.error('Error sending notification:', error);
-//         });
-//         // call inappnotification
-//         console.log(receiverId,senderId,title,body)
-//         // this.sendInAppNotification(senderId,receiverId,title)
-//     });
-//   } else {
-//     console.log('No device tokens found for this realtor.');
-//   }
-  
-// }
-
-// }
-
-
 export class NotificationSender {
   private realtorDataSource: RealtorDataSourceImpl;
   private jobDataSource: JobDataSourceImpl;
@@ -125,7 +20,6 @@ export class NotificationSender {
   async getSender(eventType:string, senderId:any) {
     let dataSource:any;
   
-     console.log("inside sender",eventType,senderId);
     switch (eventType) {
       case 'connectionRequest':
         return await this.realtorDataSource.read(senderId)
@@ -155,7 +49,6 @@ export class NotificationSender {
  
 
   async getReceiver(eventType:string, receiverId:any) {
-    console.log("inside reciver",eventType,receiverId);
 
     switch (eventType) {
       case 'connectionRequest':
@@ -191,7 +84,6 @@ export class NotificationSender {
   async getTitleAndBody(eventType:string, sender:any, receiver:any) {
     let title = '';
     let body = '';
-
     switch (eventType) {
       case 'connectionRequest':
         title = 'Connection Request';
@@ -200,7 +92,7 @@ export class NotificationSender {
 
       case 'connectionRequestResponse':
         title = 'Connection Request Status';
-        body = `${sender.firstName ?? 'user'} has accepted your connection request`;
+        body = `${sender.firstName ?? 'user'} has accepted your friend request`;
         break;
 
       case 'feedback':
@@ -210,17 +102,17 @@ export class NotificationSender {
 
       case 'appliedJob':
         title = 'Applied Job Status';
-        body = `${sender.firstName ?? 'user'} has applied on your job`;
+        body = `${sender.firstName ?? 'user'}${sender.lastName ?? ''} has requested you on your recent post`;
         break;
       
         case 'sendMessage':
-        title = 'New Message';
-        body = `${sender.firstName ?? 'user'} has send you message`;
+        title = 'Message Request';
+        body = `You have message request from ${sender.firstName ?? "user"} ${sender.lastName ?? ''}`;
         break;
 
         case 'applicantStatus':
         title = 'applied job status';
-        body = `${sender.firstName ?? 'user'} has accept your application for job`;
+        body = `Your applicantion has been selected for the job role.Tap to view job agreement`;
         break;
 
       default:
@@ -244,17 +136,16 @@ export class NotificationSender {
     return admin.messaging().send(message);
   }
 
-  async sendInAppNotification(senderId:string,receiverId:string,title:string){
+  async sendInAppNotification(senderId:string,receiverId:string,body:string){
     try{
   let notificationDataSource = new NotificationDataSourceImpl(sequelize)
 
        const notificationData={
           senderId,
           receiverId,
-          message:title
+          message:body
        }
       const inAppNotifData=await notificationDataSource.createNotification(notificationData)
-      console.log(inAppNotifData,"inappnotification data")
     }
     catch(error){
       console.error("Error sending in-app notification:", error);
@@ -271,11 +162,7 @@ export class NotificationSender {
      sender = await this.getSender(eventType, senderId);
      receiver = await this.getReceiver(eventType, receiverId);
 
-    console.log(sender,"sender is this")
-    console.log(receiver,"receiver is this")
-
     const { title, body } = await this.getTitleAndBody(eventType, sender, receiver);
-    console.log(title,body,"title and body is this")
     let deviceTokens:any
  
     if (receiver) {
@@ -300,11 +187,10 @@ export class NotificationSender {
           });
 
         // call inappnotification
-        console.log(receiverId, senderId, title, body);
         if(eventType=="appliedJob"){
           receiverId=receiver.jobOwnerId
         }
-        this.sendInAppNotification(senderId, receiverId, title);
+        this.sendInAppNotification(senderId, receiverId, body);
       });
     } else {
       console.log('No device tokens found for this realtor.');

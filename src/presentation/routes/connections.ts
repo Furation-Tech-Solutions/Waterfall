@@ -42,7 +42,7 @@ export const connectionsRouter = Router();
 // Route handling for creating a new connections
 connectionsRouter.post(
     "/",
-    // verifyUser,
+    verifyUser,
     validateConnectionsInputMiddleware(false),
     connectionsService.createRequest.bind(connectionsService)
 );
@@ -50,7 +50,7 @@ connectionsRouter.post(
 // Route handling for deleting a connections by ID
 connectionsRouter.delete(
     "/:id",
-    // verifyUser,
+    verifyUser,
     connectionsService.deleteRequest.bind(connectionsService)
 );
 

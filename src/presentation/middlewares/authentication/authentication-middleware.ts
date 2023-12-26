@@ -32,12 +32,11 @@ import { sequelize } from "@main/sequelizeClient";
     try {
       
       const user = await admin.auth().verifyIdToken(idToken);
-       console.log(user)
+       
       if (user) {
         const dbUser = await realtorDataSource.read(user.uid)
         if(dbUser) {
           req.user = user.uid;
-          console.log(req.user,"req.user",user.uid,dbUser)
           next()
         }
       

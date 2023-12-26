@@ -30,8 +30,8 @@ const Notification = sequelize.define("Notification", {
 ///created at uodtad at inplace of seen
 
 // Establish associations with the 'Realtors' model using foreign keys
-Notification.belongsTo(Realtors, { foreignKey: "senderId", as: "senderIdData" });
-Notification.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverIdData" });
+Notification.belongsTo(Realtors, { foreignKey: "senderId", as: "senderData" });
+Notification.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverData" });
 
 // Export the 'Notification' model for use in other parts of the application
 export default Notification;

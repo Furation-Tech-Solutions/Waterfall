@@ -67,7 +67,7 @@ notificationRouter.get(
 
 // Route handling for getting all messages
 notificationRouter.get("/", 
-// verifyUser,
+verifyUser,
 notificationService.getAllNotification.bind(notificationService));
 
 // // Route handling for updating a messages by ID

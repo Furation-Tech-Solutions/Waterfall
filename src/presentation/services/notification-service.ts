@@ -145,7 +145,9 @@ export class NotificationServices {
       await this.getAllNotificationUsecase.execute(loginId);
 
       notificationData.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (error: ErrorClass) => {
+        
+        this.sendErrorResponse(res, error, error.status)},
       (result: NotificationEntity[]) => {
         const responseData = result.map((notification) =>
           NotificationMapper.toEntity(notification)
