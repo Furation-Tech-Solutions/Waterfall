@@ -54,7 +54,7 @@ export class ScrapperDataSourceImpl implements ScrapperDataSource {
    
        // websiteDataAfterLoad)
        // Fill the form with first and last name
-       await page.type('#f-name', realtorData.firstName);
+      //  await page.type('#f-name', realtorData.firstName);
        await page.type('#l-name', realtorData.lastName);
    
        // Click the submit button

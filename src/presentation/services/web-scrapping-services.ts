@@ -41,7 +41,6 @@ export class WebScrapping {
   }
 
   async checkRecoNumber(req: Request, res: Response): Promise<void> {
-    const first_Name: string = req.query.firstName as string || '';
     const last_Name: string = req.query.lastName as string || '';
     const reco_Number: number = parseInt(req.query.recoNumber as string || '0', 10);
     // Check if lastName and recoNumber are provided
@@ -54,7 +53,6 @@ export class WebScrapping {
     }
 
     const scrapperData = new ScrapperModel(
-      first_Name,
       last_Name,
       reco_Number
     )
@@ -64,10 +62,10 @@ export class WebScrapping {
       await this.getScrapperUsecase.execute(scrapperData);
 
     newScrapperData.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       (result: ScrapperEntity) => {
         // const resData = SupportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, result, "User verified Successfully", 201);
+        this.sendSuccessResponse(res, result, "User verified Successfully", 200);
       }
     );
   }
