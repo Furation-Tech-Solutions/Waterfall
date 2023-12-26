@@ -18,7 +18,7 @@ export class RealtorModel {
     public firebaseId: string = "",
     public linkedIn: string = "",
     public attachmentLink: string = "",
-    public licenseIssueDate: string = "",
+    public licenseExpirationDate: string = "",
     public badge: { badgeName: string, timestamp: Date },
     public firebaseDeviceToken: string = ""
 
@@ -46,7 +46,7 @@ export class RealtorEntity {
     public firebaseId: string,
     public linkedIn: string,
     public attachmentLink: string,
-    public licenseIssueDate: string,
+    public licenseExpirationDate: string,
     public badge: {badgeName: string; timestamp: Date},
     public firebaseDeviceToken: string
 
@@ -133,10 +133,10 @@ export class RealtorMapper {
           realtorData.attachmentLink !== undefined
             ? realtorData.attachmentLink
             : existingRealtor.attachmentLink,
-        licenseIssueDate:
-          realtorData.licenseIssueDate !== undefined
-            ? realtorData.licenseIssueDate
-            : existingRealtor.licenseIssueDate,
+            licenseExpirationDate:
+          realtorData.licenseExpirationDate !== undefined
+            ? realtorData.licenseExpirationDate
+            : existingRealtor.licenseExpirationDate,
         badge:
           realtorData.badge !== undefined
             ? realtorData.badge
@@ -171,7 +171,7 @@ export class RealtorMapper {
         firebaseId: realtorData.firebaseId,
         linkedIn: realtorData.linkedIn,
         attachmentLink: realtorData.attachmentLink,
-        licenseIssueDate: realtorData.licenseIssueDate,
+        licenseExpirationDate: realtorData.licenseExpirationDate,
         badge: realtorData.badge,
         firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
 
@@ -200,7 +200,7 @@ export class RealtorMapper {
       firebaseId: realtor.firebaseId,
       linkedIn: realtor.linkedIn,
       attachmentLink: realtor.attachmentLink,
-      licenseIssueDate: realtor.licenseIssueDate,
+      licenseExpirationDate: realtor.licenseExpirationDate,
       badge: realtor.badge,
       firebaseDeviceToken:realtor.firebaseDeviceToken
     };
