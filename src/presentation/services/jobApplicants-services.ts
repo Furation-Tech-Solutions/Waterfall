@@ -76,7 +76,6 @@ export class JobApplicantService {
           "Job applicant created successfully",
           201
         );
-        console.log(result,"res",req.user)
             const pushNotification=new NotificationSender()
             pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
       }
@@ -165,10 +164,14 @@ export class JobApplicantService {
               responseData,
               "Job applicant updated successfully"
             );
-            console.log(response,"res")
-            if(response.applicantStatus=="Accept" || response.applicantStatus=="Decline"){
+            if(response.applicantStatus=="Accept" ){
               const pushNotification=new NotificationSender()
-              pushNotification.customNotification(req.user,result.applicantId,"applicantStatus")
+              pushNotification.customNotification(req.user,result.applicantId,"applicantStatusAccept")
+
+            }
+            else if(response.applicantStatus=="Decline"){
+              const pushNotification=new NotificationSender()
+              pushNotification.customNotification(req.user,result.applicantId,"applicantStatusDecline")
 
             }
           }

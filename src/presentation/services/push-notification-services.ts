@@ -36,7 +36,10 @@ export class NotificationSender {
         case 'sendMessage':
           return await this.realtorDataSource.read(senderId)
       // Add other cases for different event types
-      case 'applicantStatus':
+      case 'applicantStatusAccept':
+        return await this.realtorDataSource.read(senderId)
+
+        case 'applicantStatusDecline':
         return await this.realtorDataSource.read(senderId)
   
       default:
@@ -63,8 +66,11 @@ export class NotificationSender {
       case 'appliedJob':
         return await this.jobDataSource.read(receiverId)
 
-        case 'applicantStatus':
+        case 'applicantStatusAccepted':
         return await this.realtorDataSource.read(receiverId)
+
+        case 'applicantStatusDecline':
+          return await this.realtorDataSource.read(receiverId)
 
       
         case 'sendMessage':
@@ -110,9 +116,14 @@ export class NotificationSender {
         body = `You have message request from ${sender.firstName ?? "user"} ${sender.lastName ?? ''}`;
         break;
 
-        case 'applicantStatus':
+        case 'applicantStatusAccepted':
         title = 'applied job status';
-        body = `Your applicantion has been selected for the job role.Tap to view job agreement`;
+        body = `Your application has been selected for the job role.Tap to view job agreement`;
+        break;
+
+        case 'applicantStatusDecline':
+        title = 'applied job status';
+        body = `Your application has been Rejected for the job role.`;
         break;
 
       default:
