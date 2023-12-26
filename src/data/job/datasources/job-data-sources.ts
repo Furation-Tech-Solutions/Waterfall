@@ -60,7 +60,7 @@ export class JobDataSourceImpl implements JobDataSource {
     // Check if there are JobApplicants with agreement=true for the given job
     const hasApplicants = await JobApplicant.findOne({
       where: {
-        job: id,
+        jobId: id,
         agreement: true,
       },
     });

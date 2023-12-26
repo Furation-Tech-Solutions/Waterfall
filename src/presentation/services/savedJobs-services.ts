@@ -102,10 +102,21 @@ export class SavedJobService {
       await this.getSavedJobByIdUsecase.execute(savedJobId);
 
     savedJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "SavedJob not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Saved job retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved job retrieved successfully"
+        );
       }
     );
   }
@@ -169,6 +180,9 @@ export class SavedJobService {
     savedJobs.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (savedJobs: SavedJobEntity[]) => {
+         if (savedJobs.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const resData = savedJobs.map((savedJob: any) =>
           SavedJobMapper.toEntity(savedJob)
         );
@@ -177,6 +191,7 @@ export class SavedJobService {
           resData,
           "Saved jobs retrieved successfully"
         );
+        }
       }
     );
   }

@@ -86,7 +86,14 @@ export class JobApplicantService {
       await this.getJobApplicantByIdUsecase.execute(jobId);
 
     job.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "JobApplicant not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: JobApplicantEntity) => {
         const resData = JobApplicantMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -121,11 +128,15 @@ export class JobApplicantService {
     jobApplicants.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobApplicants: JobApplicantEntity[]) => {
-        const resData = jobApplicants.map((jobApplicant: any) =>
-          JobApplicantMapper.toEntity(jobApplicant)
-        );
-        this.sendSuccessResponse(res, resData);
-      }
+         if (jobApplicants.length === 0) {
+           this.sendSuccessResponse(res, [], "Success", 200);
+         } else {
+           const resData = jobApplicants.map((jobApplicant: any) =>
+             JobApplicantMapper.toEntity(jobApplicant)
+           );
+           this.sendSuccessResponse(res, resData);
+         }
+    }
     );
   }
 

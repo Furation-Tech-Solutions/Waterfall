@@ -109,14 +109,18 @@ export class FeedBackService {
     feedBacks.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FeedBackEntity[]) => {
-        const responseData = result.map((feedback) =>
-          FeedBackMapper.toEntity(feedback)
-        );
-        this.sendSuccessResponse(
-          res,
-          responseData,
-          "Feedbacks retrieved successfully"
-        );
+         if (result.length === 0) {
+           this.sendSuccessResponse(res, [], "Success", 200);
+         } else {
+           const responseData = result.map((feedback) =>
+             FeedBackMapper.toEntity(feedback)
+           );
+           this.sendSuccessResponse(
+             res,
+             responseData,
+             "Feedbacks retrieved successfully"
+           );
+         }
       }
     );
   }
@@ -129,18 +133,21 @@ export class FeedBackService {
       await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     feedBack.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
-      (result: FeedBackEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Feedback not found", 200);
         } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
+      (result: FeedBackEntity) => {
           const resData = FeedBackMapper.toEntity(result);
           this.sendSuccessResponse(
             res,
             resData,
             "Feedback retrieved successfully"
           );
-        }
       }
     );
   }

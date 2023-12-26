@@ -46,8 +46,8 @@ export class RealtorRepositoryImpl implements RealtorRepository {
       const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
       // Check if the data length is zero
       if (realtors.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, RealtorEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, RealtorEntity[]>([]);
       }
       return Right<ErrorClass, RealtorEntity[]>(realtors);
     } catch (error: any) {

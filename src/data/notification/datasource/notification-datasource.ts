@@ -89,7 +89,6 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
   async getAll(loginId: string): Promise<NotificationEntity[]> {
     // Get all message records based on the provided query parameters
     
-  console.log("inside datasource",loginId)
   // const data=await Notification.findAll({})
   
       const data = await Notification.findAll({
@@ -110,7 +109,6 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
         ],
        
       });
-      console.log(data,"data inside dtsrc")
       return data.map((notificationData: any) => notificationData.toJSON());
     }
 

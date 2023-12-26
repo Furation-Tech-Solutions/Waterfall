@@ -84,8 +84,8 @@ export class NotInterestedRepositoryImpl implements NotInterestedRepository {
       const response = await this.dataSource.getAll(query);
       // Check if the data length is zero
       if (response.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, NotInterestedEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, NotInterestedEntity[]>([]);
       }
       return Right<ErrorClass, NotInterestedEntity[]>(response);
     } catch (error: any) {
