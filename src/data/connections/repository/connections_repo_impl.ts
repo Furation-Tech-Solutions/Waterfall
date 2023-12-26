@@ -101,8 +101,8 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
       // Check if the data length is zero
       if (connections.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, ConnectionsEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, ConnectionsEntity[]>([]);
       }
 
       // Return a Right with an array of connection entities

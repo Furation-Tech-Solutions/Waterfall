@@ -69,17 +69,17 @@ export class NotificationServices {
       await this.createNotificationUsecase.execute(Data);
 
       newNotification.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
-      (result: NotificationEntity) => {
-        const resData = NotificationMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Message created successfully",
-          201
-        );
-      }
-    );
+        (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+        (result: NotificationEntity) => {
+          const resData = NotificationMapper.toEntity(result, true);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Message created successfully",
+            201
+          );
+        }
+      );
   }
 
 //   async deleteNotification(req: Request, res: Response): Promise<void> {
@@ -108,11 +108,15 @@ export class NotificationServices {
       await this.getByIdNotificationUsecase.execute(id);
 
     NotificationData.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
-      (result: NotificationEntity) => {
-        if (!result) {
-          return this.sendSuccessResponse(res, {}, "Message not found");
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Notification not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: NotificationEntity) => {
         const resData = NotificationMapper.toEntity(result);
         this.sendSuccessResponse(
           res,
@@ -149,11 +153,15 @@ export class NotificationServices {
         
         this.sendErrorResponse(res, error, error.status)},
       (result: NotificationEntity[]) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const responseData = result.map((notification) =>
           NotificationMapper.toEntity(notification)
         );
         this.sendSuccessResponse(res, responseData);
       }
+    }
     );
   }
 

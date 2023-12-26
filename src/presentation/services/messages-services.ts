@@ -66,7 +66,7 @@ export class MessagesServices {
       await this.createMessagesUsecase.execute(Data);
 
     newMessages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity) => {
         const resData = MessageMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -109,11 +109,15 @@ export class MessagesServices {
       await this.getByIdMessageUsecase.execute(id);
 
     Messages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
-      (result: MessageEntity) => {
-        if (!result) {
-          return this.sendSuccessResponse(res, {}, "Message not found");
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Message not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: MessageEntity) => {
         const resData = MessageMapper.toEntity(result);
         this.sendSuccessResponse(
           res,
@@ -151,11 +155,15 @@ export class MessagesServices {
     clientMessages.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity[]) => {
-        const responseData = result.map((message) =>
-          MessageMapper.toEntity(message)
-        );
-        this.sendSuccessResponse(res, responseData);
-      }
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((message) =>
+            MessageMapper.toEntity(message)
+          );
+          this.sendSuccessResponse(res, responseData);
+        }
+    }
     );
   }
 

@@ -3,8 +3,9 @@ export class NotInterestedModel {
   constructor(
     public realtorId: string = "", // Realtor name, default value is an empty string
     public jobId: number = 0, // Job name, default value is an empty string
-    public jobData: {} = {},
-    public realtorData: {} = {}
+    public realtorData: {} = {},
+    public jobData: {} = {}
+    
   ) {}
 }
 
@@ -14,8 +15,9 @@ export class NotInterestedEntity {
     public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
     public realtorId: string, // Realtor name
     public jobId: number, // Job name
-    public jobData: {},
-    public realtorData: {}
+    public realtorData: {},
+    public jobData: {}
+    
   ) {}
 }
 
@@ -49,8 +51,8 @@ export class NotInterestedMapper {
           : notInterestedData.id, // Set the ID if includeId is true
         realtorId: notInterestedData.realtorId, // Set Realtor from notInterestedData
         jobId: notInterestedData.jobId, // Set Job from notInterestedData
-        jobData: notInterestedData.jobData,
         realtorData: notInterestedData.realtorData,
+        jobData: notInterestedData.jobData,
       };
       return notInterestedEntity;
     }
@@ -62,8 +64,8 @@ export class NotInterestedMapper {
       id: notInterested.id, // Extract and include the ID
       realtorId: notInterested.realtorId, // Extract and include Realtor
       jobId: notInterested.jobId, // Extract and include Job
-      jobData: notInterested.jobData,
       realtorData: notInterested.realtorData,
+      jobData: notInterested.jobData,
     };
   }
 }

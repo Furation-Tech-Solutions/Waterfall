@@ -32,7 +32,9 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
   // Create a new feedback entry
   async create(feedBack: any): Promise<FeedBackEntity> {
     const existingFeedBack = await FeedBack.findOne({
-      where: { jobId: feedBack.jobId },
+      where: { jobId: feedBack.jobId,
+        fromRealtorId: feedBack.fromRealtorId, // Assuming these properties exist in the feedBack object
+        toRealtorId: feedBack.toRealtorId },
     });
 
     if (existingFeedBack) {
