@@ -80,8 +80,8 @@ export class MessagesRepositoryImpl implements MessagesRepository {
       const messages = await this.messageDataSource.getAll(loginId, query); // Use the messages data source
       // Check if the data length is zero
       if (messages.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, MessageEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, MessageEntity[]>([]);
       }
       return Right<ErrorClass, MessageEntity[]>(messages);
     } catch (e: any) {

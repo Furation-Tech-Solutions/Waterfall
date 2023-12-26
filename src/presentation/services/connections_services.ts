@@ -71,7 +71,7 @@ export class ConnectionsServices {
       await this.createRequestUsecase.execute(Data);
 
     newConnections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: ConnectionsEntity) => {
         const resData = ConnectionMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -116,7 +116,14 @@ export class ConnectionsServices {
       await this.getByIdUsecase.execute(id);
 
     connections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Connection not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: ConnectionsEntity) => {
         if (!result) {
           this.sendErrorResponse(res, new ApiError(400, " not found"));
@@ -151,6 +158,9 @@ export class ConnectionsServices {
     clientConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: ConnectionsEntity[]) => {
+         if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         // console.log(result, "clientConnections");
         // const responseData = result.map((connection) =>
         //   ConnectionMapper.toEntity(connection)
@@ -160,6 +170,7 @@ export class ConnectionsServices {
           result,
           "Connections retrieved successfully"
         );
+        }
       }
     );
   }

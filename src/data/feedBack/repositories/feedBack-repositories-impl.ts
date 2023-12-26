@@ -33,8 +33,8 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
       const feedBacks = await this.feedBackDataSource.getAllFeedBacks(query); // Use the tag feedBack data source
       // Check if the data length is zero
       if (feedBacks.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, FeedBackEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, FeedBackEntity[]>([]);
       }
       return Right<ErrorClass, FeedBackEntity[]>(feedBacks);
     } catch (e: any) {

@@ -15,7 +15,7 @@ export const numberOfApplicantsEnum = {
 };
 
 export const jobTypeEnum = {
-  SHOWINGPROPERTYtTOCLIENT: "Showing-property-to-client",
+  SHOWINGPROPERTYTOCLIENT: "Showing-property-to-client",
   ONETIMEVISIT: "One-time-visit",
   HELPWITHOPENHOUSE: "Help-with-open-house",
   WRITINGCMA: "Writing-CMA",

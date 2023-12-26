@@ -72,8 +72,8 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
 
       // Check if the data length is zero
       if (jobApplicants.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, JobApplicantEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, JobApplicantEntity[]>([]);
       }
 
       // Return a Right Either indicating success with an array of job applicants

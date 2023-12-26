@@ -67,15 +67,10 @@ export class JobService {
       await this.createJobUsecase.execute(jobData);
 
     newJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: JobEntity) => {
         const resData = JobMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Job created successfully",
-          201
-        );
+        this.sendSuccessResponse(res, resData, "Job created successfully", 201);
       }
     );
   }
@@ -89,12 +84,7 @@ export class JobService {
     response.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        this.sendSuccessResponse(
-          res,
-          {},
-          "Job deleted successfully",
-          204
-        );
+        this.sendSuccessResponse(res, {}, "Job deleted successfully", 204);
       }
     );
   }
@@ -106,17 +96,21 @@ export class JobService {
       await this.getJobByIdUsecase.execute(jobId);
 
     job.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => {
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Job not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: JobEntity) => {
         const resData = JobMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Job retrieved successfully"
-        );
+        this.sendSuccessResponse(res, resData, "Job retrieved successfully");
       }
     );
-  }
+}
+
 
   async updateJob(req: Request, res: Response): Promise<void> {
     const jobId: string = req.params.id;
@@ -181,27 +175,15 @@ export class JobService {
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
-
     jobs.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobs: JobEntity[]) => {
-        const resData = jobs.map((job: any) => JobMapper.toEntity(job));
-
-        // const emailService = new SESMailService();
-        // const emailOption = {
-        //   email: "shehzadmalik123.sm@gmail.com",
-        //   subject: "Booking Request Confirmation",
-        //   message: "this is testing email",
-        // };
-        // emailService.sendEmail(emailOption);
-
-        // const smsService = new SMSService();
-        // const smsOptions = {
-        //   phoneNumber: "+919881239491",
-        //   message: "this is testing sms in node .ts",
-        // };
-        // smsService.sendSMS(smsOptions);
-        this.sendSuccessResponse(res, resData);
+        if (jobs.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+          this.sendSuccessResponse(res, resData);
+        }
       }
     );
   }

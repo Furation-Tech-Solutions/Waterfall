@@ -56,10 +56,15 @@ export class BlockingService {
       await this.CreateBlockingUsecase.execute(blockingData);
 
     newBlocking.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: BlockingEntity) => {
         const resData = BlockingMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Blocking created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Blocking created successfully",
+          201
+        );
       }
     );
   }
@@ -89,11 +94,19 @@ export class BlockingService {
     blockings.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: BlockingEntity[]) => {
-        const responseData = result.map((blocking) =>
-          BlockingMapper.toEntity(blocking)
-        );
-        this.sendSuccessResponse(res, responseData, "Blockings retrieved successfully");
-      }
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((blocking) =>
+            BlockingMapper.toEntity(blocking)
+          );
+          this.sendSuccessResponse(
+            res,
+            responseData,
+            "Blockings retrieved successfully"
+          );
+        }
+    }
     );
   }
 
@@ -105,15 +118,18 @@ export class BlockingService {
       await this.GetBlockingByIdUsecase.execute(blockingId);
 
     blocking.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: BlockingEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+      (error: ErrorClass) => {
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Blocking not found", 200);
         } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
+      (result: BlockingEntity) => {
           const resData = BlockingMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "Blocking retrieved successfully");
         }
-      }
     );
   }
 

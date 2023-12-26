@@ -84,8 +84,8 @@ export class JobRepositoryImpl implements JobRepository {
       const response = await this.dataSource.getAll(query);
       // Check if the data length is zero
       if (response.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, JobEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, JobEntity[]>([]);
       }
       // Return a Right monad with an array of job entities on success
       return Right<ErrorClass, JobEntity[]>(response);
@@ -111,6 +111,7 @@ export class JobRepositoryImpl implements JobRepository {
       // Attempt to retrieve a job by ID using the data source
       const response = await this.dataSource.read(id);
 
+
       // Check if the response is null (job not found)
       if (response === null) {
         // Return a Left monad with a not found error
@@ -128,7 +129,6 @@ export class JobRepositoryImpl implements JobRepository {
       );
     }
   }
-
   // Method to find the total number of posted jobs
   async TotalCount(query: JobQuery): Promise<Either<ErrorClass, number>> {
     try {
