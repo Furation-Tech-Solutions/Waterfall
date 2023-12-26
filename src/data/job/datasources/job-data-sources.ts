@@ -111,7 +111,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
     // let whereCondition: any = {};
-    
+
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
@@ -175,7 +175,8 @@ export class JobDataSourceImpl implements JobDataSource {
       return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobsForYou") {
+    } // Check the query parameter 'q' for "jobsForYou" logic
+    else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
         include: [
@@ -197,11 +198,10 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       console.log(jobs, "job:");
-      
+
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      
-      
+
       console.log("completedJobTypes:", completedJobTypes);
 
       // Recommend jobs with the same jobType
@@ -220,13 +220,13 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      
+
       console.log("reccommendedJobs:", recommendedJobs);
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
         return recommendedJobs.map((job: any) => job.toJSON());
-      } 
+      }
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -257,10 +257,12 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return Jobsforyou.map((job: any) => job.toJSON());
-    
 
       //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobCompleted") {
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------
+    else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
 
       let whereCondition = {};
