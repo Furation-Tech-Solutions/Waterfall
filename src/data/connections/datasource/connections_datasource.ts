@@ -13,7 +13,7 @@ export interface Query {
   q: string;
   page: number;
   limit: number;
-  toId: number;
+  toId: string;
 }
 
 // Create ConnectionsDataSource Interface
@@ -28,7 +28,7 @@ export interface ConnectionsDataSource {
 
 // Connections Data Source communicates with the database
 export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Create a new connection
   async createReq(newConnection: any): Promise<ConnectionsEntity> {
@@ -73,6 +73,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     }
 
     const createdConnections = await Connections.create(newConnection);
+
     return createdConnections.toJSON();
   }
 
@@ -118,11 +119,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
   // Retrieve connections based on a query
   async getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]> {
-    const loginID = parseInt(loginId);
+    const loginID = loginId;
     const currentPage = query.page || 1;
     const itemsPerPage = query.limit || 10;
     const offset = (currentPage - 1) * itemsPerPage;
-
+    // console.log(loginID, query);
     if (query.q === "connected") {
       // Retrieve connected connections
       const data = await Connections.findAll({
@@ -145,10 +146,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-
+      // console.log(data);
       return data.map((connection: any) => connection.toJSON());
     } else if (query.q === "requests") {
       // Retrieve Request list
+      // console.log(loginID);
       const data = await Connections.findAll({
         where: {
           connected: false,
@@ -169,14 +171,14 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-
+      // console.log(data, "Dddddddddddddd")
       return data.map((connection: any) => connection.toJSON());
     } else if (query.q === "mutualfriends") {
       // Retrieve connections with mutual friends
-      const friendId: number = query.toId;
+      const friendId: string = query.toId;
       // console.log(friendId, "friendId from 123");
       // console.log(loginID, "login id from 124");
-      const findFriendIds = async (id: number) => {
+      const findFriendIds = async (id: string) => {
         const data = await Connections.findAll({
           where: {
             connected: true,
@@ -185,11 +187,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         });
         // console.log(data,"data"); working
 
-        const friendIds: number[] = data
+        const friendIds: string[] = data
           .map((friend: any) =>
             friend.fromId === id ? friend.toId : friend.fromId
           )
-          .filter((id: number | null) => id !== null);
+          .filter((id: string | null) => id !== null);
         // console.log(friendIds, "friendIds from 140");// working
         return friendIds;
       };
@@ -201,12 +203,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       // console.log(myFriends, "myfriends  from 146");
       // console.log(otherFriends, "myfriends  from 147");
 
-      const commonFriends: number[] = myFriends.filter((id: number) =>
+      const commonFriends: string[] = myFriends.filter((id: string) =>
         otherFriends.includes(id)
       );
       // console.log(commonFriends, "common");
       const friendsArray: any[] = await Promise.all(
-        commonFriends.map(async (commonFriendId: number) => {
+        commonFriends.map(async (commonFriendId: string) => {
           // console.log(commonFriendId, "inside"); // working
           const data: any = await Realtors.findByPk(commonFriendId);
           // console.log(data, "datavalue");
@@ -219,9 +221,12 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
       // loginID;
       // Retrieve connected connections
       // console.log(loginID);
-      const user: any = await Realtors.findByPk(loginID);
+      // const user: any = await Realtors.findByPk(loginID);
+      const user: any = await Realtors.findOne({
+        where: { id: loginID, deletedStatus: false },
+      });
       // console.log(user.id, "user");
-      const findFriendIds = async (id: number) => {
+      const findFriendIds = async (id: string) => {
         const data = await Connections.findAll({
           where: {
             connected: true,
@@ -249,6 +254,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             [Op.not]: loginID, // Exclude the current user
             [Op.notIn]: myFriends.map((friend: any) => friend), // Exclude existing friends
           },
+          deletedStatus: false
           // location: user.location
         },
       });
