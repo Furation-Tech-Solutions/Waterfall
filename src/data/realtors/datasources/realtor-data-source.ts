@@ -226,7 +226,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
       where: { recoId: id, deletedStatus: false },
     });
     // console.log(realtor,"asdas");
-
+    
     if (realtor === null) {
       throw ApiError.dataNotFound();
     }
