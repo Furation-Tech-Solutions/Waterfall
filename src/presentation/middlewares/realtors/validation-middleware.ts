@@ -23,7 +23,7 @@ interface RealtorInput {
   firebaseId: string;
   linkedIn: string;
   attachmentLink: string;
-  licenseIssueDate: string;
+  licenseExpirationDate: string;
   badge: { badgeName: string; timestamp: Date };
 }
 
@@ -174,9 +174,9 @@ const realtorValidator = (
       "string.min": "attachmentLink should have at least 3 characters",
       "string.max": "attachmentLink should have less than 30 characters",
     }),
-    licenseIssueDate: Joi.string().trim().messages({
-      "string.min": "licenseIssueDate should have at least 3 characters",
-      "string.max": "licenseIssueDate should have less than 30 characters",
+    licenseExpirationDate: Joi.string().trim().messages({
+      "string.min": "licenseExpirationDate should have at least 3 characters",
+      "string.max": "licenseExpirationDate should have less than 30 characters",
     }),
     badge: Joi.object({
           badgeName: Joi.string().optional(),
