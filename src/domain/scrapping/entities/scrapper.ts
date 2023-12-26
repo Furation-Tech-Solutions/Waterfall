@@ -1,7 +1,7 @@
 
 export class ScrapperModel{
     constructor(
-       public firstName:string="",
+    //    public firstName:string="",
        public lastName:string="",
        public recoNumber:number=0
     ){}
