@@ -102,7 +102,7 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.STRING,
     defaultValue: "",
   },
-  licenseIssueDate: {
+  licenseExpirationDate: {
     type: DataTypes.STRING, // Adjust the type based on your requirements
     defaultValue: "",
   },
@@ -116,7 +116,7 @@ const Realtors = sequelize.define("Realtors", {
     defaultValue: []
   },
   firebaseDeviceToken: {
-    type:  DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.ARRAY(DataTypes.STRING),
     defaultValue: []
   },
 });
