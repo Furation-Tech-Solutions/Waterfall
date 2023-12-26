@@ -4,8 +4,8 @@ export class NotificationModel {
       public senderId: string = "",
       public receiverId: string = "",
       public message: string = "",
-      public senderIdData: {} = {},
-      public receiverIdData: {} = {}
+      public senderData: {} = {},
+      public receiverData: {} = {}
     ) {}
   }
   
@@ -16,8 +16,8 @@ export class NotificationModel {
       public senderId: string,
       public receiverId: string,
       public message: string,
-      public senderIdData: {},
-      public receiverIdData: {},
+      public senderData: {},
+      public receiverData: {},
       public notificationTime:string
     ) {}
   }
@@ -58,8 +58,8 @@ export class NotificationModel {
           senderId: notificationData.senderId,
           receiverId: notificationData.receiverId,
           message: notificationData.message,
-          senderIdData: notificationData.senderIdData,
-          receiverIdData: notificationData.receiverIdData,
+          senderData: notificationData.senderData,
+          receiverData: notificationData.receiverData,
           notificationTime: notificationData.createdAt,
         };
         return notificationEntity;
@@ -72,8 +72,8 @@ export class NotificationModel {
         senderId: message.senderId,
         receiverId: message.receiverId,
         message: message.message,
-        senderIdData: message.senderIdData,
-        receiverIdData: message.receiverIdData,
+        senderData: message.senderData,
+        receiverData: message.receiverData,
       };
     }
   }

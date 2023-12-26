@@ -12,6 +12,7 @@ import { UpdateMessageUsecase } from "@domain/messages/usecases/update-msg";
 import { GetAllMessageUsecase } from "@domain/messages/usecases/get-all-msg";
 import { Either } from "monet";
 import { Query } from "@data/messages/datasources/msg-datasource";
+import { NotificationSender } from "./push-notification-services";
 
 export class MessagesServices {
   private readonly createMessagesUsecase: CreateMessagesUsecase;
@@ -74,8 +75,12 @@ export class MessagesServices {
           "Message created successfully",
           201
         );
+        console.log(result)
+        const pushNotification=new NotificationSender()
+        pushNotification.customNotification(result.senderId,result.receiverId,"sendMessage")
       }
     );
+// 
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {

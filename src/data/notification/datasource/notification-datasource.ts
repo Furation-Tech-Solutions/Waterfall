@@ -46,6 +46,7 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
     }
 
     // Create a new message record using the provided data
+
     const createdNotification = await Notification.create(notificationData);
     return createdNotification.toJSON();
   }
@@ -68,12 +69,12 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
       include: [
         {
           model: Realtors,
-          as: "senderIdData", // Alias for the first association
+          as: "senderData", // Alias for the first association
           foreignKey: "senderId",
         },
         {
           model: Realtors,
-          as: "receiverIdData", // Alias for the second association
+          as: "receiverData", // Alias for the second association
           foreignKey: "receiverId",
         },
       ],
@@ -89,7 +90,6 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
   async getAll(loginId: string): Promise<NotificationEntity[]> {
     // Get all message records based on the provided query parameters
     
-  console.log("inside datasource",loginId)
   // const data=await Notification.findAll({})
   
       const data = await Notification.findAll({
@@ -99,24 +99,18 @@ export class NotificationDataSourceImpl implements NotificationDataSource {
         include: [
           {
             model: Realtors,
-            as: "senderIdData",
+            as: "senderData",
             foreignKey: "senderId",
           },
           {
             model: Realtors,
-            as: "receiverIdData",
+            as: "receiverData",
             foreignKey: "receiverId",
           },
         ],
        
       });
-      console.log(data,"data inside dtsrc")
       return data.map((notificationData: any) => notificationData.toJSON());
     }
-
-
-
-
-
   
 }
