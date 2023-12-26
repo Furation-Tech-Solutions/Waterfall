@@ -10,6 +10,7 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import SESMailService from "./email-ses-services";
 import SMSService from "./sms-service";
+import { NotificationSender } from "./push-notification-services";
 
 export class JobService {
   private readonly createJobUsecase: CreateJobUsecase;
@@ -141,6 +142,9 @@ export class JobService {
               responseData,
               "Job updated successfully"
             );
+            console.log(response,"response")
+            const pushNotification=new NotificationSender()
+            // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
           }
         );
       }

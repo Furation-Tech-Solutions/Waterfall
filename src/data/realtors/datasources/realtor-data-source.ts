@@ -60,92 +60,48 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
     //------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // Check for different query parameters and filter data accordingly
-    if (query.location != undefined) {
-      const data = await Realtor.findAll({
-        where: {
-          location: {
-            [Op.iLike]: `%${query.location}%`,
-          },
-          deletedStatus: false,
-        },
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
-      return data.map((realtor: any) => realtor.toJSON());
-    }
-    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    else if (query.gender != undefined) {
-      const data = await Realtor.findAll({
-        where: {
-          deletedStatus: false,
-          [Op.or]: [
-            {
-              firstName: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-            {
-              lastName: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-            {
-              email: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-          ],
-          gender: {
-            [Op.iLike]: `%${query.gender}%`,
-          },
-        },
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
-      return data.map((realtor: any) => realtor.toJSON());
-    }
-    //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    else if (query.q != undefined) {
-      const data = await Realtor.findAll({
-        where: {
-          deletedStatus: false,
-          [Op.or]: [
-            {
-              firstName: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-            {
-              lastName: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-            {
-              email: {
-                [Op.iLike]: `%${query.q}%`,
-              },
-            },
-          ],
-        },
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
-      return data.map((realtor: any) => realtor.toJSON());
-    }
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------
-    else {
-      // Handle other cases when 'location' is not provided (e.g., return all records)
-      const data = await Realtor.findAll({
-        where: {
-          deletedStatus: false,
-        },
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
+    let whereClause: any = {
+      deletedStatus: false,
+    };
 
-      return data.map((realtor: any) => realtor.toJSON());
+    if (query.location != undefined) {
+      whereClause.location = {
+        [Op.iLike]: `%${query.location}%`,
+      };
     }
+    if (query.gender != undefined) {
+      whereClause.gender = query.gender
+    }
+    if (query.q != undefined) {
+      whereClause = {
+        ...whereClause,
+        [Op.or]: [
+          {
+            firstName: {
+              [Op.iLike]: `%${query.q}%`,
+            },
+          },
+          {
+            lastName: {
+              [Op.iLike]: `%${query.q}%`,
+            },
+          },
+          {
+            email: {
+              [Op.iLike]: `%${query.q}%`,
+            },
+          },
+        ],
+      };
+    }
+
+    const data = await Realtor.findAll({
+      where: whereClause,
+      limit: itemsPerPage,
+      offset: offset,
+    });
+
+    return data.map((realtor: any) => realtor.toJSON());
   }
 
   // Retrieve a Realtor entry by its ID

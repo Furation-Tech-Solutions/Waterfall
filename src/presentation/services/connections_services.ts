@@ -13,6 +13,7 @@ import { GetByIdUsecase } from "@domain/connections/usecases/get_by_id";
 import { UpdateRequestUsecase } from "@domain/connections/usecases/update_Request";
 import { GetAllUsecase } from "@domain/connections/usecases/get_all";
 import { Either } from "monet";
+import { NotificationSender } from "./push-notification-services";
 
 // Define a class for handling Connections-related services
 export class ConnectionsServices {
@@ -79,7 +80,10 @@ export class ConnectionsServices {
           "Connection created successfully",
           201
         );
+         const pushNotification=new NotificationSender()
+         pushNotification.customNotification(result.fromId,result.toId,"connectionRequest")
       }
+
     );
   }
 
@@ -203,9 +207,14 @@ export class ConnectionsServices {
               resData,
               "Connection updated successfully"
             );
+            const pushNotification=new NotificationSender()
+            pushNotification.customNotification(result.toId,result.fromId,"connectionRequestResponse")
           }
         );
       }
+      // sender
+      // const pushNotification=new NotificationSender()
+      ///
     );
   }
 }

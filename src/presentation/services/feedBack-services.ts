@@ -12,6 +12,7 @@ import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack
 import { GetFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { NotificationSender } from "./push-notification-services";
 
 export class FeedBackService {
   private readonly CreateFeedBackUsecase: CreateFeedBackUsecase;
@@ -80,8 +81,13 @@ export class FeedBackService {
           "Feedback created successfully",
           201
         ); // Created
+        const pushNotification=new NotificationSender()
+        pushNotification.customNotification(result.fromRealtorId,result.toRealtorId,"feedback")
       }
     );
+
+    // const pushNotification=new NotificationSender()
+
   }
 
   // Handler for getting all feedbacks

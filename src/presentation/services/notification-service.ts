@@ -149,7 +149,9 @@ export class NotificationServices {
       await this.getAllNotificationUsecase.execute(loginId);
 
       notificationData.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (error: ErrorClass) => {
+        
+        this.sendErrorResponse(res, error, error.status)},
       (result: NotificationEntity[]) => {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);

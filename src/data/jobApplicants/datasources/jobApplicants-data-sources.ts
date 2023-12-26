@@ -62,7 +62,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       if (pendingApplicants < parseInt(numberOfApplicantsLimit)) {
         // Create a new job applicant record in the database
         const createdJobApplicant = await JobApplicant.create(jobApplicant);
-
+           
         return createdJobApplicant.toJSON();
       } else {
         // Throw an error if the limit is exceeded

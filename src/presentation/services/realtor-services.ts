@@ -84,6 +84,8 @@ export class RealtorService {
         );
       }
     );
+    // const pushNotification=new NotificationSender()
+
   }
 
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
