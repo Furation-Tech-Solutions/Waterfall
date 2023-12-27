@@ -76,8 +76,8 @@ export class ReportRepositoryImpl implements ReportRepository {
       const allReports = await this.dataSource.getAll();
       // Check if the data length is zero
       if (allReports.length === 0) {
-        // If data length is zero, throw a "404 Not Found" error
-        return Left<ErrorClass, ReportEntity[]>(ApiError.dataNotFound());
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, ReportEntity[]>([]);
       }
       return Right<ErrorClass, ReportEntity[]>(allReports);
     } catch (error: any) {

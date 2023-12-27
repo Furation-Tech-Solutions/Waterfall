@@ -71,7 +71,7 @@ export class ConnectionsServices {
       await this.createRequestUsecase.execute(Data);
 
     newConnections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: ConnectionsEntity) => {
         const resData = ConnectionMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -80,8 +80,8 @@ export class ConnectionsServices {
           "Connection created successfully",
           201
         );
-         const pushNotification=new NotificationSender()
-         pushNotification.customNotification(result.fromId,result.toId,"connectionRequest")
+        const pushNotification = new NotificationSender()
+        pushNotification.customNotification(result.fromId, result.toId, "connectionRequest")
       }
 
     );
@@ -116,7 +116,14 @@ export class ConnectionsServices {
       await this.getByIdUsecase.execute(id);
 
     connections.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Connection not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: ConnectionsEntity) => {
         if (!result) {
           this.sendErrorResponse(res, new ApiError(400, " not found"));
@@ -134,9 +141,9 @@ export class ConnectionsServices {
 
   // Handler for getting all connections
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-        let toId = req.headers.toid;
-        let loginId = req.headers.fromid as string;
-
+    let toId = req.headers.toid;
+    let loginId = req.headers.fromid as string;
+    // console.log(req.headers);
 
     const query: any = {};
 
@@ -151,6 +158,9 @@ export class ConnectionsServices {
     clientConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: ConnectionsEntity[]) => {
+         if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         // console.log(result, "clientConnections");
         // const responseData = result.map((connection) =>
         //   ConnectionMapper.toEntity(connection)
@@ -160,6 +170,7 @@ export class ConnectionsServices {
           result,
           "Connections retrieved successfully"
         );
+        }
       }
     );
   }
@@ -196,8 +207,8 @@ export class ConnectionsServices {
               resData,
               "Connection updated successfully"
             );
-            const pushNotification=new NotificationSender()
-            pushNotification.customNotification(result.toId,result.fromId,"connectionRequestResponse")
+            const pushNotification = new NotificationSender()
+            pushNotification.customNotification(result.toId, result.fromId, "connectionRequestResponse")
           }
         );
       }

@@ -1,5 +1,8 @@
 // Import necessary modules and dependencies
-import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
+import {
+  RealtorEntity,
+  RealtorModel,
+} from "@domain/realtors/entities/realtors";
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op, DataTypes } from "sequelize";
@@ -25,7 +28,7 @@ export interface RealtorQuery {
 
 // Realtor Data Source communicates with the database
 export class RealtorDataSourceImpl implements RealtorDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Create a new Realtor entry
   async create(realtor: any): Promise<RealtorEntity> {
@@ -185,26 +188,29 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // Soft delete the Realtor (set deletedAt)
 
     // console.log('Realtor soft-deleted successfully');
-
-
   }
 
-  async realtorLogin(reatorEmail: string, firebaseDeviceToken: string): Promise<any | null> {
-
-    const realtorData: any = await Realtor.findOne({ where: { email: reatorEmail } });
+  async realtorLogin(
+    reatorEmail: string,
+    firebaseDeviceToken: string
+  ): Promise<any | null> {
+    const realtorData: any = await Realtor.findOne({
+      where: { email: reatorEmail },
+    });
     if (realtorData) {
-
       if (firebaseDeviceToken !== undefined && firebaseDeviceToken !== "") {
         const tokenExists = await Realtor.findOne({
           where: {
             id: realtorData.id,
             firebaseDeviceToken: { [Op.contains]: [firebaseDeviceToken] },
-
           },
         });
 
         if (!tokenExists) {
-          realtorData.firebaseDeviceToken = [...realtorData.firebaseDeviceToken, firebaseDeviceToken];
+          realtorData.firebaseDeviceToken = [
+            ...realtorData.firebaseDeviceToken,
+            firebaseDeviceToken,
+          ];
           try {
             await realtorData.save(); // Attempt to save the updated document with the new token
           } catch (tokenSaveError) {
@@ -217,7 +223,6 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     }
 
     return null;
-
   }
 
   async RecoId(id: string): Promise<RealtorEntity> {
@@ -226,7 +231,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
       where: { recoId: id, deletedStatus: false },
     });
     // console.log(realtor,"asdas");
-    
+
     if (realtor === null) {
       throw ApiError.dataNotFound();
     }
@@ -234,5 +239,4 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
     // If a matching entry is found, convert it to a plain JavaScript object before returning
     return realtor.toJSON();
   }
-
 }

@@ -70,7 +70,7 @@ export class CallLogService {
       await this.createCallLogUsecase.execute(callLogData);
 
     newCallLog.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -107,11 +107,18 @@ export class CallLogService {
   async getCallLogById(req: Request, res: Response): Promise<void> {
     const callLogId: string = req.params.id;
 
-    const job: Either<ErrorClass, CallLogEntity> =
+    const callLog: Either<ErrorClass, CallLogEntity> =
       await this.getCallLogByIdUsecase.execute(callLogId);
 
-    job.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+    callLog.cata(
+      (error: ErrorClass) =>  {
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "CallLog not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: CallLogEntity) => {
         const resData = CallLogMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -185,14 +192,18 @@ export class CallLogService {
     callLogs.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (callLogs: CallLogEntity[]) => {
-        const resData = callLogs.map((callLog: any) =>
-          CallLogMapper.toEntity(callLog)
-        );
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "CallLogs retrieved successfully"
-        );
+        if (callLogs.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const resData = callLogs.map((callLog: any) =>
+            CallLogMapper.toEntity(callLog)
+          );
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "CallLogs retrieved successfully"
+          );
+        }
       }
     );
   }

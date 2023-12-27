@@ -58,7 +58,7 @@ export class RealtorService {
     });
   }
 
-  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number = 500): void {
+  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number=500): void {
     res.status(statusCode).json({
       success: false,
       message: error.message,
@@ -71,7 +71,8 @@ export class RealtorService {
       await this.createRealtorUsecase.execute(realtorData);
     newRealtor.cata(
       (error: ErrorClass) => {
-        this.sendErrorResponse(res, error, 400)
+        
+        this.sendErrorResponse(res, error, error.status);
       },
       (result: RealtorEntity) => {
         const resData = RealtorMapper.toEntity(result, true);
@@ -100,8 +101,13 @@ export class RealtorService {
 
     realtors.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
-      (result: RealtorEntity[]) =>
+      (result: RealtorEntity[]) => {
+      if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+        }
+      }
     );
   }
 
@@ -112,8 +118,13 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) => {
-        this.sendErrorResponse(res, error, error.status)
+      (error: ErrorClass) =>{
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Realtor not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
       },
       (result: RealtorEntity) => {
         if (!result) {

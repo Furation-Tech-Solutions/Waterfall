@@ -60,7 +60,7 @@ export class JobDataSourceImpl implements JobDataSource {
     // Check if there are JobApplicants with agreement=true for the given job
     const hasApplicants = await JobApplicant.findOne({
       where: {
-        job: id,
+        jobId: id,
         agreement: true,
       },
     });
@@ -175,7 +175,8 @@ export class JobDataSourceImpl implements JobDataSource {
       return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobsForYou") {
+    } // Check the query parameter 'q' for "jobsForYou" logic
+    else if (query.q === "jobsForYou") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
       const jobs = await Job.findAll({
         include: [
@@ -197,11 +198,10 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
       console.log(jobs, "job:");
-      
+
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
-      
-      
+
       console.log("completedJobTypes:", completedJobTypes);
 
       // Recommend jobs with the same jobType
@@ -220,8 +220,7 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-      
-      console.log("reccommendedJobs:", recommendedJobs);
+      // console.log("reccommendedJobs:", recommendedJobs);
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
@@ -260,7 +259,10 @@ export class JobDataSourceImpl implements JobDataSource {
     
 
       //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobCompleted") {
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------
+    else if (query.q === "jobCompleted") {
       // Fetch jobs that are marked as 'JobCompleted' and meet certain criteria
 
       let whereCondition = {};
