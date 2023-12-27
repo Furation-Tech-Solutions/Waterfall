@@ -7,7 +7,7 @@ import Jobs from "@data/job/models/job-model";
 
 // Define the structure of the query parameters
 export interface Query {
-  id?: number;
+  id?: string;
   q?: string;
   page?: number;
   limit?: number;
@@ -27,14 +27,16 @@ export interface FeedBackDataSource {
 
 // Implementation of the FeedBackDataSource interface
 export class FeedBackDataSourceImpl implements FeedBackDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Create a new feedback entry
   async create(feedBack: any): Promise<FeedBackEntity> {
     const existingFeedBack = await FeedBack.findOne({
-      where: { jobId: feedBack.jobId,
+      where: {
+        jobId: feedBack.jobId,
         fromRealtorId: feedBack.fromRealtorId, // Assuming these properties exist in the feedBack object
-        toRealtorId: feedBack.toRealtorId },
+        toRealtorId: feedBack.toRealtorId
+      },
     });
 
     if (existingFeedBack) {

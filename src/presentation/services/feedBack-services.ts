@@ -81,8 +81,8 @@ export class FeedBackService {
           "Feedback created successfully",
           201
         ); // Created
-        const pushNotification=new NotificationSender()
-        pushNotification.customNotification(result.fromRealtorId,result.toRealtorId,"feedback")
+        const pushNotification = new NotificationSender()
+        pushNotification.customNotification(result.fromRealtorId, result.toRealtorId, "feedback")
       }
     );
 
@@ -115,18 +115,18 @@ export class FeedBackService {
     feedBacks.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FeedBackEntity[]) => {
-         if (result.length === 0) {
-           this.sendSuccessResponse(res, [], "Success", 200);
-         } else {
-           const responseData = result.map((feedback) =>
-             FeedBackMapper.toEntity(feedback)
-           );
-           this.sendSuccessResponse(
-             res,
-             responseData,
-             "Feedbacks retrieved successfully"
-           );
-         }
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((feedback) =>
+            FeedBackMapper.toEntity(feedback)
+          );
+          this.sendSuccessResponse(
+            res,
+            responseData,
+            "Feedbacks retrieved successfully"
+          );
+        }
       }
     );
   }
@@ -148,12 +148,12 @@ export class FeedBackService {
         }
       },
       (result: FeedBackEntity) => {
-          const resData = FeedBackMapper.toEntity(result);
-          this.sendSuccessResponse(
-            res,
-            resData,
-            "Feedback retrieved successfully"
-          );
+        const resData = FeedBackMapper.toEntity(result);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Feedback retrieved successfully"
+        );
       }
     );
   }
@@ -220,7 +220,7 @@ export class FeedBackService {
 
   async getFeedbackCount(req: Request, res: Response): Promise<void> {
     let id: string = req.body.loginId;
-    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    let loginId = id;// For testing purposes, manually set loginId to "2"
 
     const query: any = {}; // Create an empty query object
 
@@ -228,7 +228,7 @@ export class FeedBackService {
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
+    query.id = loginId;
     query.year = parseInt(req.query.year as string, 10);
     query.month = parseInt(req.query.month as string, 10);
 
