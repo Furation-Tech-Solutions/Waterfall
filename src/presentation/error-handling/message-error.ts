@@ -52,6 +52,8 @@ export const QUESTION_CONFLICT = "realtor question already exists";
 
 export const REALTOR_CONFLICT = "realtor already exists";
 
+export const SAVEDJOB_CONFLICT = "Saved Job already exists";
+
 // export const FIRST_NAME_EXIST="User already exists"
 
 
