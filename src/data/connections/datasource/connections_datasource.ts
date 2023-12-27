@@ -32,6 +32,10 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
   // Create a new connection
   async createReq(newConnection: any): Promise<ConnectionsEntity> {
+    if (newConnection.fromId === newConnection.toId) {
+      throw new Error("Cannot send a connection request to yourself.");
+    }
+    
     const existingConnection = await Connections.findOne({
       where: {
         [Op.or]: [

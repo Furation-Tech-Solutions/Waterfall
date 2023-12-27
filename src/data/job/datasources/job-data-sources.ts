@@ -7,6 +7,7 @@ import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import realtorModel from "@data/realtors/model/realtor-model";
 import { RealtorEntity, RealtorMapper, RealtorModel } from "@domain/realtors/entities/realtors";
 import ApiError from "@presentation/error-handling/api-error";
+import NotInterested from "@data/notInterested/model/notInterested-models";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -111,7 +112,19 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
     // let whereCondition: any = {};
-    
+    const applyNotInterestedFilter = async (jobs: any[]) => {
+      const notInterestedJobs = await NotInterested.findAll({
+        where: {
+          realtorId: loginId,
+        },
+        attributes: ["jobId"],
+      });
+  
+      return jobs.filter((job) => {
+        const jobId = job.getDataValue('id');
+        return !notInterestedJobs.some((notInterestedJob: any) => notInterestedJob.jobId === jobId);
+      });
+    };
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
@@ -171,8 +184,9 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage, // Limit the number of results per page
         offset: offset, // Calculate the offset based on the current page
       });
-
-      return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
+      // return jobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------
     } // Check the query parameter 'q' for "jobsForYou" logic
@@ -197,8 +211,7 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       });
-      console.log(jobs, "job:");
-
+      
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
 
@@ -255,8 +268,9 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-      return Jobsforyou.map((job: any) => job.toJSON());
-    
+      // return Jobsforyou.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+    return filteredJobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------------------
     }
@@ -308,8 +322,9 @@ export class JobDataSourceImpl implements JobDataSource {
         ],
       });
 
-      return jobs.map((job: any) => job.toJSON());
-
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "appliedJobs") {
       // Find jobs where the applicant ID matches the provided ID
@@ -332,8 +347,9 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
 
-      return appliedJobs.map((job: any) => job.toJSON());
-
+      // return appliedJobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(appliedJobs);
+      return filteredJobs.map((job: any) => job.toJSON());
       //----------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "active") {
       // Check if the query parameter is "active"
@@ -359,7 +375,9 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-      return jobs.map((job: any) => job.toJSON());
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
 
       //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "all") {
@@ -410,7 +428,9 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
 
-      return jobs.map((job: any) => job.toJSON());
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
       //-------------------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "getAll") {
       // Handle other cases or provide default logic
@@ -424,8 +444,9 @@ export class JobDataSourceImpl implements JobDataSource {
           {
             model: JobApplicant,
             as: "applicantsData",
-          },
+          }
         ],
+        
         order: [
           // Then, sort by date in ascending order
           ["date", "ASC"],
@@ -433,8 +454,11 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
+      
 
-      return jobs.map((job: any) => job.toJSON());
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
 
       //---------------------------------------------------------------------------------------------------------------------------------------
     } else {
@@ -462,7 +486,9 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
 
-      return jobs.map((job: any) => job.toJSON());
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
     }
   }
 
