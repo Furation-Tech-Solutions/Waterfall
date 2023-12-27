@@ -51,11 +51,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
     });
 
     if (existingSavedJob) {
-      // If a SavedJob with the same realtorId and jobId exists, throw an error or handle it accordingly
-      throw new ApiError(
-        409,
-        "SavedJob with the same realtorId and jobId already exists"
-      ); // Provide a status code (e.g., 400 for Bad Request)
+    throw ApiError.savedJobExist();
     }
 
     const createdSavedJob = await SavedJob.create(savedJob);
