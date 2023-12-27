@@ -1,0 +1,15 @@
+{
+    "name": "juice",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "create-layer": "npm install && mkdir nodejs && cp -r node_modules/ nodejs/ && zip -r juice-library.zip nodejs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "juice": "^10.0.0"
+    }
+}

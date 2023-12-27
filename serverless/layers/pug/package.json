@@ -1,0 +1,15 @@
+{
+    "name": "pug",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "create-layer": "npm install && mkdir nodejs && cp -r node_modules/ nodejs/ && zip -r pug-library.zip nodejs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "pug": "^3.0.2"
+    }
+}
