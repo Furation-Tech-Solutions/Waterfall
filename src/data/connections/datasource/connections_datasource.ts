@@ -33,9 +33,9 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   // Create a new connection
   async createReq(newConnection: any): Promise<ConnectionsEntity> {
     if (newConnection.fromId === newConnection.toId) {
-      throw new Error("Cannot send a connection request to yourself.");
-    }
-    
+      throw new Error("Connection cannot be created as sender and receiver are same.");
+    };
+
     const existingConnection = await Connections.findOne({
       where: {
         [Op.or]: [
@@ -122,7 +122,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Retrieve connections based on a query
-  async getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]> {
+  async getAll(loginId: string, query: Query): Promise<ConnectionsEntity[] | any[]> {
     const loginID = loginId;
     const currentPage = query.page || 1;
     const itemsPerPage = query.limit || 10;
@@ -130,53 +130,120 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     // console.log(loginID, query);
     if (query.q === "connected") {
       // Retrieve connected connections
-      const data = await Connections.findAll({
-        where: {
-          connected: true,
-          [Op.or]: [{ toId: loginID }, { fromId: loginID }],
-        },
-        include: [
-          {
-            model: Realtors,
-            as: "fromData",
-            foreignKey: "fromId",
-          },
-          {
-            model: Realtors,
-            as: "toData",
-            foreignKey: "toId",
-          },
-        ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
+      // const data = await Connections.findAll({
+      //   where: {
+      //     connected: true,
+      //     [Op.or]: [{ toId: loginID }, { fromId: loginID }],
+      //   },
+      //   include: [
+      //     {
+      //       model: Realtors,
+      //       as: "fromData",
+      //       foreignKey: "fromId",
+      //     },
+      //     {
+      //       model: Realtors,
+      //       as: "toData",
+      //       foreignKey: "toId",
+      //     },
+      //   ],
+      //   limit: itemsPerPage,
+      //   offset: offset,
+      // });
       // console.log(data);
-      return data.map((connection: any) => connection.toJSON());
+      const findFriendIds = async (id: string) => {
+        const data = await Connections.findAll({
+          where: {
+            connected: true,
+            [Op.or]: [{ toId: id }, { fromId: id }],
+          },
+        });
+        // console.log(data, "data"); //working
+
+        const friendIds: string[] = data
+          .map((friend: any) =>
+            friend.fromId === id ? friend.toId : friend.fromId
+          )
+          .filter((id: string | null) => id !== null);
+        console.log(friendIds, "friendIds from 199");// working
+        return friendIds;
+      };
+
+      const [myFriends] = await Promise.all([
+        findFriendIds(loginID),
+      ]);
+
+      const friendsArray: any[] = await Promise.all(
+        myFriends.map(async (friendId: string) => {
+          // console.log(commonFriendId, "inside"); // working
+          const data: any = await Realtors.findByPk(friendId);
+          // console.log(data, "datavalue");
+          return data?.dataValues;
+        })
+      );
+      // console.log(friendsArray, "friendsarray");
+      return friendsArray.filter(Boolean);
+
+      // return data.map((connection: any) => connection.toJSON());
     } else if (query.q === "requests") {
       // Retrieve Request list
       // console.log(loginID);
-      const data = await Connections.findAll({
-        where: {
-          connected: false,
-          toId: loginID,
-        },
-        include: [
-          {
-            model: Realtors,
-            as: "fromData",
-            foreignKey: "fromId",
+      // const data = await Connections.findAll({
+      //   where: {
+      //     connected: false,
+      //     toId: loginID,
+      //   },
+      //   include: [
+      //     {
+      //       model: Realtors,
+      //       as: "fromData",
+      //       foreignKey: "fromId",
+      //     },
+      //     {
+      //       model: Realtors,
+      //       as: "toData",
+      //       foreignKey: "toId",
+      //     },
+      //   ],
+      //   limit: itemsPerPage,
+      //   offset: offset,
+      // });
+
+      const findFriendIds = async (id: string) => {
+        const data = await Connections.findAll({
+          where: {
+            connected: false,
+            [Op.or]: [{ toId: id }, { fromId: id }],
           },
-          {
-            model: Realtors,
-            as: "toData",
-            foreignKey: "toId",
-          },
-        ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
+        });
+        // console.log(data, "data"); //working
+
+        const friendIds: string[] = data
+          .map((friend: any) =>
+            friend.fromId === id ? friend.toId : friend.fromId
+          )
+          .filter((id: string | null) => id !== null);
+        // console.log(friendIds, "friendIds from 199");// working
+        return friendIds;
+      };
+
+      const [myFriends] = await Promise.all([
+        findFriendIds(loginID),
+      ]);
+
+      const friendsArray: any[] = await Promise.all(
+        myFriends.map(async (friendId: string) => {
+          // console.log(commonFriendId, "inside"); // working
+          const data: any = await Realtors.findByPk(friendId);
+          // console.log(data, "datavalue");
+          return data?.dataValues;
+        })
+      );
+      // console.log(friendsArray, "friendsarray");
+      return friendsArray.filter(Boolean);
+
       // console.log(data, "Dddddddddddddd")
-      return data.map((connection: any) => connection.toJSON());
+      // return data.map((connection: any) => connection.toJSON());
     } else if (query.q === "mutualfriends") {
       // Retrieve connections with mutual friends
       const friendId: string = query.toId;
@@ -189,14 +256,14 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             [Op.or]: [{ toId: id }, { fromId: id }],
           },
         });
-        // console.log(data,"data"); working
+        // console.log(data, "data"); //working
 
         const friendIds: string[] = data
           .map((friend: any) =>
             friend.fromId === id ? friend.toId : friend.fromId
           )
           .filter((id: string | null) => id !== null);
-        // console.log(friendIds, "friendIds from 140");// working
+        // console.log(friendIds, "friendIds from 199");// working
         return friendIds;
       };
 

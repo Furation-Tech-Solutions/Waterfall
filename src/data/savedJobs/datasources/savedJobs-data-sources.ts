@@ -42,6 +42,18 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
 
   // Implement the "create" method to insert a new SavedJobModel into the database
   async create(savedJob: any): Promise<SavedJobEntity> {
+    // Check if a SavedJob with the same realtorId and jobId already exists
+    const existingSavedJob = await SavedJob.findOne({
+      where: {
+        realtorId: savedJob.realtorId,
+        jobId: savedJob.jobId,
+      },
+    });
+
+    if (existingSavedJob) {
+    throw ApiError.savedJobExist();
+    }
+
     const createdSavedJob = await SavedJob.create(savedJob);
 
     // Return the created SavedJob as a plain JavaScript object
@@ -97,7 +109,7 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
           as: "realtorData",
           foreignKey: "realtorId",
           where: {
-            realtorId: loginId,
+            id: loginId,
           },
         },
         {
