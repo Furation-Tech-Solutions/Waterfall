@@ -194,6 +194,7 @@ export class JobService {
 
     const query: any = {};
 
+    
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
