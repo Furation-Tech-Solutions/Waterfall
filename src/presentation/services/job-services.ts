@@ -109,7 +109,7 @@ export class JobService {
         this.sendSuccessResponse(res, resData, "Job retrieved successfully");
       }
     );
-}
+  }
 
 
   async updateJob(req: Request, res: Response): Promise<void> {
@@ -142,8 +142,8 @@ export class JobService {
               responseData,
               "Job updated successfully"
             );
-            console.log(response,"response")
-            const pushNotification=new NotificationSender()
+            console.log(response, "response")
+            const pushNotification = new NotificationSender()
             // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
           }
         );
@@ -190,14 +190,14 @@ export class JobService {
 
   async getTotalCount(req: Request, res: Response): Promise<void> {
     let id: string = req.user;
-    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    let loginId = id // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
+    query.id = loginId;
     query.year = parseInt(req.query.year as string, 10);
     query.months = [parseInt(req.query.month as string, 10)];
 
