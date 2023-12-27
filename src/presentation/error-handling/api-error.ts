@@ -82,7 +82,11 @@ class ApiError extends ErrorClass {
   }
 
   static emailExist(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.EMAIL_CONFLICT, "email_conflict");
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.EMAIL_CONFLICT,
+      "email_conflict"
+    );
   }
   static nameExist(): ApiError {
     return new ApiError(
@@ -189,21 +193,43 @@ class ApiError extends ErrorClass {
     );
   }
 
-  
   static idBlocked(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.ID_BLOCKED_CONFLICT, "idBlocked_conflict");
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.ID_BLOCKED_CONFLICT,
+      "idBlocked_conflict"
+    );
   }
 
   static feedBackGiven(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.FEEDBACK_CONFLICT, "feedBack_conflict");
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.FEEDBACK_CONFLICT,
+      "feedBack_conflict"
+    );
   }
 
   static questionExist(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.QUESTION_CONFLICT, "question_conflict");
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.QUESTION_CONFLICT,
+      "question_conflict"
+    );
   }
 
   static realtorExist(): ApiError {
-    return new ApiError(HttpStatus.CONFLICT, ErrorMessage.REALTOR_CONFLICT, "realtor_conflict");
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.REALTOR_CONFLICT,
+      "realtor_conflict"
+    );
+  }
+  static savedJobExist(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.SAVEDJOB_CONFLICT,
+      "savedJob_conflict"
+    );
   }
 }
 
