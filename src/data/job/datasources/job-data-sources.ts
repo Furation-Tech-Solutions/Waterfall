@@ -31,7 +31,7 @@ export interface JobDataSource {
 
 // Define a JobQuery object to encapsulate parameters
 export interface JobQuery {
-  id: number;
+  id: string;
   q: string;
   page: number;
   limit: number;
@@ -111,7 +111,7 @@ export class JobDataSourceImpl implements JobDataSource {
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
     const offset = (currentPage - 1) * itemsPerPage;
     // let whereCondition: any = {};
-    
+
     //------------------------------------------------------------------------------------------------------------
     // Check the query parameter 'q' for different filters
     if (query.q === "expired") {
@@ -225,7 +225,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
         return recommendedJobs.map((job: any) => job.toJSON());
-      } 
+      }
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -256,7 +256,7 @@ export class JobDataSourceImpl implements JobDataSource {
         offset: offset,
       });
       return Jobsforyou.map((job: any) => job.toJSON());
-    
+
 
       //-----------------------------------------------------------------------------------------------------------------------
     }
@@ -488,7 +488,7 @@ export class JobDataSourceImpl implements JobDataSource {
   // Method to retrieve the total number of posted jobs
   async counts(query: JobQuery): Promise<number> {
     let loginId = query.id;
-
+    // console.log(loginId, "aaaaa");
     const currentPage = query.page || 1; // Default to page 1
 
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
@@ -692,7 +692,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -734,7 +734,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -776,7 +776,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
               jobStatus: "JobCompleted",
             },
           },
