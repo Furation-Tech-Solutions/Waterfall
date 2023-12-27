@@ -32,7 +32,7 @@ export interface JobDataSource {
 
 // Define a JobQuery object to encapsulate parameters
 export interface JobQuery {
-  id: number;
+  id: string;
   q: string;
   page: number;
   limit: number;
@@ -119,7 +119,7 @@ export class JobDataSourceImpl implements JobDataSource {
         },
         attributes: ["jobId"],
       });
-  
+
       return jobs.filter((job) => {
         const jobId = job.getDataValue('id');
         return !notInterestedJobs.some((notInterestedJob: any) => notInterestedJob.jobId === jobId);
@@ -211,7 +211,7 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       });
-      
+
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
 
@@ -238,7 +238,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
         return recommendedJobs.map((job: any) => job.toJSON());
-      } 
+      }
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -270,7 +270,7 @@ export class JobDataSourceImpl implements JobDataSource {
       });
       // return Jobsforyou.map((job: any) => job.toJSON());
       const filteredJobs = await applyNotInterestedFilter(jobs);
-    return filteredJobs.map((job: any) => job.toJSON());
+      return filteredJobs.map((job: any) => job.toJSON());
 
       //-----------------------------------------------------------------------------------------------------------------------
     }
@@ -446,7 +446,7 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
           }
         ],
-        
+
         order: [
           // Then, sort by date in ascending order
           ["date", "ASC"],
@@ -454,7 +454,7 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-      
+
 
       // return jobs.map((job: any) => job.toJSON());
       const filteredJobs = await applyNotInterestedFilter(jobs);
@@ -718,7 +718,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -760,7 +760,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
             },
           },
         ],
@@ -802,7 +802,7 @@ export class JobDataSourceImpl implements JobDataSource {
             model: JobApplicant,
             as: "applicantsData",
             where: {
-              id: loginId,
+              applicantId: loginId,
               jobStatus: "JobCompleted",
             },
           },
