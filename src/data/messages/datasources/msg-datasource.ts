@@ -102,7 +102,7 @@ export class MessagesDataSourceImpl implements MessageDataSource {
     if (query.q === "unread" && loginId) {
       const data = await Message.findAll({
         where: {
-          receiverId: +loginId,
+          receiverId: loginId,
           seen: false,
         },
         include: [

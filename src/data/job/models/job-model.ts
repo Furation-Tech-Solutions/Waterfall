@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize lib
 import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
+import NotInterested from "@data/notInterested/model/notInterested-models";
 
 // Define enums for specific values
 export const numberOfApplicantsEnum = {
@@ -171,6 +172,5 @@ Job.belongsTo(Realtors, {
   foreignKey: "jobOwnerId",
   as: "jobOwnerData", // Optional alias for the association
 });
-
 // Export the "Job" model as the default export of this module
 export default Job;
