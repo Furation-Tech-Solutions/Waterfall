@@ -116,9 +116,9 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     const { id, page = 1, limit = 10, q } = query;
 
     if (q === "owner") {
-      return FeedBack.count({ where: { fromRealtor: id } });
+      return FeedBack.count({ where: { fromRealtorId: id } });
     } else if (q === "applicant") {
-      return FeedBack.count({ where: { toRealtor: id } });
+      return FeedBack.count({ where: { toRealtorId: id } });
     }
 
     return 0;
