@@ -7,7 +7,7 @@ import { Op, literal,fn } from 'sequelize'
 export const deleteStatusWithCron = () => {
 
   try {
-    cron.schedule('*/1 * * * *', async function () {
+    cron.schedule('0 0 * * *', async function () {
       try {
         // const userList = await Realtors.findAll({
         //   where: {
@@ -65,6 +65,7 @@ export const deleteStatusWithCron = () => {
             where: {
               // Assuming your Job model has a 'date' attribute
               date: {
+                
                 [Op.lt]: fn('DATE', literal('CURRENT_DATE')), // Use CURRENT_DATE to represent today's date
               },
             },
@@ -86,6 +87,9 @@ export const deleteStatusWithCron = () => {
         console.log(err)
       }
       
+    },{
+      scheduled:true,
+      timezone:"America/Toronto"
     })
   }
   catch (err) {

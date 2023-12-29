@@ -119,7 +119,6 @@ export class JobDataSourceImpl implements JobDataSource {
         },
         attributes: ["jobId"],
       });
-
       return jobs.filter((job) => {
         const jobId = job.getDataValue('id');
         return !notInterestedJobs.some((notInterestedJob: any) => notInterestedJob.jobId === jobId);
@@ -211,16 +210,19 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       });
-
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
 
       console.log("completedJobTypes:", completedJobTypes);
 
       // Recommend jobs with the same jobType
+      // map completedJobType
       const recommendedJobs = await Job.findAll({
         where: {
-          jobType: completedJobTypes, // Filter by the extracted jobTypes
+          jobType: {
+            [Op.in]: completedJobTypes, // Filters where jobType is in the array
+          },
+       // Filter by the extracted jobTypes
           liveStatus: true,
         },
         include: [
@@ -237,8 +239,11 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
-        return recommendedJobs.map((job: any) => job.toJSON());
-      }
+        const filteredRecommendedJobs = recommendedJobs.filter((job) => job.getDataValue('jobOwnerId') !== loginId);
+        return filteredRecommendedJobs.map((job: any) => job.toJSON());
+      } 
+      console.log(recommendedJobs);
+      
 
       const realtor: any = await Realtors.findByPk(loginId);
 

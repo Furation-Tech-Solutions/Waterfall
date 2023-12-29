@@ -18,11 +18,12 @@ export class JobModel {
     public attachments: string[] = [], // Job attachments
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string = "", // Reason for job deletion
+    public jobProgress: string = "",
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean = false,
     public urgentRequirement: boolean = false,
     public jobOwnerData: {} = {},
-    public applicantsData: []= [],
+    public applicantsData: [] = []
   ) {}
 }
 
@@ -47,12 +48,12 @@ export class JobEntity {
     public attachments: string[], // Job attachments
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string, // Reason for job deletion
+    public jobProgress: string, 
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean,
     public urgentRequirement: boolean,
     public jobOwnerData: {},
-    public applicantsData: [],
-
+    public applicantsData: []
   ) {}
 }
 
@@ -91,7 +92,7 @@ export class JobMapper {
           jobData.toTime !== undefined ? jobData.toTime : existingJob.toTime,
         jobType:
           jobData.jobType !== undefined ? jobData.jobType : existingJob.jobType,
-        applyBy: 
+        applyBy:
           jobData.applyBy !== undefined ? jobData.applyBy : existingJob.applyBy,
         clientEmail:
           jobData.clientEmail !== undefined
@@ -120,6 +121,10 @@ export class JobMapper {
           jobData.deleteReason !== undefined
             ? jobData.deleteReason
             : existingJob.deleteReason,
+        jobProgress:
+          jobData.jobProgress !== undefined
+            ? jobData.jobProgress
+            : existingJob.jobProgress,
         coordinates:
           jobData.coordinates !== undefined
             ? jobData.coordinates
@@ -132,7 +137,6 @@ export class JobMapper {
           jobData.urgentRequirement !== undefined
             ? jobData.urgentRequirement
             : existingJob.urgentRequirement,
-        
       };
     } else {
       // If an existingJob is not provided, create a new JobEntity using jobData
@@ -159,6 +163,7 @@ export class JobMapper {
         attachments: jobData.attachments,
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
+        jobProgress: jobData.jobProgress,
         coordinates: jobData.coordinates || null,
         liveStatus: jobData.liveStatus,
         urgentRequirement: jobData.urgentRequirement,
@@ -182,7 +187,7 @@ export class JobMapper {
       numberOfApplicants: job.numberOfApplicants,
       fromTime: job.fromTime,
       toTime: job.toTime,
-      applyBy:job.applyBy,
+      applyBy: job.applyBy,
       jobType: job.jobType,
       clientEmail: job.clientEmail,
       clientPhoneNumber: job.clientPhoneNumber,
@@ -192,6 +197,7 @@ export class JobMapper {
       attachments: job.attachments,
       createdAt: job.createdAt,
       deleteReason: job.deleteReason,
+      jobProgress: job.jobProgress,
       coordinates: job.coordinates,
       liveStatus: job.liveStatus,
       urgentRequirement: job.urgentRequirement,

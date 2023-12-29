@@ -16,18 +16,20 @@ class S3MediaUploader {
 
     async getPreSignedUrl(req: Request, res: Response) {
         try {
+          const uid:string=req.params.uid;
           const fileName: string = req.params.fileName;
           const dataType: string = req.params.dataType;
+
     
           const uniqueIdentifier = Date.now();
           const fileNameWithoutExtension = fileName.slice(0, fileName.lastIndexOf('.'));
           const fileExtension = fileName.slice(fileName.lastIndexOf('.') + 1);
     
           let path = "";
-          if (dataType === "template") {
-            path = `template/${fileNameWithoutExtension}.${fileExtension}`;
+          if (dataType === "image") {
+            path = `users/${uid}/profile/${fileNameWithoutExtension}.${fileExtension}`;
           } else {
-            path = `${dataType}/${uniqueIdentifier}_${fileNameWithoutExtension}.${fileExtension}`;
+            path = `users/${uid}/jobs/attachments/${fileNameWithoutExtension}.${fileExtension}`;
           }
           const params = {
             Bucket: "waterfall-general-storage-dev",
