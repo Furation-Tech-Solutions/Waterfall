@@ -57,8 +57,12 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
         toRealtorId: query.id,
       },
       include: [
-        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtorId" },
-        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtorId" },
+        {
+          model: Realtors,
+          as: "fromRealtorData",
+          foreignKey: "fromRealtorId",
+          attributes: ["firstName", "lastName", "location"], // Specify the attributes you want to retrieve
+        },
       ],
       // limit,
       // offset,

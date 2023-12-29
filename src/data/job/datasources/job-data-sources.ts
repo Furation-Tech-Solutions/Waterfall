@@ -451,7 +451,7 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "applicantsData",
           }
         ],
-        
+
         order: [
           // Then, sort by date in ascending order
           ["date", "ASC"],
@@ -459,7 +459,7 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-      
+
 
       // return jobs.map((job: any) => job.toJSON());
       const filteredJobs = await applyNotInterestedFilter(jobs);
