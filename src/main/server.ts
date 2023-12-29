@@ -5,6 +5,7 @@ import ApiError from "@presentation/error-handling/api-error";
 import * as Message from "@presentation/error-handling/message-error";
 import { sequelize } from "@main/sequelizeClient";
 import { deleteStatusWithCron } from "@presentation/middlewares/cron/deleteUserCron";
+import { notificationWithCron } from "@presentation/middlewares/cron/pushNotificationCron";
 
 const app = setupApp();
 
@@ -25,6 +26,7 @@ try {
   });
 
   deleteStatusWithCron();
+  notificationWithCron()
 
 } catch (error) {
   console.log("error is this-", error, "error");
