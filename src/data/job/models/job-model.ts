@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { DataTypes } from "sequelize"; // Importing DataTypes from Sequelize library
+import { DataTypes, Sequelize } from "sequelize"; // Importing DataTypes from Sequelize library
 import { sequelize } from "@main/sequelizeClient"; // Importing the Sequelize instance
 
 import Realtors from "@data/realtors/model/realtor-model";
@@ -158,6 +158,11 @@ const Job = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
+    },
+    jobProgress: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "active",
     },
   },
   {

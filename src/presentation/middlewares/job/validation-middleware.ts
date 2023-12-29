@@ -26,6 +26,7 @@ interface JobInput {
   description: string;
   attachments: string[];
   deleteReason: string;
+  jobProgress: string;
   coordinates: { latitude: string; longitude: string } | null;
   liveStatus: boolean;
   urgentRequirement: boolean;
@@ -122,7 +123,7 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
         }),
     applyBy: isUpdate
       ? Joi.date().optional().messages({
-          "applyBy.base": "applyBy must be a valid date"
+          "applyBy.base": "applyBy must be a valid date",
         })
       : Joi.date().required().messages({
           "applyBy.base": "applyBy must be a valid date",
@@ -242,6 +243,13 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
           "string.base": "Delete reason must be a string",
           "string.empty": "Delete reason is required",
           "any.required": "Delete reason is required",
+        }),
+    jobProgress: isUpdate
+      ? Joi.string().optional().messages({
+          "string.base": "jobProgress must be a string",
+        })
+      : Joi.string().optional().messages({
+          "string.base": "jobProgress must be a string",
         }),
     coordinates: Joi.object({
       latitude: Joi.string().optional(),

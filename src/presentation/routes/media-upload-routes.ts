@@ -10,7 +10,7 @@ export const mediaRoutes = Router();
 
 
 mediaRoutes.get(
-  "/getpresignedurl/:dataType/:fileName",
+  "/:uid/:dataType/:fileName",
   mediaUploadService.getPreSignedUrl.bind(mediaUploadService)
 );
 
