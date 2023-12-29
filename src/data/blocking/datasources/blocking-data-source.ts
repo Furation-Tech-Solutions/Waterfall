@@ -21,6 +21,9 @@ export interface BlockingDataSource {
   // Method to read a blocking entry by ID
   read(id: string): Promise<BlockingEntity>; // Promise of BlockingEntity or null
 
+  // Method to check if a user is blocked
+  isBlocked(id: string, blockingId: string): Promise<BlockingEntity>;
+
   // Method to update a blocking entry by ID
   update(
     id: string,
@@ -130,6 +133,21 @@ export class BlockingDataSourceImpl implements BlockingDataSource {
     }
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return blocking.toJSON();
+  }
+
+  // Method to check if a user is blocked
+  async isBlocked(id: string, blockingId: string): Promise<BlockingEntity> {
+
+    const blocking = await Blocking.findOne({
+      where: {
+        fromRealtorId: id,
+        toRealtorId: blockingId,
+      },
+    });
+    if (blocking === null) {
+      throw ApiError.notFound();
+    }
     return blocking.toJSON();
   }
 
