@@ -61,7 +61,7 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
           model: Realtors,
           as: "fromRealtorData",
           foreignKey: "fromRealtorId",
-          attributes: ["firstName", "lastName", "location"], // Specify the attributes you want to retrieve
+          attributes: ["firstName", "lastName", "location", "profileImage"], // Specify the attributes you want to retrieve
         },
       ],
       // limit,
