@@ -55,20 +55,24 @@ const JobApplicant = sequelize.define("JobApplicant", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+
   // Define the "jobStatus" field with its data type and constraints
   jobStatus: {
     type: DataTypes.ENUM(...Object.values(jobStatusEnum)),
     defaultValue: "Pending",
   },
+
   // Define the "paymentStatus" field with its data type and constraints
   paymentStatus: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+
   // Define the "paymentStatusUpdateTime" field with its data type
   paymentStatusUpdateTime: {
     type: DataTypes.STRING,
   },
+  
 });
 
 // Define associations between JobApplicant and other models

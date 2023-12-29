@@ -148,6 +148,7 @@ export class JobApplicantService {
   async updateJobApplicant(req: Request, res: Response): Promise<void> {
     const jobApplicantId: string = req.params.id;
     const jobApplicantData: JobApplicantModel = req.body;
+
     
     const existingJobApplicant: Either<ErrorClass, JobApplicantEntity> =
       await this.getJobApplicantByIdUsecase.execute(jobApplicantId);
