@@ -52,6 +52,7 @@ export class JobEntity {
     public urgentRequirement: boolean,
     public jobOwnerData: {},
     public applicantsData: [],
+
   ) {}
 }
 
