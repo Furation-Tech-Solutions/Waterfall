@@ -25,7 +25,7 @@ export const notificationWithCron=()=>{
                 }
             }
             )
-            console.log(jobData,"job Data")
+            // console.log(jobData,"job Data")
         }
         catch(error){
             console.log(error,"error in cron")
@@ -86,7 +86,8 @@ export class CronJob{
       async expiredJobNotification(){
         const currentDate = new Date();
         const twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2); 
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 1); 
+        console.log(twoDaysAgo,"twoDaysAgo")
         try{
             cron.schedule('*/1 * * * *', async ()=> {
                 try{
@@ -98,7 +99,11 @@ export class CronJob{
                             },
                         }
                     })
-                    console.log()
+                    console.log("........................................")
+                    console.log(jobData,"jobData")
+                    console.log("........................................")
+                    
+
                 }
                 catch(error){
                     console.log("error of cron job",error)
