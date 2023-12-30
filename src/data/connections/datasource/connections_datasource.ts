@@ -23,6 +23,7 @@ export interface ConnectionsDataSource {
   updateReq(id: string, data: any): Promise<ConnectionsEntity>;
   deleteReq(id: string): Promise<void>;
   read(id: string): Promise<ConnectionsEntity>;
+  check(id: string, loginId: string): Promise<ConnectionsEntity>;
   getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
 }
 
@@ -113,6 +114,24 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         },
       ],
     });
+    if (connections === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return connections.toJSON();
+  }
+
+  // Retrieve a connection by ID
+  async check(id: string, loginId: string): Promise<ConnectionsEntity> {
+    // console.log(id,loginId);
+    const connections = await Connections.findOne({
+      where: {
+        toId: id,
+        fromId: loginId
+      },
+    });
+
     if (connections === null) {
       throw ApiError.notFound();
     }

@@ -54,15 +54,6 @@ CallLog.belongsTo(JobApplicant, {
   as: "jobApplicantData"
 });
 
-CallLog.belongsTo(Job,{
-  foreignKey: "jobId",
-  as: "jobData"
-})
-
-CallLog.belongsTo(JobApplicant, {
-  foreignKey: "jobApplicantId",
-  as: "callLogData",
-});
 
 // Export the CallLog model as the default export
 export default CallLog;
