@@ -5,7 +5,7 @@ import { Either, Right, Left } from "monet";
 
 // Define the interface for the GetById use case
 export interface GetByIdUsecase {
-  execute: (toId: string) => Promise<Either<ErrorClass, ConnectionsEntity>>;
+  execute: (id: string) => Promise<Either<ErrorClass, ConnectionsEntity>>;
 }
 
 // Implement the GetById use case
@@ -18,8 +18,8 @@ export class GetById implements GetByIdUsecase {
 
   // Implementation of the execute method
   // This method retrieves a specific connection by fromId and toId and returns a Promise with an Either result
-  async execute(toId: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
+  async execute(id: string): Promise<Either<ErrorClass, ConnectionsEntity>> {
     // Delegate the retrieval of the specific connection to the ConnectionsRepository
-    return await this.connectionsRepository.getById(toId);
+    return await this.connectionsRepository.getById(id);
   }
 }

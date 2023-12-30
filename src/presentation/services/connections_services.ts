@@ -97,7 +97,7 @@ export class ConnectionsServices {
     let id = req.params.id;
 
     const deletedConnections: Either<ErrorClass, void> =
-      await this.deleteRequestUsecase.execute(id,loginId);
+      await this.deleteRequestUsecase.execute(id, loginId);
 
     deletedConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
@@ -216,11 +216,11 @@ export class ConnectionsServices {
   // Handler for updating connections by ID
   async updateRequests(req: Request, res: Response): Promise<void> {
     const Data: ConnectionsModel = req.body;
-    let loginId = req.body.fromId;
+    let loginId = req.user;
     let id = req.params.id;
-
+// console.log(loginId,id,Data);
     const existingConnections: Either<ErrorClass, ConnectionsEntity> =
-      await this.getByIdUsecase.execute(id);
+      await this.checkConnectionUsecase.execute(id, loginId);
 
     existingConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
@@ -233,6 +233,7 @@ export class ConnectionsServices {
         const updatedConnections: Either<ErrorClass, ConnectionsEntity> =
           await this.updateRequestUsecase.execute(
             id,
+            loginId,
             updatedConnectionsEntity
           );
 

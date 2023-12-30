@@ -68,12 +68,14 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
   // Method to update a connection
   async updateRequest(
     id: string,
+    loginId: string,
     data: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to update a connection
       const updatedConnections = await this.connectionsDataSource.updateReq(
         id,
+        loginId,
         data
       );
 
