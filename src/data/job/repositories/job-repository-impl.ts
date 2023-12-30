@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { JobEntity, JobModel } from "@domain/job/entities/job";
+import { JobCountEntity, JobEntity, JobModel } from "@domain/job/entities/job";
 import { JobRepository } from "@domain/job/repositories/job-repository";
 import {
   JobDataSource,
@@ -130,15 +130,15 @@ export class JobRepositoryImpl implements JobRepository {
     }
   }
   // Method to find the total number of posted jobs
-  async TotalCount(query: JobQuery): Promise<Either<ErrorClass, number>> {
+  async TotalCount(query: JobQuery): Promise<Either<ErrorClass, JobCountEntity>> {
     try {
       // Call the job repository method to retrieve the count of posted jobs
       const count = await this.dataSource.counts(query);
 
       // Return a Right monad with the count on success
-      return Right<ErrorClass, number>(count);
+      return Right<ErrorClass, JobCountEntity>(count);
     } catch (error: any) {
-      return Left<ErrorClass, number>(ApiError.customError(400, error.message));
+      return Left<ErrorClass, JobCountEntity>(ApiError.customError(400, error.message));
     }
   }
 }

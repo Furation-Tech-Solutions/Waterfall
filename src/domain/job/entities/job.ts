@@ -206,3 +206,27 @@ export class JobMapper {
     };
   }
 }
+
+export class JobCountModel{
+  constructor(
+    public posted: number = 0,
+    public accepted: number = 0,
+    public completedjobsforowner: number = 0,
+    public scheduled: number = 0,
+    public applied: number = 0,
+    public assigned: number = 0,
+    public completedjobforapplicant: number = 0
+  ){}
+}
+
+export class JobCountEntity{
+  constructor(
+    public posted: number ,
+    public accepted: number ,
+    public completedjobsforowner: number ,
+    public scheduled: number ,
+    public applied: number ,
+    public assigned: number ,
+    public completedjobforapplicant: number
+  ){}
+}
