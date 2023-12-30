@@ -10,6 +10,7 @@ import {
 import { CreateRequestUsecase } from "@domain/connections/usecases/create_request"; // Import Connections-related use cases
 import { DeleteRequestUsecase } from "@domain/connections/usecases/delete_Request";
 import { GetByIdUsecase } from "@domain/connections/usecases/get_by_id";
+import { CheckConnectionUsecase } from "@domain/connections/usecases/check_Connection";
 import { UpdateRequestUsecase } from "@domain/connections/usecases/update_Request";
 import { GetAllUsecase } from "@domain/connections/usecases/get_all";
 import { Either } from "monet";
@@ -20,6 +21,7 @@ export class ConnectionsServices {
   private readonly createRequestUsecase: CreateRequestUsecase;
   private readonly deleteRequestUsecase: DeleteRequestUsecase;
   private readonly getByIdUsecase: GetByIdUsecase;
+  private readonly checkConnectionUsecase: CheckConnectionUsecase;
   private readonly getAllUsecase: GetAllUsecase;
   private readonly updateRequestUsecase: UpdateRequestUsecase;
 
@@ -27,12 +29,14 @@ export class ConnectionsServices {
     createRequestUsecase: CreateRequestUsecase,
     deleteRequestUsecase: DeleteRequestUsecase,
     getByIdUsecase: GetByIdUsecase,
+    checkConnectionUsecase: CheckConnectionUsecase,
     getAllUsecase: GetAllUsecase,
     updateRequestUsecase: UpdateRequestUsecase
   ) {
     this.createRequestUsecase = createRequestUsecase;
     this.deleteRequestUsecase = deleteRequestUsecase;
     this.getByIdUsecase = getByIdUsecase;
+    this.checkConnectionUsecase = checkConnectionUsecase;
     this.getAllUsecase = getAllUsecase;
     this.updateRequestUsecase = updateRequestUsecase;
   }
@@ -109,11 +113,44 @@ export class ConnectionsServices {
 
   // Handler for getting connections by ID
   async getById(req: Request, res: Response): Promise<void> {
-    let loginId = req.body.fromId;
+    let loginId = req.user;
     let id = req.params.id;
 
     const connections: Either<ErrorClass, ConnectionsEntity> =
       await this.getByIdUsecase.execute(id);
+
+    connections.cata(
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Connection not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
+      (result: ConnectionsEntity) => {
+        if (!result) {
+          this.sendErrorResponse(res, new ApiError(400, " not found"));
+        } else {
+          const resData = ConnectionMapper.toEntity(result);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Connection retrieved successfully"
+          );
+        }
+      }
+    );
+  }
+
+  // Handler for getting connections by ID
+  async checkConnection(req: Request, res: Response): Promise<void> {
+    let loginId: string = req.user;
+    // console.log(loginId);
+    let id = req.params.id;
+
+    const connections: Either<ErrorClass, ConnectionsEntity> =
+      await this.checkConnectionUsecase.execute(id, loginId);
 
     connections.cata(
       (error: ErrorClass) => {
@@ -158,18 +195,18 @@ export class ConnectionsServices {
     clientConnections.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: ConnectionsEntity[]) => {
-         if (result.length === 0) {
+        if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-        // console.log(result, "clientConnections");
-        // const responseData = result.map((connection) =>
-        //   ConnectionMapper.toEntity(connection)
-        // );
-        this.sendSuccessResponse(
-          res,
-          result,
-          "Connections retrieved successfully"
-        );
+          // console.log(result, "clientConnections");
+          // const responseData = result.map((connection) =>
+          //   ConnectionMapper.toEntity(connection)
+          // );
+          this.sendSuccessResponse(
+            res,
+            result,
+            "Connections retrieved successfully"
+          );
         }
       }
     );

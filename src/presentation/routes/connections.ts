@@ -1,5 +1,5 @@
 
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 import { Router } from "express";
 import { ConnectionsServices } from "@presentation/services/connections_services"; // Import the ConnectionsServices
 import { ConnectionsDataSourceImpl } from "@data/connections/datasource/connections_datasource"; // Import the ConnectionsDataSourceImpl
@@ -7,6 +7,7 @@ import { ConnectionsRepositoryImpl } from "@data/connections/repository/connecti
 import { CreateRequest } from "@domain/connections/usecases/create_request"; // Import Connections-related use cases
 import { DeleteRequest } from "@domain/connections/usecases/delete_Request";
 import { GetById } from "@domain/connections/usecases/get_by_id";
+import { CheckConnection } from "@domain/connections/usecases/check_Connection";
 import { UpdateRequest } from "@domain/connections/usecases/update_Request";
 import { GetAll } from "@domain/connections/usecases/get_all";
 // import { GetAllRequests } from "@domain/connections/usecases/get_all_Requests";
@@ -24,6 +25,7 @@ const connectionsRepository = new ConnectionsRepositoryImpl(connectionsDataSourc
 const createRequestsUsecase = new CreateRequest(connectionsRepository);
 const deleteRequestsUsecase = new DeleteRequest(connectionsRepository);
 const getRequestsByIdUsecase = new GetById(connectionsRepository);
+const checkConnectionUsecase = new CheckConnection(connectionsRepository);
 const getAllRequestsUsecase = new GetAll(connectionsRepository);
 const updateRequestsUsecase = new UpdateRequest(connectionsRepository);
 
@@ -32,6 +34,7 @@ const connectionsService = new ConnectionsServices(
     createRequestsUsecase,
     deleteRequestsUsecase,
     getRequestsByIdUsecase,
+    checkConnectionUsecase,
     getAllRequestsUsecase,
     updateRequestsUsecase
 );
@@ -62,7 +65,7 @@ connectionsRouter.get(
 );
 
 // Route handling for getting all connections
-connectionsRouter.get("/", verifyUser,connectionsService.getAll.bind(connectionsService));
+connectionsRouter.get("/", verifyUser, connectionsService.getAll.bind(connectionsService));
 
 // Route handling for updating a connections by ID
 connectionsRouter.put(
@@ -74,7 +77,7 @@ connectionsRouter.put(
 
 
 // // Route handling for getting all connection requests
-// connectionsRouter.get("/requests", connectionsService.AllRequests.bind(connectionsService));
+connectionsRouter.get("/check/:id", verifyUser, connectionsService.checkConnection.bind(connectionsService));
 
 // // Route handling for getting all connection requests
 // connectionsRouter.get("/connections", connectionsService.AllConnections.bind(connectionsService));
