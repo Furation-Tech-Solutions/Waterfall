@@ -78,6 +78,24 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     }
   }
 
+  // Check if a user is blocked
+  async isUserBlocked(id: string, blockingId: string): Promise<Either<ErrorClass, BlockingEntity>> {
+    try {
+      const blocking: BlockingEntity = await this.blockingDataSource.isBlocked(
+        id,
+        blockingId
+      ); // Use the tag blocking data source
+      return Right<ErrorClass, BlockingEntity>(blocking);
+    } catch (e) {
+      // Handle specific API error for not found
+      if (e instanceof ApiError && e.name === "notfound") {
+        return Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+      }
+      // Handle other errors with a generic bad request error
+      return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
+    }
+  }
+
   // Update a blocking entry by ID
   async updateBlocking(
     id: string,
