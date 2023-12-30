@@ -47,11 +47,12 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
   // Method to delete a connection
   async deleteRequest(
-    id: string
+    id: string,
+    loginId: string
   ): Promise<Either<ErrorClass, void>> {
     try {
       // Use the ConnectionsDataSource to delete a connection
-      const result = await this.connectionsDataSource.deleteReq(id);
+      const result = await this.connectionsDataSource.deleteReq(id, loginId);
 
       // Return a Right if deletion was successful
       return Right<ErrorClass, void>(result);
