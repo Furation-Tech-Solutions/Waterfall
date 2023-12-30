@@ -48,7 +48,6 @@ const Job = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     // Address of the job
     address: {
       type: DataTypes.STRING,

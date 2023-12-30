@@ -61,6 +61,7 @@ const Realtors = sequelize.define("Realtors", {
   location: {
     type: DataTypes.STRING,
     allowNull: true, // It cannot be null
+    defaultValue: 'Ontario',
   },
   // Define the "about" field with a data type of STRING
   about: {

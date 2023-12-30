@@ -40,7 +40,7 @@ export interface JobApplicantQuery {
 
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<JobApplicantEntity> {
@@ -370,6 +370,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     // Retrieve the record to check the current applicantStatus
     const existingApplicant: any = await JobApplicant.findByPk(id);
 
+
+
     // Check if the current applicantStatus is different from the updatedData.applicantStatus
     if (existingApplicant.applicantStatus !== updatedData.applicantStatus) {
       // Update the job applicant record with the provided data
@@ -388,6 +390,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       if (updatedJobApplicant == null) {
         throw ApiError.notFound();
       }
+
       return updatedJobApplicant.toJSON();
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -472,13 +475,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         !applicantStatusUpdateTime ||
         (currentTime.getTime() -
           new Date(applicantStatusUpdateTime).getTime()) /
-          (1000 * 60 * 60) >
-          24
-        // (1000 * 60) > // Change from 24 hours to 5 minutes
-        // 2
+        (1000 * 60 * 60) > 2
       ) {
         throw new Error(
-          "Agreement can only be set within 24 hours after Accepting"
+          "Agreement can only be set within 2 hours after Accepting"
         );
       }
     }
@@ -526,17 +526,50 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       updatedData.jobStatus === "Decline"
     ) {
       // Update the associated Job to set liveStatus and urgentRequirement to true
-      const associatedJob = await Job.findByPk(
+      const associatedJob = await Job.findByPk<any>(
         jobApplicant.getDataValue("jobId")
       );
       if (associatedJob) {
-        // Set liveStatus and urgentRequirement to true in the associated Job
+        // Set liveStatus to true in the associated Job
         await associatedJob.update({
           liveStatus: true,
-          urgentRequirement: true,
         });
+    
+        const currentDate = new Date();
+
+
+        const lastDate: Date | string | null | undefined = associatedJob.applyBy;
+
+    
+        if (
+          lastDate &&
+          new Date(lastDate).toDateString() === currentDate.toDateString()
+        ) {
+          const fromTime = new Date(associatedJob.fromTime);
+
+          const currentTime = new Date();
+    
+          // Calculate 10 hours before fromTime of the day
+          const tenHoursBeforeFromTime = new Date(
+            fromTime.getFullYear(),
+            fromTime.getMonth(),
+            fromTime.getDate(),
+            fromTime.getHours() - 10,
+            fromTime.getMinutes(),
+            0
+          );
+
+    
+          if (currentTime >= tenHoursBeforeFromTime) {
+            console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
+            await associatedJob.update({
+              urgentRequirement: true,
+            });
+          }
+        }
       }
     }
+    
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);

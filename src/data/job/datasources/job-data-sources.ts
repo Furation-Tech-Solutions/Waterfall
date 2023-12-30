@@ -110,7 +110,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
   // Method to retrieve a list of job records
   async getAll(query: JobQuery): Promise<JobEntity[]> {
-    //---------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------ ---------
     let loginId = query.id;
 
     const currentPage = query.page || 1; // Default to page 1
