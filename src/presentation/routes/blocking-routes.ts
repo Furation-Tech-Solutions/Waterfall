@@ -8,9 +8,10 @@ import { CreateBlocking } from "@domain/blocking/usecases/create-blocking";
 import { validateBlockingInputMiddleware } from "@presentation/middlewares/blocking/validation-middleware";
 import { GetAllBlockings } from "@domain/blocking/usecases/get-all-blockings";
 import { GetBlockingById } from "@domain/blocking/usecases/get-blocking-by-id";
+import { IsUserBlocked } from "@domain/blocking/usecases/is-user-blocked";
 import { UpdateBlocking } from "@domain/blocking/usecases/update-blocking";
 import { DeleteBlocking } from "@domain/blocking/usecases/delete-blocking";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
 import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 
@@ -24,6 +25,7 @@ const blockingRepository = new BlockingRepositoryImpl(blockingDataSource);
 const createBlockingUsecase = new CreateBlocking(blockingRepository);
 const getAllBlockingsUsecase = new GetAllBlockings(blockingRepository);
 const getBlockingByIdUsecase = new GetBlockingById(blockingRepository);
+const isUserBlockedUsecase = new IsUserBlocked(blockingRepository);
 const updateBlockingUsecase = new UpdateBlocking(blockingRepository);
 const deleteBlockingUsecase = new DeleteBlocking(blockingRepository);
 
@@ -32,6 +34,7 @@ const blockingService = new BlockingService(
   createBlockingUsecase,
   getAllBlockingsUsecase,
   getBlockingByIdUsecase,
+  isUserBlockedUsecase,
   updateBlockingUsecase,
   deleteBlockingUsecase
 );
@@ -40,16 +43,18 @@ const blockingService = new BlockingService(
 export const blockingRouter = Router();
 
 // Route handling for creating a new blocking
-blockingRouter.post("/", verifyUser,validateBlockingInputMiddleware(false), blockingService.createBlocking.bind(blockingService));
+blockingRouter.post("/", verifyUser, validateBlockingInputMiddleware(false), blockingService.createBlocking.bind(blockingService));
 
 // Route handling for getting all blockingsx`
-blockingRouter.get("/", verifyUser,blockingService.getAllBlockings.bind(blockingService));
+blockingRouter.get("/", verifyUser, blockingService.getAllBlockings.bind(blockingService));
 
 // Route handling for getting an Blocking by ID
-blockingRouter.get("/:id",verifyUser, blockingService.getBlockingById.bind(blockingService));
+blockingRouter.get("/:id", verifyUser, blockingService.getBlockingById.bind(blockingService));
+
+blockingRouter.get("/check/:id", verifyUser, blockingService.isUserBlocked.bind(blockingService));
 
 // Route handling for updating an blocking by ID
-blockingRouter.put("/:id",verifyUser, validateBlockingInputMiddleware(true), blockingService.updateBlocking.bind(blockingService));
+blockingRouter.put("/:id", verifyUser, validateBlockingInputMiddleware(true), blockingService.updateBlocking.bind(blockingService));
 
 // Route handling for deleting an blocking by ID
-blockingRouter.delete("/:id",verifyUser, blockingService.deleteBlocking.bind(blockingService));
+blockingRouter.delete("/:id", verifyUser, blockingService.deleteBlocking.bind(blockingService));

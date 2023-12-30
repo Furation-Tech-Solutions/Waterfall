@@ -76,11 +76,11 @@ export class MessagesServices {
           201
         );
         console.log(result)
-        const pushNotification=new NotificationSender()
-        pushNotification.customNotification(result.senderId,result.receiverId,"sendMessage")
+        const pushNotification = new NotificationSender()
+        pushNotification.customNotification(result.senderId, result.receiverId, "sendMessage")
       }
     );
-// 
+    // 
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {
@@ -134,7 +134,7 @@ export class MessagesServices {
     next: NextFunction
   ): Promise<void> {
 
-    let loginId = req.headers.fromid as string;
+    let loginId = req.user as string;
     // let Id = req.user;
 
 
@@ -163,7 +163,7 @@ export class MessagesServices {
           );
           this.sendSuccessResponse(res, responseData);
         }
-    }
+      }
     );
   }
 
