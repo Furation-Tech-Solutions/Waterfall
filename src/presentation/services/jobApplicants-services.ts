@@ -12,6 +12,7 @@ import { Either } from "monet";
 import { CreateJobApplicantUsecase } from "@domain/jobApplicants/usecases/create-jobApplicants";
 import { DeleteJobApplicantUsecase } from "@domain/jobApplicants/usecases/delete-jobApplicant";
 import { NotificationSender } from "./push-notification-services";
+import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 
 export class JobApplicantService {
   private readonly createJobApplicantUsecase: CreateJobApplicantUsecase;
@@ -43,7 +44,8 @@ export class JobApplicantService {
     res.status(statusCode).json({
       success: true,
       message,
-      data,
+      documentCount: data.totalCount,
+      data: data.allAplicants,
     });
   }
 
@@ -76,12 +78,15 @@ export class JobApplicantService {
           "Job applicant created successfully",
           201
         );
-            const pushNotification=new NotificationSender()
-            pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
+        const pushNotification = new NotificationSender();
+        pushNotification.customNotification(
+          result.applicantId,
+          result.jobId,
+          "appliedJob"
+        );
       }
     );
     // const pushNotification=new NotificationSender()
-
   }
 
   async getJobApplicantById(req: Request, res: Response): Promise<void> {
@@ -118,8 +123,6 @@ export class JobApplicantService {
     // let Id = req.headers.id;
     let Id = req.user;
 
-    
-
     const query: any = {};
 
     query.q = req.query.q as string;
@@ -127,21 +130,28 @@ export class JobApplicantService {
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
 
-    const jobApplicants: Either<ErrorClass, JobApplicantEntity[]> =
+    const jobApplicants: Either<ErrorClass, JobApplicantsResponse> =
       await this.getAllJobApplicantsUsecase.execute(query);
 
     jobApplicants.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
-      (jobApplicants: JobApplicantEntity[]) => {
-         if (jobApplicants.length === 0) {
-           this.sendSuccessResponse(res, [], "Success", 200);
-         } else {
-           const resData = jobApplicants.map((jobApplicant: any) =>
-             JobApplicantMapper.toEntity(jobApplicant)
-           );
-           this.sendSuccessResponse(res, resData);
-         }
-    }
+      (jobApplicants: JobApplicantsResponse) => {
+        if (jobApplicants.jobApplicants.length === 0) {
+          this.sendSuccessResponse(res,[], "Success", 200);
+        } else {
+          const allAplicants = jobApplicants.jobApplicants.map(
+            (jobApplicant: any) => JobApplicantMapper.toEntity(jobApplicant)
+          );
+          const totalCount = jobApplicants.totalCount;
+
+          const resData = {
+            allAplicants,
+            totalCount,
+          };
+
+          this.sendSuccessResponse(res, resData);
+        }
+      }
     );
   }
 
@@ -149,7 +159,6 @@ export class JobApplicantService {
     const jobApplicantId: string = req.params.id;
     const jobApplicantData: JobApplicantModel = req.body;
 
-    
     const existingJobApplicant: Either<ErrorClass, JobApplicantEntity> =
       await this.getJobApplicantByIdUsecase.execute(jobApplicantId);
 
@@ -176,22 +185,26 @@ export class JobApplicantService {
               responseData,
               "Job applicant updated successfully"
             );
-            if(response.applicantStatus=="Accept" ){
-              const pushNotification=new NotificationSender()
-              pushNotification.customNotification(req.user,result.applicantId,"applicantStatusAccept")
-
-            }
-            else if(response.applicantStatus=="Decline"){
-              const pushNotification=new NotificationSender()
-              pushNotification.customNotification(req.user,result.applicantId,"applicantStatusDecline")
-
+            if (response.applicantStatus == "Accept") {
+              const pushNotification = new NotificationSender();
+              pushNotification.customNotification(
+                req.user,
+                result.applicantId,
+                "applicantStatusAccept"
+              );
+            } else if (response.applicantStatus == "Decline") {
+              const pushNotification = new NotificationSender();
+              pushNotification.customNotification(
+                req.user,
+                result.applicantId,
+                "applicantStatusDecline"
+              );
             }
           }
         );
       }
     );
     // const pushNotification=new NotificationSender()
-
   }
 
   async deleteJobApplicant(req: Request, res: Response): Promise<void> {

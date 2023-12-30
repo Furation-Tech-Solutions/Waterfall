@@ -10,7 +10,7 @@ import JobApplicant, {
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
-import { JobEntity } from "@domain/job/entities/job";
+import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
@@ -24,7 +24,7 @@ export interface JobApplicantDataSource {
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]>;
+  getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
@@ -101,7 +101,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   }
 
   // Method to get all job applicants based on query parameters
-  async getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]> {
+  async getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse> {
     //-------------------------------------------------------------------------------------------------------------
     // Extract relevant information from the query parameters
     let loginId = query.id;
@@ -114,67 +114,137 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     if (query.q === "upcomingTask") {
       {
         // Retrieve upcoming tasks for the specified realtor
-        const jobApplicant = await JobApplicant.findAll({
-          where: {
-            agreement: true, // Now, it's a boolean
-            jobStatus: "Pending",
-            applicantId: loginId,
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
-        });
+        // const jobApplicant = await JobApplicant.findAll({
+        //   where: {
+        //     agreement: true, // Now, it's a boolean
+        //     jobStatus: "Pending",
+        //     applicantId: loginId,
+        //   },
+        //   include: [
+        //     {
+        //       model: Job,
+        //       as: "jobData",
+        //       foreignKey: "jobId",
+        //     },
+        //     {
+        //       model: Realtors,
+        //       as: "applicantData",
+        //       foreignKey: "applicantId",
+        //     },
+        //   ],
+        //   limit: itemsPerPage, // Limit the number of results per page
+        //   offset: offset, // Calculate the offset based on the current page
+        // });
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+              applicantId: loginId,
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+              },
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
+
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
       }
       //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
-        const jobApplicant = await JobApplicant.findAll({
-          where: {
-            agreement: true, // Now, it's a boolean
-            jobStatus: "Pending",
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+                where: {
+                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                },
               },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
-        });
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
       }
       //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
-        const jobApplicant = await JobApplicant.findAll({
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              applicantStatus: "Pending",
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+                where: {
+                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                },
+              },
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
+
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
+      }
+      //------------------------------------------------------------------------------------------------------------------
+    } else if (query.q == "PaymentPending") {
+      // Check if the query parameter is "active"
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
           where: {
-            applicantStatus: "Pending",
+            jobStatus: "JobCompleted", // Filter by applicantStatus
+            paymentStatus: false, // Filter by agreement
           },
           include: [
             {
@@ -191,84 +261,72 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               foreignKey: "applicantId",
             },
           ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
         });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
-      }
-      //------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
-      // Check if the query parameter is "active"
-      const jobApplicant = await JobApplicant.findAll({
-        where: {
-          jobStatus: "JobCompleted", // Filter by applicantStatus
-          paymentStatus: false, // Filter by agreement
-        },
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-            },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-      });
-      return jobApplicant.map((jobA: any) => jobA.toJSON());
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "Completed") {
       // Check if the query parameter is "active"
-      const jobApplicant = await JobApplicant.findAll({
-        where: {
-          paymentStatus: true, // Filter by agreement
-        },
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
+          where: {
+            paymentStatus: true, // Filter by agreement
+          },
+          include: [
+            {
+              model: Job,
+              as: "jobData",
+              foreignKey: "jobId",
+              where: {
+                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+              },
             },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-      });
-      return jobApplicant.map((jobA: any) => jobA.toJSON());
+            {
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicantId",
+            },
+          ],
+        });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
       //-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
-      const jobApplicant = await JobApplicant.findAll({
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
+          include: [
+            {
+              model: Job,
+              as: "jobData",
+              foreignKey: "jobId",
+              where: {
+                // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+              },
             },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
-      return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
+            {
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicantId",
+            },
+          ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
+        });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
     }
   }
 
