@@ -127,8 +127,16 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     // console.log(id,loginId);
     const connections = await Connections.findOne({
       where: {
-        toId: id,
-        fromId: loginId
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 
@@ -258,7 +266,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
           return data?.dataValues;
         })
       );
-      // console.log(friendsArray, "friendsarray");
+      console.log(friendsArray, "friendsarray");
       return friendsArray.filter(Boolean);
 
       // console.log(data, "Dddddddddddddd")
