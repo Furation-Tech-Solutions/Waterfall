@@ -10,6 +10,7 @@ import JobApplicant, {
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
+import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
@@ -23,7 +24,7 @@ export interface JobApplicantDataSource {
   read(id: string): Promise<JobApplicantEntity | null>;
 
   // Method to get all job applicants
-  getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]>;
+  getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse>;
 
   // Method to delete a jobApplicant record by ID
   delete(id: string): Promise<void>;
@@ -39,7 +40,7 @@ export interface JobApplicantQuery {
 
 // jobApplicant Data Source communicates with the database
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
   async create(jobApplicant: any): Promise<JobApplicantEntity> {
@@ -62,7 +63,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       if (pendingApplicants < parseInt(numberOfApplicantsLimit)) {
         // Create a new job applicant record in the database
         const createdJobApplicant = await JobApplicant.create(jobApplicant);
-           
+
         return createdJobApplicant.toJSON();
       } else {
         // Throw an error if the limit is exceeded
@@ -100,7 +101,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   }
 
   // Method to get all job applicants based on query parameters
-  async getAll(query: JobApplicantQuery): Promise<JobApplicantEntity[]> {
+  async getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse> {
     //-------------------------------------------------------------------------------------------------------------
     // Extract relevant information from the query parameters
     let loginId = query.id;
@@ -113,67 +114,137 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     if (query.q === "upcomingTask") {
       {
         // Retrieve upcoming tasks for the specified realtor
-        const jobApplicant = await JobApplicant.findAll({
-          where: {
-            agreement: true, // Now, it's a boolean
-            jobStatus: "Pending",
-            applicantId: loginId,
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
-        });
+        // const jobApplicant = await JobApplicant.findAll({
+        //   where: {
+        //     agreement: true, // Now, it's a boolean
+        //     jobStatus: "Pending",
+        //     applicantId: loginId,
+        //   },
+        //   include: [
+        //     {
+        //       model: Job,
+        //       as: "jobData",
+        //       foreignKey: "jobId",
+        //     },
+        //     {
+        //       model: Realtors,
+        //       as: "applicantData",
+        //       foreignKey: "applicantId",
+        //     },
+        //   ],
+        //   limit: itemsPerPage, // Limit the number of results per page
+        //   offset: offset, // Calculate the offset based on the current page
+        // });
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+              applicantId: loginId,
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+              },
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
+
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
       }
       //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobAssigned") {
       {
         // Retrieve job applicants for assigned jobs
-        const jobApplicant = await JobApplicant.findAll({
-          where: {
-            agreement: true, // Now, it's a boolean
-            jobStatus: "Pending",
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              agreement: true, // Now, it's a boolean
+              jobStatus: "Pending",
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+                where: {
+                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                },
               },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
-        });
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
       }
       //------------------------------------------------------------------------------------------------------------------------------
     } else if (query.q === "jobResponse") {
       {
         // Retrieve job applicants with pending responses
-        const jobApplicant = await JobApplicant.findAll({
+        const { rows: jobApplicant, count: total } =
+          await JobApplicant.findAndCountAll({
+            where: {
+              applicantStatus: "Pending",
+            },
+            include: [
+              {
+                model: Job,
+                as: "jobData",
+                foreignKey: "jobId",
+                where: {
+                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                },
+              },
+              {
+                model: Realtors,
+                as: "applicantData",
+                foreignKey: "applicantId",
+              },
+            ],
+            limit: itemsPerPage, // Limit the number of results per page
+            offset: offset, // Calculate the offset based on the current page
+          });
+
+        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+        return {
+          jobApplicants: mappedJobApplicants,
+          totalCount: total,
+        };
+      }
+      //------------------------------------------------------------------------------------------------------------------
+    } else if (query.q == "PaymentPending") {
+      // Check if the query parameter is "active"
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
           where: {
-            applicantStatus: "Pending",
+            jobStatus: "JobCompleted", // Filter by applicantStatus
+            paymentStatus: false, // Filter by agreement
           },
           include: [
             {
@@ -190,84 +261,72 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
               foreignKey: "applicantId",
             },
           ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
         });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
 
-        return jobApplicant.map((jobA: any) => jobA.toJSON());
-      }
-      //------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
-      // Check if the query parameter is "active"
-      const jobApplicant = await JobApplicant.findAll({
-        where: {
-          jobStatus: "JobCompleted", // Filter by applicantStatus
-          paymentStatus: false, // Filter by agreement
-        },
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-            },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-      });
-      return jobApplicant.map((jobA: any) => jobA.toJSON());
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
       //-----------------------------------------------------------------------------------------------------------------------
     } else if (query.q == "Completed") {
       // Check if the query parameter is "active"
-      const jobApplicant = await JobApplicant.findAll({
-        where: {
-          paymentStatus: true, // Filter by agreement
-        },
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
+          where: {
+            paymentStatus: true, // Filter by agreement
+          },
+          include: [
+            {
+              model: Job,
+              as: "jobData",
+              foreignKey: "jobId",
+              where: {
+                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+              },
             },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-      });
-      return jobApplicant.map((jobA: any) => jobA.toJSON());
+            {
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicantId",
+            },
+          ],
+        });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
       //-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
-      const jobApplicant = await JobApplicant.findAll({
-        include: [
-          {
-            model: Job,
-            as: "jobData",
-            foreignKey: "jobId",
-            where: {
-              // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+      const { rows: jobApplicant, count: total } =
+        await JobApplicant.findAndCountAll({
+          include: [
+            {
+              model: Job,
+              as: "jobData",
+              foreignKey: "jobId",
+              where: {
+                // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+              },
             },
-          },
-          {
-            model: Realtors,
-            as: "applicantData",
-            foreignKey: "applicantId",
-          },
-        ],
-        limit: itemsPerPage, // Limit the number of results per page
-        offset: offset, // Calculate the offset based on the current page
-      });
-      return jobApplicant.map((jobApplicant: any) => jobApplicant.toJSON());
+            {
+              model: Realtors,
+              as: "applicantData",
+              foreignKey: "applicantId",
+            },
+          ],
+          limit: itemsPerPage, // Limit the number of results per page
+          offset: offset, // Calculate the offset based on the current page
+        });
+      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+
+      return {
+        jobApplicants: mappedJobApplicants,
+        totalCount: total,
+      };
     }
   }
 
@@ -311,6 +370,8 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     // Retrieve the record to check the current applicantStatus
     const existingApplicant: any = await JobApplicant.findByPk(id);
 
+
+
     // Check if the current applicantStatus is different from the updatedData.applicantStatus
     if (existingApplicant.applicantStatus !== updatedData.applicantStatus) {
       // Update the job applicant record with the provided data
@@ -329,6 +390,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       if (updatedJobApplicant == null) {
         throw ApiError.notFound();
       }
+
       return updatedJobApplicant.toJSON();
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -413,13 +475,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         !applicantStatusUpdateTime ||
         (currentTime.getTime() -
           new Date(applicantStatusUpdateTime).getTime()) /
-          (1000 * 60 * 60) >
-          24
-        // (1000 * 60) > // Change from 24 hours to 5 minutes
-        // 2
+        (1000 * 60 * 60) > 2
       ) {
         throw new Error(
-          "Agreement can only be set within 24 hours after Accepting"
+          "Agreement can only be set within 2 hours after Accepting"
         );
       }
     }
@@ -467,17 +526,50 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       updatedData.jobStatus === "Decline"
     ) {
       // Update the associated Job to set liveStatus and urgentRequirement to true
-      const associatedJob = await Job.findByPk(
+      const associatedJob = await Job.findByPk<any>(
         jobApplicant.getDataValue("jobId")
       );
       if (associatedJob) {
-        // Set liveStatus and urgentRequirement to true in the associated Job
+        // Set liveStatus to true in the associated Job
         await associatedJob.update({
           liveStatus: true,
-          urgentRequirement: true,
         });
+    
+        const currentDate = new Date();
+
+
+        const lastDate: Date | string | null | undefined = associatedJob.applyBy;
+
+    
+        if (
+          lastDate &&
+          new Date(lastDate).toDateString() === currentDate.toDateString()
+        ) {
+          const fromTime = new Date(associatedJob.fromTime);
+
+          const currentTime = new Date();
+    
+          // Calculate 10 hours before fromTime of the day
+          const tenHoursBeforeFromTime = new Date(
+            fromTime.getFullYear(),
+            fromTime.getMonth(),
+            fromTime.getDate(),
+            fromTime.getHours() - 10,
+            fromTime.getMinutes(),
+            0
+          );
+
+    
+          if (currentTime >= tenHoursBeforeFromTime) {
+            console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
+            await associatedJob.update({
+              urgentRequirement: true,
+            });
+          }
+        }
       }
     }
+    
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);
