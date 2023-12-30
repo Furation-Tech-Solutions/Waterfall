@@ -41,6 +41,9 @@ export class NotificationSender {
 
         case 'applicantStatusDecline':
         return await this.realtorDataSource.read(senderId)
+
+        case 'expiredJob':
+        return await this.realtorDataSource.read(senderId)
   
       default:
         throw new Error('Invalid event type');
@@ -75,6 +78,9 @@ export class NotificationSender {
       
         case 'sendMessage':
           return await this.realtorDataSource.read(receiverId)
+
+        case 'expiredJob':
+           return this.realtorDataSource.read(receiverId)
   
       // Add other cases for different event types
   
@@ -124,6 +130,11 @@ export class NotificationSender {
         case 'applicantStatusDecline':
         title = 'applied job status';
         body = `Your application has been Rejected for the job role.`;
+        break;
+
+        case 'expiredJob':
+        title = 'Attention: Your Job Has Expired';
+        body = `Hi ${receiver.firstName} Your job has expired. Consider renewing or reposting to keep it active..`;
         break;
 
       default:

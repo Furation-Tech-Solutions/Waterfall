@@ -57,8 +57,12 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
         toRealtorId: query.id,
       },
       include: [
-        { model: Realtors, as: "fromRealtorData", foreignKey: "fromRealtorId" },
-        { model: Realtors, as: "toRealtorData", foreignKey: "toRealtorId" },
+        {
+          model: Realtors,
+          as: "fromRealtorData",
+          foreignKey: "fromRealtorId",
+          attributes: ["firstName", "lastName", "location", "profileImage"], // Specify the attributes you want to retrieve
+        },
       ],
       // limit,
       // offset,
@@ -118,9 +122,9 @@ export class FeedBackDataSourceImpl implements FeedBackDataSource {
     const { id, page = 1, limit = 10, q } = query;
 
     if (q === "owner") {
-      return FeedBack.count({ where: { fromRealtor: id } });
+      return FeedBack.count({ where: { fromRealtorId: id } });
     } else if (q === "applicant") {
-      return FeedBack.count({ where: { toRealtor: id } });
+      return FeedBack.count({ where: { toRealtorId: id } });
     }
 
     return 0;

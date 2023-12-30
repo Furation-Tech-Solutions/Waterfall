@@ -22,6 +22,8 @@ export interface BlockingRepository {
   // Method to get a blocking entity by its ID
   getBlockingById(id: string): Promise<Either<ErrorClass, BlockingEntity>>;
 
+  // Method to check if a user is blocked
+  isUserBlocked(id: string, blockingId: string): Promise<Either<ErrorClass, BlockingEntity>>;
   // Method to update a blocking entity by its ID
   updateBlocking(
     id: string,

@@ -78,11 +78,11 @@ export class ReportDataSourceImpl implements ReportDataSource {
     const reports = await Report.findAll({
       // Include associations to retrieve related data
       include: [
-        {
-          model: Realtors,
-          as: "fromRealtorData", // Alias for the first association
-          foreignKey: "fromRealtorId",
-        },
+        // {
+        //   model: Realtors,
+        //   as: "fromRealtorData", // Alias for the first association
+        //   foreignKey: "fromRealtorId",
+        // },
         {
           model: Realtors,
           as: "toRealtorData", // Alias for the second association
