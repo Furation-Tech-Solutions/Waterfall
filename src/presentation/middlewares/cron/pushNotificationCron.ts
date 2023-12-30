@@ -2,15 +2,17 @@
 
 import { JobDataSourceImpl } from "@data/job/datasources/job-data-sources";
 import Job from "@data/job/models/job-model";
+import Realtors from "@data/realtors/model/realtor-model";
 import { JobEntity } from "@domain/job/entities/job";
 import { sequelize } from "@main/sequelizeClient";
+import { NotificationSender } from "@presentation/services/push-notification-services";
+import { Op, Model } from "sequelize";
 import cron from "node-cron";
-import { Op } from 'sequelize';
 
 export const notificationWithCron=()=>{
     const currentDate = new Date();
   try{
-       cron.schedule('*/1 * * * *', async function () {
+       cron.schedule('0 0 * * *', async function () {
         try{
             const jobData=await Job.findAll({
                 where:{
@@ -43,11 +45,12 @@ export class CronJob{
 
     constructor() {
         this.jobDataSource = new JobDataSourceImpl(sequelize);
+        this.jobDataSource = new JobDataSourceImpl(sequelize);
       }
       async notificationsWithCron(){
         const currentDate = new Date();
         try{
-             cron.schedule('*/1 * * * *', async ()=> {
+             cron.schedule('0 0 * * *', async ()=> {
               try{
                   const jobData:JobEntity[]=[]
                   const allJob=await Job.findAll({
@@ -87,9 +90,8 @@ export class CronJob{
         const currentDate = new Date();
         const twoDaysAgo = new Date();
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 1); 
-        console.log(twoDaysAgo,"twoDaysAgo")
         try{
-            cron.schedule('*/1 * * * *', async ()=> {
+            cron.schedule('0 0 * * *', async ()=> {
                 try{
                     const jobData=await Job.findAll({
                         where:{
@@ -97,12 +99,24 @@ export class CronJob{
                                 [Op.lt]: currentDate, // Apply By date is less than current date (December 30th)
                                 [Op.gt]: twoDaysAgo, // Find where applyBy is greater than or equal to current date
                             },
-                        }
+
+                        },
+                            include: [
+                                {
+                                  model: Realtors,
+                                  as: "jobOwnerData",
+                                  foreignKey: "jobOwnerId",
+                                },
+                            ]
                     })
-                    console.log("........................................")
-                    console.log(jobData,"jobData")
-                    console.log("........................................")
-                    
+                    const allJobData=jobData.map((job: any) => job.toJSON());
+                    const pushNotification=new NotificationSender()
+                    allJobData.map((job:any)=>{
+
+                          pushNotification.customNotification(job.jobOwnerId,job.jobOwnerId,"expiredJob")
+                    })
+
+
 
                 }
                 catch(error){
