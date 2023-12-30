@@ -14,6 +14,10 @@ export interface ConnectionsRepository {
   getById(
     id: string
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
+  checkConnection(
+    id: string,
+    loginId: string
+  ): Promise<Either<ErrorClass, ConnectionsEntity>>;
   updateRequest(
     id: string,
     data: ConnectionsModel
