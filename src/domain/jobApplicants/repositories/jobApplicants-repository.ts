@@ -7,6 +7,7 @@ import {
 import { Either } from "monet"; // Importing the Either monad from the 'monet' library
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Importing the ErrorClass type
 import { JobApplicantQuery } from "@data/jobApplicants/datasources/jobApplicants-data-sources"; // Importing the JobApplicantQuery type
+import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 
 // Defining an interface for the JobApplicantRepository
 export interface JobApplicantRepository {
@@ -26,7 +27,7 @@ export interface JobApplicantRepository {
   // Method to get a list of job applicants
   getJobApplicants(
     query: JobApplicantQuery
-  ): Promise<Either<ErrorClass, JobApplicantEntity[]>>;
+  ): Promise<Either<ErrorClass, JobApplicantsResponse>>;
   // The above method returns a Promise that resolves to an Either monad containing either an ErrorClass or an array of JobApplicantEntity.
 
   // Method to get a job applicant by ID
