@@ -11,6 +11,7 @@ import {
 import { Either, Left, Right } from "monet"; // Importing Either monad for handling success and failure
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error"; // Importing custom error handling class
 import * as HttpStatus from "@presentation/error-handling/http-status"; // Importing HTTP status codes
+import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 
 // Create a class for the JobApplicantRepositoryImpl implementing the JobApplicantRepository interface
 export class JobApplicantRepositoryImpl implements JobApplicantRepository {
@@ -65,27 +66,42 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   // Method to retrieve all job applicants
   async getJobApplicants(
     query: JobApplicantQuery
-  ): Promise<Either<ErrorClass, JobApplicantEntity[]>> {
+  ): Promise<Either<ErrorClass, JobApplicantsResponse>> {
     try {
       // Attempt to get all job applicants using the data source
       const jobApplicants = await this.dataSource.getAll(query);
 
+      // // Check if the data length is zero
+      // if (jobApplicants.length === 0) {
+      //   // If data length is zero, send a success response with status code 200
+      //   return Right<ErrorClass, JobApplicantEntity[]>([]);
+      // }
+
+      // // Return a Right Either indicating success with an array of job applicants
+      // return Right<ErrorClass, JobApplicantEntity[]>(jobApplicants);
+
       // Check if the data length is zero
-      if (jobApplicants.length === 0) {
+      if (jobApplicants.jobApplicants.length === 0) {
         // If data length is zero, send a success response with status code 200
-        return Right<ErrorClass, JobApplicantEntity[]>([]);
+        return Right<ErrorClass, JobApplicantsResponse>({
+          jobApplicants: [],
+          totalCount: 0,
+        });
       }
 
-      // Return a Right Either indicating success with an array of job applicants
-      return Right<ErrorClass, JobApplicantEntity[]>(jobApplicants);
+      // Return a Right Either indicating success with an array of job applicants and totalCount
+      return Right<ErrorClass, JobApplicantsResponse>({
+        jobApplicants: jobApplicants.jobApplicants,
+        totalCount: jobApplicants.totalCount,
+      });
     } catch (error: any) {
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 404) {
         // If not found, return a Not Found error
-        return Left<ErrorClass, JobApplicantEntity[]>(ApiError.notFound());
+        return Left<ErrorClass, JobApplicantsResponse>(ApiError.notFound());
       }
       // Return a custom error with a Bad Request status and the error message
-      return Left<ErrorClass, JobApplicantEntity[]>(
+      return Left<ErrorClass, JobApplicantsResponse>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
       );
     }
@@ -132,4 +148,3 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
     }
   }
 }
-
