@@ -177,5 +177,6 @@ Job.belongsTo(Realtors, {
   foreignKey: "jobOwnerId",
   as: "jobOwnerData", // Optional alias for the association
 });
+
 // Export the "Job" model as the default export of this module
 export default Job;

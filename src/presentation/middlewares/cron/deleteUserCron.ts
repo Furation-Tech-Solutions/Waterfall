@@ -64,7 +64,7 @@ export const deleteStatusWithCron = () => {
           const jobData = await Job.findAll({
             where: {
               // Assuming your Job model has a 'date' attribute
-              date: {
+              applyBy: {
                 
                 [Op.lt]: fn('DATE', literal('CURRENT_DATE')), // Use CURRENT_DATE to represent today's date
               },
