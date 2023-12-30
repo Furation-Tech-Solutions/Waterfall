@@ -21,7 +21,7 @@ export interface ConnectionsDataSource {
 
   createReq(connections: any): Promise<ConnectionsEntity>;
   updateReq(id: string, data: any): Promise<ConnectionsEntity>;
-  deleteReq(id: string): Promise<void>;
+  deleteReq(id: string, loginId: string): Promise<void>;
   read(id: string): Promise<ConnectionsEntity>;
   check(id: string, loginId: string): Promise<ConnectionsEntity>;
   getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
@@ -83,10 +83,19 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Delete a connection
-  async deleteReq(id: string): Promise<void> {
+  async deleteReq(id: string, loginId: string): Promise<void> {
     const deletedConnection = await Connections.destroy({
       where: {
-        id,
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 
