@@ -20,6 +20,7 @@ export interface ConnectionsRepository {
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
   updateRequest(
     id: string,
+    loginId:string,
     data: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
   getAll(
