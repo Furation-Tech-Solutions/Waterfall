@@ -283,6 +283,29 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       // Handle the case where the job applicant is not found
       throw new Error("Job Applicant not found");
     }
+    // Retrieve the associated Job to set jobProgress based on liveStatus
+    const associatedJob = await Job.findByPk(
+      jobApplicant.getDataValue("jobId")
+    );
+
+    if (associatedJob) {
+      // If jobStatus: "JobCompleted", paymentStatus: false in JobApplicant, set jobProgress to "PaymentPending"
+      if (
+        updatedData.jobStatus === "JobCompleted" &&
+        updatedData.paymentStatus === false
+      ) {
+        await associatedJob.update({
+          jobProgress: "paymentPending",
+        });
+      }
+
+      // If paymentStatus: true in JobApplicant, set jobProgress to "Completed"
+      else if (updatedData.paymentStatus === true) {
+        await associatedJob.update({
+          jobProgress: "completed",
+        });
+      }
+    }
     //-------------------------------------------------------------------------------------------------------------------------
 
     // Retrieve the record to check the current applicantStatus
@@ -456,7 +479,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
     }
     //--------------------------------------------------------------------------------------------------------------------------------------
-
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);
 
@@ -467,8 +489,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     if (updatedJobApplicant == null) {
       throw ApiError.notFound();
     }
+
     return updatedJobApplicant.toJSON();
   }
+
   // Method to delete a jobApplicant record by ID
   async delete(id: string): Promise<void> {
     // Delete the jobApplicant record where the ID matches the provided ID

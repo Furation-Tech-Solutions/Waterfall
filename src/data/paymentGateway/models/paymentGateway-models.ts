@@ -37,6 +37,12 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
     type: DataTypes.ENUM(...Object.values(paymentMethodEnum)),
     allowNull: false,
   },
+
+  // Define a field "TransactionId" with a data type of STRING
+  TransactionId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
 });
 
 // Define associations with other models
