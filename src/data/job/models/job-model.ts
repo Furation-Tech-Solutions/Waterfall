@@ -48,7 +48,6 @@ const Job = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     // Address of the job
     address: {
       type: DataTypes.STRING,
@@ -177,5 +176,6 @@ Job.belongsTo(Realtors, {
   foreignKey: "jobOwnerId",
   as: "jobOwnerData", // Optional alias for the association
 });
+
 // Export the "Job" model as the default export of this module
 export default Job;

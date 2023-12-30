@@ -5,9 +5,14 @@ import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import realtorModel from "@data/realtors/model/realtor-model";
-import { RealtorEntity, RealtorMapper, RealtorModel } from "@domain/realtors/entities/realtors";
+import {
+  RealtorEntity,
+  RealtorMapper,
+  RealtorModel,
+} from "@domain/realtors/entities/realtors";
 import ApiError from "@presentation/error-handling/api-error";
 import NotInterested from "@data/notInterested/model/notInterested-models";
+import CallLog from "@data/callLog/models/callLog-model";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -40,12 +45,13 @@ export interface JobQuery {
   months?: Array<number>;
   jobType?: string;
   feeType?: string;
+  sortOrder?: "ASC" | "DESC";
 }
 
 // Implementation of the JobDataSource interface
 export class JobDataSourceImpl implements JobDataSource {
   // Constructor that accepts a Sequelize database connection
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new job record
   async create(job: any): Promise<JobEntity> {
@@ -94,7 +100,11 @@ export class JobDataSourceImpl implements JobDataSource {
         },
         {
           model: JobApplicant,
-          as: "applicantsData",
+          as: "applican                                                                                                                                                                                                                                                   tsData",
+        },
+        {
+          model: CallLog,
+          as: "calllogData",
         },
       ],
     });
@@ -105,7 +115,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
   // Method to retrieve a list of job records
   async getAll(query: JobQuery): Promise<JobEntity[]> {
-    //---------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------ ---------
     let loginId = query.id;
 
     const currentPage = query.page || 1; // Default to page 1
@@ -120,8 +130,10 @@ export class JobDataSourceImpl implements JobDataSource {
         attributes: ["jobId"],
       });
       return jobs.filter((job) => {
-        const jobId = job.getDataValue('id');
-        return !notInterestedJobs.some((notInterestedJob: any) => notInterestedJob.jobId === jobId);
+        const jobId = job.getDataValue("id");
+        return !notInterestedJobs.some(
+          (notInterestedJob: any) => notInterestedJob.jobId === jobId
+        );
       });
     };
     //------------------------------------------------------------------------------------------------------------
@@ -222,7 +234,7 @@ export class JobDataSourceImpl implements JobDataSource {
           jobType: {
             [Op.in]: completedJobTypes, // Filters where jobType is in the array
           },
-       // Filter by the extracted jobTypes
+          // Filter by the extracted jobTypes
           liveStatus: true,
         },
         include: [
@@ -239,11 +251,12 @@ export class JobDataSourceImpl implements JobDataSource {
 
       // console.log("recommendedJobs:", recommendedJobs);
       if (recommendedJobs.length > 0) {
-        const filteredRecommendedJobs = recommendedJobs.filter((job) => job.getDataValue('jobOwnerId') !== loginId);
+        const filteredRecommendedJobs = recommendedJobs.filter(
+          (job) => job.getDataValue("jobOwnerId") !== loginId
+        );
         return filteredRecommendedJobs.map((job: any) => job.toJSON());
-      } 
+      }
       console.log(recommendedJobs);
-      
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -449,7 +462,7 @@ export class JobDataSourceImpl implements JobDataSource {
           {
             model: JobApplicant,
             as: "applicantsData",
-          }
+          },
         ],
 
         order: [
@@ -459,7 +472,6 @@ export class JobDataSourceImpl implements JobDataSource {
         limit: itemsPerPage,
         offset: offset,
       });
-
 
       // return jobs.map((job: any) => job.toJSON());
       const filteredJobs = await applyNotInterestedFilter(jobs);
@@ -467,32 +479,56 @@ export class JobDataSourceImpl implements JobDataSource {
 
       //---------------------------------------------------------------------------------------------------------------------------------------
     } else {
-      // Handle other cases or provide default logic
+      // Set up the initial conditions for the Sequelize query
+      let whereCondition: any = {
+        jobOwnerId: loginId, // Filter jobs by the logged-in user's ID
+      };
+
+      // Check if the 'feeType' parameter exists in the query
+      if (query.feeType) {
+        // Add 'feeType' as a filter condition
+        whereCondition = {
+          ...whereCondition, // Preserve existing conditions
+          feeType: query.feeType, // Filter jobs by the provided 'feeType'
+        };
+      }
+
+      // Check if the 'jobType' parameter exists in the query
+      if (query.jobType) {
+        // Add 'jobType' as a filter condition
+        whereCondition = {
+          ...whereCondition, // Preserve existing conditions
+          jobType: query.jobType, // Filter jobs by the provided 'jobType'
+        };
+      }
+
+      // Execute the Sequelize query to fetch jobs based on the provided conditions
       const jobs = await Job.findAll({
-        where: {
-          jobOwnerId: loginId,
-        },
+        where: whereCondition, // Apply the constructed conditions for filtering
         include: [
           {
             model: Realtors,
-            as: "jobOwnerData",
-            foreignKey: "jobOwnerId",
+            as: "jobOwnerData", // Include the associated job owner data
+            foreignKey: "jobOwnerId", // Based on the 'jobOwnerId' foreign key
           },
           {
             model: JobApplicant,
-            as: "applicantsData",
+            as: "applicantsData", // Include the associated applicants' data
           },
         ],
         order: [
-          // Then, sort by date in ascending order
-          ["date", "ASC"],
+          Sequelize.literal(`CAST(fee AS DECIMAL) ${query.sortOrder || "ASC"}`),
+          // Sort the jobs by 'fee' in numeric order, either ASC or DESC based on 'query.sortOrder'
+          ["date", "ASC"], // Then, sort by 'date' in ascending order
         ],
-        limit: itemsPerPage,
-        offset: offset,
+        limit: itemsPerPage, // Limit the number of fetched jobs per page
+        offset: offset, // Define the offset for pagination
       });
 
-      // return jobs.map((job: any) => job.toJSON());
+      // Apply additional filtering logic, if any, to the fetched jobs
       const filteredJobs = await applyNotInterestedFilter(jobs);
+
+      // Return the filtered jobs as JSON objects
       return filteredJobs.map((job: any) => job.toJSON());
     }
   }
