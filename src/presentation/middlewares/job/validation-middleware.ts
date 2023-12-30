@@ -10,13 +10,14 @@ import {
 
 // Define the structure of the expected input data
 interface JobInput {
-  jobOwner: number;
+  jobOwnerId: string;
   location: string;
   address: string;
   date: Date;
   numberOfApplicants: string;
   fromTime: string;
   toTime: string;
+  applyBy: Date;
   jobType: string;
   clientEmail: string;
   clientPhoneNumber: string;
@@ -25,6 +26,7 @@ interface JobInput {
   description: string;
   attachments: string[];
   deleteReason: string;
+  jobProgress: string;
   coordinates: { latitude: string; longitude: string } | null;
   liveStatus: boolean;
   urgentRequirement: boolean;
@@ -35,7 +37,7 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
   // Define a schema for validating the input using Joi
   const jobSchema = Joi.object<JobInput>({
     // Validate job owner
-    jobOwner: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    jobOwnerId: isUpdate ? Joi.string().optional() : Joi.string().required(),
 
     // Validate location
     location: isUpdate
@@ -118,6 +120,14 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
           "string.base": "To time must be a string",
           "string.empty": "To time is required",
           "any.required": "To time is required",
+        }),
+    applyBy: isUpdate
+      ? Joi.date().optional().messages({
+          "applyBy.base": "applyBy must be a valid date",
+        })
+      : Joi.date().required().messages({
+          "applyBy.base": "applyBy must be a valid date",
+          "any.required": "applyBy is required",
         }),
 
     // Validate job type
@@ -233,6 +243,13 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
           "string.base": "Delete reason must be a string",
           "string.empty": "Delete reason is required",
           "any.required": "Delete reason is required",
+        }),
+    jobProgress: isUpdate
+      ? Joi.string().optional().messages({
+          "string.base": "jobProgress must be a string",
+        })
+      : Joi.string().optional().messages({
+          "string.base": "jobProgress must be a string",
         }),
     coordinates: Joi.object({
       latitude: Joi.string().optional(),

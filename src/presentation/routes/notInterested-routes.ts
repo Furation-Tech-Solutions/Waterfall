@@ -10,6 +10,7 @@ import { GetNotInterestedById } from "@domain/notInterested/usecases/get-notInte
 import { GetAllNotInteresteds } from "@domain/notInterested/usecases/get-all-notInterested";
 import { UpdateNotInterested } from "@domain/notInterested/usecases/update-notInterested";
 import { validateNotInterestedInputMiddleware } from "@presentation/middlewares/notInterested/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the NotInterestedDataSourceImpl and pass the sequelize connection
 const notInterestedDataSource = new NotInterestedDataSourceImpl(sequelize);
@@ -39,6 +40,7 @@ export const notInterestedRouter = Router();
 // Route handling for creating a new Job
 notInterestedRouter.post(
     "/", // Define the route URL
+    verifyUser,
     validateNotInterestedInputMiddleware(false), // Apply input validation middleware
     notInterestedService.createNotInterested.bind(notInterestedService) // Bind the createNotInterested method to handle the route
 );
@@ -46,20 +48,24 @@ notInterestedRouter.post(
 // Route handling for getting a NotInterested by ID
 notInterestedRouter.get(
     "/:id",
+    verifyUser,
     notInterestedService.getNotInterestedById.bind(notInterestedService)
 );
 
 // Route handling for updating a NotInterested by ID
 notInterestedRouter.put(
-    "/:id", validateNotInterestedInputMiddleware(true),
+    "/:id",
+    verifyUser,
+     validateNotInterestedInputMiddleware(true),
     notInterestedService.updateNotInterested.bind(notInterestedService)
 );
 
 // Route handling for deleting a NotInterested by ID
 notInterestedRouter.delete(
     "/:id",
+    verifyUser,
     notInterestedService.deleteNotInterested.bind(notInterestedService)
 );
 
 // Route handling for getting all NotInteresteds
-notInterestedRouter.get("/", notInterestedService.getAllNotInteresteds.bind(notInterestedService));
+notInterestedRouter.get("/", verifyUser,notInterestedService.getAllNotInteresteds.bind(notInterestedService));

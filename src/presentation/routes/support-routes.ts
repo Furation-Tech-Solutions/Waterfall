@@ -10,6 +10,7 @@ import { GetSupportById } from "@domain/support/usecases/get-support-by-id";
 import { GetAllSupports } from "@domain/support/usecases/get-all-supports";
 import { UpdateSupport } from "@domain/support/usecases/update-support";
 import { validateSupportInputMiddleware } from "@presentation/middlewares/support/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the SupportDataSourceImpl and pass the sequelize connection
 const supportDataSource = new SupportDataSourceImpl(sequelize);
@@ -39,22 +40,24 @@ export const supportRouter = Router();
 // Route handling for creating a new Support
 supportRouter.post(
   "/", // Endpoint for creating a new Support
+  verifyUser,
   validateSupportInputMiddleware(false), // Apply input validation middleware
   supportService.createSupport.bind(supportService) // Bind the createSupport method to handle the route
 );
 
 // Route handling for getting a Support by ID
-supportRouter.get("/:id", supportService.getSupportById.bind(supportService));
+supportRouter.get("/:id",verifyUser, supportService.getSupportById.bind(supportService));
 
 // Route handling for updating a Support by ID
 supportRouter.put(
   "/:id",
+  verifyUser,
   validateSupportInputMiddleware(true),
   supportService.updateSupport.bind(supportService)
 );
 
 // Route handling for deleting a Support by ID
-supportRouter.delete("/:id", supportService.deleteSupport.bind(supportService));
+supportRouter.delete("/:id",verifyUser, supportService.deleteSupport.bind(supportService));
 
 // Route handling for getting all Supports
-supportRouter.get("/", supportService.getAllSupports.bind(supportService));
+supportRouter.get("/",verifyUser, supportService.getAllSupports.bind(supportService));

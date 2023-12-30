@@ -1,13 +1,14 @@
 // Express API request DTO
 export class JobModel {
   constructor(
-    public jobOwner: number = 0, // Owner of the job
+    public jobOwnerId: string = "", // Owner of the job
     public location: string = "", // Location of the job
     public address: string = "", // Address of the job
     public date: Date = new Date(), // Date of the job
     public numberOfApplicants: string = "", // Number of applicants needed
     public fromTime: string = "", // Start time of the job
     public toTime: string = "", // End time of the job
+    public applyBy: Date = new Date(),
     public jobType: string = "", // Type of the job
     public clientEmail: string = "", // Client's email
     public clientPhoneNumber: string = "", // Client's phone number
@@ -17,9 +18,12 @@ export class JobModel {
     public attachments: string[] = [], // Job attachments
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string = "", // Reason for job deletion
+    public jobProgress: string = "",
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean = false,
-    public urgentRequirement: boolean = false
+    public urgentRequirement: boolean = false,
+    public jobOwnerData: {} = {},
+    public applicantsData: [] = []
   ) {}
 }
 
@@ -27,13 +31,14 @@ export class JobModel {
 export class JobEntity {
   constructor(
     public id: number | undefined = undefined, // Job ID (optional)
-    public jobOwner: number, // Owner of the job
+    public jobOwnerId: string, // Owner of the job
     public location: string, // Location of the job
     public address: string, // Address of the job
     public date: Date, // Date of the job
     public numberOfApplicants: string, // Number of applicants needed
     public fromTime: string, // Start time of the job
     public toTime: string, // End time of the job
+    public applyBy: Date,
     public jobType: string, // Type of the job
     public clientEmail: string, // Client's email
     public clientPhoneNumber: string, // Client's phone number
@@ -43,9 +48,12 @@ export class JobEntity {
     public attachments: string[], // Job attachments
     public createdAt: Date | undefined = undefined, // Creation date of the job (optional)
     public deleteReason: string, // Reason for job deletion
+    public jobProgress: string, 
     public coordinates: { latitude: string; longitude: string } | null = null,
     public liveStatus: boolean,
-    public urgentRequirement: boolean
+    public urgentRequirement: boolean,
+    public jobOwnerData: {},
+    public applicantsData: []
   ) {}
 }
 
@@ -61,10 +69,10 @@ export class JobMapper {
       // Merge properties one by one, using jobData if defined, or fall back to existingJob's properties
       return {
         ...existingJob,
-        jobOwner:
-          jobData.jobOwner !== undefined
-            ? jobData.jobOwner
-            : existingJob.jobOwner,
+        jobOwnerId:
+          jobData.jobOwnerId !== undefined
+            ? jobData.jobOwnerId
+            : existingJob.jobOwnerId,
         location:
           jobData.location !== undefined
             ? jobData.location
@@ -84,6 +92,8 @@ export class JobMapper {
           jobData.toTime !== undefined ? jobData.toTime : existingJob.toTime,
         jobType:
           jobData.jobType !== undefined ? jobData.jobType : existingJob.jobType,
+        applyBy:
+          jobData.applyBy !== undefined ? jobData.applyBy : existingJob.applyBy,
         clientEmail:
           jobData.clientEmail !== undefined
             ? jobData.clientEmail
@@ -111,6 +121,10 @@ export class JobMapper {
           jobData.deleteReason !== undefined
             ? jobData.deleteReason
             : existingJob.deleteReason,
+        jobProgress:
+          jobData.jobProgress !== undefined
+            ? jobData.jobProgress
+            : existingJob.jobProgress,
         coordinates:
           jobData.coordinates !== undefined
             ? jobData.coordinates
@@ -132,13 +146,14 @@ export class JobMapper {
             ? jobData.id.toString()
             : undefined
           : jobData.id.toString(),
-        jobOwner: jobData.jobOwner,
+        jobOwnerId: jobData.jobOwnerId,
         location: jobData.location,
         address: jobData.address,
         date: jobData.date,
         numberOfApplicants: jobData.numberOfApplicants,
         fromTime: jobData.fromTime,
         toTime: jobData.toTime,
+        applyBy: jobData.applyBy,
         jobType: jobData.jobType,
         clientEmail: jobData.clientEmail,
         clientPhoneNumber: jobData.clientPhoneNumber,
@@ -148,9 +163,12 @@ export class JobMapper {
         attachments: jobData.attachments,
         createdAt: jobData.createdAt,
         deleteReason: jobData.deleteReason,
+        jobProgress: jobData.jobProgress,
         coordinates: jobData.coordinates || null,
         liveStatus: jobData.liveStatus,
         urgentRequirement: jobData.urgentRequirement,
+        jobOwnerData: jobData.jobOwnerData,
+        applicantsData: jobData.applicantsData,
       };
       return jobData;
     }
@@ -162,13 +180,14 @@ export class JobMapper {
     // Map properties one by one
     return {
       id: job.id,
-      jobOwner: job.jobOwner,
+      jobOwnerId: job.jobOwnerId,
       location: job.location,
       address: job.address,
       date: job.date,
       numberOfApplicants: job.numberOfApplicants,
       fromTime: job.fromTime,
       toTime: job.toTime,
+      applyBy: job.applyBy,
       jobType: job.jobType,
       clientEmail: job.clientEmail,
       clientPhoneNumber: job.clientPhoneNumber,
@@ -178,9 +197,12 @@ export class JobMapper {
       attachments: job.attachments,
       createdAt: job.createdAt,
       deleteReason: job.deleteReason,
+      jobProgress: job.jobProgress,
       coordinates: job.coordinates,
       liveStatus: job.liveStatus,
       urgentRequirement: job.urgentRequirement,
+      jobOwnerData: job.jobOwnerData,
+      applicantsData: job.applicantsData,
     };
   }
 }

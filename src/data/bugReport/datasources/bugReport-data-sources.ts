@@ -6,12 +6,13 @@ import {
 } from "@domain/bugReport/entities/bugReport"; // Import the BugReportModel
 import BugReport from "@data/bugReport/models/bugReport-model";
 import Realtors from "@data/realtors/model/realtor-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create an interface for the BugReportDataSource
 export interface BugReportDataSource {
   // Define methods for data operations with promises
-  create(bugReport: BugReportModel): Promise<BugReportEntity>;
-  update(id: string, bugReport: BugReportModel): Promise<any>;
+  create(bugReport: any): Promise<BugReportEntity>;
+  update(id: string, bugReport: any): Promise<BugReportEntity>;
   delete(id: string): Promise<void>;
   read(id: string): Promise<BugReportEntity | null>;
   getAll(): Promise<BugReportEntity[]>;
@@ -19,7 +20,7 @@ export interface BugReportDataSource {
 
 // Implementation of the BugReportDataSource interface
 export class BugReportDataSourceImpl implements BugReportDataSource {
-  constructor(private db: Sequelize) { } // Constructor that accepts a Sequelize instance
+  constructor(private db: Sequelize) {} // Constructor that accepts a Sequelize instance
 
   // Method to create a new bug report in the database
   async create(bugReport: any): Promise<BugReportEntity> {
@@ -49,12 +50,10 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "realtor",
-          as: "RealtorData"
+          foreignKey: "realtorId",
+          as: "realtorData",
         },
       ],
-      // You can uncomment the "include" option if there are associations to load
-      // include: 'tags', // Replace 'tags' with the actual name of your association
     });
 
     return bugReport ? bugReport.toJSON() : null; // Convert to a plain JavaScript object before returning
@@ -67,8 +66,8 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
       include: [
         {
           model: Realtors,
-          foreignKey: "realtor",
-          as: "RealtorData"
+          foreignKey: "realtorId",
+          as: "realtorData",
         },
       ],
     });
@@ -77,7 +76,10 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
   }
 
   // Method to update a bug report in the database by ID
-  async update(id: string, updatedData: BugReportModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: BugReportModel
+  ): Promise<BugReportEntity> {
     // Find the bug report record by ID
     const bugReport = await BugReport.findByPk(id);
 
@@ -89,6 +91,13 @@ export class BugReportDataSourceImpl implements BugReportDataSource {
     // Fetch the updated record
     const updatedBugReport = await BugReport.findByPk(id);
 
-    return updatedBugReport ? updatedBugReport.toJSON() : null; // Convert to a plain JavaScript object before returning
-  }
+    if (updatedBugReport == null) {
+      throw ApiError.notFound();
+    }
+    return updatedBugReport.toJSON();
 }
+}
+
+
+
+

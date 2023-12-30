@@ -42,7 +42,9 @@
     "@aws-sdk/client-ses": "^3.449.0",
     "@types/express": "^4.17.17",
     "@types/node-cron": "^3.0.11",
-    "aws-sdk": "^2.1425.0",
+    "aws-sdk": "^2.1511.0",
+    "aws-sdk-mock": "^5.8.0",
+    "aws-sdk-promise": "^0.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -61,7 +63,8 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "puppeteer": "^21.5.2",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "stripe": "^14.10.0"
   },
   "_moduleAliases": {
     "@domain": "dist/domain",

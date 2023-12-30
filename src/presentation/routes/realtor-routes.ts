@@ -10,7 +10,10 @@ import { GetAllRealtors } from "@domain/realtors/usecases/get-all-realtors";
 import { GetRealtorById } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtor } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtor } from "@domain/realtors/usecases/delete-realtor";
-import {sequelize} from "@main/sequelizeClient";
+import { sequelize } from "@main/sequelizeClient";
+import { LoginRealtor } from "@domain/realtors/usecases/login-realtor";
+import { CheckRealtorByRecoId } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -25,6 +28,8 @@ const getAllRealtorsUsecase = new GetAllRealtors(realtorRepository);
 const getRealtorByIdUsecase = new GetRealtorById(realtorRepository);
 const updateRealtorUsecase = new UpdateRealtor(realtorRepository);
 const deleteRealtorUsecase = new DeleteRealtor(realtorRepository);
+const loginRealtorUsecase = new LoginRealtor(realtorRepository);
+const CheckRealtorByRecoIdUsecase = new CheckRealtorByRecoId(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
@@ -32,23 +37,36 @@ const realtorService = new RealtorService(
   getAllRealtorsUsecase,
   getRealtorByIdUsecase,
   updateRealtorUsecase,
-  deleteRealtorUsecase
+  deleteRealtorUsecase,
+  loginRealtorUsecase,
+  CheckRealtorByRecoIdUsecase
 );
 
 // Create an Express router
 export const realtorRouter = Router();
 
 // Route handling for creating a new realtor
-realtorRouter.post("/", validateRealtorInputMiddleware(false), realtorService.createRealtor.bind(realtorService));
+realtorRouter.post("/",
+  validateRealtorInputMiddleware(false),
+  realtorService.createRealtor.bind(realtorService));
 
 // Route handling for getting all realtorsx`
 realtorRouter.get("/", realtorService.getAllRealtors.bind(realtorService));
 
 // Route handling for getting an Realtor by ID
-realtorRouter.get("/:id", realtorService.getRealtorById.bind(realtorService));
+realtorRouter.get("/:id",verifyUser, realtorService.getRealtorById.bind(realtorService));
 
 // Route handling for updating an realtor by ID
-realtorRouter.put("/:id", validateRealtorInputMiddleware(true), realtorService.updateRealtor.bind(realtorService));
+realtorRouter.put("/:id",verifyUser, validateRealtorInputMiddleware(true), realtorService.updateRealtor.bind(realtorService));
 
 // Route handling for deleting an realtor by ID
-realtorRouter.delete("/:id", realtorService.deleteRealtor.bind(realtorService));
+realtorRouter.delete("/:id",verifyUser, realtorService.deleteRealtor.bind(realtorService));
+
+// Route handling for login realtor by email for deviceToken
+realtorRouter.post(
+  "/login",
+  realtorService.loginRealtor.bind(realtorService)
+)
+
+// Route handling for getting an Realtor by ID
+realtorRouter.get("/checkRecoId/:id", realtorService.CheckRecoId.bind(realtorService));

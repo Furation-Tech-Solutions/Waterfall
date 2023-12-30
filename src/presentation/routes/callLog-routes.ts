@@ -10,6 +10,7 @@ import { GetCallLogById } from "@domain/callLog/usecases/get-callLog-by-id";
 import { GetAllCallLogs } from "@domain/callLog/usecases/get-all-callLog";
 import { UpdateCallLog } from "@domain/callLog/usecases/update-callLog";
 import { validateCallLogInputMiddleware } from "@presentation/middlewares/callLog/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the CallLogDataSourceImpl and pass the sequelize connection
 const callLogDataSource = new CallLogDataSourceImpl(sequelize);
@@ -39,18 +40,19 @@ export const callLogRouter = Router();
 // Route handling for creating a new CallLog
 callLogRouter.post(
   "/", // Route URL
+  verifyUser,
   validateCallLogInputMiddleware(false), // Middleware for input validation
   callLogService.createCallLog.bind(callLogService) // Handling function
 );
 
 // Route handling for getting a CallLog by ID
-callLogRouter.get("/:id", callLogService.getCallLogById.bind(callLogService));
+callLogRouter.get("/:id",verifyUser, callLogService.getCallLogById.bind(callLogService));
 
 // Route handling for updating a CallLog by ID
-callLogRouter.put("/:id",validateCallLogInputMiddleware(true), callLogService.updateCallLog.bind(callLogService));
+callLogRouter.put("/:id",verifyUser,validateCallLogInputMiddleware(true), callLogService.updateCallLog.bind(callLogService));
 
 // Route handling for deleting a CallLog by ID
-callLogRouter.delete("/:id", callLogService.deleteCallLog.bind(callLogService));
+callLogRouter.delete("/:id",verifyUser, callLogService.deleteCallLog.bind(callLogService));
 
 // Route handling for getting all CallLogs
-callLogRouter.get("/", callLogService.getAllCallLogs.bind(callLogService));
+callLogRouter.get("/",verifyUser, callLogService.getAllCallLogs.bind(callLogService));

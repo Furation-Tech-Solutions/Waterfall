@@ -12,6 +12,7 @@ import { DeleteFeedBackUsecase } from "@domain/feedBack/usecases/delete-feedBack
 import { GetFeedbackCountUsecase } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { NotificationSender } from "./push-notification-services";
 
 export class FeedBackService {
   private readonly CreateFeedBackUsecase: CreateFeedBackUsecase;
@@ -71,7 +72,7 @@ export class FeedBackService {
       await this.CreateFeedBackUsecase.execute(feedBackData);
 
     newFeedBack.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: FeedBackEntity) => {
         const resData = FeedBackMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -80,15 +81,21 @@ export class FeedBackService {
           "Feedback created successfully",
           201
         ); // Created
+        const pushNotification = new NotificationSender()
+        pushNotification.customNotification(result.fromRealtorId, result.toRealtorId, "feedback")
       }
     );
+
+    // const pushNotification=new NotificationSender()
+
   }
 
   // Handler for getting all feedbacks
   async getAllFeedBacks(req: Request, res: Response, next: NextFunction): Promise<void> {
     // let id: string = req.body.loginId;
     // let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
 
 
     const query: any = {}; // Create an empty query object
@@ -99,23 +106,27 @@ export class FeedBackService {
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = parseInt(req.query.months as string, 10);
 
     // Call the GetAllFeedBacksUsecase to get all Feedbacks
     const feedBacks: Either<ErrorClass, FeedBackEntity[]> =
       await this.GetAllFeedBacksUsecase.execute(query);
 
     feedBacks.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FeedBackEntity[]) => {
-        const responseData = result.map((feedback) =>
-          FeedBackMapper.toEntity(feedback)
-        );
-        this.sendSuccessResponse(
-          res,
-          responseData,
-          "Feedbacks retrieved successfully"
-        );
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((feedback) =>
+            FeedBackMapper.toEntity(feedback)
+          );
+          this.sendSuccessResponse(
+            res,
+            responseData,
+            "Feedbacks retrieved successfully"
+          );
+        }
       }
     );
   }
@@ -128,18 +139,21 @@ export class FeedBackService {
       await this.GetFeedBackByIdUsecase.execute(feedBackId);
 
     feedBack.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
-      (result: FeedBackEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Feedback not found", 200);
         } else {
-          const resData = FeedBackMapper.toEntity(result);
-          this.sendSuccessResponse(
-            res,
-            resData,
-            "Feedback retrieved successfully"
-          );
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: FeedBackEntity) => {
+        const resData = FeedBackMapper.toEntity(result);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Feedback retrieved successfully"
+        );
       }
     );
   }
@@ -206,7 +220,7 @@ export class FeedBackService {
 
   async getFeedbackCount(req: Request, res: Response): Promise<void> {
     let id: string = req.body.loginId;
-    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    let loginId = id;// For testing purposes, manually set loginId to "2"
 
     const query: any = {}; // Create an empty query object
 
@@ -214,7 +228,7 @@ export class FeedBackService {
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
+    query.id = loginId;
     query.year = parseInt(req.query.year as string, 10);
     query.month = parseInt(req.query.month as string, 10);
 

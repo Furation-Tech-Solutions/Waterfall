@@ -1,24 +1,24 @@
 // Express API request populate the ConnectionsModel
 export class ConnectionsModel {
   constructor(
-    public fromId: number = 0,
-    public toId: number = 0,
-    public fromRealtor: {} = {},
-    public toRealtor: {} = {},
+    public fromId: string = "",
+    public toId: string = "",
+    public fromData: {} = {},
+    public toData: {} = {},
     public connected: boolean = false
-  ) { }
+  ) {}
 }
 
 // ConnectionsEntity provided by Connections Repository is converted to Express API Response
 export class ConnectionsEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public fromId: number,
-    public toId: number,
+    public fromId: string,
+    public toId: string,
     public connected: boolean,
-    public fromRealtor: {},
-    public toRealtor: {}
-  ) { }
+    public fromData: {},
+    public toData: {}
+  ) {}
 }
 
 /* ConnectionsMapper provided by Connections Repository is converted to Express API Response */
@@ -49,13 +49,15 @@ export class ConnectionMapper {
       // Create a new ConnectionsEntity
       const connectionEntity: ConnectionsEntity = {
         id: includeId
-          ? connectionData.id ? connectionData.id : undefined
+          ? connectionData.id
+            ? connectionData.id
+            : undefined
           : connectionData.id,
         fromId: connectionData.fromId,
         toId: connectionData.toId,
         connected: connectionData.connected,
-        toRealtor: connectionData.toRealtor,
-        fromRealtor: connectionData.fromRealtor,
+        toData: connectionData.toData,
+        fromData: connectionData.fromData,
       };
       return connectionEntity;
     }
@@ -67,8 +69,8 @@ export class ConnectionMapper {
       fromId: connection.fromId,
       toId: connection.toId,
       connected: connection.connected,
-      fromRealtor: connection.fromRealtor,
-      toRealtor: connection.toRealtor,
+      fromData: connection.fromData,
+      toData: connection.toData,
     };
   }
 }

@@ -1,22 +1,24 @@
 // Express API request DTO (Data Transfer Object) for NotInterested
 export class NotInterestedModel {
   constructor(
-    public realtor: number = 0, // Realtor name, default value is an empty string
-    public job: number = 0, // Job name, default value is an empty string
-    public jobData: {} = {},
+    public realtorId: string = "", // Realtor name, default value is an empty string
+    public jobId: number = 0, // Job name, default value is an empty string
     public realtorData: {} = {},
-  ) { }
+    public jobData: {} = {}
+    
+  ) {}
 }
 
 // NotInterested Entity provided by NotInterested Repository is converted to Express API Response
 export class NotInterestedEntity {
   constructor(
     public id: number | undefined = undefined, // Unique identifier for the saved job, initially undefined
-    public realtor: number, // Realtor name
-    public job: number, // Job name
-    public jobData: {},
+    public realtorId: string, // Realtor name
+    public jobId: number, // Job name
     public realtorData: {},
-  ) { }
+    public jobData: {}
+    
+  ) {}
 }
 
 export class NotInterestedMapper {
@@ -30,14 +32,14 @@ export class NotInterestedMapper {
       // If existingNotInterested is provided, merge the data from NotInterestedData with the existingNotInterested
       return {
         ...existingNotInterested,
-        realtor:
-          notInterestedData.realtor !== undefined
-            ? notInterestedData.realtor
-            : existingNotInterested.realtor, // Use existing Realtor if not provided in notInterestedData
-        job:
-          notInterestedData.job !== undefined
-            ? notInterestedData.job
-            : existingNotInterested.job, // Use existing Job if not provided in notInterestedData
+        realtorId:
+          notInterestedData.realtorId !== undefined
+            ? notInterestedData.realtorId
+            : existingNotInterested.realtorId, // Use existing Realtor if not provided in notInterestedData
+        jobId:
+          notInterestedData.jobId !== undefined
+            ? notInterestedData.jobId
+            : existingNotInterested.jobId, // Use existing Job if not provided in notInterestedData
       };
     } else {
       // If existingNotInterested is not provided, create a new notInterestedEntity using notInterestedData
@@ -46,11 +48,11 @@ export class NotInterestedMapper {
           ? notInterestedData.id
             ? notInterestedData.id
             : undefined
-          : notInterestedData.id,// Set the ID if includeId is true
-        realtor: notInterestedData.realtor, // Set Realtor from notInterestedData
-        job: notInterestedData.job, // Set Job from notInterestedData
-        jobData: notInterestedData.jobData,
+          : notInterestedData.id, // Set the ID if includeId is true
+        realtorId: notInterestedData.realtorId, // Set Realtor from notInterestedData
+        jobId: notInterestedData.jobId, // Set Job from notInterestedData
         realtorData: notInterestedData.realtorData,
+        jobData: notInterestedData.jobData,
       };
       return notInterestedEntity;
     }
@@ -60,10 +62,10 @@ export class NotInterestedMapper {
   static toModel(notInterested: NotInterestedEntity): any {
     return {
       id: notInterested.id, // Extract and include the ID
-      realtor: notInterested.realtor, // Extract and include Realtor
-      job: notInterested.job, // Extract and include Job
-      jobData: notInterested.jobData,
+      realtorId: notInterested.realtorId, // Extract and include Realtor
+      jobId: notInterested.jobId, // Extract and include Job
       realtorData: notInterested.realtorData,
+      jobData: notInterested.jobData,
     };
   }
 }

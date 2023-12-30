@@ -7,6 +7,7 @@ import {
 import { CreateBlockingUsecase } from "@domain/blocking/usecases/create-blocking";
 import { GetAllBlockingsUsecase } from "@domain/blocking/usecases/get-all-blockings";
 import { GetBlockingByIdUsecase } from "@domain/blocking/usecases/get-blocking-by-id";
+import { IsUserBlockedUsecase } from "@domain/blocking/usecases/is-user-blocked";
 import { UpdateBlockingUsecase } from "@domain/blocking/usecases/update-blocking";
 import { DeleteBlockingUsecase } from "@domain/blocking/usecases/delete-blocking";
 import { Either } from "monet";
@@ -16,6 +17,7 @@ export class BlockingService {
   private readonly CreateBlockingUsecase: CreateBlockingUsecase;
   private readonly GetAllBlockingsUsecase: GetAllBlockingsUsecase;
   private readonly GetBlockingByIdUsecase: GetBlockingByIdUsecase;
+  private readonly IsUserBlockedUsecase: IsUserBlockedUsecase;
   private readonly UpdateBlockingUsecase: UpdateBlockingUsecase;
   private readonly DeleteBlockingUsecase: DeleteBlockingUsecase;
 
@@ -23,12 +25,14 @@ export class BlockingService {
     CreateBlockingUsecase: CreateBlockingUsecase,
     GetAllBlockingsUsecase: GetAllBlockingsUsecase,
     GetBlockingByIdUsecase: GetBlockingByIdUsecase,
+    IsUserBlockedUsecase: IsUserBlockedUsecase,
     UpdateBlockingUsecase: UpdateBlockingUsecase,
     DeleteBlockingUsecase: DeleteBlockingUsecase
   ) {
     this.CreateBlockingUsecase = CreateBlockingUsecase;
     this.GetAllBlockingsUsecase = GetAllBlockingsUsecase;
     this.GetBlockingByIdUsecase = GetBlockingByIdUsecase;
+    this.IsUserBlockedUsecase = IsUserBlockedUsecase;
     this.UpdateBlockingUsecase = UpdateBlockingUsecase;
     this.DeleteBlockingUsecase = DeleteBlockingUsecase;
   }
@@ -56,10 +60,15 @@ export class BlockingService {
       await this.CreateBlockingUsecase.execute(blockingData);
 
     newBlocking.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: BlockingEntity) => {
         const resData = BlockingMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Blocking created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Blocking created successfully",
+          201
+        );
       }
     );
   }
@@ -70,7 +79,9 @@ export class BlockingService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "3"; // For testing purposes, manually set loginId to "2"
 
@@ -85,12 +96,20 @@ export class BlockingService {
     const blockings: Either<ErrorClass, BlockingEntity[]> =
       await this.GetAllBlockingsUsecase.execute(query);
     blockings.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: BlockingEntity[]) => {
-        const responseData = result.map((blocking) =>
-          BlockingMapper.toEntity(blocking)
-        );
-        this.sendSuccessResponse(res, responseData, "Blockings retrieved successfully");
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((blocking) =>
+            BlockingMapper.toEntity(blocking)
+          );
+          this.sendSuccessResponse(
+            res,
+            responseData,
+            "Blockings retrieved successfully"
+          );
+        }
       }
     );
   }
@@ -103,17 +122,38 @@ export class BlockingService {
       await this.GetBlockingByIdUsecase.execute(blockingId);
 
     blocking.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: BlockingEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+      (error: ErrorClass) => {
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Blocking not found", 200);
         } else {
-          const resData = BlockingMapper.toEntity(result);
-          this.sendSuccessResponse(res, resData, "Blocking retrieved successfully");
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: BlockingEntity) => {
+        const resData = BlockingMapper.toEntity(result);
+        this.sendSuccessResponse(res, resData, "Blocking retrieved successfully");
       }
     );
   }
+
+  // Handler for checking if a user is blocked
+  async isUserBlocked(req: Request, res: Response): Promise<void> {
+    let Id = req.user;
+    const blockingId: string = req.params.id;
+
+    const blocking: Either<ErrorClass, BlockingEntity> =
+      await this.IsUserBlockedUsecase.execute(Id, blockingId);
+
+    blocking.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
+      (result: BlockingEntity) => {
+        const resData = BlockingMapper.toEntity(result, true);
+        this.sendSuccessResponse(res, resData, "Blocking retrieved successfully");
+      }
+    )
+  }
+
 
   // Handler for updating a blocking by ID
   async updateBlocking(req: Request, res: Response): Promise<void> {

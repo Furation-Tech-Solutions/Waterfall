@@ -31,6 +31,11 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
   async getFeedBacks(query: Query): Promise<Either<ErrorClass, FeedBackEntity[]>> {
     try {
       const feedBacks = await this.feedBackDataSource.getAllFeedBacks(query); // Use the tag feedBack data source
+      // Check if the data length is zero
+      if (feedBacks.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, FeedBackEntity[]>([]);
+      }
       return Right<ErrorClass, FeedBackEntity[]>(feedBacks);
     } catch (e: any) {
       if (e instanceof ApiError && e.name === "notfound") {
@@ -44,7 +49,7 @@ export class FeedBackRepositoryImpl implements FeedBackRepository {
   async getFeedBackById(id: string): Promise<Either<ErrorClass, FeedBackEntity>> {
     try {
       const feedBack = await this.feedBackDataSource.read(id); // Use the tag feedBack data source
-      return feedBack ? Right<ErrorClass, FeedBackEntity>(feedBack) : Left<ErrorClass, FeedBackEntity>(ApiError.notFound());
+      return Right<ErrorClass, FeedBackEntity>(feedBack) 
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, FeedBackEntity>(ApiError.notFound());

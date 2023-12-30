@@ -9,8 +9,11 @@ import { GetAllRealtorsUsecase } from "@domain/realtors/usecases/get-all-realtor
 import { GetRealtorByIdUsecase } from "@domain/realtors/usecases/get-realtor-by-id";
 import { UpdateRealtorUsecase } from "@domain/realtors/usecases/update-realtor";
 import { DeleteRealtorUsecase } from "@domain/realtors/usecases/delete-realtor";
+import { CheckRealtorByRecoIdUsecase } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
 import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
+import { NotificationSender } from "./push-notification-services";
+import { LoginRealtorUsecase } from "@domain/realtors/usecases/login-realtor";
 
 export class RealtorService {
   private readonly createRealtorUsecase: CreateRealtorUsecase;
@@ -18,6 +21,10 @@ export class RealtorService {
   private readonly getRealtorByIdUsecase: GetRealtorByIdUsecase;
   private readonly updateRealtorUsecase: UpdateRealtorUsecase;
   private readonly deleteRealtorUsecase: DeleteRealtorUsecase;
+  private readonly loginRealtorUsecase: LoginRealtorUsecase;
+  private readonly checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase;
+
+
 
   constructor(
     createRealtorUsecase: CreateRealtorUsecase,
@@ -25,12 +32,17 @@ export class RealtorService {
     getRealtorByIdUsecase: GetRealtorByIdUsecase,
     updateRealtorUsecase: UpdateRealtorUsecase,
     deleteRealtorUsecase: DeleteRealtorUsecase,
+    loginRealtorUsecase: LoginRealtorUsecase,
+    checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase
   ) {
     this.createRealtorUsecase = createRealtorUsecase;
     this.getAllRealtorsUsecase = getAllRealtorsUsecase;
     this.getRealtorByIdUsecase = getRealtorByIdUsecase;
     this.updateRealtorUsecase = updateRealtorUsecase;
     this.deleteRealtorUsecase = deleteRealtorUsecase;
+    this.loginRealtorUsecase = loginRealtorUsecase;
+    this.checkRealtorByRecoIdUsecase = checkRealtorByRecoIdUsecase;
+
   }
 
   private sendSuccessResponse(
@@ -46,7 +58,7 @@ export class RealtorService {
     });
   }
 
-  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number = 500): void {
+  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number=500): void {
     res.status(statusCode).json({
       success: false,
       message: error.message,
@@ -55,12 +67,13 @@ export class RealtorService {
 
   async createRealtor(req: Request, res: Response): Promise<void> {
     const realtorData: RealtorModel = RealtorMapper.toModel(req.body);
-
     const newRealtor: Either<ErrorClass, RealtorEntity> =
       await this.createRealtorUsecase.execute(realtorData);
-
     newRealtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => {
+        
+        this.sendErrorResponse(res, error, error.status);
+      },
       (result: RealtorEntity) => {
         const resData = RealtorMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -71,6 +84,8 @@ export class RealtorService {
         );
       }
     );
+    // const pushNotification=new NotificationSender()
+
   }
 
   async getAllRealtors(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -85,8 +100,14 @@ export class RealtorService {
       await this.getAllRealtorsUsecase.execute(query);
 
     realtors.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: RealtorEntity[]) => this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: RealtorEntity[]) => {
+      if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+        this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+        }
+      }
     );
   }
 
@@ -97,11 +118,20 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) =>{
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Realtor not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: RealtorEntity) => {
         if (!result) {
           this.sendErrorResponse(res, ErrorClass.notFound());
+
         } else {
+
           const resData = RealtorMapper.toEntity(result);
           this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
         }
@@ -157,6 +187,50 @@ export class RealtorService {
           "Realtor deleted successfully",
           204
         ); // No Content
+      }
+    );
+  }
+
+
+  async loginRealtor(req: Request, res: Response): Promise<void> {
+    const { email, firebaseDeviceToken } = req.body;
+
+    const user: Either<ErrorClass, RealtorEntity> =
+      await this.loginRealtorUsecase.execute(email, firebaseDeviceToken);
+
+    user.cata(
+      (error: ErrorClass) => {
+        res.status(error.status).json({ error: error.message })
+      },
+      (result: RealtorEntity) => {
+        if (result == undefined) {
+          return res.status(404).json({ message: "Data Not Found" });
+        }
+        const resData = RealtorMapper.toEntity(result);
+        return res.status(200).cookie('email', resData.email).json(resData);
+      }
+    );
+  }
+
+  async CheckRecoId(req: Request, res: Response): Promise<void> {
+    const recoId: string = req.params.id;
+    console.log(recoId, ":service ");
+    const realtor: Either<ErrorClass, RealtorEntity> =
+      await this.checkRealtorByRecoIdUsecase.execute(recoId);
+
+    realtor.cata(
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, error.status)
+      },
+      (result: RealtorEntity) => {
+        if (!result) {
+          this.sendErrorResponse(res, ErrorClass.notFound());
+
+        } else {
+
+          const resData = RealtorMapper.toEntity(result);
+          this.sendSuccessResponse(res, resData, "Realtor retrieved successfully");
+        }
       }
     );
   }

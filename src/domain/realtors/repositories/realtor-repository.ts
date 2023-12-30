@@ -19,4 +19,11 @@ export interface RealtorRepository {
 
   // Method to delete a Realtor by ID
   deleteRealtor(id: string): Promise<Either<ErrorClass, void>>;
+
+  // Method to login realtor with Email
+  loginRealtor(email: string, firebaseDeviceToken: string): Promise<Either<ErrorClass, RealtorEntity>>
+
+  // Method to retrieve a Realtor by ID
+  CheckRecoId(id: string): Promise<Either<ErrorClass, RealtorEntity>>;
+
 }

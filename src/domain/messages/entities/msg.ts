@@ -1,24 +1,24 @@
 // Define a class for the MessageModel, representing the structure of data sent in Express API requests
 export class MessageModel {
   constructor(
-    public sender: number = 0,
-    public receiver: number = 0,
-    public message: string = '',
+    public senderId: string = "",
+    public receiverId: string = "",
+    public message: string = "",
     public senderData: {} = {},
-    public ReceiverData: {} = {},
-  ) { }
+    public receiverData: {} = {}
+  ) {}
 }
 
 // Define a class for the MessageEntity, representing data provided by the Message Repository and converted to an Express API response
 export class MessageEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public sender: number,
-    public receiver: number,
+    public senderId: string,
+    public receiverId: string,
     public message: string,
     public senderData: {},
-    public ReceiverData: {},
-  ) { }
+    public receiverData: {}
+  ) {}
 }
 
 // Define a MessageMapper class to handle the mapping between MessageModel and MessageEntity
@@ -32,19 +32,32 @@ export class MessageMapper {
       // If existingMessage is provided, merge the data from messageData with the existingMessage
       return {
         ...existingMessage,
-        sender: messageData.sender !== undefined ? messageData.sender : existingMessage.sender,
-        receiver: messageData.receiver !== undefined ? messageData.receiver : existingMessage.receiver,
-        message: messageData.message !== undefined ? messageData.message : existingMessage.message
+        senderId:
+          messageData.senderId !== undefined
+            ? messageData.senderId
+            : existingMessage.senderId,
+        receiverId:
+          messageData.receiverId !== undefined
+            ? messageData.receiverId
+            : existingMessage.receiverId,
+        message:
+          messageData.message !== undefined
+            ? messageData.message
+            : existingMessage.message,
       };
     } else {
       // If existingMessage is not provided, create a new MessageEntity using messageData
       const messageEntity: MessageEntity = {
-        id: includeId ? (messageData.id ? messageData.id : undefined) : messageData.id,
-        sender: messageData.sender,
-        receiver: messageData.receiver,
+        id: includeId
+          ? messageData.id
+            ? messageData.id
+            : undefined
+          : messageData.id,
+        senderId: messageData.senderId,
+        receiverId: messageData.receiverId,
         message: messageData.message,
         senderData: messageData.senderData,
-        ReceiverData: messageData.ReceiverData
+        receiverData: messageData.receiverData,
       };
       return messageEntity;
     }
@@ -53,11 +66,11 @@ export class MessageMapper {
   // Convert a MessageEntity to a format suitable for a model
   static toModel(message: MessageEntity): any {
     return {
-      sender: message.sender,
-      receiver: message.receiver,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
       message: message.message,
       senderData: message.senderData,
-      ReceiverData: message.ReceiverData
+      receiverData: message.receiverData,
     };
   }
 }

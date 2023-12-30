@@ -42,9 +42,9 @@ export class CallLogRepositoryImpl implements CallLogRepository {
   async deleteCallLog(id: string): Promise<Either<ErrorClass, void>> {
     try {
       // Call the data source's delete method and await the result
-      await this.dataSource.delete(id);
+      const res = await this.dataSource.delete(id);
       // Return a Right indicating successful deletion
-      return Right<ErrorClass, void>(undefined);
+      return Right<ErrorClass, void>(res);
     } catch (error: any) {
       // If an error occurs, return a Left with a custom ApiError indicating a bad request
       return Left<ErrorClass, void>(
@@ -78,6 +78,12 @@ export class CallLogRepositoryImpl implements CallLogRepository {
     try {
       // Call the data source's getAll method and await the result
       const callLogs = await this.dataSource.getAll(query);
+
+      // Check if the data length is zero
+      if (callLogs.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, CallLogEntity[]>([]);
+      }
       // Return a Right with an array of CallLogEntity objects on success
       return Right<ErrorClass, CallLogEntity[]>(callLogs);
     } catch (error: any) {

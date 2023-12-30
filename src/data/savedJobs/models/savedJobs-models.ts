@@ -10,29 +10,29 @@ import Job from "@data/job/models/job-model";
 const SavedJob = sequelize.define("SavedJob", {
   // Define a field "Realtor" with a data type of INTEGER
   // This field represents the foreign key linking to the "Realtors" table
-  Realtor: {
-    type: DataTypes.INTEGER,
+  realtorId: {
+    type: DataTypes.STRING,
     allowNull: false, // The field cannot be null
-    references: { model: Realtors, key: 'id' } // Establish a foreign key relationship
+    references: { model: Realtors, key: "id" }, // Establish a foreign key relationship
   },
 
   // Define a field "Job" with a data type of INTEGER
   // This field represents the foreign key linking to the "Job" table
-  Job: {
+  jobId: {
     type: DataTypes.INTEGER,
     allowNull: false, // The field cannot be null
-    references: { model: Job, key: 'id' } // Establish a foreign key relationship
+    references: { model: Job, key: "id" }, // Establish a foreign key relationship
   },
 });
 
 // Define associations between tables
 SavedJob.belongsTo(Job, {
-  foreignKey: "Job", // Define the foreign key in the "SavedJob" table
+  foreignKey: "jobId", // Define the foreign key in the "SavedJob" table
   as: "jobData", // Alias for the associated data from the "Job" table
 });
 
 SavedJob.belongsTo(Realtors, {
-  foreignKey: "Realtor", // Define the foreign key in the "SavedJob" table
+  foreignKey: "realtorId", // Define the foreign key in the "SavedJob" table
   as: "realtorData", // Alias for the associated data from the "Realtors" table
 });
 

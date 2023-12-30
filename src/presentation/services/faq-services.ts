@@ -63,15 +63,10 @@ export class FAQService {
       await this.CreateFAQUsecase.execute(faqData);
 
     newFAQ.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: FAQEntity) => {
         const resData = FAQMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "FAQ created successfully",
-          201
-        ); // Created
+        this.sendSuccessResponse(res, resData, "FAQ created successfully", 201); // Created
       }
     );
   }
@@ -86,14 +81,18 @@ export class FAQService {
       await this.GetAllFAQsUsecase.execute();
 
     faqs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: FAQEntity[]) => {
-        const responseData = result.map((faq) => FAQMapper.toEntity(faq));
-        this.sendSuccessResponse(
-          res,
-          responseData,
-          "FAQs retrieved successfully"
-        );
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((faq) => FAQMapper.toEntity(faq));
+          this.sendSuccessResponse(
+            res,
+            responseData,
+            "FAQs retrieved successfully"
+          );
+        }
       }
     );
   }
@@ -106,18 +105,23 @@ export class FAQService {
       await this.GetFAQByIdUsecase.execute(faqId);
 
     faq.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404), // Not Found
-      (result: FAQEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, ErrorClass.notFound());
+      (error: ErrorClass) =>{
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "FAQ not found", 200);
         } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
+      (result: FAQEntity) => {
+
           const resData = FAQMapper.toEntity(result);
           this.sendSuccessResponse(
             res,
             resData,
             "FAQ retrieved successfully"
           );
-        }
+        
       }
     );
   }

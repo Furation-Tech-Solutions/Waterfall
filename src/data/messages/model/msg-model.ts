@@ -4,16 +4,16 @@ import { sequelize } from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
 
 // Define a Sequelize model called 'Message' with three fields: 'sender', 'receiver', and 'message'
-const Message = sequelize.define('Message', {
+const Message = sequelize.define("Message", {
   // Define the 'sender' field
-  sender: {
-    type: DataTypes.INTEGER,
+  senderId: {
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
   },
   // Define the 'receiver' field
-  receiver: {
-    type: DataTypes.INTEGER,
+  receiverId: {
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
   },
@@ -22,11 +22,15 @@ const Message = sequelize.define('Message', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  seen: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 // Establish associations with the 'Realtors' model using foreign keys
-Message.belongsTo(Realtors, { foreignKey: "sender", as: "senderData" });
-Message.belongsTo(Realtors, { foreignKey: "receiver", as: "receiverData" });
+Message.belongsTo(Realtors, { foreignKey: "senderId", as: "senderData" });
+Message.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverData" });
 
 // Export the 'Message' model for use in other parts of the application
 export default Message;

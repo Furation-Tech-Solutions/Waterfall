@@ -45,13 +45,17 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     query: BlockQuery
   ): Promise<Either<ErrorClass, BlockingEntity[]>> {
     try {
-      const blockings = await this.blockingDataSource.getAllBlockings(query); // Use the tag blocking data source
+      const blockings = await this.blockingDataSource.getAllBlockings(query);
+
+      // Check if the data length is zero
+      if (blockings.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, BlockingEntity[]>([]);
+      }
+
+      // Return the data if it exists
       return Right<ErrorClass, BlockingEntity[]>(blockings);
     } catch (e) {
-      // Handle specific API error for not found
-      if (e instanceof ApiError && e.name === "notfound") {
-        return Left<ErrorClass, BlockingEntity[]>(ApiError.notFound());
-      }
       // Handle other errors with a generic bad request error
       return Left<ErrorClass, BlockingEntity[]>(ApiError.badRequest());
     }
@@ -62,10 +66,26 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     id: string
   ): Promise<Either<ErrorClass, BlockingEntity>> {
     try {
-      const blocking = await this.blockingDataSource.read(id); // Use the tag blocking data source
-      return blocking
-        ? Right<ErrorClass, BlockingEntity>(blocking)
-        : Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+      const blocking: BlockingEntity = await this.blockingDataSource.read(id); // Use the tag blocking data source
+      return Right<ErrorClass, BlockingEntity>(blocking);
+    } catch (e) {
+      // Handle specific API error for not found
+      if (e instanceof ApiError && e.name === "notfound") {
+        return Left<ErrorClass, BlockingEntity>(ApiError.notFound());
+      }
+      // Handle other errors with a generic bad request error
+      return Left<ErrorClass, BlockingEntity>(ApiError.badRequest());
+    }
+  }
+
+  // Check if a user is blocked
+  async isUserBlocked(id: string, blockingId: string): Promise<Either<ErrorClass, BlockingEntity>> {
+    try {
+      const blocking: BlockingEntity = await this.blockingDataSource.isBlocked(
+        id,
+        blockingId
+      ); // Use the tag blocking data source
+      return Right<ErrorClass, BlockingEntity>(blocking);
     } catch (e) {
       // Handle specific API error for not found
       if (e instanceof ApiError && e.name === "notfound") {
@@ -82,7 +102,8 @@ export class BlockingRepositoryImpl implements BlockingRepository {
     data: BlockingModel
   ): Promise<Either<ErrorClass, BlockingEntity>> {
     try {
-      const updatedBlocking = await this.blockingDataSource.update(id, data); // Use the tag blocking data source
+      const updatedBlocking: BlockingEntity =
+        await this.blockingDataSource.update(id, data); // Use the tag blocking data source
       return Right<ErrorClass, BlockingEntity>(updatedBlocking);
     } catch (e) {
       // Handle specific API error for conflict

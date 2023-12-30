@@ -33,6 +33,11 @@ export class FAQRepositoryImpl implements FAQRepository {
   async getFAQs(): Promise<Either<ErrorClass, FAQEntity[]>> {
     try {
       const faqs = await this.faqDataSource.getAllFAQs(); // Use the tag faq data source
+      // Check if the data length is zero
+      if (faqs.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, FAQEntity[]>([]);
+      }
       return Right<ErrorClass, FAQEntity[]>(faqs);
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
@@ -46,9 +51,8 @@ export class FAQRepositoryImpl implements FAQRepository {
   async getFAQById(id: string): Promise<Either<ErrorClass, FAQEntity>> {
     try {
       const faq = await this.faqDataSource.read(id); // Use the tag faq data source
-      return faq
-        ? Right<ErrorClass, FAQEntity>(faq)
-        : Left<ErrorClass, FAQEntity>(ApiError.notFound());
+      return Right<ErrorClass, FAQEntity>(faq)
+
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, FAQEntity>(ApiError.notFound());

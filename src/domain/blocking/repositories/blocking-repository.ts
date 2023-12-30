@@ -11,7 +11,7 @@ import { BlockQuery } from "@data/blocking/datasources/blocking-data-source";
 export interface BlockingRepository {
   // Method to create a blocking entity
   createBlocking(
-    blocking: BlockingModel
+    blocking: any
   ): Promise<Either<ErrorClass, BlockingEntity>>;
 
   // Method to get a list of blocking entities
@@ -22,6 +22,8 @@ export interface BlockingRepository {
   // Method to get a blocking entity by its ID
   getBlockingById(id: string): Promise<Either<ErrorClass, BlockingEntity>>;
 
+  // Method to check if a user is blocked
+  isUserBlocked(id: string, blockingId: string): Promise<Either<ErrorClass, BlockingEntity>>;
   // Method to update a blocking entity by its ID
   updateBlocking(
     id: string,

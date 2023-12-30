@@ -70,6 +70,12 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       // Attempt to get all job applicants using the data source
       const jobApplicants = await this.dataSource.getAll(query);
 
+      // Check if the data length is zero
+      if (jobApplicants.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, JobApplicantEntity[]>([]);
+      }
+
       // Return a Right Either indicating success with an array of job applicants
       return Right<ErrorClass, JobApplicantEntity[]>(jobApplicants);
     } catch (error: any) {

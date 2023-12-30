@@ -5,8 +5,8 @@ import { Request, Response, NextFunction } from "express";
 
 // Define the structure of the input data for blocking
 interface BlockingInput {
-  fromRealtor: number;
-  toRealtor: number;
+  fromRealtorId: string;
+  toRealtorId: string;
 }
 
 // Define a validator function for blocking input
@@ -16,12 +16,8 @@ const blockingValidator = (
 ) => {
   // Define a schema for blocking input using Joi
   const blockingSchema = Joi.object<BlockingInput>({
-    fromRealtor: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().required(),
-    toRealtor: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().required()
+    fromRealtorId: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    toRealtorId: isUpdate ? Joi.string().optional() : Joi.string().required(),
   });
 
   // Validate the input against the schema

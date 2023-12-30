@@ -99,6 +99,12 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
         query
       );
 
+      // Check if the data length is zero
+      if (connections.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, ConnectionsEntity[]>([]);
+      }
+
       // Return a Right with an array of connection entities
       return Right<ErrorClass, ConnectionsEntity[]>(connections);
     } catch (e) {
@@ -116,12 +122,10 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to get a connection by ID
-      const connections = await this.connectionsDataSource.read(id);
+      let connections: any = await this.connectionsDataSource.read(id);
 
       // Return a Right with the connection entity if found, else return Left with notFound ApiError
-      return connections
-        ? Right<ErrorClass, ConnectionsEntity>(connections)
-        : Left<ErrorClass, ConnectionsEntity>(ApiError.notFound());
+      return Right<ErrorClass, ConnectionsEntity>(connections);
     } catch (e) {
       // Handle errors, return Left with appropriate ApiError
       if (e instanceof ApiError && e.name === "notfound") {

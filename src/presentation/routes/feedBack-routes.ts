@@ -11,6 +11,7 @@ import { UpdateFeedBack } from "@domain/feedBack/usecases/update-feedBack";
 import { DeleteFeedBack } from "@domain/feedBack/usecases/delete-feedBack";
 import { GetFeedbackCount } from "@domain/feedBack/usecases/get-all-feedBacks-Count";
 import { sequelize } from "@main/sequelizeClient";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the FeedBackDataSourceImpl and pass the mongoose connection
 const feedBackDataSource = new FeedBackDataSourceImpl(sequelize);
@@ -40,20 +41,20 @@ const feedBackService = new FeedBackService(
 export const feedBackRouter = Router();
 
 // Route handling for creating a new feedBack
-feedBackRouter.post("/", validateFeedBackInputMiddleware(false), feedBackService.createFeedBack.bind(feedBackService));
+feedBackRouter.post("/",verifyUser, validateFeedBackInputMiddleware(false), feedBackService.createFeedBack.bind(feedBackService));
 
 // Route handling for getting all feedBacksx`
-feedBackRouter.get("/", feedBackService.getAllFeedBacks.bind(feedBackService));
+feedBackRouter.get("/", verifyUser,feedBackService.getAllFeedBacks.bind(feedBackService));
 
 // Route handling for getting the total feedback count
-feedBackRouter.get("/count/", feedBackService.getFeedbackCount.bind(feedBackService));
+feedBackRouter.get("/count/",verifyUser, feedBackService.getFeedbackCount.bind(feedBackService));
 
 // Route handling for getting an FeedBack by ID
-feedBackRouter.get("/:id", feedBackService.getFeedBackById.bind(feedBackService));
+feedBackRouter.get("/:id",verifyUser, feedBackService.getFeedBackById.bind(feedBackService));
 
 // Route handling for updating an feedBack by ID
-feedBackRouter.put("/:id", validateFeedBackInputMiddleware(true), feedBackService.updateFeedBack.bind(feedBackService));
+feedBackRouter.put("/:id",verifyUser, validateFeedBackInputMiddleware(true), feedBackService.updateFeedBack.bind(feedBackService));
 
 // Route handling for deleting an feedBack by ID
-feedBackRouter.delete("/:id", feedBackService.deleteFeedBack.bind(feedBackService));
+feedBackRouter.delete("/:id",verifyUser, feedBackService.deleteFeedBack.bind(feedBackService));
 

@@ -64,7 +64,7 @@ export class SavedJobService {
       await this.createSavedJobUsecase.execute(savedJobData);
 
     newSavedJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -102,10 +102,21 @@ export class SavedJobService {
       await this.getSavedJobByIdUsecase.execute(savedJobId);
 
     savedJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "SavedJob not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: SavedJobEntity) => {
         const resData = SavedJobMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Saved job retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved job retrieved successfully"
+        );
       }
     );
   }
@@ -152,7 +163,9 @@ export class SavedJobService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object
@@ -165,12 +178,20 @@ export class SavedJobService {
       await this.getAllSavedJobsUsecase.execute(query);
 
     savedJobs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (savedJobs: SavedJobEntity[]) => {
+         if (savedJobs.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const resData = savedJobs.map((savedJob: any) =>
           SavedJobMapper.toEntity(savedJob)
         );
-        this.sendSuccessResponse(res, resData, "Saved jobs retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Saved jobs retrieved successfully"
+        );
+        }
       }
     );
   }

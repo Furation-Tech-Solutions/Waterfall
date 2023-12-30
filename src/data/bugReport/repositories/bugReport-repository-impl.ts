@@ -78,6 +78,13 @@ export class BugReportRepositoryImpl implements BugReportRepository {
     try {
       // Retrieve all bug reports using the "dataSource" and return them as Right
       const response = await this.dataSource.getAll();
+
+      // Check if the data length is zero
+      if (response.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, BugReportEntity[]>([]);
+      }
+
       return Right<ErrorClass, BugReportEntity[]>(response);
     } catch (error: any) {
       // Handle error cases:

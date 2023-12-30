@@ -12,6 +12,7 @@ import { UpdateMessageUsecase } from "@domain/messages/usecases/update-msg";
 import { GetAllMessageUsecase } from "@domain/messages/usecases/get-all-msg";
 import { Either } from "monet";
 import { Query } from "@data/messages/datasources/msg-datasource";
+import { NotificationSender } from "./push-notification-services";
 
 export class MessagesServices {
   private readonly createMessagesUsecase: CreateMessagesUsecase;
@@ -65,7 +66,7 @@ export class MessagesServices {
       await this.createMessagesUsecase.execute(Data);
 
     newMessages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity) => {
         const resData = MessageMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -74,8 +75,12 @@ export class MessagesServices {
           "Message created successfully",
           201
         );
+        console.log(result)
+        const pushNotification = new NotificationSender()
+        pushNotification.customNotification(result.senderId, result.receiverId, "sendMessage")
       }
     );
+    // 
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {
@@ -104,11 +109,15 @@ export class MessagesServices {
       await this.getByIdMessageUsecase.execute(id);
 
     Messages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
-      (result: MessageEntity) => {
-        if (!result) {
-          return this.sendSuccessResponse(res, {}, "Message not found");
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Message not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: MessageEntity) => {
         const resData = MessageMapper.toEntity(result);
         this.sendSuccessResponse(
           res,
@@ -124,9 +133,9 @@ export class MessagesServices {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let toId = req.headers.toid;
 
-    let loginId = req.headers.fromid as string;
+    let loginId = req.user as string;
+    // let Id = req.user;
 
 
     const query: Query = {};
@@ -137,19 +146,23 @@ export class MessagesServices {
     // query.toId = parseInt(req.query.toId as string, 10);
     query.searchList = req.query.search as string;
     // query.toId = toId;
-    query.toId = toId ? parseInt(toId as string, 10) : undefined;
+    query.toId = req.headers.toid as string;
 
 
     const clientMessages: Either<ErrorClass, MessageEntity[]> =
       await this.getAllMessageUsecase.execute(loginId, query);
 
     clientMessages.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: MessageEntity[]) => {
-        const responseData = result.map((message) =>
-          MessageMapper.toEntity(message)
-        );
-        this.sendSuccessResponse(res, responseData);
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const responseData = result.map((message) =>
+            MessageMapper.toEntity(message)
+          );
+          this.sendSuccessResponse(res, responseData);
+        }
       }
     );
   }

@@ -6,6 +6,8 @@ export const CREATE_SUCCESS = "created successfully";
 
 export const NO_USERS_FOUND = "No users found";
 
+export const NO_DATA_FOUND = "data not found";
+
 export const GENERIC_ERROR = "An unexpected error occurred";
 
 export const DELETED_SUCCESS = "deleted successfully";
@@ -49,6 +51,8 @@ export const FEEDBACK_CONFLICT = "realtor already given the feedback";
 export const QUESTION_CONFLICT = "realtor question already exists";
 
 export const REALTOR_CONFLICT = "realtor already exists";
+
+export const SAVEDJOB_CONFLICT = "Saved Job already exists";
 
 // export const FIRST_NAME_EXIST="User already exists"
 

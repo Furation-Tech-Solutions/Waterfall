@@ -10,6 +10,7 @@ import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import SESMailService from "./email-ses-services";
 import SMSService from "./sms-service";
+import { NotificationSender } from "./push-notification-services";
 
 export class JobService {
   private readonly createJobUsecase: CreateJobUsecase;
@@ -66,15 +67,10 @@ export class JobService {
       await this.createJobUsecase.execute(jobData);
 
     newJob.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: JobEntity) => {
         const resData = JobMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Job created successfully",
-          201
-        );
+        this.sendSuccessResponse(res, resData, "Job created successfully", 201);
       }
     );
   }
@@ -88,12 +84,7 @@ export class JobService {
     response.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        this.sendSuccessResponse(
-          res,
-          {},
-          "Job deleted successfully",
-          204
-        );
+        this.sendSuccessResponse(res, {}, "Job deleted successfully", 204);
       }
     );
   }
@@ -105,17 +96,21 @@ export class JobService {
       await this.getJobByIdUsecase.execute(jobId);
 
     job.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => {
+        if (error.message === 'not found') {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Job not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: JobEntity) => {
         const resData = JobMapper.toEntity(result, true);
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Job retrieved successfully"
-        );
+        this.sendSuccessResponse(res, resData, "Job retrieved successfully");
       }
     );
   }
+
 
   async updateJob(req: Request, res: Response): Promise<void> {
     const jobId: string = req.params.id;
@@ -147,6 +142,9 @@ export class JobService {
               responseData,
               "Job updated successfully"
             );
+            console.log(response, "response")
+            const pushNotification = new NotificationSender()
+            // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
           }
         );
       }
@@ -159,7 +157,8 @@ export class JobService {
     next: NextFunction
   ): Promise<void> {
     // let loginId = req.user;
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
@@ -169,46 +168,39 @@ export class JobService {
     query.limit = parseInt(req.query.limit as string, 10);
     query.id = Id;
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = [parseInt(req.query.month as string, 10)];
+    query.jobType = req.query.jobType as string;
+    query.feeType = req.query.feeType as string;
+    query.sortOrder = req.query.sortOrder as string;
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
-
     jobs.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobs: JobEntity[]) => {
-        const resData = jobs.map((job: any) => JobMapper.toEntity(job));
-        const emailService = new SESMailService();
-        const emailOption = {
-          email: "shehzadmalik123.sm@gmail.com",
-          subject: "Booking Request Confirmation",
-          message: "this is testing email",
-        };
-        emailService.sendEmail(emailOption)
-
-        const smsService = new SMSService()
-        const smsOptions = {
-          phoneNumber: "+919881239491",
-          message: "this is testing sms in node .ts"
+        if (jobs.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const resData = jobs.map((job: any) => JobMapper.toEntity(job));
+          this.sendSuccessResponse(res, resData);
         }
-        smsService.sendSMS(smsOptions)
-        this.sendSuccessResponse(res, resData);
       }
     );
   }
 
   async getTotalCount(req: Request, res: Response): Promise<void> {
     let id: string = req.user;
-    let loginId = id || "1"; // For testing purposes, manually set loginId to "2"
+    let loginId = id // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
+    
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
-    query.id = parseInt(loginId, 10);
+    query.id = loginId;
     query.year = parseInt(req.query.year as string, 10);
-    query.month = parseInt(req.query.month as string, 10);
+    query.months = [parseInt(req.query.month as string, 10)];
 
     const count: Either<ErrorClass, number> =
       await this.gettotalCountUsecase.execute(query);

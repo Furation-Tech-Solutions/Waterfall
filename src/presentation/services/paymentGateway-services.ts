@@ -58,15 +58,14 @@ export class PaymentGatewayService {
   }
 
   async createPaymentGateway(req: Request, res: Response): Promise<void> {
-    const paymentGatewayData: PaymentGatewayModel = PaymentGatewayMapper.toModel(
-      req.body
-    );
+    const paymentGatewayData: PaymentGatewayModel =
+      PaymentGatewayMapper.toModel(req.body);
 
     const newPaymentGateway: Either<ErrorClass, PaymentGatewayEntity> =
       await this.createPaymentGatewayUsecase.execute(paymentGatewayData);
 
     newPaymentGateway.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: PaymentGatewayEntity) => {
         const resData = PaymentGatewayMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -105,7 +104,14 @@ export class PaymentGatewayService {
       await this.getPaymentGatewayByIdUsecase.execute(paymentGatewayId);
 
     paymentGateway.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "PaymentGateway not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: PaymentGatewayEntity) => {
         const resData = PaymentGatewayMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -131,11 +137,8 @@ export class PaymentGatewayService {
       async (result: PaymentGatewayEntity) => {
         const resData = PaymentGatewayMapper.toEntity(result, true);
 
-        const updatedPaymentGatewayEntity: PaymentGatewayEntity = PaymentGatewayMapper.toEntity(
-          paymentGatewayData,
-          true,
-          resData
-        );
+        const updatedPaymentGatewayEntity: PaymentGatewayEntity =
+          PaymentGatewayMapper.toEntity(paymentGatewayData, true, resData);
 
         const updatedPaymentGateway: Either<ErrorClass, PaymentGatewayEntity> =
           await this.updatePaymentGatewayUsecase.execute(
@@ -169,12 +172,16 @@ export class PaymentGatewayService {
       await this.getAllPaymentGatewaysUsecase.execute();
 
     paymentGateways.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: PaymentGatewayEntity[]) => {
-        const resData = result.map((paymentGateway: any) =>
-          PaymentGatewayMapper.toEntity(paymentGateway)
-        );
-        this.sendSuccessResponse(res, resData);
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          const resData = result.map((paymentGateway: any) =>
+            PaymentGatewayMapper.toEntity(paymentGateway)
+          );
+          this.sendSuccessResponse(res, resData);
+        }
       }
     );
   }

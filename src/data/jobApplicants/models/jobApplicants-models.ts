@@ -22,14 +22,14 @@ export const jobStatusEnum = {
 // Define the "JobApplicant" model using Sequelize
 const JobApplicant = sequelize.define("JobApplicant", {
   // Define the "job" field with its data type and constraints
-  job: {
+  jobId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: { model: Job, key: "id" }, // Reference to the Job model's id
   },
   // Define the "applicant" field with its data type and constraints
-  applicant: {
-    type: DataTypes.INTEGER, // Assuming 'Realtor' is represented by UUID in PostgreSQL
+  applicantId: {
+    type: DataTypes.STRING, // Assuming 'Realtor' is represented by UUID in PostgreSQL
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Reference to the Realtors model's id
   },
@@ -73,17 +73,17 @@ const JobApplicant = sequelize.define("JobApplicant", {
 
 // Define associations between JobApplicant and other models
 Job.hasMany(JobApplicant, {
-  foreignKey: "job",
+  foreignKey: "jobId",
   as: "applicantsData",
 });
 
 JobApplicant.belongsTo(Job, {
-  foreignKey: "job",
+  foreignKey: "jobId",
   as: "jobData",
 });
 
 JobApplicant.belongsTo(Realtors, {
-  foreignKey: "applicant",
+  foreignKey: "applicantId",
   as: "applicantData",
 });
 

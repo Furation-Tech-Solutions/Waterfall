@@ -7,12 +7,16 @@ import {
 import NotInterested from "@data/notInterested/model/notInterested-models";
 import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
+import ApiError from "@presentation/error-handling/api-error";
 
 // Create a NotInterestedDataSource Interface
 export interface NotInterestedDataSource {
   // Define methods for data source operations
-  create(notInterested: NotInterestedModel): Promise<NotInterestedEntity>;
-  update(id: string, notInterested: NotInterestedModel): Promise<any>;
+  create(notInterested: any): Promise<NotInterestedEntity>;
+  update(
+    id: string,
+    notInterested: any
+  ): Promise<NotInterestedEntity>;
   delete(id: string): Promise<void>;
   read(id: string): Promise<NotInterestedEntity | null>;
   getAll(query: NotInterestedQuery): Promise<NotInterestedEntity[]>;
@@ -27,7 +31,7 @@ export interface NotInterestedQuery {
 
 // Implement the NotInterested Data Source that communicates with the database
 export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Implement the "create" method to insert a new NotInterestedModel into the database
   async create(notInterested: any): Promise<NotInterestedEntity> {
@@ -61,13 +65,13 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
         {
           model: Realtors,
           as: "realtorData",
-          foreignKey: "realtor",
+          foreignKey: "realtorId",
         },
         {
           model: Job,
           as: "jobData",
-          foreignKey: "job",
-        }
+          foreignKey: "jobId",
+        },
       ],
     });
 
@@ -87,15 +91,15 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
         {
           model: Realtors,
           as: "realtorData",
-          foreignKey: "realtor",
+          foreignKey: "realtorId",
           where: {
-            // realtor: loginId
+            realtorId: loginId,
           },
         },
         {
           model: Job,
           as: "jobData",
-          foreignKey: "job",
+          foreignKey: "jobId",
         },
       ],
       limit: itemsPerPage, // Limit the number of results per page
@@ -107,7 +111,10 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
   }
 
   // Implement the "update" method to update a NotInterested record by ID with provided data
-  async update(id: string, updatedData: NotInterestedModel): Promise<any> {
+  async update(
+    id: string,
+    updatedData: any
+  ): Promise<NotInterestedEntity> {
     // Find the record by ID
     const notInterested = await NotInterested.findByPk(id);
 
@@ -119,7 +126,10 @@ export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
     // Fetch the updated record
     const updatedNotInterested = await NotInterested.findByPk(id);
 
-    // Convert to a plain JavaScript object before returning
-    return updatedNotInterested ? updatedNotInterested.toJSON() : null;
+    if (updatedNotInterested == null) {
+      throw ApiError.notFound();
+    }
+    return updatedNotInterested.toJSON();
   }
 }
+

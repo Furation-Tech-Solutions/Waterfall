@@ -10,6 +10,7 @@ import { GetBugReportById } from "@domain/bugReport/usecases/get-bugReport-by-id
 import { GetAllBugReports } from "@domain/bugReport/usecases/get-all-bugReports";
 import { UpdateBugReport } from "@domain/bugReport/usecases/update-bugReport";
 import { validateBugReportInputMiddleware } from "@presentation/middlewares/bugReport/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // Create an instance of the BugReportDataSourceImpl and pass the sequelize connection
 const bugReportDataSource = new BugReportDataSourceImpl(sequelize);
@@ -39,6 +40,7 @@ export const bugReportRouter = Router();
 // Route handling for creating a new BugReport
 bugReportRouter.post(
   "/",
+  verifyUser,
   validateBugReportInputMiddleware(false), // Apply input validation middleware
   bugReportService.createBugReport.bind(bugReportService) // Bind the createBugReport method to handle the route
 );
@@ -46,23 +48,28 @@ bugReportRouter.post(
 // Route handling for getting a BugReport by ID
 bugReportRouter.get(
   "/:id",
+  verifyUser,
   bugReportService.getBugReportById.bind(bugReportService)
 );
 
 // Route handling for updating a BugReport by ID
 bugReportRouter.put(
-  "/:id",validateBugReportInputMiddleware(true),
+  "/:id",
+  verifyUser,
+  validateBugReportInputMiddleware(true),
   bugReportService.updateBugReport.bind(bugReportService)
 );
 
 // Route handling for deleting a BugReport by ID
 bugReportRouter.delete(
   "/:id",
+  verifyUser,
   bugReportService.deleteBugReport.bind(bugReportService)
 );
 
 // Route handling for getting all BugReports
 bugReportRouter.get(
   "/",
+  verifyUser,
   bugReportService.getAllBugReports.bind(bugReportService)
 );

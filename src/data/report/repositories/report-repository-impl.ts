@@ -74,6 +74,11 @@ export class ReportRepositoryImpl implements ReportRepository {
     try {
       // Retrieve all reports using the "dataSource" and return them as Right
       const allReports = await this.dataSource.getAll();
+      // Check if the data length is zero
+      if (allReports.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, ReportEntity[]>([]);
+      }
       return Right<ErrorClass, ReportEntity[]>(allReports);
     } catch (error: any) {
       // Handle error cases:

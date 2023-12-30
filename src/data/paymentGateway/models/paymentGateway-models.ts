@@ -8,8 +8,6 @@ import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 export const paymentMethodEnum = {
   CREDITCARD: "Credit Card",
   DEBITCARD: "Debit Card",
-  PAYPAL: "Paypal",
-  BANKTRANSFER: "Bank Transfer",
 };
 
 // Define a Sequelize model named "PaymentGateway"
@@ -39,6 +37,12 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
     type: DataTypes.ENUM(...Object.values(paymentMethodEnum)),
     allowNull: false,
   },
+
+  // Define a field "TransactionId" with a data type of STRING
+  TransactionId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
 });
 
 // Define associations with other models

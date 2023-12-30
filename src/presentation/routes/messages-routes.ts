@@ -9,6 +9,8 @@ import { DeleteMessage } from "@domain/messages/usecases/delete-msg";
 import { GetAllMessage } from "@domain/messages/usecases/get-all-msg";
 import { GetByIdMessage } from "@domain/messages/usecases/get-msg-by-id";
 import { UpdateMessage } from "@domain/messages/usecases/update-msg";
+import { validateMessageInputMiddleware } from "@presentation/middlewares/message/validation-middleware";
+import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
 
 // import { validatemessagesInputMiddleware } from "@presentation/middlewares/messages/validation-messages";
 
@@ -40,28 +42,32 @@ export const messagesRouter = Router();
 // Route handling for creating a new messages
 messagesRouter.post(
   "/",
-  // validateMessagesInputMiddleware(false),
+  verifyUser,
+  validateMessageInputMiddleware(false),
   messagesService.createMessage.bind(messagesService)
 );
 
 // Route handling for deleting a messages by ID
 messagesRouter.delete(
   "/:id",
+  verifyUser,
   messagesService.deleteMessage.bind(messagesService)
 );
 
 // Route handling for getting a Messages by ID
 messagesRouter.get(
   "/:id",
+  verifyUser,
   messagesService.getByIdMessages.bind(messagesService)
 );
 
 // Route handling for getting all messages
-messagesRouter.get("/", messagesService.getAllMessages.bind(messagesService));
+messagesRouter.get("/",verifyUser, messagesService.getAllMessages.bind(messagesService));
 
 // Route handling for updating a messages by ID
 messagesRouter.put(
   "/:id",
-  // validateMessagesInputMiddleware(true),
+  verifyUser,
+  validateMessageInputMiddleware(true),
   messagesService.updateMessages.bind(messagesService)
 );

@@ -4,16 +4,16 @@ import { Request, Response, NextFunction } from "express";
 
 // Define an interface for the expected SavedJobInput structure
 interface SavedJobInput {
-  Realtor: number;
-  Job: number;
+  realtorId: string;
+  jobId: number;
 }
 
 // Define a validator function for SavedJobInput
 const savedJobValidator = (input: SavedJobInput, isUpdate: boolean = false) => {
   // Define a Joi schema for validation
   const savedJobSchema = Joi.object<SavedJobInput>({
-    Realtor: isUpdate ? Joi.number().optional() : Joi.number().required(),
-    Job: isUpdate ? Joi.number().optional() : Joi.number().required(),
+    realtorId: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    jobId: isUpdate ? Joi.number().optional() : Joi.number().required(),
   });
 
   // Validate the input against the schema

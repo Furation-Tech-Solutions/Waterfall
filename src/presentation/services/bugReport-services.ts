@@ -64,10 +64,15 @@ export class BugReportService {
 
     // Handle the result using the Either monad's cata method
     newBugReport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400), // Bad Request
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Bad Request
       (result: BugReportEntity) => {
         const resData = BugReportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "BugReport created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "BugReport created successfully",
+          201
+        );
       }
     );
   }
@@ -102,14 +107,17 @@ export class BugReportService {
 
     // Handle the result using the Either monad's cata method
     bugReport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
-      (result: BugReportEntity) => {
-        if (!result) {
-          this.sendErrorResponse(res, new ApiError(400, " not found"));
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "BugReport not found", 200);
         } else {
-          const resData = BugReportMapper.toEntity(result);
-          this.sendSuccessResponse(res, resData, "BugReport retrieved successfully");
+          this.sendErrorResponse(res, error, 404);
         }
+      },
+      (result: BugReportEntity) => {
+        const resData = BugReportMapper.toEntity(result, true);
+        this.sendSuccessResponse(res, resData, "BugReport retrieved successfully");
       }
     );
   }
@@ -164,13 +172,17 @@ export class BugReportService {
 
     // Handle the result using the Either monad's cata method
     bugReports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500), // Internal Server Error
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status), // Internal Server Error
       (result: BugReportEntity[]) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const responseData = result.map((blocking) =>
           BugReportMapper.toEntity(blocking)
         );
         this.sendSuccessResponse(res, responseData, "BugReport retrieved successfully");
       }
+    }
     );
   }
 }

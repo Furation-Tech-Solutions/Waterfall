@@ -2,13 +2,15 @@
 export class SupportModel {
   constructor(
     // The name of the realtor associated with the support request
-    public realtor: number = 0,
+    public realtorId: string = "",
     // The recipient of the support request
-    public to: number = 0,
+    public toId: string = "",
     // A description of the support request
     public description: string = "",
     // An array of attachments (optional) related to the support request
-    public attachments: string[] | undefined = undefined
+    public attachments: string[] | undefined = undefined,
+
+    public realtorData:{}={},
   ) {}
 }
 
@@ -16,17 +18,19 @@ export class SupportModel {
 export class SupportEntity {
   constructor(
     // The unique identifier for the support request (optional)
-    public id: number| undefined = undefined,
+    public id: number | undefined = undefined,
     // The name of the realtor associated with the support request
-    public realtor: number,
+    public realtorId: string,
     // The recipient of the support request
-    public to: number,
+    public toId: string,
     // A description of the support request
     public description: string,
     // An array of attachments (optional) related to the support request
     public attachments: string[] | undefined = undefined,
     // The timestamp when the support request was created (default to current date)
-    public timestamp: Date = new Date()
+    public timestamp: Date = new Date(),
+
+    public realtorData:{},
   ) {}
 }
 
@@ -40,11 +44,14 @@ export class SupportMapper {
       // If existingSupport is provided, merge the data from supportData with the existingSupport
       return {
         ...existingSupport,
-        realtor:
-          supportData.realtor !== undefined
-            ? supportData.realtor
-            : existingSupport.realtor,
-        to: supportData.to !== undefined ? supportData.to : existingSupport.to,
+        realtorId:
+          supportData.realtorId !== undefined
+            ? supportData.realtorId
+            : existingSupport.realtorId,
+        toId:
+          supportData.toId !== undefined
+            ? supportData.toId
+            : existingSupport.toId,
         description:
           supportData.description !== undefined
             ? supportData.description
@@ -66,11 +73,12 @@ export class SupportMapper {
             ? supportData.id.toString()
             : undefined
           : supportData.id.toString(),
-        realtor: supportData.realtor,
-        to: supportData.to,
+        realtorId: supportData.realtorId,
+        toId: supportData.toId,
         description: supportData.description,
         attachments: supportData.attachments,
         timestamp: supportData.timestamp,
+        realtorData: supportData.realtorData,
       };
       return supportData;
     }
@@ -80,11 +88,12 @@ export class SupportMapper {
     // Convert a SupportEntity to a plain JavaScript object (model)
     return {
       id: support.id,
-      realtor: support.realtor,
-      to: support.to,
+      realtorId: support.realtorId,
+      toId: support.toId,
       description: support.description,
       attachments: support.attachments,
       timestamp: support.timestamp,
+      realtorData: support.realtorData,
     };
   }
 }

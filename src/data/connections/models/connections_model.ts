@@ -9,13 +9,13 @@ import Realtors from "@data/realtors/model/realtor-model"; // Importing the Real
 const Connections = sequelize.define("Connections", {
   // Define the "fromId" field with an INTEGER data type, which cannot be null
   fromId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Establishing a foreign key reference to the Realtors model
   },
   // Define the "toId" field with an INTEGER data type, which cannot be null
   toId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Realtors, key: "id" }, // Establishing a foreign key reference to the Realtors model
   },
@@ -27,8 +27,8 @@ const Connections = sequelize.define("Connections", {
 });
 
 // Establish associations with the Realtors model using foreign keys
-Connections.belongsTo(Realtors, { foreignKey: "fromId", as: "fromRealtor" }); // Association for the "fromRealtor"
-Connections.belongsTo(Realtors, { foreignKey: "toId", as: "toRealtor" }); // Association for the "toRealtor"
+Connections.belongsTo(Realtors, { foreignKey: "fromId", as: "fromData" }); // Association for the "fromRealtor"
+Connections.belongsTo(Realtors, { foreignKey: "toId", as: "toData" }); // Association for the "toRealtor"
 
 // Export the Connections model as the default export
 export default Connections;

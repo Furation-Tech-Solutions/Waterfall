@@ -7,13 +7,13 @@ import Realtors from "@data/realtors/model/realtor-model"; // Importing the Real
 // Define a Sequelize model named "Support"
 const Support = sequelize.define("Support", {
   // Define a "realtor" field with INTEGER data type, which cannot be null
-  realtor: {
-    type: DataTypes.INTEGER,
+  realtorId: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: { model: Realtors, key: 'id' } // Adding a foreign key constraint referencing the 'id' field in the Realtors model
+    references: { model: Realtors, key: "id" }, // Adding a foreign key constraint referencing the 'id' field in the Realtors model
   },
-  // Define a "to" field with STRING data type, which cannot be null
-  to: {
+  // Define a "to" field with STRING data type, which cannot be null support email address
+  toId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -44,7 +44,7 @@ const Support = sequelize.define("Support", {
 
 // Establishing a foreign key relationship: Support belongs to Realtors
 Support.belongsTo(Realtors, {
-  foreignKey: "realtor", // Using the "realtor" field as the foreign key
+  foreignKey: "realtorId", // Using the "realtor" field as the foreign key
   as: "realtorData", // Alias for the relation to access realtor data, e.g., supportInstance.realtorData
 });
 

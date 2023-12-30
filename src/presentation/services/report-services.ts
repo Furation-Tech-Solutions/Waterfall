@@ -64,7 +64,7 @@ export class ReportService {
       await this.createReportUsecase.execute(reportData);
 
     newReport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: ReportEntity) => {
         const resData = ReportMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -103,7 +103,14 @@ export class ReportService {
       await this.getReportByIdUsecase.execute(reportId);
 
     report.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Report not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: ReportEntity) => {
         const resData = ReportMapper.toEntity(result, true);
         this.sendSuccessResponse(res, resData, "Report retrieved successfully");
@@ -152,13 +159,21 @@ export class ReportService {
       await this.getAllReportsUsecase.execute();
 
     reports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (reports: ReportEntity[]) => {
+        if (reports.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const resData = reports.map((report: any) =>
           ReportMapper.toEntity(report)
         );
-        this.sendSuccessResponse(res, resData, "Reports retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Reports retrieved successfully"
+        );
       }
+    }
     );
   }
 }

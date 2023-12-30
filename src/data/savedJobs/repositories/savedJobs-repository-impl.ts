@@ -42,12 +42,17 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
       return Right<ErrorClass, SavedJobEntity>(newSavedJob);
     } catch (error: any) {
       // Handle error cases:
-      // If the error is an unauthorized ApiError with a status code of 401, return it as Left
-      if (error instanceof ApiError && error.status === 401) {
-        return Left<ErrorClass, SavedJobEntity>(ApiError.unAuthorized());
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          // If the error is an unauthorized ApiError with a status code of 401, return it as Left
+          return Left<ErrorClass, SavedJobEntity>(ApiError.unAuthorized());
+        } else if (error.status === 409) {
+          // If the error is a conflict ApiError with a status code of 409, return it as Left
+          return Left<ErrorClass, SavedJobEntity>(ApiError.savedJobExist());
+        }
       }
 
-      // Otherwise, return a custom error with a BAD_REQUEST status and the error message as Left
+      // If the error is not explicitly handled, return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, SavedJobEntity>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
       );
@@ -92,6 +97,11 @@ export class SavedJobRepositoryImpl implements SavedJobRepository {
     try {
       // Retrieve all saved jobs using the "dataSource" and return them as Right
       const allSavedJobs = await this.dataSource.getAll(query);
+      // Check if the data length is zero
+      if (allSavedJobs.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, SavedJobEntity[]>([]);
+      }
       return Right<ErrorClass, SavedJobEntity[]>(allSavedJobs);
     } catch (error: any) {
       // Handle error cases:

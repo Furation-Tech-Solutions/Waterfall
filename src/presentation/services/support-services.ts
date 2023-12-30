@@ -64,10 +64,15 @@ export class SupportService {
       await this.createSupportUsecase.execute(supportData);
 
     newSupport.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Support created successfully", 201);
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Support created successfully",
+          201
+        );
       }
     );
   }
@@ -98,10 +103,21 @@ export class SupportService {
       await this.getSupportByIdUsecase.execute(supportId);
 
     support.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "Support not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: SupportEntity) => {
         const resData = SupportMapper.toEntity(result, true);
-        this.sendSuccessResponse(res, resData, "Support retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Support retrieved successfully"
+        );
       }
     );
   }
@@ -149,12 +165,20 @@ export class SupportService {
       await this.getAllSupportsUsecase.execute();
 
     supports.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (supports: SupportEntity[]) => {
+         if (supports.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
         const resData = supports.map((support: any) =>
           SupportMapper.toEntity(support)
         );
-        this.sendSuccessResponse(res, resData, "Supports retrieved successfully");
+        this.sendSuccessResponse(
+          res,
+          resData,
+          "Supports retrieved successfully"
+        );
+        }
       }
     );
   }

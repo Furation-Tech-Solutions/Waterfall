@@ -66,7 +66,7 @@ export class NotInterestedService {
       await this.createNotInterestedUsecase.execute(notInterestedData);
 
     newNotInterested.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 400),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -105,7 +105,14 @@ export class NotInterestedService {
       await this.getNotInterestedByIdUsecase.execute(notInterestedId);
 
     notInterested.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "NotInterested not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
       (result: NotInterestedEntity) => {
         const resData = NotInterestedMapper.toEntity(result, true);
         this.sendSuccessResponse(
@@ -162,7 +169,9 @@ export class NotInterestedService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    let Id = req.headers.id;
+    // let Id = req.headers.id;
+    let Id = req.user;
+
     // let loginId = req.user;
     // loginId = "1"; // For testing purposes, manually set loginId to "2"
     const query: any = {}; // Create an empty query object
@@ -176,13 +185,17 @@ export class NotInterestedService {
       await this.getAllNotInterestedsUsecase.execute(query);
 
     notInteresteds.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: NotInterestedEntity[]) => {
-        const resData = result.map((notInterested: any) =>
-          NotInterestedMapper.toEntity(notInterested)
-        );
-        this.sendSuccessResponse(res, resData);
-      }
+         if (result.length === 0) {
+           this.sendSuccessResponse(res, [], "Success", 200);
+         } else {
+           const resData = result.map((notInterested: any) =>
+             NotInterestedMapper.toEntity(notInterested)
+           );
+           this.sendSuccessResponse(res, resData);
+         }
+    }
     );
   }
 }
