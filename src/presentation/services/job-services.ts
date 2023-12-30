@@ -97,7 +97,7 @@ export class JobService {
 
     job.cata(
       (error: ErrorClass) => {
-        if (error.message === 'not found') {
+        if (error.message === "not found") {
           // Send success response with status code 200
           this.sendSuccessResponse(res, [], "Job not found", 200);
         } else {
@@ -110,7 +110,6 @@ export class JobService {
       }
     );
   }
-
 
   async updateJob(req: Request, res: Response): Promise<void> {
     const jobId: string = req.params.id;
@@ -142,8 +141,8 @@ export class JobService {
               responseData,
               "Job updated successfully"
             );
-            console.log(response, "response")
-            const pushNotification = new NotificationSender()
+            console.log(response, "response");
+            const pushNotification = new NotificationSender();
             // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
           }
         );
@@ -172,6 +171,7 @@ export class JobService {
     query.jobType = req.query.jobType as string;
     query.feeType = req.query.feeType as string;
     query.sortOrder = req.query.sortOrder as string;
+    query.feeType = req.query.feeType as string;
 
     const jobs: Either<ErrorClass, JobEntity[]> =
       await this.getAllJobsUsecase.execute(query);
@@ -190,11 +190,10 @@ export class JobService {
 
   async getTotalCount(req: Request, res: Response): Promise<void> {
     let id: string = req.user;
-    let loginId = id // For testing purposes, manually set loginId to "2"
+    let loginId = id; // For testing purposes, manually set loginId to "2"
 
     const query: any = {};
 
-    
     query.q = req.query.q as string;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
