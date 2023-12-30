@@ -12,6 +12,7 @@ import {
 } from "@domain/realtors/entities/realtors";
 import ApiError from "@presentation/error-handling/api-error";
 import NotInterested from "@data/notInterested/model/notInterested-models";
+import CallLog from "@data/callLog/models/callLog-model";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -99,7 +100,11 @@ export class JobDataSourceImpl implements JobDataSource {
         },
         {
           model: JobApplicant,
-          as: "applicantsData",
+          as: "applican                                                                                                                                                                                                                                                   tsData",
+        },
+        {
+          model: CallLog,
+          as: "calllogData",
         },
       ],
     });

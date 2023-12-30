@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "@main/sequelizeClient";
 
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import Job from "@data/job/models/job-model";
 
 // Define an enum for possible outcomes
 export const OutcomeEnum = {
@@ -20,8 +21,15 @@ const CallLog = sequelize.define("CallLog", {
   jobApplicantId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: JobApplicant, key: 'id' }
+    references: { model: JobApplicant, key: "id" },
   },
+
+  jobId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: Job, key: "id" },
+  },
+
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
     type: DataTypes.STRING,
@@ -44,6 +52,16 @@ const CallLog = sequelize.define("CallLog", {
 CallLog.belongsTo(JobApplicant, {
   foreignKey: "jobApplicantId",
   as: "jobApplicantData"
+});
+
+CallLog.belongsTo(Job,{
+  foreignKey: "jobId",
+  as: "jobData"
+})
+
+CallLog.belongsTo(JobApplicant, {
+  foreignKey: "jobApplicantId",
+  as: "callLogData",
 });
 
 // Export the CallLog model as the default export
