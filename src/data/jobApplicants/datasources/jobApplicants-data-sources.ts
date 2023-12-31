@@ -9,6 +9,7 @@ import JobApplicant, {
 } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
 import Report from "@data/report/models/report-model";
+import Blocking from "@data/blocking/model/blocking-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { JobApplicantsResponse } from "types/jobApplicant/responseType";
@@ -69,11 +70,29 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         throw new Error("The applicant can't apply for a job they've been reported");
       }
 
-      // Retrieve the associated Job based on jobApplicant's job ID
-      const job: any = await Job.findByPk(jobApplicant.jobId);
+      // Check if the job owner has blocked the applicant
+      const job = await Job.findByPk(jobApplicant.jobId);
 
-      // Check if the number of applicants exceeds the limit
+      if (!job) {
+        // Handle the case where the job is not found
+        throw new Error("Job not found");
+      }
+
+      const jobOwnerID = job.getDataValue("jobOwnerId");
+
+      const blockingRecord = await Blocking.findOne({
+        where: {
+          fromRealtorId: jobOwnerID,
+          toRealtorId: jobApplicant.applicantId,
+        },
+      });
+
+      if (blockingRecord) {
+        throw new Error("User can't apply for this job as they've been blocked from JobOwner");
+      }
+
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
+
 
       // Count the number of existing applicants with "Pending" status
       const pendingApplicants = await JobApplicant.count({
@@ -97,6 +116,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       throw error;
     }
   }
+
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {
