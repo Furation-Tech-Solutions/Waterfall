@@ -8,6 +8,7 @@ import JobApplicant, {
   applicationStatusEnum,
 } from "@data/jobApplicants/models/jobApplicants-models";
 import Job from "@data/job/models/job-model";
+import Report from "@data/report/models/report-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { JobApplicantsResponse } from "types/jobApplicant/responseType";
@@ -42,9 +43,19 @@ export interface JobApplicantQuery {
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
-  // Method to create a new job applicant
   async create(jobApplicant: any): Promise<JobApplicantEntity> {
     try {
+      // Check if the applicant has been reported
+      const existingReport = await Report.findOne({
+        where: {
+          toRealtorId: jobApplicant.applicantId,
+        },
+      });
+
+      if (existingReport) {
+        throw new Error("The applicant can't apply for a Job they've been reported");
+      }
+
       // Retrieve the associated Job based on jobApplicant's job ID
       const job: any = await Job.findByPk(jobApplicant.jobId);
 
