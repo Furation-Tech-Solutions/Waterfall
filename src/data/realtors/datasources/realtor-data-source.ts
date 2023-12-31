@@ -16,11 +16,13 @@ export interface RealtorDataSource {
   delete(id: string): Promise<void>;
   realtorLogin(email: string, firebaseDeviceToken: string): Promise<any | null>;
   RecoId(id: string): Promise<RealtorEntity>;
+  getAllReportedRealtors(query: RealtorQuery): Promise<RealtorEntity[]>;
 }
 
 export interface RealtorQuery {
   location?: string;
   gender?: string;
+  isBanned: string;
   q?: string;
   page: number;
   limit: number;
@@ -93,6 +95,10 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
           },
         ],
       };
+    }
+
+    if (query.isBanned != undefined && query.isBanned === 'true') {
+      whereClause.isBanned = true;
     }
 
     const data = await Realtor.findAll({
@@ -238,5 +244,23 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
     // If a matching entry is found, convert it to a plain JavaScript object before returning
     return realtor.toJSON();
+  }
+
+  async getAllReportedRealtors(query: RealtorQuery): Promise<RealtorEntity[]> {
+    const currentPage = query.page || 1; // Default to page 1
+    const itemsPerPage = query.limit || 10; // Default to 10 items per page
+    const offset = (currentPage - 1) * itemsPerPage;
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------
+    const reportedUsers = await Realtor.findAll({
+      where: {
+        reportCount: {
+          [Op.gt]: 0,
+        },
+      },
+      limit:itemsPerPage,
+      offset:offset,
+    });
+
+    return reportedUsers.map((realtor: any) => realtor.toJSON());
   }
 }

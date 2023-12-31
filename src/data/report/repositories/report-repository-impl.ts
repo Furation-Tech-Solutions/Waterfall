@@ -70,10 +70,10 @@ export class ReportRepositoryImpl implements ReportRepository {
   }
 
   // Implement the "getReports" method defined in the ReportRepository interface
-  async getReports(): Promise<Either<ErrorClass, ReportEntity[]>> {
+  async getReports(realtId: string): Promise<Either<ErrorClass, ReportEntity[]>> {
     try {
       // Retrieve all reports using the "dataSource" and return them as Right
-      const allReports = await this.dataSource.getAll();
+      const allReports = await this.dataSource.getAll(realtId);
       // Check if the data length is zero
       if (allReports.length === 0) {
         // If data length is zero, send a success response with status code 200

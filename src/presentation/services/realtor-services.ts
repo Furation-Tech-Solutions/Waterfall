@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, query } from "express";
 import {
   RealtorModel,
   RealtorEntity,
@@ -14,6 +14,9 @@ import { Either } from "monet";
 import ErrorClass from "@presentation/error-handling/api-error";
 import { NotificationSender } from "./push-notification-services";
 import { LoginRealtorUsecase } from "@domain/realtors/usecases/login-realtor";
+import { GetAllReportedRealtorsUsecase } from "@domain/realtors/usecases/reported-realtors";
+import admin from "firebase-admin";
+import { Boolean } from "aws-sdk/clients/cloudtrail";
 
 export class RealtorService {
   private readonly createRealtorUsecase: CreateRealtorUsecase;
@@ -23,6 +26,7 @@ export class RealtorService {
   private readonly deleteRealtorUsecase: DeleteRealtorUsecase;
   private readonly loginRealtorUsecase: LoginRealtorUsecase;
   private readonly checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase;
+  private readonly getAllReportedRealtorsUsecase: GetAllReportedRealtorsUsecase;
 
 
 
@@ -33,7 +37,8 @@ export class RealtorService {
     updateRealtorUsecase: UpdateRealtorUsecase,
     deleteRealtorUsecase: DeleteRealtorUsecase,
     loginRealtorUsecase: LoginRealtorUsecase,
-    checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase
+    checkRealtorByRecoIdUsecase: CheckRealtorByRecoIdUsecase,
+    getAllReportedRealtorsUsecase: GetAllReportedRealtorsUsecase
   ) {
     this.createRealtorUsecase = createRealtorUsecase;
     this.getAllRealtorsUsecase = getAllRealtorsUsecase;
@@ -42,6 +47,7 @@ export class RealtorService {
     this.deleteRealtorUsecase = deleteRealtorUsecase;
     this.loginRealtorUsecase = loginRealtorUsecase;
     this.checkRealtorByRecoIdUsecase = checkRealtorByRecoIdUsecase;
+    this.getAllReportedRealtorsUsecase = getAllReportedRealtorsUsecase;
 
   }
 
@@ -58,7 +64,7 @@ export class RealtorService {
     });
   }
 
-  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number=500): void {
+  private sendErrorResponse(res: Response, error: ErrorClass, statusCode: number = 500): void {
     res.status(statusCode).json({
       success: false,
       message: error.message,
@@ -71,7 +77,7 @@ export class RealtorService {
       await this.createRealtorUsecase.execute(realtorData);
     newRealtor.cata(
       (error: ErrorClass) => {
-        
+
         this.sendErrorResponse(res, error, error.status);
       },
       (result: RealtorEntity) => {
@@ -94,6 +100,7 @@ export class RealtorService {
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
     query.location = req.query.location as string;
     query.gender = req.query.gender as string;
+    query.isBanned = req.query.banned as string;
     query.q = req.query.q as string;
 
     const realtors: Either<ErrorClass, RealtorEntity[]> =
@@ -102,10 +109,10 @@ export class RealtorService {
     realtors.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: RealtorEntity[]) => {
-      if (result.length === 0) {
+        if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-        this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+          this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
         }
       }
     );
@@ -118,7 +125,7 @@ export class RealtorService {
       await this.getRealtorByIdUsecase.execute(realtorId);
 
     realtor.cata(
-      (error: ErrorClass) =>{
+      (error: ErrorClass) => {
         if (error.message === 'not found') {
           // Send success response with status code 200
           this.sendSuccessResponse(res, [], "Realtor not found", 200);
@@ -234,4 +241,88 @@ export class RealtorService {
       }
     );
   }
+
+
+  async reportedUsers(req: Request, res: Response): Promise<void> {
+    const query: any = {}; // Create an empty query object
+    query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
+    query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
+
+    const reportedUsers: Either<ErrorClass, RealtorEntity[]> =
+      await this.getAllReportedRealtorsUsecase.execute(query);
+
+    reportedUsers.cata(
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, error.status)
+      },
+      (result: RealtorEntity[]) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          this.sendSuccessResponse(res, result, "Realtors retrieved successfully")
+        }
+      }
+    );
+  }
+
+
+  async disableFirebaseAuthForBannedUser(req: Request, res: Response): Promise<void> {
+    const realtorId = req.params.id
+    const query = req.query.q as string
+
+    const existingRealtor: Either<ErrorClass, RealtorEntity> =
+      await this.getRealtorByIdUsecase.execute(realtorId);
+
+      if(query == "ban") {
+        const realtorData = {
+          isBanned: true
+        }
+      } else if (query == "unban") {
+        const realtorData = {
+          isBanned: false
+        }
+      }
+    const realtorData = {
+      isBanned: true
+    }
+
+    existingRealtor.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      async (existingRealtorData: RealtorEntity) => {
+        const updatedRealtorEntity: RealtorEntity = RealtorMapper.toEntity(
+          realtorData,
+          true,
+          existingRealtorData
+        );
+
+        const updatedRealtor: Either<ErrorClass, RealtorEntity> =
+          await this.updateRealtorUsecase.execute(
+            realtorId,
+            updatedRealtorEntity
+          );
+
+        updatedRealtor.cata(
+          (error: ErrorClass) => this.sendErrorResponse(res, error),
+          async (result: RealtorEntity) => {
+            const resData = RealtorMapper.toEntity(result, true);
+
+            if(query == "ban") {
+              await admin.auth().updateUser(resData.firebaseId, {
+                disabled: true,
+              });
+              this.sendSuccessResponse(res, resData, "Realtor banned successfully");
+            }else if (query == "unban") {
+              await admin.auth().updateUser(resData.firebaseId, {
+                disabled: false,
+              });
+  
+              this.sendSuccessResponse(res, resData, "Realtor unbanned successfully");
+            }
+          }
+        );
+      }
+    );
+  }
+
+
 }

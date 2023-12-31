@@ -28,7 +28,7 @@ export interface ReportRepository {
 
   // Function to get all reports
   // Returns a Promise that resolves to Either<ErrorClass, ReportEntity[]>
-  getReports(): Promise<Either<ErrorClass, ReportEntity[]>>;
+  getReports(realtId: string): Promise<Either<ErrorClass, ReportEntity[]>>;
 
   // Function to get a report by ID
   // Takes a string ID as input and returns a Promise that resolves to Either<ErrorClass, ReportEntity>

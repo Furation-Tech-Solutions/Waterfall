@@ -20,6 +20,8 @@ export class RealtorModel {
     public attachmentLink: string = "",
     public licenseExpirationDate: string = "",
     public badge: { badgeName: string, timestamp: Date },
+    public isBanned: boolean = false,
+    public reportCount: number = 0,
     public firebaseDeviceToken: string = ""
 
 
@@ -48,6 +50,8 @@ export class RealtorEntity {
     public attachmentLink: string,
     public licenseExpirationDate: string,
     public badge: {badgeName: string; timestamp: Date},
+    public isBanned: boolean,
+    public reportCount: number,
     public firebaseDeviceToken: string
 
 
@@ -141,6 +145,14 @@ export class RealtorMapper {
           realtorData.badge !== undefined
             ? realtorData.badge
             : existingRealtor.badge,
+        isBanned:
+          realtorData.isBanned !== undefined
+            ? realtorData.isBanned
+            : existingRealtor.isBanned,
+        reportCount:
+          realtorData.reportCount !== undefined
+            ? realtorData.reportCount
+            : existingRealtor.reportCount,
             firebaseDeviceToken:
             realtorData.firebaseDeviceToken !== undefined
               ? realtorData.firebaseDeviceToken
@@ -173,6 +185,8 @@ export class RealtorMapper {
         attachmentLink: realtorData.attachmentLink,
         licenseExpirationDate: realtorData.licenseExpirationDate,
         badge: realtorData.badge,
+        isBanned: realtorData.isBanned,
+        reportCount: realtorData.reportCount,
         firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
 
       };
@@ -202,6 +216,8 @@ export class RealtorMapper {
       attachmentLink: realtor.attachmentLink,
       licenseExpirationDate: realtor.licenseExpirationDate,
       badge: realtor.badge,
+      isBanned: realtor.isBanned,
+      reportCount: realtor.reportCount,
       firebaseDeviceToken:realtor.firebaseDeviceToken
     };
   }

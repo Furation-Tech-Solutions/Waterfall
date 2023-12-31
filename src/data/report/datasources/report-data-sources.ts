@@ -20,7 +20,7 @@ export interface ReportDataSource {
   read(id: string): Promise<ReportEntity | null>;
 
   // Method to get all reports
-  getAll(): Promise<ReportEntity[]>;
+  getAll(realtId: string): Promise<ReportEntity[]>;
 }
 
 // Implementation of the ReportDataSource interface
@@ -73,20 +73,22 @@ export class ReportDataSourceImpl implements ReportDataSource {
   }
 
   // Implement the "getAll" method to retrieve all reports from the database
-  async getAll(): Promise<ReportEntity[]> {
+  async getAll(realtId: string): Promise<ReportEntity[]> {
     // Find all report records in the database
     const reports = await Report.findAll({
-      // Include associations to retrieve related data
+      where: {
+        toRealtorId: realtId,
+      },
       include: [
-        // {
-        //   model: Realtors,
-        //   as: "fromRealtorData", // Alias for the first association
-        //   foreignKey: "fromRealtorId",
-        // },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtorId",
+          as: 'fromRealtorData', // Include data from the 'Realtors' model associated with fromRealtorId
+          attributes: ['id', 'firstName', 'lastName'], // Define specific attributes to retrieve
+        },
+        {
+          model: Realtors,
+          as: 'toRealtorData', // Include data from the 'Realtors' model associated with toRealtorId
+          attributes: ['id', 'firstName', 'lastName'], // Define specific attributes to retrieve
         },
       ],
     });
