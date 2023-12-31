@@ -8,6 +8,7 @@ import { sequelize } from "@main/sequelizeClient";
 import { NotificationSender } from "@presentation/services/push-notification-services";
 import { Op, Model } from "sequelize";
 import cron from "node-cron";
+import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 
 export const notificationWithCron=()=>{
     const currentDate = new Date();
@@ -121,6 +122,54 @@ export class CronJob{
                 }
                 catch(error){
                     console.log("error of cron job",error)
+                }
+            }, {
+                timezone: 'America/Toronto', // Set the time zone to Eastern Standard Time (Toronto)
+            })
+        }
+        catch(error){
+            console.log("error on expiration job notification")
+        }
+      }
+      async notifyOwnerNoApplicants(){
+        const currentDate = new Date();
+        
+        try{
+            cron.schedule('0 * * * *', async ()=> {
+                try{
+                    const jobData=await Job.findAll({
+                        where:{
+                            applyBy: {
+                                [Op.gt]: currentDate, // Apply By date is less than current date (December 30th)
+                            },
+
+                        },
+                            include: [
+                                {
+                                  model: Realtors,
+                                  as: "jobOwnerData",
+                                  foreignKey: "jobOwnerId",
+                                },
+                                {
+                                    model: JobApplicant,
+                                    as: "applicantsData", // Include the associated applicants' data
+                                  }
+                            ]
+                    })
+                    const allJobData=jobData.map((job: any) => job.toJSON());
+                    const pushNotification=new NotificationSender()
+                    allJobData.map((job:any)=>{
+                        if (job.applicantsData.length === 0) {
+                            pushNotification.customNotification(job.jobOwnerId, job.jobOwnerId, "noApplicantsNotification");
+                        }
+                          
+                    })
+
+
+
+                }
+                catch(error){
+                    console.log("error of cron job1",error)
                 }
             })
         }
