@@ -47,11 +47,12 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
 
   // Method to delete a connection
   async deleteRequest(
-    id: string
+    id: string,
+    loginId: string
   ): Promise<Either<ErrorClass, void>> {
     try {
       // Use the ConnectionsDataSource to delete a connection
-      const result = await this.connectionsDataSource.deleteReq(id);
+      const result = await this.connectionsDataSource.deleteReq(id, loginId);
 
       // Return a Right if deletion was successful
       return Right<ErrorClass, void>(result);
@@ -67,12 +68,14 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
   // Method to update a connection
   async updateRequest(
     id: string,
+    loginId: string,
     data: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>> {
     try {
       // Use the ConnectionsDataSource to update a connection
       const updatedConnections = await this.connectionsDataSource.updateReq(
         id,
+        loginId,
         data
       );
 
@@ -123,6 +126,26 @@ export class ConnectionsRepositoryImpl implements ConnectionsRepository {
     try {
       // Use the ConnectionsDataSource to get a connection by ID
       let connections: any = await this.connectionsDataSource.read(id);
+
+      // Return a Right with the connection entity if found, else return Left with notFound ApiError
+      return Right<ErrorClass, ConnectionsEntity>(connections);
+    } catch (e) {
+      // Handle errors, return Left with appropriate ApiError
+      if (e instanceof ApiError && e.name === "notfound") {
+        return Left<ErrorClass, ConnectionsEntity>(ApiError.notFound());
+      }
+      return Left<ErrorClass, ConnectionsEntity>(ApiError.badRequest());
+    }
+  }
+
+  // Method to get a connection by ID
+  async checkConnection(
+    id: string,
+    loginId: string
+  ): Promise<Either<ErrorClass, ConnectionsEntity>> {
+    try {
+      // Use the ConnectionsDataSource to get a connection by ID
+      let connections: any = await this.connectionsDataSource.check(id, loginId);
 
       // Return a Right with the connection entity if found, else return Left with notFound ApiError
       return Right<ErrorClass, ConnectionsEntity>(connections);

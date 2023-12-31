@@ -6,7 +6,7 @@ import { Either, Right, Left } from "monet";
 
 // Define the interface for the DeleteConnections use case
 export interface DeleteRequestUsecase {
-    execute: (toId: string) => Promise<Either<ErrorClass, void>>;
+    execute: (id: string, loginId: string) => Promise<Either<ErrorClass, void>>;
 }
 
 // Implement the DeleteConnections use case
@@ -20,8 +20,8 @@ export class DeleteRequest implements DeleteRequestUsecase {
 
     // Implementation of the execute method
     // This method takes fromId and toId and returns a Promise with an Either result
-    async execute(toId: string): Promise<Either<ErrorClass, void>> {
+    async execute(id: string, loginId: string): Promise<Either<ErrorClass, void>> {
         // Delegate the deletion of connections to the ConnectionsRepository
-        return await this.connectionsRepository.deleteRequest(toId);
+        return await this.connectionsRepository.deleteRequest(id, loginId);
     }
 }

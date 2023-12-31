@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { JobEntity, JobModel, JobMapper } from "@domain/job/entities/job";
+import { JobEntity, JobModel, JobMapper, JobCountEntity } from "@domain/job/entities/job";
 import { CreateJobUsecase } from "@domain/job/usecases/create-job";
 import { DeleteJobUsecase } from "@domain/job/usecases/delete-job";
 import { GetJobByIdUsecase } from "@domain/job/usecases/get-job-by-id";
@@ -201,12 +201,12 @@ export class JobService {
     query.year = parseInt(req.query.year as string, 10);
     query.months = [parseInt(req.query.month as string, 10)];
 
-    const count: Either<ErrorClass, number> =
+    const count: Either<ErrorClass, JobCountEntity> =
       await this.gettotalCountUsecase.execute(query);
     count.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
-      (result: number) => {
-        this.sendSuccessResponse(res, { count: result });
+      (result: JobCountEntity) => {
+        this.sendSuccessResponse(res,  result );
       }
     );
   }

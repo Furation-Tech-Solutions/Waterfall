@@ -107,6 +107,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         // Create a new job applicant record in the database
         const createdJobApplicant = await JobApplicant.create(jobApplicant);
 
+        // console.log(createdJobApplicant.dataValues, "createdJobApplicant");
         return createdJobApplicant.toJSON();
       } else {
         // Throw an error if the limit is exceeded

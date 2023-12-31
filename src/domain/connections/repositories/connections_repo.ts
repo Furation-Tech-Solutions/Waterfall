@@ -10,12 +10,17 @@ export interface ConnectionsRepository {
   createRequest(
     connections: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
-  deleteRequest(id: string): Promise<Either<ErrorClass, void>>;
+  deleteRequest(id: string, loginId: string): Promise<Either<ErrorClass, void>>;
   getById(
     id: string
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
+  checkConnection(
+    id: string,
+    loginId: string
+  ): Promise<Either<ErrorClass, ConnectionsEntity>>;
   updateRequest(
     id: string,
+    loginId:string,
     data: ConnectionsModel
   ): Promise<Either<ErrorClass, ConnectionsEntity>>;
   getAll(

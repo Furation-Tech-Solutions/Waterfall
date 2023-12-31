@@ -137,7 +137,7 @@ export class JobApplicantService {
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobApplicants: JobApplicantsResponse) => {
         if (jobApplicants.jobApplicants.length === 0) {
-          this.sendSuccessResponse(res,[], "Success", 200);
+          this.sendSuccessResponse(res, [], "Success", 200);
         } else {
           const allAplicants = jobApplicants.jobApplicants.map(
             (jobApplicant: any) => JobApplicantMapper.toEntity(jobApplicant)
@@ -180,6 +180,7 @@ export class JobApplicantService {
           (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
           (response: JobApplicantEntity) => {
             const responseData = JobApplicantMapper.toModel(response);
+            console.log(responseData, "responseData");
             this.sendSuccessResponse(
               res,
               responseData,

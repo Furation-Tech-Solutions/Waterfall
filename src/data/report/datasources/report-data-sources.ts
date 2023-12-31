@@ -1,5 +1,5 @@
 // Import necessary dependencies and modules
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import { ReportEntity, ReportModel } from "@domain/report/entities/report";
 import Report from "@data/report/models/report-model";
 import Realtors from "@data/realtors/model/realtor-model";
@@ -21,11 +21,13 @@ export interface ReportDataSource {
 
   // Method to get all reports
   getAll(): Promise<ReportEntity[]>;
+
+  check(id: string, loginId: string): Promise<ReportEntity>;
 }
 
 // Implementation of the ReportDataSource interface
 export class ReportDataSourceImpl implements ReportDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to add a new report to the database
   async create(report: any): Promise<ReportEntity> {
@@ -113,4 +115,31 @@ export class ReportDataSourceImpl implements ReportDataSource {
     }
     return updatedReport.toJSON();
   }
+
+  // Retrieve a report by ID
+  async check(id: string, loginId: string): Promise<ReportEntity> {
+    // console.log(id,loginId);
+    const report = await Report.findOne({
+      where: {
+        [Op.or]: [
+          {
+            fromRealtorId: id,
+            toRealtorId: loginId,
+          },
+          {
+            toRealtorId: id,
+            fromRealtorId: loginId,
+          },
+        ],
+      },
+    });
+
+    if (report === null) {
+      throw ApiError.notFound();
+    }
+
+    // If a matching entry is found, convert it to a plain JavaScript object before returning
+    return report.toJSON();
+  }
+
 }
