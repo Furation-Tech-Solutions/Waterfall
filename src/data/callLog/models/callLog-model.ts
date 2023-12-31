@@ -49,5 +49,6 @@ CallLog.belongsTo(JobApplicant, {
 });
 
 
+
 // Export the CallLog model as the default export
 export default CallLog;

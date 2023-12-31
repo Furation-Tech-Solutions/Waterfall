@@ -100,8 +100,10 @@ export class JobDataSourceImpl implements JobDataSource {
         },
         {
           model: JobApplicant,
+
           as: "applicantsData",
         }
+
 
       ],
     });
