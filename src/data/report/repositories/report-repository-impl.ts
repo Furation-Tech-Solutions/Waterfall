@@ -114,4 +114,24 @@ export class ReportRepositoryImpl implements ReportRepository {
       );
     }
   }
+
+  // Method to get a report by ID
+  async checkReport(
+    id: string,
+    loginId: string
+  ): Promise<Either<ErrorClass, ReportEntity>> {
+    try {
+      // Use the reportDataSource to get a report by ID
+      let report: any = await this.dataSource.check(id, loginId);
+
+      // Return a Right with the connection entity if found, else return Left with notFound ApiError
+      return Right<ErrorClass, ReportEntity>(report);
+    } catch (e) {
+      // Handle errors, return Left with appropriate ApiError
+      if (e instanceof ApiError && e.name === "notfound") {
+        return Left<ErrorClass, ReportEntity>(ApiError.notFound());
+      }
+      return Left<ErrorClass, ReportEntity>(ApiError.badRequest());
+    }
+  }
 }

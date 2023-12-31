@@ -24,11 +24,6 @@ const CallLog = sequelize.define("CallLog", {
     references: { model: JobApplicant, key: "id" },
   },
 
-  jobId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: Job, key: "id" },
-  },
 
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
@@ -53,6 +48,7 @@ CallLog.belongsTo(JobApplicant, {
   foreignKey: "jobApplicantId",
   as: "jobApplicantData"
 });
+
 
 
 // Export the CallLog model as the default export

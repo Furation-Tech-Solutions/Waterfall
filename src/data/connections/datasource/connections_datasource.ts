@@ -20,8 +20,8 @@ export interface Query {
 export interface ConnectionsDataSource {
 
   createReq(connections: any): Promise<ConnectionsEntity>;
-  updateReq(id: string, data: any): Promise<ConnectionsEntity>;
-  deleteReq(id: string): Promise<void>;
+  updateReq(id: string, loginId: string, data: any): Promise<ConnectionsEntity>;
+  deleteReq(id: string, loginId: string): Promise<void>;
   read(id: string): Promise<ConnectionsEntity>;
   check(id: string, loginId: string): Promise<ConnectionsEntity>;
   getAll(loginId: string, query: Query): Promise<ConnectionsEntity[]>;
@@ -83,10 +83,19 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Delete a connection
-  async deleteReq(id: string): Promise<void> {
+  async deleteReq(id: string, loginId: string): Promise<void> {
     const deletedConnection = await Connections.destroy({
       where: {
-        id,
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 
@@ -127,8 +136,16 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
     // console.log(id,loginId);
     const connections = await Connections.findOne({
       where: {
-        toId: id,
-        fromId: loginId
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 
@@ -258,7 +275,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
           return data?.dataValues;
         })
       );
-      // console.log(friendsArray, "friendsarray");
+      console.log(friendsArray, "friendsarray");
       return friendsArray.filter(Boolean);
 
       // console.log(data, "Dddddddddddddd")
@@ -374,10 +391,20 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Update a connection by ID
-  async updateReq(id: string, updatedData: any): Promise<ConnectionsEntity> {
+  async updateReq(id: string, loginId: string, updatedData: any): Promise<ConnectionsEntity> {
+    // console.log(id, loginId, updatedData);
     const connection: any = await Connections.findOne({
       where: {
-        id,
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 
@@ -386,7 +413,16 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     const updatedConnections = await Connections.findOne({
       where: {
-        id,
+        [Op.or]: [
+          {
+            toId: id,
+            fromId: loginId,
+          },
+          {
+            fromId: id,
+            toId: loginId,
+          },
+        ],
       },
     });
 

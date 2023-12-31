@@ -17,7 +17,7 @@ try {
     throw ApiError.SQLError();
   }
 
-  sequelize.sync().then(() => {
+  sequelize.sync({alter:true}).then(() => {
 
     app.listen(env.port, () => {
       console.log("Table synchronized successfully.");
@@ -26,8 +26,9 @@ try {
   });
 
   deleteStatusWithCron();
-  const cronClass=new CronJob()
+  const cronClass = new CronJob()
   cronClass.expiredJobNotification()
+  cronClass.notifyOwnerNoApplicants()
   // notificationWithCron()
 
 } catch (error) {

@@ -7,6 +7,7 @@ import {
 import { CreateReportUsecase } from "@domain/report/usecases/create-report";
 import { DeleteReportUsecase } from "@domain/report/usecases/delete-report";
 import { GetReportByIdUsecase } from "@domain/report/usecases/get-report-by-id";
+import { CheckReportUsecase } from "@domain/report/usecases/check_Report";
 import { UpdateReportUsecase } from "@domain/report/usecases/update-report";
 import { GetAllReportsUsecase } from "@domain/report/usecases/get-all-reports";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
@@ -16,6 +17,7 @@ export class ReportService {
   private readonly createReportUsecase: CreateReportUsecase;
   private readonly deleteReportUsecase: DeleteReportUsecase;
   private readonly getReportByIdUsecase: GetReportByIdUsecase;
+  private readonly checkReportUsecase: CheckReportUsecase;
   private readonly updateReportUsecase: UpdateReportUsecase;
   private readonly getAllReportsUsecase: GetAllReportsUsecase;
 
@@ -23,12 +25,14 @@ export class ReportService {
     createReportUsecase: CreateReportUsecase,
     deleteReportUsecase: DeleteReportUsecase,
     getReportByIdUsecase: GetReportByIdUsecase,
+    checkReportUsecase: CheckReportUsecase,
     updateReportUsecase: UpdateReportUsecase,
     getAllReportsUsecase: GetAllReportsUsecase
   ) {
     this.createReportUsecase = createReportUsecase;
     this.deleteReportUsecase = deleteReportUsecase;
     this.getReportByIdUsecase = getReportByIdUsecase;
+    this.checkReportUsecase = checkReportUsecase;
     this.updateReportUsecase = updateReportUsecase;
     this.getAllReportsUsecase = getAllReportsUsecase;
   }
@@ -118,6 +122,38 @@ export class ReportService {
     );
   }
 
+  async checkReport(req: Request, res: Response): Promise<void> {
+    let loginId: string = req.user;
+    // console.log(loginId);
+    let id = req.params.id;
+
+    const report: Either<ErrorClass, ReportEntity> =
+      await this.checkReportUsecase.execute(id, loginId);
+
+    report.cata(
+      (error: ErrorClass) => {
+        if (error.message === "not found") {
+          // Send success response with status code 200
+          this.sendSuccessResponse(res, [], "report not found", 200);
+        } else {
+          this.sendErrorResponse(res, error, 404);
+        }
+      },
+      (result: ReportEntity) => {
+        if (!result) {
+          this.sendErrorResponse(res, new ApiError(400, " not found"));
+        } else {
+          const resData = ReportMapper.toEntity(result);
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Report retrieved successfully"
+          );
+        }
+      }
+    );
+  }
+
   async updateReport(req: Request, res: Response): Promise<void> {
     const reportId: string = req.params.id;
     const reportData: ReportModel = req.body;
@@ -167,16 +203,16 @@ export class ReportService {
         if (reports.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-        const resData = reports.map((report: any) =>
-          ReportMapper.toEntity(report)
-        );
-        this.sendSuccessResponse(
-          res,
-          resData,
-          "Reports retrieved successfully"
-        );
+          const resData = reports.map((report: any) =>
+            ReportMapper.toEntity(report)
+          );
+          this.sendSuccessResponse(
+            res,
+            resData,
+            "Reports retrieved successfully"
+          );
+        }
       }
-    }
     );
   }
 }
