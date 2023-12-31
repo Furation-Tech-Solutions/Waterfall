@@ -26,7 +26,7 @@ try {
   });
 
   deleteStatusWithCron();
-  const cronClass=new CronJob()
+  const cronClass = new CronJob()
   cronClass.expiredJobNotification()
   // notificationWithCron()
 
