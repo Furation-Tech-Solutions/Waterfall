@@ -44,6 +44,9 @@ export class NotificationSender {
 
         case 'expiredJob':
         return await this.realtorDataSource.read(senderId)
+
+        case 'noApplicantsNotification':
+           return this.realtorDataSource.read(senderId)
   
       default:
         throw new Error('Invalid event type');
@@ -80,6 +83,9 @@ export class NotificationSender {
           return await this.realtorDataSource.read(receiverId)
 
         case 'expiredJob':
+           return this.realtorDataSource.read(receiverId)
+
+        case 'noApplicantsNotification':
            return this.realtorDataSource.read(receiverId)
   
       // Add other cases for different event types
@@ -136,6 +142,12 @@ export class NotificationSender {
         title = 'Attention: Your Job Has Expired';
         body = `Hi ${receiver.firstName} Your job has expired. Consider renewing or reposting to keep it active..`;
         break;
+
+        case 'noApplicantsNotification':
+        title = 'Action Required: No Applicants Received';
+        body = `Hi ${receiver.firstName}, it seems your job listing hasn't received any applicants. Consider renewing or reposting it to attract more candidates and keep it active.`;
+        break;
+        
 
       default:
         title = 'Default Title';
@@ -202,6 +214,7 @@ export class NotificationSender {
       deviceTokens.forEach((registrationToken:string) => {
         this.sendNotification(registrationToken, title, body)
           .then((response:any) => {
+            
             console.log('Notification sent successfully:', response);
           })
           .catch((error:any) => {
