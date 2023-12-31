@@ -43,8 +43,21 @@ export interface JobApplicantQuery {
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
+  // Method to create a new job applicant
   async create(jobApplicant: any): Promise<JobApplicantEntity> {
     try {
+      // Check if the applicant has already applied for the same job
+      const existingApplication = await JobApplicant.findOne({
+        where: {
+          jobId: jobApplicant.jobId,
+          applicantId: jobApplicant.applicantId,
+        },
+      });
+
+      if (existingApplication) {
+        throw new Error("The applicant has already applied for this job");
+      }
+
       // Check if the applicant has been reported
       const existingReport = await Report.findOne({
         where: {
@@ -53,7 +66,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       });
 
       if (existingReport) {
-        throw new Error("The applicant can't apply for a Job they've been reported");
+        throw new Error("The applicant can't apply for a job they've been reported");
       }
 
       // Retrieve the associated Job based on jobApplicant's job ID
