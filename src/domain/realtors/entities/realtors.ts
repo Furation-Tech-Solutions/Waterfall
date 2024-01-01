@@ -15,12 +15,12 @@ export class RealtorModel {
     public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = "",
-    public firebaseId: string = "",
     public linkedIn: string = "",
     public attachmentLink: string = "",
     public licenseExpirationDate: string = "",
     public badge: { badgeName: string, timestamp: Date },
-    public firebaseDeviceToken: string = ""
+    public firebaseDeviceToken: string = "",
+    public connectedAccountId = ""
 
 
   ) { }
@@ -29,7 +29,7 @@ export class RealtorModel {
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
 export class RealtorEntity {
   constructor(
-    public id: string , // Set a default value for id
+    public id: string, // Set a default value for id
     public firstName: string,
     public lastName: string,
     public email: string,
@@ -43,12 +43,12 @@ export class RealtorEntity {
     public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
-    public firebaseId: string,
     public linkedIn: string,
     public attachmentLink: string,
     public licenseExpirationDate: string,
-    public badge: {badgeName: string; timestamp: Date},
-    public firebaseDeviceToken: string
+    public badge: { badgeName: string; timestamp: Date },
+    public firebaseDeviceToken: string,
+    public connectedAccountId: string,
 
 
   ) { }
@@ -121,10 +121,10 @@ export class RealtorMapper {
           realtorData.recoId !== undefined
             ? realtorData.recoId
             : existingRealtor.recoId,
-        firebaseId:
-          realtorData.firebaseId !== undefined
-            ? realtorData.firebaseId
-            : existingRealtor.firebaseId,
+        connectedAccountId:
+          realtorData.connectedAccountId !== undefined
+            ? realtorData.connectedAccountId
+            : existingRealtor.connectedAccountId,
         linkedIn:
           realtorData.linkedIn !== undefined
             ? realtorData.linkedIn
@@ -133,7 +133,7 @@ export class RealtorMapper {
           realtorData.attachmentLink !== undefined
             ? realtorData.attachmentLink
             : existingRealtor.attachmentLink,
-            licenseExpirationDate:
+        licenseExpirationDate:
           realtorData.licenseExpirationDate !== undefined
             ? realtorData.licenseExpirationDate
             : existingRealtor.licenseExpirationDate,
@@ -141,10 +141,10 @@ export class RealtorMapper {
           realtorData.badge !== undefined
             ? realtorData.badge
             : existingRealtor.badge,
-            firebaseDeviceToken:
-            realtorData.firebaseDeviceToken !== undefined
-              ? realtorData.firebaseDeviceToken
-              : existingRealtor.firebaseDeviceToken
+        firebaseDeviceToken:
+          realtorData.firebaseDeviceToken !== undefined
+            ? realtorData.firebaseDeviceToken
+            : existingRealtor.firebaseDeviceToken
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -168,7 +168,7 @@ export class RealtorMapper {
         deleteStatus: realtorData.deleteStatus,
         coordinates: realtorData.coordinates || null,
         recoId: realtorData.recoId,
-        firebaseId: realtorData.firebaseId,
+        connectedAccountId: realtorData.connectedAccountId,
         linkedIn: realtorData.linkedIn,
         attachmentLink: realtorData.attachmentLink,
         licenseExpirationDate: realtorData.licenseExpirationDate,
@@ -197,12 +197,12 @@ export class RealtorMapper {
       deleteStatus: realtor.deleteStatus,
       coordinates: realtor.coordinates,
       recoId: realtor.recoId,
-      firebaseId: realtor.firebaseId,
+      connectedAccountId: realtor.connectedAccountId,
       linkedIn: realtor.linkedIn,
       attachmentLink: realtor.attachmentLink,
       licenseExpirationDate: realtor.licenseExpirationDate,
       badge: realtor.badge,
-      firebaseDeviceToken:realtor.firebaseDeviceToken
+      firebaseDeviceToken: realtor.firebaseDeviceToken
     };
   }
 }

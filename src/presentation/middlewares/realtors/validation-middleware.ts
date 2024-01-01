@@ -13,7 +13,6 @@ interface RealtorInput {
   gender: string;
   location: string;
   about: string;
-  password: string;
   profileImage: string;
   countryCode: number;
   deleteStatus: boolean;
@@ -178,14 +177,14 @@ const realtorValidator = (
       "string.min": "licenseExpirationDate should have at least 3 characters",
       "string.max": "licenseExpirationDate should have less than 30 characters",
     }),
-      badge: Joi.object({
-        badgeName: Joi.string().optional(),
-        timestamp: Joi.date().optional(),
+    badge: Joi.object({
+      badgeName: Joi.string().optional(),
+      timestamp: Joi.date().optional(),
+    })
+      .optional()
+      .messages({
+        "string.empty": "badgeName cannot be empty",
       })
-        .optional()
-        .messages({
-          "string.empty": "badgeName cannot be empty",
-        })
   });
 
   // Validate the input against the schema
