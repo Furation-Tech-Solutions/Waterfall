@@ -130,7 +130,15 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
   // Define a method to create a Connect Express account
   async createAccount(loginId: string, data: any): Promise<any> {
 
-    console.log(loginId, "ds");
+    const realtor: any = await Realtor.findOne({
+      where: { id: loginId, deletedStatus: false },
+    });
+
+    // Update the record with the provided data if it exists
+    if (realtor.connectedAccountId !== "") {
+      throw new Error('Realtor already have an account');
+    }
+
     // Create Connect Express account
     const connectExpressAccount: any = await stripe.accounts.create({
       type: 'express',
@@ -158,23 +166,19 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
 
     });
 
-    const realtor = await Realtor.findOne({
-      where: { id: loginId, deletedStatus: false },
-    });
-
     // Update the record with the provided data if it exists
     if (realtor) {
       await realtor.update({ connectedAccountId: connectExpressAccount.id });
     }
 
-
-    console.log('Connect Express account created:', connectExpressAccount);
-
     if (!connectExpressAccount.id) {
       throw new Error('Failed to create Connect Express account');
     };
-
-    return connectExpressAccount.toJSON();
+    
+    return {
+      "id": connectExpressAccount.id,
+      "realtor": realtor
+    };
   }
 
   async retrieveAcc(loginId: string): Promise<any> {
