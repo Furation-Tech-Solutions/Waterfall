@@ -77,11 +77,6 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
       },
       include: [
         {
-          model: Realtors,
-          foreignKey: "realtorId",
-          as: "realtorData",
-        },
-        {
           model: Job,
           foreignKey: "jobId",
           as: "jobData",
@@ -103,15 +98,10 @@ export class SavedJobDataSourceImpl implements SavedJobDataSource {
 
     // Retrieve SavedJobEntity records from the database with associations
     const savedJobs = await SavedJob.findAll({
+      where:{
+        realtorId:loginId,
+      },
       include: [
-        {
-          model: Realtors,
-          as: "realtorData",
-          foreignKey: "realtorId",
-          where: {
-            id: loginId,
-          },
-        },
         {
           model: Job,
           as: "jobData",

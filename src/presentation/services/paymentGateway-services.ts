@@ -268,10 +268,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          const resData = result.map((paymentGateway: any) =>
-            PaymentGatewayMapper.toEntity(paymentGateway)
-          );
-          this.sendSuccessResponse(res, resData);
+          this.sendSuccessResponse(res, result);
         }
       }
 
