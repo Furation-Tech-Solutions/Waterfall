@@ -17,7 +17,7 @@ try {
     throw ApiError.SQLError();
   }
 
-  sequelize.sync({alter:true}).then(() => {
+  sequelize.sync().then(() => {
 
     app.listen(env.port, () => {
       console.log("Table synchronized successfully.");
