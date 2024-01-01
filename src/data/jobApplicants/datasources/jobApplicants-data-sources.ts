@@ -606,7 +606,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
     
           if (currentTime >= tenHoursBeforeFromTime) {
-            console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
+            // console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
             await associatedJob.update({
               urgentRequirement: true,
             });

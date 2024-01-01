@@ -180,7 +180,7 @@ export class JobApplicantService {
           (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
           (response: JobApplicantEntity) => {
             const responseData = JobApplicantMapper.toModel(response);
-            console.log(responseData, "responseData");
+            // console.log(responseData, "responseData");
             this.sendSuccessResponse(
               res,
               responseData,

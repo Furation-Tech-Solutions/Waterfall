@@ -258,7 +258,7 @@ export class PaymentGatewayService {
   ): Promise<void> {
     const data: any = req.body;
     const id: string = req.user;
-    console.log(id);
+    // console.log(id);
     const create: Either<ErrorClass, any> =
       await this.createConnectAccountUsecase.execute(id, data);
 

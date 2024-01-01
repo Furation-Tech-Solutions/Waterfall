@@ -255,7 +255,7 @@ export class JobDataSourceImpl implements JobDataSource {
         );
         return filteredRecommendedJobs.map((job: any) => job.toJSON());
       }
-      console.log(recommendedJobs);
+      // console.log(recommendedJobs);
 
       const realtor: any = await Realtors.findByPk(loginId);
 
