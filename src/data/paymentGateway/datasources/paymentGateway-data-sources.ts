@@ -139,8 +139,6 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
       throw new Error('Realtor already have an account');
     }
 
-
-    // console.log(loginId, "ds");
     // Create Connect Express account
     const connectExpressAccount: any = await stripe.accounts.create({
       type: 'express',
@@ -173,13 +171,10 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
       await realtor.update({ connectedAccountId: connectExpressAccount.id });
     }
 
-
-    // console.log('Connect Express account created:', connectExpressAccount);
-
     if (!connectExpressAccount.id) {
       throw new Error('Failed to create Connect Express account');
     };
-    console.log(connectExpressAccount.id);
+    
     return {
       "id": connectExpressAccount.id,
       "realtor": realtor
