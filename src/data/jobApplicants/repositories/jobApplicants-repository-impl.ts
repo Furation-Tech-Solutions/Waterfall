@@ -23,11 +23,12 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
 
   // Method to create a new job applicant
   async createJobApplicant(
-    jobApplicant: JobApplicantModel
+    jobApplicant: JobApplicantModel,
+    loginId:string
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     try {
       // Attempt to create a job applicant using the data source
-      const createdJobApplicant = await this.dataSource.create(jobApplicant);
+      const createdJobApplicant = await this.dataSource.create(jobApplicant,loginId);
 
       // Return a Right Either indicating success with the created job applicant
       return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
