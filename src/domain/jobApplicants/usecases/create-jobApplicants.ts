@@ -11,7 +11,8 @@ import { Either } from "monet"; // Importing the Either type from the Monet libr
 export interface CreateJobApplicantUsecase {
   // The execute method takes JobApplicantModel as input and returns Either<ErrorClass, JobApplicantEntity>
   execute: (
-    jobApplicantData: JobApplicantModel
+    jobApplicantData: JobApplicantModel,
+    loginId:string
   ) => Promise<Either<ErrorClass, JobApplicantEntity>>;
 }
 
@@ -26,11 +27,13 @@ export class CreateJobApplicant implements CreateJobApplicantUsecase {
 
   // Implementation of the execute method from the interface
   async execute(
-    jobApplicantData: JobApplicantModel
+    jobApplicantData: JobApplicantModel,
+    loginId:string
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     // Calling the createJobApplicant method from the repository to create a new Job Applicant
     return await this.jobApplicantRepository.createJobApplicant(
-      jobApplicantData
+      jobApplicantData,
+      loginId
     );
   }
 }

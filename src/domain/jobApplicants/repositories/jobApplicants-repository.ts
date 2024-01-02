@@ -13,7 +13,8 @@ import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 export interface JobApplicantRepository {
   // Method to create a job applicant
   createJobApplicant(
-    jobApplicant: JobApplicantModel
+    jobApplicant: JobApplicantModel,
+    loginId:string
   ): Promise<Either<ErrorClass, JobApplicantEntity>>;
   // The above method returns a Promise that resolves to an Either monad containing either an ErrorClass or the created JobApplicantEntity.
 
