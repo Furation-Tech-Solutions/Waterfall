@@ -163,6 +163,15 @@ class ApiError extends ErrorClass {
       "taxTypeExist"
     );
   }
+
+  static accountExist(): ApiError {
+    return new ApiError(
+    HttpStatus.CONFLICT,
+      ErrorMessage.TAX_TYPE_EXIST,
+      "account Exist"
+    );
+  }
+
   static clientExist(): ApiError {
     return new ApiError(HttpStatus.CONFLICT, ErrorMessage.CONFLICT, "conflict");
   }

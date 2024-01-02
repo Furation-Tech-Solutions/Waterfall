@@ -33,7 +33,7 @@ export class ReportDataSourceImpl implements ReportDataSource {
   async create(report: any): Promise<ReportEntity> {
     // Create a new report record in the database
     const createdReport = await Report.create(report);
-      console.log(createdReport)
+      
      // Get the Realtor ID associated with the created report (assuming it's stored in the report object)
   const realtorId = createdReport.dataValues.toRealtorId; // Replace 'realtorId' with the actual field name
 

@@ -224,7 +224,7 @@ export class JobDataSourceImpl implements JobDataSource {
       // Extract jobTypes from jobs
       const completedJobTypes = jobs.map((job: any) => job.jobType);
 
-      console.log("completedJobTypes:", completedJobTypes);
+      // console.log("completedJobTypes:", completedJobTypes);
 
       // Recommend jobs with the same jobType
       // map completedJobType
@@ -255,7 +255,7 @@ export class JobDataSourceImpl implements JobDataSource {
         );
         return filteredRecommendedJobs.map((job: any) => job.toJSON());
       }
-      console.log(recommendedJobs);
+      // console.log(recommendedJobs);
 
       const realtor: any = await Realtors.findByPk(loginId);
 
@@ -449,7 +449,65 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
       return filteredJobs.map((job: any) => job.toJSON());
       //-------------------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.q === "getAll") {
+    } else if (query.q == "allpastjobs") {
+      let whereCondition = {};
+
+      if (query.year && query.months && query.months.length > 0) {
+        // If year and months are provided, filter by year and months
+        whereCondition = {
+          [Op.and]: [
+            Sequelize.where(
+              Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+              query.year
+            ),
+            {
+              [Op.or]: query.months.map((month) => {
+                return Sequelize.where(
+                  Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
+                  month
+                );
+              }),
+            },
+          ],
+        };
+      }
+
+      // Handle other cases or provide default logic
+      const jobs = await Job.findAll({
+        where: {
+          date: {
+            [Op.lt]: new Date(),
+          },
+          ...whereCondition
+        },
+        include: [
+          {
+            model: Realtors,
+            as: "jobOwnerData",
+            foreignKey: "jobOwnerId",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantId: loginId,
+            },
+          }
+        ],
+        order: [
+          // Then, sort by date in ascending order
+          ["date", "ASC"],
+        ],
+        limit: itemsPerPage,
+        offset: offset,
+      });
+
+      // return jobs.map((job: any) => job.toJSON());
+      const filteredJobs = await applyNotInterestedFilter(jobs);
+      return filteredJobs.map((job: any) => job.toJSON());
+    }
+    // ------------------------
+    else if (query.q === "getAll") {
       // Handle other cases or provide default logic
       const jobs = await Job.findAll({
         include: [
@@ -855,111 +913,111 @@ export class JobDataSourceImpl implements JobDataSource {
   //   //--------------------------------------------------------------------------------------------------------------------
   // }
 
-  
-  
-async counts(query: JobQuery): Promise<JobCountEntity> {
-  const loginId = query.id;
 
-  const conditionsMap: Record<string, any> = {
-    posted: {
-      where: { jobOwnerId: loginId },
-    },
-    accepted: {
-      where: { jobOwnerId: loginId, liveStatus: false },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            applicantStatus: "Accept",
-          },
-        },
-      ],
-    },
-    completedjobsforowner: {
-      where: { jobOwnerId: loginId, liveStatus: false },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            paymentStatus: true,
-            jobStatus: "JobCompleted",
-          },
-        },
-      ],
-    },
-    scheduled: {
-      where: { jobOwnerId: loginId, liveStatus: false },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            agreement: true,
-            jobStatus: "Pending",
-          },
-        },
-      ],
-    },
-    applied: {
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            applicantId: loginId,
-          },
-        },
-      ],
-    },
-    assigned: {
-      where: { liveStatus: false },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            applicantId: loginId,
-          },
-        },
-      ],
-    },
-    completedjobforapplicant: {
-      where: { liveStatus: false },
-      include: [
-        {
-          model: JobApplicant,
-          as: "applicantsData",
-          where: {
-            applicantId: loginId,
-            jobStatus: "JobCompleted",
-          },
-        },
-      ],
-    },
-  };
 
-  const jobCounts: JobCountEntity = {
-    posted: 0,
-    accepted: 0,
-    completedjobsforowner: 0,
-    scheduled: 0,
-    applied: 0,
-    assigned: 0,
-    completedjobforapplicant: 0,
-  };
+  async counts(query: JobQuery): Promise<JobCountEntity> {
+    const loginId = query.id;
 
-  for (const key in conditionsMap) {
-    const count = await Job.count({
-      where: conditionsMap[key].where || {},
-      include: conditionsMap[key].include || [],
-    });
-    jobCounts[key as keyof JobCountEntity] = count;
+    const conditionsMap: Record<string, any> = {
+      posted: {
+        where: { jobOwnerId: loginId },
+      },
+      accepted: {
+        where: { jobOwnerId: loginId, liveStatus: false },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantStatus: "Accept",
+            },
+          },
+        ],
+      },
+      completedjobsforowner: {
+        where: { jobOwnerId: loginId, liveStatus: false },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              paymentStatus: true,
+              jobStatus: "JobCompleted",
+            },
+          },
+        ],
+      },
+      scheduled: {
+        where: { jobOwnerId: loginId, liveStatus: false },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              agreement: true,
+              jobStatus: "Pending",
+            },
+          },
+        ],
+      },
+      applied: {
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantId: loginId,
+            },
+          },
+        ],
+      },
+      assigned: {
+        where: { liveStatus: false },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantId: loginId,
+            },
+          },
+        ],
+      },
+      completedjobforapplicant: {
+        where: { liveStatus: false },
+        include: [
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+            where: {
+              applicantId: loginId,
+              jobStatus: "JobCompleted",
+            },
+          },
+        ],
+      },
+    };
+
+    const jobCounts: JobCountEntity = {
+      posted: 0,
+      accepted: 0,
+      completedjobsforowner: 0,
+      scheduled: 0,
+      applied: 0,
+      assigned: 0,
+      completedjobforapplicant: 0,
+    };
+
+    for (const key in conditionsMap) {
+      const count = await Job.count({
+        where: conditionsMap[key].where || {},
+        include: conditionsMap[key].include || [],
+      });
+      jobCounts[key as keyof JobCountEntity] = count;
+    }
+
+    return jobCounts;
   }
 
-  return jobCounts;
-}
 
-  
 }

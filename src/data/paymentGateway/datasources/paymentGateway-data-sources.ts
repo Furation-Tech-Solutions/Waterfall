@@ -9,6 +9,10 @@ import Realtors from "@data/realtors/model/realtor-model";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import ApiError from "@presentation/error-handling/api-error";
+import Realtor from "@data/realtors/model/realtor-model";
+import Stripe from 'stripe';
+const stripe = new Stripe('sk_test_51OL6H0IZoxttFA7OkUh1eTIgn2aX2GDIw3GPrUk37pQOHzCgyRpgb691kMcBiy90qkbdxbaTP7kmERH9I4iFFzTc00ndt8cjPR');
+
 
 // Create PaymentGatewayDataSource Interface
 export interface PaymentGatewayDataSource {
@@ -18,11 +22,21 @@ export interface PaymentGatewayDataSource {
   delete(id: string): Promise<void>;
   read(id: string): Promise<PaymentGatewayEntity | null>;
   getAll(): Promise<PaymentGatewayEntity[]>;
+  createAccount(loginId: string, data: any): Promise<any>;
+  retrieveAcc(loginId: string): Promise<any>;
+  updateAcc(loginId: string, data: any): Promise<any>;
+  deleteAcc(loginId: string): Promise<any>;
+  generateAccLink(loginId: string): Promise<any>;
+  prosPayment(loginId: string, data: any): Promise<any>;
+  dash(loginId: string): Promise<any>;
+  cBalance(loginId: string): Promise<any>;
+  trans(loginId: string): Promise<any>;
+
 }
 
 // PaymentGateway Data Source communicates with the database
 export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new PaymentGatewayEntity
   async create(paymentGateway: any): Promise<PaymentGatewayEntity> {
@@ -112,4 +126,179 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
     }
     return updatedPaymentGateway.toJSON();
   }
+
+  // Define a method to create a Connect Express account
+  async createAccount(loginId: string, data: any): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { id: loginId, deletedStatus: false },
+    });
+
+    // Update the record with the provided data if it exists
+    if (realtor.connectedAccountId !== "") {
+      throw new Error('Realtor already have an account');
+    }
+
+    // Create Connect Express account
+    const connectExpressAccount: any = await stripe.accounts.create({
+      type: 'express',
+      country: 'CA', // Replace with the country of the connected account
+      email: data.email, // Use the email from the request body
+      capabilities: {
+        card_payments: {
+          requested: true,
+        },
+        transfers: {
+          requested: true,
+        },
+      },
+      business_type: 'individual',
+      individual: {
+        email: data.email
+      },
+      settings: {
+        payouts: {
+          schedule: {
+            interval: 'manual',
+          },
+        },
+      },
+
+    });
+
+    // Update the record with the provided data if it exists
+    if (realtor) {
+      await realtor.update({ connectedAccountId: connectExpressAccount.id });
+    }
+
+    if (!connectExpressAccount.id) {
+      throw new Error('Failed to create Connect Express account');
+    };
+    
+    return {
+      "id": connectExpressAccount.id,
+      "realtor": realtor
+    };
+  }
+
+  async retrieveAcc(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    const connectExpressAccount: any = await stripe.accounts.retrieve(realtor.connectedAccountId);
+
+    return connectExpressAccount.toJSON();
+  }
+
+  async updateAcc(loginId: string, data: any): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    const connectExpressAccount: any = await stripe.accounts.update(realtor.connectedAccountId, data);
+
+    return connectExpressAccount.toJSON();
+  }
+
+  async deleteAcc(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    // Delete account
+    const deletedAccount = await stripe.accounts.del(realtor.connectedAccountId);
+
+  }
+
+  async generateAccLink(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    const accountLink = await stripe.accountLinks.create({
+      account: realtor.connectedAccountId,
+      refresh_url: `https://dashboard.stripe.com/${realtor.connectedAccountId}/test/dashboard`,
+      return_url: `http://localhost:3000/dashboard/${realtor.connectedAccountId}`,
+      type: 'account_onboarding',
+    });
+
+    console.log('Account link generated:', accountLink);
+
+    return accountLink.url;
+  }
+
+  async prosPayment(loginId: string, data: any): Promise<any> {
+
+    let id = data.connectedAccountId;
+
+    const realtor: any = await Realtor.findOne({
+      where: { id, deletedStatus: false },
+    });
+
+    // Create a PaymentIntent to handle the payment
+    const paymentIntent: any = await stripe.paymentIntents.create({
+      amount: data.amount,
+      currency: data.currency,
+      payment_method: data.payment_method, // source // Payment method ID or token from the client
+      confirm: true,
+      transfer_data: {
+        destination: realtor.connectedAccountId,
+      },
+      return_url: data.return_url,
+    });
+    // Check if the payment is successful
+    if (paymentIntent.status === 'succeeded') {
+      return paymentIntent.toJSON();
+    };
+  }
+
+  async dash(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    // Generate a unique login link for the associated Stripe account to access their Express dashboard
+    let loginLink = await stripe.accounts.createLoginLink(
+      realtor.connectedAccountId,
+      // {
+      //     redirect_url: "https://dashboard.stripe.com/test/"
+      // }
+    );
+
+    loginLink.url = loginLink.url + '#/account';
+    // Retrieve the URL from the response and redirect the user to Stripe
+    return { url: loginLink.url };
+  }
+
+  async cBalance(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    const balance: any = await stripe.balance.retrieve({
+      stripeAccount: realtor.connectedAccountId,
+    });
+    return balance.toJSON();
+  }
+
+  async trans(loginId: string): Promise<any> {
+
+    const realtor: any = await Realtor.findOne({
+      where: { loginId, deletedStatus: false },
+    });
+
+    // Retrieve transactions using the Stripe API
+    const transactions: any = await stripe.balanceTransactions.list({
+      source: realtor.connectedAccountId, // Use 'destination' instead of 'account'
+    });
+    return transactions.toJSON();
+  }
+
 }

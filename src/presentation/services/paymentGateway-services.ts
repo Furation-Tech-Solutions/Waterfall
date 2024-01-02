@@ -9,6 +9,15 @@ import { DeletePaymentGatewayUsecase } from "@domain/paymentGateway/usecases/del
 import { GetPaymentGatewayByIdUsecase } from "@domain/paymentGateway/usecases/get-paymentGateway-by-id";
 import { UpdatePaymentGatewayUsecase } from "@domain/paymentGateway/usecases/update-paymentGateway";
 import { GetAllPaymentGatewaysUsecase } from "@domain/paymentGateway/usecases/get-all-paymentGateway";
+import { CheckBalanceUsecase } from "@domain/paymentGateway/usecases/checkBalance";
+import { CreateConnectAccountUsecase } from "@domain/paymentGateway/usecases/createConnectAccount";
+import { DashboardUsecase } from "@domain/paymentGateway/usecases/dashboard";
+import { DeleteAccountUsecase } from "@domain/paymentGateway/usecases/deleteAccount";
+import { GenerateAccountLinkUsecase } from "@domain/paymentGateway/usecases/generateAccountLink";
+import { ProcessPaymentUsecase } from "@domain/paymentGateway/usecases/processPayment";
+import { RetrieveAccountUsecase } from "@domain/paymentGateway/usecases/retrieveAccount";
+import { TransactionsUsecase } from "@domain/paymentGateway/usecases/transactions";
+import { UpdateAccountUsecase } from "@domain/paymentGateway/usecases/updateAccount";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 
@@ -18,19 +27,50 @@ export class PaymentGatewayService {
   private readonly getPaymentGatewayByIdUsecase: GetPaymentGatewayByIdUsecase;
   private readonly updatePaymentGatewayUsecase: UpdatePaymentGatewayUsecase;
   private readonly getAllPaymentGatewaysUsecase: GetAllPaymentGatewaysUsecase;
+  private readonly checkBalanceUsecase: CheckBalanceUsecase;
+  private readonly createConnectAccountUsecase: CreateConnectAccountUsecase;
+  private readonly dashboardUsecase: DashboardUsecase;
+  private readonly deleteAccountUsecase: DeleteAccountUsecase;
+  private readonly generateAccountLinkUsecase: GenerateAccountLinkUsecase;
+  private readonly processPaymentUsecase: ProcessPaymentUsecase;
+  private readonly retrieveAccountUsecase: RetrieveAccountUsecase;
+  private readonly transactionsUsecase: TransactionsUsecase;
+  private readonly updateAccountUsecase: UpdateAccountUsecase;
+
+
 
   constructor(
     createPaymentGatewayUsecase: CreatePaymentGatewayUsecase,
     deletePaymentGatewayUsecase: DeletePaymentGatewayUsecase,
     getPaymentGatewayByIdUsecase: GetPaymentGatewayByIdUsecase,
     updatePaymentGatewayUsecase: UpdatePaymentGatewayUsecase,
-    getAllPaymentGatewaysUsecase: GetAllPaymentGatewaysUsecase
+    getAllPaymentGatewaysUsecase: GetAllPaymentGatewaysUsecase,
+    checkBalanceUsecase: CheckBalanceUsecase,
+    createConnectAccountUsecase: CreateConnectAccountUsecase,
+    dashboardUsecase: DashboardUsecase,
+    deleteAccountUsecase: DeleteAccountUsecase,
+    generateAccountLinkUsecase: GenerateAccountLinkUsecase,
+    processPaymentUsecase: ProcessPaymentUsecase,
+    retrieveAccountUsecase: RetrieveAccountUsecase,
+    transactionsUsecase: TransactionsUsecase,
+    updateAccountUsecase: UpdateAccountUsecase
+
   ) {
     this.createPaymentGatewayUsecase = createPaymentGatewayUsecase;
     this.deletePaymentGatewayUsecase = deletePaymentGatewayUsecase;
     this.getPaymentGatewayByIdUsecase = getPaymentGatewayByIdUsecase;
     this.updatePaymentGatewayUsecase = updatePaymentGatewayUsecase;
     this.getAllPaymentGatewaysUsecase = getAllPaymentGatewaysUsecase;
+    this.checkBalanceUsecase = checkBalanceUsecase;
+    this.createConnectAccountUsecase = createConnectAccountUsecase;
+    this.dashboardUsecase = dashboardUsecase;
+    this.deleteAccountUsecase = deleteAccountUsecase;
+    this.generateAccountLinkUsecase = generateAccountLinkUsecase;
+    this.processPaymentUsecase = processPaymentUsecase;
+    this.retrieveAccountUsecase = retrieveAccountUsecase;
+    this.transactionsUsecase = transactionsUsecase;
+    this.updateAccountUsecase = updateAccountUsecase;
+
   }
 
   private sendSuccessResponse(
@@ -184,5 +224,234 @@ export class PaymentGatewayService {
         }
       }
     );
+  }
+
+  async checkBalance(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const check: Either<ErrorClass, any> =
+      await this.checkBalanceUsecase.execute(id);
+
+    check.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  }
+
+  async createConnectAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const data: any = req.body;
+    const id: string = req.user;
+    // console.log(id);
+    const create: Either<ErrorClass, any> =
+      await this.createConnectAccountUsecase.execute(id, data);
+
+    create.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          this.sendSuccessResponse(res, result);
+        }
+      }
+
+    )
+  }
+
+  async dashboard(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const dashboard: Either<ErrorClass, any> =
+      await this.dashboardUsecase.execute(id);
+
+    dashboard.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  }
+
+  async deleteAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const deleteAccount: Either<ErrorClass, any> =
+      await this.deleteAccountUsecase.execute(id);
+
+    deleteAccount.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+
+  }
+
+  async generateAccountLink(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const generateAccountLink: Either<ErrorClass, any> =
+      await this.generateAccountLinkUsecase.execute(id);
+
+    generateAccountLink.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  }
+
+  async processPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const processPayment: Either<ErrorClass, any> =
+      await this.processPaymentUsecase.execute(id, data);
+
+    processPayment.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  } // processPayment
+
+  async retrieveAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const retrieveAccount: Either<ErrorClass, any> =
+      await this.retrieveAccountUsecase.execute(id);
+
+    retrieveAccount.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  }
+
+  async transactions(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const transactions: Either<ErrorClass, any> =
+      await this.transactionsUsecase.execute(id);
+
+    transactions.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
+  }
+
+  async updateAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id: string = req.user;
+    const data: any = req.body;
+    const updateAccount: Either<ErrorClass, any> =
+      await this.updateAccountUsecase.execute(id, data);
+
+    updateAccount.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (result: any) => {
+        if (result.length === 0) {
+          this.sendSuccessResponse(res, [], "Success", 200);
+        } else {
+          if (result.length === 0) {
+            this.sendSuccessResponse(res, [], "Success", 200);
+          } else {
+            this.sendSuccessResponse(res, result);
+          }
+        }
+      }
+    )
   }
 }

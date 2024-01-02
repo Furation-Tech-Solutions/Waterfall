@@ -141,7 +141,7 @@ export class JobService {
               responseData,
               "Job updated successfully"
             );
-            console.log(response, "response");
+            // console.log(response, "response");
             const pushNotification = new NotificationSender();
             // pushNotification.customNotification(result.applicantId,result.jobId,"appliedJob")
           }

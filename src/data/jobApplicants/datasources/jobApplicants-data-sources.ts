@@ -17,7 +17,7 @@ import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
   // Method to create a new job applicant
-  create(jobApplicant: any): Promise<JobApplicantEntity>;
+  create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity>;
 
   // Method to update an existing job applicant by ID
   update(id: string, updatedData: any): Promise<JobApplicantEntity>;
@@ -45,7 +45,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
-  async create(jobApplicant: any): Promise<JobApplicantEntity> {
+  async create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity> {
     try {
       // Check if the applicant has already applied for the same job
       const existingApplication = await JobApplicant.findOne({
@@ -77,8 +77,12 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         // Handle the case where the job is not found
         throw new Error("Job not found");
       }
-
       const jobOwnerID = job.getDataValue("jobOwnerId");
+
+       // Check if the job owner ID is the same as req.user ID
+    if (jobOwnerID === loginId) {
+      throw new Error("Job owner cannot apply for their own job");
+    }
 
       const blockingRecord = await Blocking.findOne({
         where: {
@@ -606,7 +610,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
     
           if (currentTime >= tenHoursBeforeFromTime) {
-            console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
+            // console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
             await associatedJob.update({
               urgentRequirement: true,
             });

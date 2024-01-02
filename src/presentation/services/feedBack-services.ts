@@ -219,8 +219,7 @@ export class FeedBackService {
   }
 
   async getFeedbackCount(req: Request, res: Response): Promise<void> {
-    let id: string = req.body.loginId;
-    let loginId = id;// For testing purposes, manually set loginId to "2"
+    let loginId: string = req.user;
 
     const query: any = {}; // Create an empty query object
 

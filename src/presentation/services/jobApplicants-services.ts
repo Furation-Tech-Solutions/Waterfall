@@ -61,12 +61,13 @@ export class JobApplicantService {
   }
 
   async createJobApplicant(req: Request, res: Response): Promise<void> {
+    let loginId=req.user
     const jobApplicantData: JobApplicantModel = JobApplicantMapper.toModel(
       req.body
     );
 
     const newJobApplicant: Either<ErrorClass, JobApplicantEntity> =
-      await this.createJobApplicantUsecase.execute(jobApplicantData);
+      await this.createJobApplicantUsecase.execute(jobApplicantData,loginId);
 
     newJobApplicant.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
@@ -180,7 +181,7 @@ export class JobApplicantService {
           (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
           (response: JobApplicantEntity) => {
             const responseData = JobApplicantMapper.toModel(response);
-            console.log(responseData, "responseData");
+            // console.log(responseData, "responseData");
             this.sendSuccessResponse(
               res,
               responseData,

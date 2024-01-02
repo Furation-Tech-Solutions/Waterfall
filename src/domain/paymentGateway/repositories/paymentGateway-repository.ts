@@ -24,4 +24,34 @@ export interface PaymentGatewayRepository {
 
   // Define a method to get a paymentGateway entry by its ID
   getPaymentGatewayById(id: string): Promise<Either<ErrorClass, PaymentGatewayEntity>>;
+
+
+  // Define a method to create a Connect Express account
+  createConnectAccount(loginId: string, data: any): Promise<Either<ErrorClass, any>>;
+
+  //define a method to retrieve accounts
+  retrieveAccount(loginId: string,): Promise<Either<ErrorClass, any>>;
+
+  //define a method to update accounts
+  updateAccount(loginId: string, data: any): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to delete a Connect Express account
+  deleteAccount(loginId: string): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to generate an account link
+  generateAccountLink(loginId: string): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to process payment
+  processPayment(loginId: string, data: any): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to get dashboard
+  dashboard(loginId: string): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to check balance
+  checkBalance(loginId: string): Promise<Either<ErrorClass, any>>;
+
+  // Define a method to get transactions
+  transactions(loginId: string): Promise<Either<ErrorClass, any>>;
+
+
 }

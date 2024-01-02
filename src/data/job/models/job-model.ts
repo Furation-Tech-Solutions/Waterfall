@@ -99,6 +99,9 @@ const Job = sequelize.define(
     clientPhoneNumber: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        len: [10, 12], // Validate length between 3 and 30 characters
+      },
     },
 
     // Type of fee for the job, with predefined values using ENUM

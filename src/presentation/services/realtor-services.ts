@@ -223,7 +223,7 @@ export class RealtorService {
 
   async CheckRecoId(req: Request, res: Response): Promise<void> {
     const recoId: string = req.params.id;
-    console.log(recoId, ":service ");
+    // console.log(recoId, ":service ");
     const realtor: Either<ErrorClass, RealtorEntity> =
       await this.checkRealtorByRecoIdUsecase.execute(recoId);
 
