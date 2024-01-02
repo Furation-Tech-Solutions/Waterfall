@@ -26,4 +26,6 @@ export interface RealtorRepository {
   // Method to retrieve a Realtor by ID
   CheckRecoId(id: string): Promise<Either<ErrorClass, RealtorEntity>>;
 
+  reportedRealtors(query: object): Promise<Either<ErrorClass, RealtorEntity[]>>
+
 }

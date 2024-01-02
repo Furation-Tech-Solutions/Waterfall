@@ -134,4 +134,29 @@ export class RealtorRepositoryImpl implements RealtorRepository {
       return Left<ErrorClass, RealtorEntity>(ApiError.badRequest());
     }
   }
+
+  async reportedRealtors(
+    query: RealtorQuery
+  ): Promise<Either<ErrorClass, RealtorEntity[]>> {
+    try {
+      const realtors = await this.realtorDataSource.getAllReportedRealtors(query); // Use the tag realtor data source
+      // Check if the data length is zero
+      if (realtors.length === 0) {
+        // If data length is zero, send a success response with status code 200
+        return Right<ErrorClass, RealtorEntity[]>([]);
+      }
+      return Right<ErrorClass, RealtorEntity[]>(realtors);
+    } catch (error: any) {
+      // Check if the error is an instance of ApiError and has a status of 404 (Not Found)
+      if (error instanceof ApiError && error.status === 404) {
+        // Return a Left monad with a not found error
+        return Left<ErrorClass, RealtorEntity[]>(ApiError.notFound());
+      }
+
+      // Return a Left monad with a custom error and the error message
+      return Left<ErrorClass, RealtorEntity[]>(
+        ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
+      );
+    }
+  }
 }

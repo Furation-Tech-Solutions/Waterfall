@@ -20,7 +20,7 @@ export interface ReportDataSource {
   read(id: string): Promise<ReportEntity | null>;
 
   // Method to get all reports
-  getAll(): Promise<ReportEntity[]>;
+  getAll(realtId: string): Promise<ReportEntity[]>;
 
   check(id: string, loginId: string): Promise<ReportEntity>;
 }
@@ -33,6 +33,20 @@ export class ReportDataSourceImpl implements ReportDataSource {
   async create(report: any): Promise<ReportEntity> {
     // Create a new report record in the database
     const createdReport = await Report.create(report);
+      
+     // Get the Realtor ID associated with the created report (assuming it's stored in the report object)
+  const realtorId = createdReport.dataValues.toRealtorId; // Replace 'realtorId' with the actual field name
+
+  // Find the associated Realtor using the Realtors model
+  const realtor = await Realtors.findByPk(realtorId);
+
+  if (!realtor) {
+    // If Realtor not found, handle the error (you can throw an error or handle it accordingly)
+    throw new Error('Realtor not found');
+  }
+
+  // Increment the reportCount for the Realtor
+  await realtor.increment('reportCount');
 
     // Return the created report as a plain JavaScript object
     return createdReport.toJSON();
@@ -75,20 +89,22 @@ export class ReportDataSourceImpl implements ReportDataSource {
   }
 
   // Implement the "getAll" method to retrieve all reports from the database
-  async getAll(): Promise<ReportEntity[]> {
+  async getAll(realtId: string): Promise<ReportEntity[]> {
     // Find all report records in the database
     const reports = await Report.findAll({
-      // Include associations to retrieve related data
+      where: {
+        toRealtorId: realtId,
+      },
       include: [
-        // {
-        //   model: Realtors,
-        //   as: "fromRealtorData", // Alias for the first association
-        //   foreignKey: "fromRealtorId",
-        // },
         {
           model: Realtors,
-          as: "toRealtorData", // Alias for the second association
-          foreignKey: "toRealtorId",
+          as: 'fromRealtorData', // Include data from the 'Realtors' model associated with fromRealtorId
+          attributes: ['id', 'firstName', 'lastName'], // Define specific attributes to retrieve
+        },
+        {
+          model: Realtors,
+          as: 'toRealtorData', // Include data from the 'Realtors' model associated with toRealtorId
+          attributes: ['id', 'firstName', 'lastName'], // Define specific attributes to retrieve
         },
       ],
     });

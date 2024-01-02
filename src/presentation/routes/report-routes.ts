@@ -61,5 +61,4 @@ reportRouter.put("/:id", verifyUser, validateReportInputMiddleware(true), report
 reportRouter.delete("/:id", verifyUser, reportService.deleteReport.bind(reportService));
 
 // Route handling for getting all Reports
-reportRouter.get("/", verifyUser, reportService.getAllReports.bind(reportService));
-
+reportRouter.get("/reported/:id",verifyUser, reportService.getAllReports.bind(reportService));

@@ -5,7 +5,7 @@ import { Either } from "monet"; // Import Either for handling results with possi
 
 // Define the GetAllReportsUsecase interface
 export interface GetAllReportsUsecase {
-  execute: () => Promise<Either<ErrorClass, ReportEntity[]>>; // Define a method for executing the use case
+  execute: (realtId: string) => Promise<Either<ErrorClass, ReportEntity[]>>; // Define a method for executing the use case
 }
 
 // Define the GetAllReports class that implements the GetAllReportsUsecase interface
@@ -18,7 +18,7 @@ export class GetAllReports implements GetAllReportsUsecase {
   }
 
   // Implementation of the execute method defined in the interface
-  async execute(): Promise<Either<ErrorClass, ReportEntity[]>> {
-    return await this.reportRepository.getReports(); // Call the getReports method of the report repository
+  async execute(realtId: string): Promise<Either<ErrorClass, ReportEntity[]>> {
+    return await this.reportRepository.getReports(realtId); // Call the getReports method of the report repository
   }
 }

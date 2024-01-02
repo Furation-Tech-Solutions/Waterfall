@@ -112,6 +112,14 @@ const Realtors = sequelize.define("Realtors", {
     allowNull: true, // Set to allowNull: true if coordinates are optional
     defaultValue: []
   },
+  isBanned: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  reportCount: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
   firebaseDeviceToken: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     defaultValue: []
