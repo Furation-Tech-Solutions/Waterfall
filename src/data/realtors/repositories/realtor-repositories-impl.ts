@@ -139,7 +139,7 @@ export class RealtorRepositoryImpl implements RealtorRepository {
     query: RealtorQuery
   ): Promise<Either<ErrorClass, RealtorEntity[]>> {
     try {
-      const realtors = await this.realtorDataSource.getAllRealtors(query); // Use the tag realtor data source
+      const realtors = await this.realtorDataSource.getAllReportedRealtors(query); // Use the tag realtor data source
       // Check if the data length is zero
       if (realtors.length === 0) {
         // If data length is zero, send a success response with status code 200

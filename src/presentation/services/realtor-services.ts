@@ -16,6 +16,8 @@ import { NotificationSender } from "./push-notification-services";
 import { LoginRealtorUsecase } from "@domain/realtors/usecases/login-realtor";
 import { GetAllReportedRealtorsUsecase } from "@domain/realtors/usecases/reported-realtors";
 import admin from "firebase-admin";
+// import admin from "../../../main/firebase-sdk/firebase-config";
+
 import { Boolean } from "aws-sdk/clients/cloudtrail";
 
 export class RealtorService {
@@ -272,19 +274,17 @@ export class RealtorService {
 
     const existingRealtor: Either<ErrorClass, RealtorEntity> =
       await this.getRealtorByIdUsecase.execute(realtorId);
-
+     let realtorData={}
       if(query == "ban") {
-        const realtorData = {
+         realtorData = {
           isBanned: true
         }
       } else if (query == "unban") {
-        const realtorData = {
+         realtorData = {
           isBanned: false
         }
       }
-    const realtorData = {
-      isBanned: true
-    }
+    
 
     existingRealtor.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
@@ -305,14 +305,13 @@ export class RealtorService {
           (error: ErrorClass) => this.sendErrorResponse(res, error),
           async (result: RealtorEntity) => {
             const resData = RealtorMapper.toEntity(result, true);
-
             if(query == "ban") {
-              await admin.auth().updateUser(resData.firebaseId, {
+              await admin.auth().updateUser(resData.id, {
                 disabled: true,
               });
               this.sendSuccessResponse(res, resData, "Realtor banned successfully");
             }else if (query == "unban") {
-              await admin.auth().updateUser(resData.firebaseId, {
+              await admin.auth().updateUser(resData.id, {
                 disabled: false,
               });
   

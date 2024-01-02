@@ -260,6 +260,7 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
       limit:itemsPerPage,
       offset:offset,
     });
+    console.log(reportedUsers,"reporteduser")
 
     return reportedUsers.map((realtor: any) => realtor.toJSON());
   }
