@@ -218,7 +218,6 @@ export class ConnectionsServices {
     const Data: ConnectionsModel = req.body;
     let loginId = req.user;
     let id = req.params.id;
-// console.log(loginId,id,Data);
     const existingConnections: Either<ErrorClass, ConnectionsEntity> =
       await this.checkConnectionUsecase.execute(id, loginId);
 

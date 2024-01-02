@@ -75,7 +75,7 @@ export class MessagesServices {
           "Message created successfully",
           201
         );
-        console.log(result)
+        // console.log(result)
         const pushNotification = new NotificationSender()
         pushNotification.customNotification(result.senderId, result.receiverId, "sendMessage")
       }

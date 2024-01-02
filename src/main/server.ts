@@ -28,6 +28,7 @@ try {
   deleteStatusWithCron();
   const cronClass = new CronJob()
   cronClass.expiredJobNotification()
+  cronClass.notifyOwnerNoApplicants()
   // notificationWithCron()
 
 } catch (error) {

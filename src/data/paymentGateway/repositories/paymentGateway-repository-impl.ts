@@ -116,4 +116,99 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
       );
     }
   }
+
+  async createConnectAccount(loginId: string, data: any): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.createAccount(loginId, data);
+
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async retrieveAccount(loginId: string,): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.retrieveAcc(loginId);
+
+      if (response === null) {
+        return Left<ErrorClass, any>(ApiError.notFound());
+      }
+
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async updateAccount(loginId: string, data: any): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.updateAcc(loginId, data);
+
+      return Right<ErrorClass, any>(response);
+
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+
+    }
+
+  }
+
+  async deleteAccount(loginId: string): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.deleteAcc(loginId);
+
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async generateAccountLink(loginId: string): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.generateAccLink(loginId);
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async processPayment(loginId: string, data: any): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.prosPayment(loginId, data);
+      return Right<ErrorClass, any>(response);
+
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async dashboard(loginId: string): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.dash(loginId);
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async checkBalance(loginId: string): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.cBalance(loginId);
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+  async transactions(loginId: string): Promise<Either<ErrorClass, any>> {
+    try {
+      const response = await this.dataSource.trans(loginId);
+      return Right<ErrorClass, any>(response);
+    } catch (error: any) {
+      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+    }
+  }
+
+
 }

@@ -61,7 +61,7 @@ const Realtors = sequelize.define("Realtors", {
   location: {
     type: DataTypes.STRING,
     allowNull: true, // It cannot be null
-    defaultValue: 'Ontario',
+    defaultValue: 'ontario',
   },
   // Define the "about" field with a data type of STRING
   about: {
@@ -91,10 +91,6 @@ const Realtors = sequelize.define("Realtors", {
     allowNull: false,
     unique: true,
   },
-  firebaseId: {
-    type: DataTypes.STRING,
-    defaultValue: "",
-  },
   linkedIn: {
     type: DataTypes.STRING,
     defaultValue: "",
@@ -120,6 +116,10 @@ const Realtors = sequelize.define("Realtors", {
     type: DataTypes.ARRAY(DataTypes.STRING),
     defaultValue: []
   },
+  connectedAccountId: {
+    type: DataTypes.STRING,
+    defaultValue: ""
+  }
 });
 
 export default Realtors; // Export the Realtors model as the default export
