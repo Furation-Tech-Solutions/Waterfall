@@ -166,23 +166,23 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
     clientPhoneNumber: isUpdate
       ? Joi.string()
           .optional()
-          .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
+          // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
           .messages({
             "string.base": "Client phone number must be a string",
             "string.empty": "Client phone number is required",
-            "string.pattern.base":
-              "Invalid client phone number format (e.g., 123-456-7890)",
-            "any.required": "Client phone number is required",
+            "string.min": "contact should have at least 10 characters",
+            "string.max": "contact should have less than 13 characters",
           })
       : Joi.string()
           .required()
-          .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
+          .min(10)
+          .max(12)
+          // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
           .messages({
             "string.base": "Client phone number must be a string",
             "string.empty": "Client phone number is required",
-            "string.pattern.base":
-              "Invalid client phone number format (e.g., 123-456-7890)",
-            "any.required": "Client phone number is required",
+            "string.min": "contact should have at least 10 characters",
+            "string.max": "contact should have less than 13 characters",
           }),
 
     // Validate fee type
