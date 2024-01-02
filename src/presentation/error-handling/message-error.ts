@@ -42,6 +42,8 @@ export const NAME_EXIST="name already exists";
 
 export const TAX_TYPE_EXIST="tax type already exists";
 
+export const ACCOUNT_EXIST="Account already exists";
+
 export const EMAIL_CONFLICT = "already exist";
 
 export const ID_BLOCKED_CONFLICT = "id already blocked";

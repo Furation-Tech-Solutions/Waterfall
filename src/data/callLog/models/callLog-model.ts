@@ -20,13 +20,13 @@ const CallLog = sequelize.define("CallLog", {
   // Define the "jobApplicant" field with a INTEGER data type, which cannot be null and references the 'id' of the JobApplicant model
   jobApplicantId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
     references: { model: JobApplicant, key: "id" },
   },
 
   jobId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
     references: { model: Job, key: "id" },
   },
 
