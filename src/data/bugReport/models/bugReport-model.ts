@@ -33,7 +33,7 @@ const BugReport = sequelize.define("BugReport", {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
   },
-
+  
   // Define a field "timestamp" of type DATE with a default value of the current timestamp
   timestamp: {
     type: DataTypes.DATE,

@@ -14,6 +14,7 @@ import { sequelize } from "@main/sequelizeClient";
 import { LoginRealtor } from "@domain/realtors/usecases/login-realtor";
 import { CheckRealtorByRecoId } from "@domain/realtors/usecases/Check-realtor-by-Reco-id";
 import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
+import { GetAllReportedRealtors } from "@domain/realtors/usecases/reported-realtors";
 
 
 // Create an instance of the RealtorDataSourceImpl and pass the mongoose connection
@@ -30,6 +31,7 @@ const updateRealtorUsecase = new UpdateRealtor(realtorRepository);
 const deleteRealtorUsecase = new DeleteRealtor(realtorRepository);
 const loginRealtorUsecase = new LoginRealtor(realtorRepository);
 const CheckRealtorByRecoIdUsecase = new CheckRealtorByRecoId(realtorRepository);
+const getAllReportedRealtorsUsecase = new GetAllReportedRealtors(realtorRepository);
 
 // Initialize RealtorService and inject required dependencies
 const realtorService = new RealtorService(
@@ -39,7 +41,8 @@ const realtorService = new RealtorService(
   updateRealtorUsecase,
   deleteRealtorUsecase,
   loginRealtorUsecase,
-  CheckRealtorByRecoIdUsecase
+  CheckRealtorByRecoIdUsecase,
+  getAllReportedRealtorsUsecase,
 );
 
 // Create an Express router
@@ -70,3 +73,7 @@ realtorRouter.post(
 
 // Route handling for getting an Realtor by ID
 realtorRouter.get("/checkRecoId/:id", realtorService.CheckRecoId.bind(realtorService));
+
+realtorRouter.get("/get/reported", realtorService.reportedUsers.bind(realtorService));
+
+realtorRouter.patch("/banunban/realtor/:id",  validateRealtorInputMiddleware(true), realtorService.disableFirebaseAuthForBannedUser.bind(realtorService));

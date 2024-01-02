@@ -19,6 +19,8 @@ export class RealtorModel {
     public attachmentLink: string = "",
     public licenseExpirationDate: string = "",
     public badge: { badgeName: string, timestamp: Date },
+    public isBanned: boolean = false,
+    public reportCount: number = 0,
     public firebaseDeviceToken: string = "",
     public connectedAccountId = ""
 
@@ -46,9 +48,11 @@ export class RealtorEntity {
     public linkedIn: string,
     public attachmentLink: string,
     public licenseExpirationDate: string,
-    public badge: { badgeName: string; timestamp: Date },
-    public firebaseDeviceToken: string,
+    public badge: {badgeName: string; timestamp: Date},
+    public isBanned: boolean,
+    public reportCount: number,
     public connectedAccountId: string,
+    public firebaseDeviceToken: string
 
 
   ) { }
@@ -141,10 +145,18 @@ export class RealtorMapper {
           realtorData.badge !== undefined
             ? realtorData.badge
             : existingRealtor.badge,
-        firebaseDeviceToken:
-          realtorData.firebaseDeviceToken !== undefined
-            ? realtorData.firebaseDeviceToken
-            : existingRealtor.firebaseDeviceToken
+        isBanned:
+          realtorData.isBanned !== undefined
+            ? realtorData.isBanned
+            : existingRealtor.isBanned,
+        reportCount:
+          realtorData.reportCount !== undefined
+            ? realtorData.reportCount
+            : existingRealtor.reportCount,
+            firebaseDeviceToken:
+            realtorData.firebaseDeviceToken !== undefined
+              ? realtorData.firebaseDeviceToken
+              : existingRealtor.firebaseDeviceToken
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -173,6 +185,8 @@ export class RealtorMapper {
         attachmentLink: realtorData.attachmentLink,
         licenseExpirationDate: realtorData.licenseExpirationDate,
         badge: realtorData.badge,
+        isBanned: realtorData.isBanned,
+        reportCount: realtorData.reportCount,
         firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
 
       };
@@ -202,7 +216,9 @@ export class RealtorMapper {
       attachmentLink: realtor.attachmentLink,
       licenseExpirationDate: realtor.licenseExpirationDate,
       badge: realtor.badge,
-      firebaseDeviceToken: realtor.firebaseDeviceToken
+      isBanned: realtor.isBanned,
+      reportCount: realtor.reportCount,
+      firebaseDeviceToken:realtor.firebaseDeviceToken
     };
   }
 }

@@ -191,8 +191,11 @@ export class ReportService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+
+    const realtId = req.params.id
+    
     const reports: Either<ErrorClass, ReportEntity[]> =
-      await this.getAllReportsUsecase.execute();
+      await this.getAllReportsUsecase.execute(realtId);
 
     reports.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
