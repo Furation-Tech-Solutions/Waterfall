@@ -2,6 +2,7 @@
 export class CallLogModel {
   constructor(
     public jobApplicantId: number = 0, // Job applicant ID, defaulting to 0
+    public jobId: number = 0, // Job applicant ID, defaulting to 0
     public logActivity: string = "", // Log activity, defaulting to an empty string
     public logOutcome: string = "", // Log outcome, defaulting to an empty string
     public jobApplicantData: {} = {}
@@ -14,6 +15,7 @@ export class CallLogEntity {
   constructor(
     public id: number | undefined = undefined, // Log ID, defaulting to undefined
     public jobApplicantId: number, // Job applicant ID
+    public jobId: number, // Job applicant ID
     public logActivity: string, // Log activity
     public logOutcome: string, // Log outcome
     public jobApplicantData: {}
@@ -36,6 +38,10 @@ export class CallLogMapper {
           callLogData.jobApplicantId !== undefined
             ? callLogData.jobApplicantId
             : existingCallLog.jobApplicantId,
+        jobId:
+          callLogData.jobId !== undefined
+            ? callLogData.jobId
+            : existingCallLog.jobId,
         logActivity:
           callLogData.logActivity !== undefined
             ? callLogData.logActivity
@@ -54,6 +60,7 @@ export class CallLogMapper {
             : undefined
           : callLogData.id.toString(),
         jobApplicantId: callLogData.jobApplicantId,
+        jobId: callLogData.jobId,
         logActivity: callLogData.logActivity,
         logOutcome: callLogData.logOutcome,
         jobApplicantData: callLogData.jobApplicantData,
@@ -67,6 +74,7 @@ export class CallLogMapper {
     return {
       id: callLog.id, // ID of the log
       jobApplicantId: callLog.jobApplicantId, // Job applicant ID
+      jobId: callLog.jobId, // Job applicant ID
       logActivity: callLog.logActivity, // Log activity
       logOutcome: callLog.logOutcome, // Log outcome
       jobApplicantData: callLog.jobApplicantData, // Log outcome
