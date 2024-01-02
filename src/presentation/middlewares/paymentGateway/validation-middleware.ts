@@ -8,9 +8,12 @@ import {
 // Define the interface for the expected input data
 interface PaymentGatewayInput {
   jobId: number;
-  jobApplicantId: number;
+  toRealtorId: string;
+  fromRealtorId: string;
   amount: string;
-  paymentMethod: string;
+  currency: string;
+  transactionId: string;
+  status: string;
 }
 
 // Define a function for validating payment gateway input
@@ -21,25 +24,20 @@ const paymentGatewayValidator = (
   // Define a Joi schema for validating the input
   const paymentGatewaySchema = Joi.object<PaymentGatewayInput>({
     jobId: isUpdate ? Joi.number().optional() : Joi.number().required(),
-    jobApplicantId: isUpdate
-      ? Joi.number().optional()
-      : Joi.number().required(),
+    toRealtorId: isUpdate
+      ? Joi.string().optional()
+      : Joi.string().required(),
     amount: isUpdate ? Joi.string().optional() : Joi.string().required(),
-    paymentMethod: isUpdate
-      ? Joi.string()
-          .valid(...Object.values(paymentMethodEnum))
-          .optional()
-          .messages({
-            "any.only": "Invalid payment method",
-            "any.required": "Payment method is required",
-          })
-      : Joi.string()
-          .valid(...Object.values(paymentMethodEnum))
-          .required()
-          .messages({
-            "any.only": "Invalid payment method",
-            "any.required": "Payment method is required",
-          }),
+    fromRealtorId: isUpdate
+      ? Joi.string().optional()
+      : Joi.string().required(),
+    currency: isUpdate ? Joi.string().optional() : Joi.string().required(),
+    transactionId: isUpdate
+      ? Joi.string().optional()
+      : Joi.string().optional(),
+    status: isUpdate
+      ? Joi.string().optional()
+      : Joi.string().optional(),
   });
 
   // Validate the input against the schema

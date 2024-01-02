@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "@main/sequelizeClient";
 import Job from "@data/job/models/job-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
+import Realtors from "@data/realtors/model/realtor-model";
 
 // Define payment method options
 export const paymentMethodEnum = {
@@ -11,7 +12,7 @@ export const paymentMethodEnum = {
 };
 
 // Define a Sequelize model named "PaymentGateway"
-const PaymentGateway = sequelize.define("PaymentGateway", {
+const Transactions = sequelize.define("transactions", {
   // Define a field "jobId" with a data type of INTEGER
   jobId: {
     type: DataTypes.INTEGER,
@@ -19,11 +20,16 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
     references: { model: Job, key: "id" },
   },
 
-  // Define a field "jobApplicantId" with a data type of INTEGER
-  jobApplicantId: {
-    type: DataTypes.INTEGER,
+  toRealtorId: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: { model: JobApplicant, key: "id" },
+    references: { model: Realtors, key: "id" },
+  },
+
+  fromRealtorId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    references: { model: Realtors, key: "id" },
   },
 
   // Define a field "amount" with a data type of STRING
@@ -32,29 +38,47 @@ const PaymentGateway = sequelize.define("PaymentGateway", {
     allowNull: false,
   },
 
-  // Define a field "paymentMethod" with a data type of ENUM with predefined values
-  paymentMethod: {
-    type: DataTypes.ENUM(...Object.values(paymentMethodEnum)),
+  currency: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
 
+  // Define a field "paymentMethod" with a data type of ENUM with predefined values
+  // paymentMethod: {
+  //   type: DataTypes.ENUM(...Object.values(paymentMethodEnum)),
+  //   allowNull: false,
+  // },
+
   // Define a field "TransactionId" with a data type of STRING
-  TransactionId: {
+  transactionId: {
     type: DataTypes.STRING,
-    allowNull: false,
-  }
+    // allowNull: false,
+  },
+
+  status: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+  },
+
 });
 
 // Define associations with other models
-PaymentGateway.belongsTo(Job, {
+Transactions.belongsTo(Job, {
   foreignKey: "jobId",
   as: "jobData",
 });
 
-PaymentGateway.belongsTo(JobApplicant, {
-  foreignKey: "jobApplicantId",
-  as: "jobApplicantData",
+// Define an association between Job and Realtors (jobOwner)
+Transactions.belongsTo(Realtors, {
+  foreignKey: "toRealtorId",
+  as: "toRealtorData", // Optional alias for the association
+});
+
+// Define an association between Job and Realtors (jobOwner)
+Transactions.belongsTo(Realtors, {
+  foreignKey: "fromRealtorId",
+  as: "fromRealtorData", // Optional alias for the association
 });
 
 // Export the "PaymentGateway" model as the default export
-export default PaymentGateway;
+export default Transactions;

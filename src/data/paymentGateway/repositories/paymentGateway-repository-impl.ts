@@ -1,7 +1,7 @@
 // Import necessary dependencies and modules
 import { PaymentGatewayEntity, PaymentGatewayModel } from "@domain/paymentGateway/entities/paymentGateway";
 import { PaymentGatewayRepository } from "@domain/paymentGateway/repositories/paymentGateway-repository";
-import { PaymentGatewayDataSource } from "@data/paymentGateway/datasources/paymentGateway-data-sources";
+import { PaymentGatewayDataSource, Query } from "@data/paymentGateway/datasources/paymentGateway-data-sources";
 import { Either, Left, Right } from "monet";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import * as HttpStatus from "@presentation/error-handling/http-status";
@@ -71,10 +71,10 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
   }
 
   // Implement the "getPaymentGateways" method defined in the PaymentGatewayRepository interface
-  async getPaymentGateways(): Promise<Either<ErrorClass, PaymentGatewayEntity[]>> {
+  async getPaymentGateways(id: string): Promise<Either<ErrorClass, PaymentGatewayEntity[]>> {
     try {
       // Retrieve all paymentGateways using the "dataSource" and return them as Right
-      const response = await this.dataSource.getAll();
+      const response = await this.dataSource.getAll(id);
       // Check if the data length is zero
       if (response.length === 0) {
         // If data length is zero, send a success response with status code 200
@@ -123,7 +123,12 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
 
       return Right<ErrorClass, any>(response);
     } catch (error: any) {
-      return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+      if (error instanceof ApiError && error.name === "account Exist") {
+        return Left<ErrorClass, any>(ApiError.accountExist());
+      }
+      return Left<ErrorClass, any>(
+        ApiError.customError(400, error.message)
+      );
     }
   }
 
@@ -131,13 +136,14 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
     try {
       const response = await this.dataSource.retrieveAcc(loginId);
 
-      if (response === null) {
-        return Left<ErrorClass, any>(ApiError.notFound());
-      }
-
       return Right<ErrorClass, any>(response);
     } catch (error: any) {
+      if (error instanceof ApiError && error.name === "data not found") {
+        return Left<ErrorClass, any>(ApiError.dataNotFound());
+      }
       return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
+
+
     }
   }
 
@@ -164,9 +170,9 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
     }
   }
 
-  async generateAccountLink(loginId: string): Promise<Either<ErrorClass, any>> {
+  async generateAccountLink(loginId: string, query: Query): Promise<Either<ErrorClass, any>> {
     try {
-      const response = await this.dataSource.generateAccLink(loginId);
+      const response = await this.dataSource.generateAccLink(loginId, query);
       return Right<ErrorClass, any>(response);
     } catch (error: any) {
       return Left<ErrorClass, any>(ApiError.customError(HttpStatus.BAD_REQUEST, error.message));
