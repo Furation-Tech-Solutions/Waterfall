@@ -102,6 +102,11 @@ export class JobDataSourceImpl implements JobDataSource {
           model: JobApplicant,
 
           as: "applicantsData",
+        },
+
+        {
+          model: CallLog,  // Add this include for the CallLog model
+          as: "callLogsData",  // You can use any alias you prefer
         }
 
 

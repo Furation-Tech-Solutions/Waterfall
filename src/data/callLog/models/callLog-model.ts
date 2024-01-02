@@ -24,6 +24,11 @@ const CallLog = sequelize.define("CallLog", {
     references: { model: JobApplicant, key: "id" },
   },
 
+  jobId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: Job, key: "id" },
+  },
 
   // Define the "logActivity" field with a STRING data type, not null, and length validation
   logActivity: {
@@ -49,7 +54,11 @@ CallLog.belongsTo(JobApplicant, {
   as: "jobApplicantData"
 });
 
-
+// Define a one-to-many association between Job and CallLog
+Job.hasMany(CallLog, {
+  foreignKey: "jobId", // Assuming CallLog has a field named "jobId" as the foreign key
+  as: "callLogsData", // Optional alias for the association
+});
 
 // Export the CallLog model as the default export
 export default CallLog;

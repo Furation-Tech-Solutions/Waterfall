@@ -7,6 +7,7 @@ import { OutcomeEnum } from "@data/callLog/models/callLog-model"; // Adjust the 
 // Define an interface for the expected input data
 interface CallLogInput {
   jobApplicantId: number;
+  jobId: number;
   logActivity: string;
   logOutcome: string;
 }
@@ -16,6 +17,9 @@ const callLogValidator = (input: CallLogInput, isUpdate: boolean = false) => {
   // Define a schema using Joi for validating the input
   const callLogSchema = Joi.object<CallLogInput>({
     jobApplicantId: isUpdate
+      ? Joi.number().optional()
+      : Joi.number().required(),
+    jobId: isUpdate
       ? Joi.number().optional()
       : Joi.number().required(),
     logActivity: isUpdate
