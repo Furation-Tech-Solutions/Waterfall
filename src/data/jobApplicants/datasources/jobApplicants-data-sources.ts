@@ -72,16 +72,14 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
 
       // Check if the job owner has blocked the applicant
       const job = await Job.findByPk(jobApplicant.jobId);
-
       if (!job) {
-        // Handle the case where the job is not found
         throw new Error("Job not found");
       }
       const jobOwnerID = job.getDataValue("jobOwnerId");
 
       // Check if the job owner ID is the same as req.user ID
       if (jobOwnerID === loginId) {
-        throw new Error("Job owner cannot apply for their own job");
+        throw ApiError.jobownerconflict();
       }
 
       const blockingRecord = await Blocking.findOne({
@@ -94,6 +92,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       if (blockingRecord) {
         throw new Error("User can't apply for this job as they've been blocked from JobOwner");
       }
+
+
+
+
 
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
 

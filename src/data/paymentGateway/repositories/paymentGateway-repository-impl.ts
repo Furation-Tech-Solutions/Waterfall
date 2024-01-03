@@ -123,8 +123,8 @@ export class PaymentGatewayRepositoryImpl implements PaymentGatewayRepository {
 
       return Right<ErrorClass, any>(response);
     } catch (error: any) {
-      if (error instanceof ApiError && error.name === "applicant_conflict") {
-        return Left<ErrorClass, any>(ApiError.applicantExist());
+      if (error instanceof ApiError && error.name === "account Exist") {
+        return Left<ErrorClass, any>(ApiError.accountExist());
       }
       return Left<ErrorClass, any>(
         ApiError.customError(400, error.message)

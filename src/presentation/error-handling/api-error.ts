@@ -95,6 +95,14 @@ class ApiError extends ErrorClass {
       "applicant_conflict"
     );
   }
+
+  static jobownerconflict(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.jOBOWNER_CONFLICT,
+      "jobowner_conflict"
+    );
+  }
   static nameExist(): ApiError {
     return new ApiError(
       HttpStatus.CONFLICT,

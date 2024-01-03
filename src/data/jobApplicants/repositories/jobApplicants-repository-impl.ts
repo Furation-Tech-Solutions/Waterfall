@@ -34,7 +34,10 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
     } catch (error: any) {
       if (error instanceof ApiError && error.name === "account Exist") {
-        return Left<ErrorClass, any>(ApiError.accountExist());
+        return Left<ErrorClass, any>(ApiError.applicantExist());
+      }
+      if (error instanceof ApiError && error.name === " jobowner_conflict") {
+        return Left<ErrorClass, any>(ApiError.jobownerconflict());
       }
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 401) {

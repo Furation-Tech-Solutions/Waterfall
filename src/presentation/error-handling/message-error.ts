@@ -46,6 +46,8 @@ export const ACCOUNT_EXIST = "Account already exists";
 
 export const APPLICANT_CONFLICT = "Applicant already exist";
 
+export const jOBOWNER_CONFLICT = "Job Owner can't apply to his own job";
+
 export const EMAIL_CONFLICT = "already exist";
 
 export const ID_BLOCKED_CONFLICT = "id already blocked";
