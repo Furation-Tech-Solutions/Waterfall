@@ -28,7 +28,11 @@ class S3MediaUploader {
           let path = "";
           if (dataType === "image") {
             path = `users/${uid}/profile/${fileNameWithoutExtension}.${fileExtension}`;
-          } else {
+          } 
+          else if(dataType==="chat"){
+            path=`users/${uid}/chat/media/${fileNameWithoutExtension}.${fileExtension}`
+          }
+          else {
             path = `users/${uid}/jobs/attachments/${uniqueIdentifier}/${fileNameWithoutExtension}`;
           }
           const params = {
