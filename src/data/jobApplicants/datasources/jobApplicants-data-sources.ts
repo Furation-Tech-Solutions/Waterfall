@@ -47,53 +47,56 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   // Method to create a new job applicant
   async create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity> {
     try {
-      // Check if the applicant has already applied for the same job
-      const existingApplication = await JobApplicant.findOne({
-        where: {
-          jobId: jobApplicant.jobId,
-          applicantId: jobApplicant.applicantId,
-        },
-      });
-
-      if (existingApplication) {
-        throw new Error("The applicant has already applied for this job");
-      }
-
-      // Check if the applicant has been reported
-      const existingReport = await Report.findOne({
-        where: {
-          toRealtorId: jobApplicant.applicantId,
-        },
-      });
-
-      if (existingReport) {
-        throw new Error("The applicant can't apply for a job they've been reported");
-      }
-
+      
+      
       // Check if the job owner has blocked the applicant
       const job = await Job.findByPk(jobApplicant.jobId);
-
-      if (!job) {
-        // Handle the case where the job is not found
+      if(!job){
         throw new Error("Job not found");
       }
-      const jobOwnerID = job.getDataValue("jobOwnerId");
-
-       // Check if the job owner ID is the same as req.user ID
-    if (jobOwnerID === loginId) {
-      throw new Error("Job owner cannot apply for their own job");
-    }
-
-      const blockingRecord = await Blocking.findOne({
-        where: {
-          fromRealtorId: jobOwnerID,
-          toRealtorId: jobApplicant.applicantId,
-        },
-      });
-
-      if (blockingRecord) {
-        throw new Error("User can't apply for this job as they've been blocked from JobOwner");
+      else{
+        const jobOwnerID = job.getDataValue("jobOwnerId");
+        const blockingRecord = await Blocking.findOne({
+          where: {
+            fromRealtorId: jobOwnerID,
+            toRealtorId: jobApplicant.applicantId,
+          },
+        });
+        // Check if the applicant has been reported
+        const existingReport = await Report.findOne({
+          where: {
+            toRealtorId: jobApplicant.applicantId,
+          },
+        });
+        // Check if the applicant has already applied for the same job
+        const existingApplication = await JobApplicant.findOne({
+          where: {
+            jobId: jobApplicant.jobId,
+            applicantId: jobApplicant.applicantId,
+          },
+        });
+        if (jobOwnerID === jobApplicant.applicantId) {
+        throw new Error("Job owner cannot apply for their own job");
       }
+      else if (existingApplication) {
+          throw new Error("The applicant has already applied for this job");
+        }
+  
+        else if (existingReport) {
+          throw new Error("The applicant can't apply for a job they've been reported");
+        }
+           // Check if the job owner ID is the same as req.user ID
+  
+      
+        else if (blockingRecord) {
+          throw new Error("User can't apply for this job as they've been blocked from JobOwner");
+        }
+
+      }
+
+      
+
+      
 
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
 
