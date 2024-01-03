@@ -17,7 +17,7 @@ import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
   // Method to create a new job applicant
-  create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity>;
+  create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity>;
 
   // Method to update an existing job applicant by ID
   update(id: string, updatedData: any): Promise<JobApplicantEntity>;
@@ -45,7 +45,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
-  async create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity> {
+  async create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity> {
     try {
       // Check if the applicant has already applied for the same job
       const existingApplication = await JobApplicant.findOne({
@@ -55,10 +55,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         },
       });
 
+      // Update the record with the provided data if it exists
       if (existingApplication) {
-        throw new Error("The applicant has already applied for this job");
+        throw ApiError.applicantExist();
       }
-
       // Check if the applicant has been reported
       const existingReport = await Report.findOne({
         where: {
@@ -79,10 +79,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       }
       const jobOwnerID = job.getDataValue("jobOwnerId");
 
-       // Check if the job owner ID is the same as req.user ID
-    if (jobOwnerID === loginId) {
-      throw new Error("Job owner cannot apply for their own job");
-    }
+      // Check if the job owner ID is the same as req.user ID
+      if (jobOwnerID === loginId) {
+        throw new Error("Job owner cannot apply for their own job");
+      }
 
       const blockingRecord = await Blocking.findOne({
         where: {
@@ -583,13 +583,13 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         await associatedJob.update({
           liveStatus: true,
         });
-    
+
         const currentDate = new Date();
 
 
         const lastDate: Date | string | null | undefined = associatedJob.applyBy;
 
-    
+
         if (
           lastDate &&
           new Date(lastDate).toDateString() === currentDate.toDateString()
@@ -597,7 +597,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           const fromTime = new Date(associatedJob.fromTime);
 
           const currentTime = new Date();
-    
+
           // Calculate 10 hours before fromTime of the day
           const tenHoursBeforeFromTime = new Date(
             fromTime.getFullYear(),
@@ -608,7 +608,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             0
           );
 
-    
+
           if (currentTime >= tenHoursBeforeFromTime) {
             // console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
             await associatedJob.update({
@@ -618,7 +618,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         }
       }
     }
-    
+
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);

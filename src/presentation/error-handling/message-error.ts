@@ -1,4 +1,4 @@
-export const NOT_FOUND =  "not found";
+export const NOT_FOUND = "not found";
 
 export const FETCH_SUCCESS = "fetched successfully";
 
@@ -36,13 +36,15 @@ export const OVERLAPPING_SHIFT = "Overlapping shift already exists";
 
 export const OVERLAPPING_DATE = "You have already added that date";
 
-export const ROLE_CONFLICT="role is already exist"
+export const ROLE_CONFLICT = "role is already exist"
 
-export const NAME_EXIST="name already exists";
+export const NAME_EXIST = "name already exists";
 
-export const TAX_TYPE_EXIST="tax type already exists";
+export const TAX_TYPE_EXIST = "tax type already exists";
 
-export const ACCOUNT_EXIST="Account already exists";
+export const ACCOUNT_EXIST = "Account already exists";
+
+export const APPLICANT_CONFLICT = "Applicant already exist";
 
 export const EMAIL_CONFLICT = "already exist";
 
