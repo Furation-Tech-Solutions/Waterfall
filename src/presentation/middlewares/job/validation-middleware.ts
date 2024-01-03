@@ -155,7 +155,7 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
           "string.email": "Invalid client email format",
           "any.required": "Client email is required",
         })
-      : Joi.string().required().email().messages({
+      : Joi.string().optional().email().messages({
           "string.base": "Client email must be a string",
           "string.empty": "Client email is required",
           "string.email": "Invalid client email format",
@@ -174,7 +174,7 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
             "string.max": "contact should have less than 13 characters",
           })
       : Joi.string()
-          .required()
+          .optional()
           .min(10)
           .max(12)
           // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
