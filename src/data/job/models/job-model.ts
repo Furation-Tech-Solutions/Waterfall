@@ -126,6 +126,7 @@ const Job = sequelize.define(
     attachments: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
+      defaultValue:[]
     },
 
     // Timestamp representing the creation date of the job

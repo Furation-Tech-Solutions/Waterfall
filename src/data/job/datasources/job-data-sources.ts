@@ -600,7 +600,7 @@ export class JobDataSourceImpl implements JobDataSource {
     } else {
       // Set up the initial conditions for the Sequelize query
       let whereCondition: any = {
-        jobOwnerId: loginId, // Filter jobs by the logged-in user's ID
+        // jobOwnerId: !loginId, // Filter jobs by the logged-in user's ID
       };
 
       // Check if the 'feeType' parameter exists in the query
@@ -648,7 +648,12 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
 
       // Return the filtered jobs as JSON objects
-      return filteredJobs.map((job: any) => job.toJSON());
+      // return filteredJobs.map((job: any) => job.toJSON());
+
+      const filteredRecommendedJobs = filteredJobs.filter(
+        (job) => job.getDataValue("jobOwnerId") !== loginId
+      );
+      return filteredRecommendedJobs.map((job: any) => job.toJSON());
     }
   }
 
