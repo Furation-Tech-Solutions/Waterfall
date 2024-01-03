@@ -12,20 +12,21 @@ export class RealtorModel {
     public about: string = "",
     public profileImage: string = "",
     public countryCode: number = 0,
-    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string = "",
     public linkedIn: string = "",
     public attachmentLink: string = "",
     public licenseExpirationDate: string = "",
-    public badge: { badgeName: string, timestamp: Date },
+    public deleteStatus: boolean,
+    public badge: { badgeName: string; timestamp: Date },
     public isBanned: boolean = false,
     public reportCount: number = 0,
     public firebaseDeviceToken: string = "",
-    public connectedAccountId = ""
-
-
-  ) { }
+    public connectedAccountId = "",
+    public lastSeen: Date = new Date(),
+    public userOneData: {} = {},
+    public userTwoData: {} = {},
+  ) {}
 }
 
 // Define a class for the RealtorEntity, which represents the data provided by the Realtor Repository
@@ -42,20 +43,21 @@ export class RealtorEntity {
     public about: string,
     public profileImage: string,
     public countryCode: number,
-    public deleteStatus: boolean,
     public coordinates: { latitude: string; longitude: string } | null = null,
     public recoId: string,
     public linkedIn: string,
     public attachmentLink: string,
     public licenseExpirationDate: string,
-    public badge: {badgeName: string; timestamp: Date},
+    public deleteStatus: boolean,
+    public badge: { badgeName: string; timestamp: Date },
     public isBanned: boolean,
     public reportCount: number,
     public connectedAccountId: string,
-    public firebaseDeviceToken: string
-
-
-  ) { }
+    public firebaseDeviceToken: string,
+    public lastSeen: Date,
+    public userOneData: {},
+    public userTwoData: {},
+  ) {}
 }
 
 // Define a RealtorMapper class to convert between RealtorData and RealtorEntity
@@ -113,10 +115,6 @@ export class RealtorMapper {
           realtorData.countryCode !== undefined
             ? realtorData.countryCode
             : existingRealtor.countryCode,
-        deleteStatus:
-          realtorData.deleteStatus !== undefined
-            ? realtorData.deleteStatus
-            : existingRealtor.deleteStatus,
         coordinates:
           realtorData.coordinates !== undefined
             ? realtorData.coordinates
@@ -141,6 +139,10 @@ export class RealtorMapper {
           realtorData.licenseExpirationDate !== undefined
             ? realtorData.licenseExpirationDate
             : existingRealtor.licenseExpirationDate,
+        deleteStatus:
+          realtorData.deleteStatus !== undefined
+            ? realtorData.deleteStatus
+            : existingRealtor.deleteStatus,
         badge:
           realtorData.badge !== undefined
             ? realtorData.badge
@@ -153,10 +155,14 @@ export class RealtorMapper {
           realtorData.reportCount !== undefined
             ? realtorData.reportCount
             : existingRealtor.reportCount,
-            firebaseDeviceToken:
-            realtorData.firebaseDeviceToken !== undefined
-              ? realtorData.firebaseDeviceToken
-              : existingRealtor.firebaseDeviceToken
+        firebaseDeviceToken:
+          realtorData.firebaseDeviceToken !== undefined
+            ? realtorData.firebaseDeviceToken
+            : existingRealtor.firebaseDeviceToken,
+        lastSeen:
+          realtorData.lastSeen !== undefined
+            ? realtorData.lastSeen
+            : existingRealtor.lastSeen,
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -177,18 +183,20 @@ export class RealtorMapper {
         about: realtorData.about,
         profileImage: realtorData.profileImage,
         countryCode: realtorData.countryCode,
-        deleteStatus: realtorData.deleteStatus,
         coordinates: realtorData.coordinates || null,
         recoId: realtorData.recoId,
         connectedAccountId: realtorData.connectedAccountId,
         linkedIn: realtorData.linkedIn,
         attachmentLink: realtorData.attachmentLink,
         licenseExpirationDate: realtorData.licenseExpirationDate,
+        deleteStatus: realtorData.deleteStatus,
         badge: realtorData.badge,
         isBanned: realtorData.isBanned,
         reportCount: realtorData.reportCount,
         firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
-
+        lastSeen: realtorData.lastSeen,
+        userOneData: realtorData.userOneData,
+        userTwoData: realtorData.userTwoData,
       };
       return realtorEntity;
     }
@@ -208,17 +216,20 @@ export class RealtorMapper {
       about: realtor.about,
       profileImage: realtor.profileImage,
       countryCode: realtor.countryCode,
-      deleteStatus: realtor.deleteStatus,
       coordinates: realtor.coordinates,
       recoId: realtor.recoId,
       connectedAccountId: realtor.connectedAccountId,
       linkedIn: realtor.linkedIn,
       attachmentLink: realtor.attachmentLink,
       licenseExpirationDate: realtor.licenseExpirationDate,
+      deleteStatus: realtor.deleteStatus,
       badge: realtor.badge,
       isBanned: realtor.isBanned,
       reportCount: realtor.reportCount,
-      firebaseDeviceToken:realtor.firebaseDeviceToken
+      firebaseDeviceToken: realtor.firebaseDeviceToken,
+      lastSeen: realtor.lastSeen,
+      userOneData: realtor.userOneData,
+      userTwoData: realtor.userTwoData,
     };
   }
 }

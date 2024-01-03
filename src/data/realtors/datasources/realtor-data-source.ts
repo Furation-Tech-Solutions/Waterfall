@@ -6,6 +6,8 @@ import {
 import Realtor from "../model/realtor-model";
 import ApiError from "@presentation/error-handling/api-error";
 import { Sequelize, Op, DataTypes } from "sequelize";
+import Chat from "@data/chat/models/chat-models";
+import { query } from "express";
 
 // Define the interface for the RealtorDataSource
 export interface RealtorDataSource {
@@ -26,6 +28,7 @@ export interface RealtorQuery {
   q?: string;
   page: number;
   limit: number;
+  id: string;
 }
 
 // Realtor Data Source communicates with the database
@@ -112,9 +115,21 @@ export class RealtorDataSourceImpl implements RealtorDataSource {
 
   // Retrieve a Realtor entry by its ID
   async read(id: string): Promise<RealtorEntity> {
+    let loginId = id;
     // Find a Realtor record in the database by its ID
     const realtor = await Realtor.findOne({
       where: { id, deletedStatus: false },
+      include: [
+        {
+          model: Chat,
+          as: "userOneData",
+          foreignKey: "userOne",
+          where:{
+            userOne: loginId
+          }
+        },
+
+      ],
     });
 
     if (realtor === null) {

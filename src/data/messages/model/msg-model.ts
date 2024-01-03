@@ -2,21 +2,17 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "@main/sequelizeClient";
 import Realtors from "@data/realtors/model/realtor-model";
+import Chat from "@data/chat/models/chat-models";
 
 // Define a Sequelize model called 'Message' with three fields: 'sender', 'receiver', and 'message'
-const Message = sequelize.define("Message", {
-  // Define the 'sender' field
-  senderId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
-  },
+ const Message = sequelize.define("Message", {
   // Define the 'receiver' field
-  receiverId: {
-    type: DataTypes.STRING,
+  chatId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: Realtors, key: "id" }, // Reference the 'id' field of the 'Realtors' model
+    references: { model: Chat, key: "id" }, // Reference the 'id' field of the 'Realtors' model
   },
+
   // Define the 'message' field
   message: {
     type: DataTypes.TEXT,
@@ -28,9 +24,9 @@ const Message = sequelize.define("Message", {
   },
 });
 
-// Establish associations with the 'Realtors' model using foreign keys
-Message.belongsTo(Realtors, { foreignKey: "senderId", as: "senderData" });
-Message.belongsTo(Realtors, { foreignKey: "receiverId", as: "receiverData" });
+
+Chat.hasMany(Message, { foreignKey: "chatId", as: "chatData" });
+
 
 // Export the 'Message' model for use in other parts of the application
 export default Message;

@@ -1,11 +1,9 @@
 // Define a class for the MessageModel, representing the structure of data sent in Express API requests
 export class MessageModel {
   constructor(
-    public senderId: string = "",
-    public receiverId: string = "",
+    public chatId: string = "",
     public message: string = "",
-    public senderData: {} = {},
-    public receiverData: {} = {}
+    public seen: boolean=false,
   ) {}
 }
 
@@ -13,11 +11,10 @@ export class MessageModel {
 export class MessageEntity {
   constructor(
     public id: number | undefined = undefined, // Set a default value for id
-    public senderId: string,
-    public receiverId: string,
+    public chatId: string,
     public message: string,
-    public senderData: {},
-    public receiverData: {}
+    public seen: boolean,
+    public chatData: {}
   ) {}
 }
 
@@ -32,18 +29,18 @@ export class MessageMapper {
       // If existingMessage is provided, merge the data from messageData with the existingMessage
       return {
         ...existingMessage,
-        senderId:
-          messageData.senderId !== undefined
-            ? messageData.senderId
-            : existingMessage.senderId,
-        receiverId:
-          messageData.receiverId !== undefined
-            ? messageData.receiverId
-            : existingMessage.receiverId,
+        chatId:
+          messageData.chatId !== undefined
+            ? messageData.chatId
+            : existingMessage.chatId,
         message:
           messageData.message !== undefined
             ? messageData.message
             : existingMessage.message,
+        seen:
+          messageData.seen !== undefined
+            ? messageData.seen
+            : existingMessage.seen,
       };
     } else {
       // If existingMessage is not provided, create a new MessageEntity using messageData
@@ -53,11 +50,10 @@ export class MessageMapper {
             ? messageData.id
             : undefined
           : messageData.id,
-        senderId: messageData.senderId,
-        receiverId: messageData.receiverId,
+        chatId: messageData.chatId,
         message: messageData.message,
-        senderData: messageData.senderData,
-        receiverData: messageData.receiverData,
+        seen: messageData.seen,
+        chatData: messageData.chatData,
       };
       return messageEntity;
     }
@@ -66,11 +62,10 @@ export class MessageMapper {
   // Convert a MessageEntity to a format suitable for a model
   static toModel(message: MessageEntity): any {
     return {
-      senderId: message.senderId,
-      receiverId: message.receiverId,
+      chatId: message.chatId,
       message: message.message,
-      senderData: message.senderData,
-      receiverData: message.receiverData,
+      seen: message.seen,
+      chatData: message.chatData,
     };
   }
 }

@@ -47,6 +47,8 @@ import { sequelize } from "@main/sequelizeClient";
          
       }
       else{
+      console.log("error.message",error.message);
+      
       return res.status(401).json({ message: "Token verification failed" });
       }
     }

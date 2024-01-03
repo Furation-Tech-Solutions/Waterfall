@@ -7,6 +7,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 import { connections } from "mongoose";
 import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Blocking from "@data/blocking/model/blocking-model";
+import { createChat } from"@presentation/controller/chat-controller";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
@@ -79,8 +80,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
     const createdConnections = await Connections.create(newConnection);
 
+    await createChat(newConnection.fromId, newConnection.toId);
+
     return createdConnections.toJSON();
-  }
+    
+}
 
   // Delete a connection
   async deleteReq(id: string, loginId: string): Promise<void> {

@@ -1,4 +1,5 @@
 // Import necessary dependencies
+import Chat from "@data/chat/models/chat-models";
 import { sequelize } from "@main/sequelizeClient";
 import { DataTypes } from "sequelize";
 // type Badge = {
@@ -61,7 +62,7 @@ const Realtors = sequelize.define("Realtors", {
   location: {
     type: DataTypes.STRING,
     allowNull: true, // It cannot be null
-    defaultValue: 'ontario',
+    defaultValue: "ontario",
   },
   // Define the "about" field with a data type of STRING
   about: {
@@ -110,24 +111,46 @@ const Realtors = sequelize.define("Realtors", {
   badge: {
     type: DataTypes.JSONB, // Use JSONB type for better performance and flexibility
     allowNull: true, // Set to allowNull: true if coordinates are optional
-    defaultValue: []
+    defaultValue: [],
   },
   isBanned: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
   },
   reportCount: {
     type: DataTypes.INTEGER,
-    defaultValue: 0
+    defaultValue: 0,
   },
   firebaseDeviceToken: {
     type: DataTypes.ARRAY(DataTypes.STRING),
-    defaultValue: []
+    defaultValue: [],
   },
   connectedAccountId: {
     type: DataTypes.STRING,
-    defaultValue: ""
-  }
+    defaultValue: "",
+  },
+  // requestedConnection: {
+  //   type: DataTypes.ARRAY(DataTypes.STRING),
+  //   allowNull: true,
+  // },
+  // receivedConnection: {
+  //   type: DataTypes.ARRAY(DataTypes.STRING),
+  //   allowNull: true,
+  // },
+  
+  lastSeen: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
-export default Realtors; // Export the Realtors model as the default export
+// Realtors.hasMany(Realtors, {
+//   foreignKey: "requestedConnection", 
+//   as: "requestedConnectionData", 
+// });
+// Realtors.hasMany(Realtors, {
+//   foreignKey: "receivedConnection", 
+//   as: "receivedConnectionData",
+// });
+
+export default Realtors; 
