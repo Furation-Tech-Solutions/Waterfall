@@ -2,6 +2,7 @@
 import { PaymentGatewayEntity, PaymentGatewayModel } from "@domain/paymentGateway/entities/paymentGateway"; // Import PaymentGatewayEntity and PaymentGatewayModel from a specific location
 import { Either } from "monet"; // Import the Either type from the Monet library
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Import the ErrorClass from the specified location
+import { Query } from "@data/paymentGateway/datasources/paymentGateway-data-sources";
 
 // Define an interface for the PaymentGatewayRepository
 export interface PaymentGatewayRepository {
@@ -20,7 +21,7 @@ export interface PaymentGatewayRepository {
   ): Promise<Either<ErrorClass, PaymentGatewayEntity>>;
 
   // Define a method to get all paymentGateway entries
-  getPaymentGateways(): Promise<Either<ErrorClass, PaymentGatewayEntity[]>>;
+  getPaymentGateways(id: string): Promise<Either<ErrorClass, PaymentGatewayEntity[]>>;
 
   // Define a method to get a paymentGateway entry by its ID
   getPaymentGatewayById(id: string): Promise<Either<ErrorClass, PaymentGatewayEntity>>;
@@ -39,7 +40,7 @@ export interface PaymentGatewayRepository {
   deleteAccount(loginId: string): Promise<Either<ErrorClass, any>>;
 
   // Define a method to generate an account link
-  generateAccountLink(loginId: string): Promise<Either<ErrorClass, any>>;
+  generateAccountLink(loginId: string, query: Query): Promise<Either<ErrorClass, any>>;
 
   // Define a method to process payment
   processPayment(loginId: string, data: any): Promise<Either<ErrorClass, any>>;

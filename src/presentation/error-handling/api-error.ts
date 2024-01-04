@@ -88,6 +88,21 @@ class ApiError extends ErrorClass {
       "email_conflict"
     );
   }
+  static applicantExist(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.APPLICANT_CONFLICT,
+      "applicant_conflict"
+    );
+  }
+
+  static jobownerconflict(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.jOBOWNER_CONFLICT,
+      "jobowner_conflict"
+    );
+  }
   static nameExist(): ApiError {
     return new ApiError(
       HttpStatus.CONFLICT,
@@ -166,7 +181,7 @@ class ApiError extends ErrorClass {
 
   static accountExist(): ApiError {
     return new ApiError(
-    HttpStatus.CONFLICT,
+      HttpStatus.CONFLICT,
       ErrorMessage.TAX_TYPE_EXIST,
       "account Exist"
     );

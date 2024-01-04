@@ -33,20 +33,20 @@ export class ReportDataSourceImpl implements ReportDataSource {
   async create(report: any): Promise<ReportEntity> {
     // Create a new report record in the database
     const createdReport = await Report.create(report);
-      
-     // Get the Realtor ID associated with the created report (assuming it's stored in the report object)
-  const realtorId = createdReport.dataValues.toRealtorId; // Replace 'realtorId' with the actual field name
 
-  // Find the associated Realtor using the Realtors model
-  const realtor = await Realtors.findByPk(realtorId);
+    // Get the Realtor ID associated with the created report (assuming it's stored in the report object)
+    const realtorId = createdReport.dataValues.toRealtorId; // Replace 'realtorId' with the actual field name
 
-  if (!realtor) {
-    // If Realtor not found, handle the error (you can throw an error or handle it accordingly)
-    throw new Error('Realtor not found');
-  }
+    // Find the associated Realtor using the Realtors model
+    const realtor = await Realtors.findByPk(realtorId);
 
-  // Increment the reportCount for the Realtor
-  await realtor.increment('reportCount');
+    if (!realtor) {
+      // If Realtor not found, handle the error (you can throw an error or handle it accordingly)
+      throw new Error('Realtor not found');
+    }
+
+    // Increment the reportCount for the Realtor
+    await realtor.increment('reportCount');
 
     // Return the created report as a plain JavaScript object
     return createdReport.toJSON();
@@ -54,7 +54,27 @@ export class ReportDataSourceImpl implements ReportDataSource {
 
   // Implement the "delete" method to remove a report by ID from the database
   async delete(id: string): Promise<void> {
+
+    const report: any = await Report.findOne({
+      where: {
+        id: id,
+      },
+    });
+
     // Delete the report record where the ID matches the provided ID
+    const realtorId = report.toRealtorId; // Replace 'realtorId' with the actual field name
+
+    // Find the associated Realtor using the Realtors model
+    const realtor = await Realtors.findByPk(realtorId);
+
+    if (!realtor) {
+      // If Realtor not found, handle the error (you can throw an error or handle it accordingly)
+      throw new Error('Realtor not found');
+    }
+
+    // Increment the reportCount for the Realtor
+    await realtor.decrement('reportCount');
+    
     await Report.destroy({
       where: {
         id: id,

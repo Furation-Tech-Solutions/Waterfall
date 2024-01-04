@@ -20,6 +20,7 @@ import { TransactionsUsecase } from "@domain/paymentGateway/usecases/transaction
 import { UpdateAccountUsecase } from "@domain/paymentGateway/usecases/updateAccount";
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
+import { Query } from "@data/paymentGateway/datasources/paymentGateway-data-sources";
 
 export class PaymentGatewayService {
   private readonly createPaymentGatewayUsecase: CreatePaymentGatewayUsecase;
@@ -208,8 +209,11 @@ export class PaymentGatewayService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
+    const id: string = req.user;
+    const paymentGatewayData: PaymentGatewayModel = req.body;
+
     const paymentGateways: Either<ErrorClass, PaymentGatewayEntity[]> =
-      await this.getAllPaymentGatewaysUsecase.execute();
+      await this.getAllPaymentGatewaysUsecase.execute(id);
 
     paymentGateways.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
@@ -242,11 +246,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -264,16 +264,18 @@ export class PaymentGatewayService {
       await this.createConnectAccountUsecase.execute(id, data);
 
     create.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
+      (error: ErrorClass) => {
+        this.sendErrorResponse(res, error, error.status);
+      },
       (result: any) => {
         if (result.length === 0) {
-          this.sendSuccessResponse(res, [], "Success", 200);
+          this.sendSuccessResponse(res, [], "Success", 201);
         } else {
           this.sendSuccessResponse(res, result);
         }
       }
+    );
 
-    )
   }
 
   async dashboard(
@@ -292,11 +294,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -313,19 +311,11 @@ export class PaymentGatewayService {
       await this.deleteAccountUsecase.execute(id);
 
     deleteAccount.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
-      (result: any) => {
-        if (result.length === 0) {
-          this.sendSuccessResponse(res, [], "Success", 200);
-        } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
-        }
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      () => {
+        this.sendSuccessResponse(res, {}, "Account deleted successfully", 204);
       }
-    )
+    );
 
   }
 
@@ -335,21 +325,25 @@ export class PaymentGatewayService {
     next: NextFunction
   ): Promise<void> {
     const id: string = req.user;
-    const data: any = req.body;
+    // let ref_url: string = req.headers.refresh_url;
+    // let rtn_url: string = req.headers.return_url;
+
+    let query: Query = {};
+
+    query.refresh_url = req.headers.refresh_url as string;
+    query.return_url = req.headers.return_url as string;
+
+    // console.log(query);
     const generateAccountLink: Either<ErrorClass, any> =
-      await this.generateAccountLinkUsecase.execute(id);
+      await this.generateAccountLinkUsecase.execute(id, query);
 
     generateAccountLink.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (result: any) => {
         if (result.length === 0) {
-          this.sendSuccessResponse(res, [], "Success", 200);
+          this.sendSuccessResponse(res, [], "Success", 201);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -358,6 +352,7 @@ export class PaymentGatewayService {
   async processPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
     const id: string = req.user;
     const data: any = req.body;
+    // console.log(data);
     const processPayment: Either<ErrorClass, any> =
       await this.processPaymentUsecase.execute(id, data);
 
@@ -367,11 +362,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -382,7 +373,8 @@ export class PaymentGatewayService {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const id: string = req.user;
+    const id: string = req.params.id;
+    // console.log(id, "service");
     const data: any = req.body;
     const retrieveAccount: Either<ErrorClass, any> =
       await this.retrieveAccountUsecase.execute(id);
@@ -393,11 +385,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -419,11 +407,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )
@@ -445,11 +429,7 @@ export class PaymentGatewayService {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
         } else {
-          if (result.length === 0) {
-            this.sendSuccessResponse(res, [], "Success", 200);
-          } else {
-            this.sendSuccessResponse(res, result);
-          }
+          this.sendSuccessResponse(res, result);
         }
       }
     )

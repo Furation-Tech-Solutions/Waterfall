@@ -86,7 +86,7 @@ paymentGatewayRouter.delete("/:id", verifyUser, paymentGatewayService.deletePaym
 paymentGatewayRouter.get("/", verifyUser, paymentGatewayService.getAllPaymentGateways.bind(paymentGatewayService));
 
 // Route handling for checking balance
-paymentGatewayRouter.get("/CheckBalance/", verifyUser, paymentGatewayService.checkBalance.bind(paymentGatewayService));
+paymentGatewayRouter.get("/account/CheckBalance/", verifyUser, paymentGatewayService.checkBalance.bind(paymentGatewayService));
 
 // Route handling for creating connect account
 paymentGatewayRouter.post("/account/", verifyUser, paymentGatewayService.createConnectAccount.bind(paymentGatewayService));
@@ -95,22 +95,22 @@ paymentGatewayRouter.post("/account/", verifyUser, paymentGatewayService.createC
 paymentGatewayRouter.get("/account/Dashboard/", verifyUser, paymentGatewayService.dashboard.bind(paymentGatewayService));
 
 // Route handling for deleting account
-paymentGatewayRouter.delete("/account/:id", verifyUser, paymentGatewayService.deleteAccount.bind(paymentGatewayService));
+paymentGatewayRouter.delete("/account/", verifyUser, paymentGatewayService.deleteAccount.bind(paymentGatewayService));
 
 // Route handling for generating account link
 paymentGatewayRouter.get("/account/GenerateAccountLink/", verifyUser, paymentGatewayService.generateAccountLink.bind(paymentGatewayService));
 
 // Route handling for processing payment
-paymentGatewayRouter.get("/account/ProcessPayment/", verifyUser, paymentGatewayService.processPayment.bind(paymentGatewayService));
+paymentGatewayRouter.post("/account/ProcessPayment/", verifyUser, paymentGatewayService.processPayment.bind(paymentGatewayService));
 
 // Route handling for retrieving account
-paymentGatewayRouter.get("/account/RetrieveAccount/", verifyUser, paymentGatewayService.retrieveAccount.bind(paymentGatewayService));
+paymentGatewayRouter.get("/account/RetrieveAccount/:id", verifyUser, paymentGatewayService.retrieveAccount.bind(paymentGatewayService));
 
 // Route handling for transactions
 paymentGatewayRouter.get("/account/Transactions/", verifyUser, paymentGatewayService.transactions.bind(paymentGatewayService));
 
 // Route handling for updating account
-paymentGatewayRouter.put("/account/:id", verifyUser, paymentGatewayService.updateAccount.bind(paymentGatewayService));
+paymentGatewayRouter.put("/account/", verifyUser, paymentGatewayService.updateAccount.bind(paymentGatewayService));
 
 
 

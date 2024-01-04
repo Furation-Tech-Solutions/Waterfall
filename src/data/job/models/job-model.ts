@@ -93,13 +93,13 @@ const Job = sequelize.define(
     // Email of the client associated with the job
     clientEmail: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
 
     // Phone number of the client associated with the job
     clientPhoneNumber: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
       validate: {
         len: [10, 12], // Validate length between 3 and 30 characters
       },
@@ -126,6 +126,7 @@ const Job = sequelize.define(
     attachments: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
+      defaultValue:[]
     },
 
     // Timestamp representing the creation date of the job

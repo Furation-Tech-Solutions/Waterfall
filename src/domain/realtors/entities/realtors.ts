@@ -21,8 +21,8 @@ export class RealtorModel {
     public badge: { badgeName: string, timestamp: Date },
     public isBanned: boolean = false,
     public reportCount: number = 0,
-    public firebaseDeviceToken: string = "",
-    public connectedAccountId = ""
+    public firebaseDeviceToken: string[] = [],
+    public connectedAccountId: string = ""
 
 
   ) { }
@@ -48,11 +48,11 @@ export class RealtorEntity {
     public linkedIn: string,
     public attachmentLink: string,
     public licenseExpirationDate: string,
-    public badge: {badgeName: string; timestamp: Date},
+    public badge: { badgeName: string; timestamp: Date },
     public isBanned: boolean,
     public reportCount: number,
     public connectedAccountId: string,
-    public firebaseDeviceToken: string
+    public firebaseDeviceToken: string[]
 
 
   ) { }
@@ -153,10 +153,10 @@ export class RealtorMapper {
           realtorData.reportCount !== undefined
             ? realtorData.reportCount
             : existingRealtor.reportCount,
-            firebaseDeviceToken:
-            realtorData.firebaseDeviceToken !== undefined
-              ? realtorData.firebaseDeviceToken
-              : existingRealtor.firebaseDeviceToken
+        firebaseDeviceToken:
+          realtorData.firebaseDeviceToken !== undefined
+            ? realtorData.firebaseDeviceToken
+            : existingRealtor.firebaseDeviceToken
       };
     } else {
       // If existingRealtor is not provided, create a new RealtorEntity using realtorData
@@ -187,7 +187,7 @@ export class RealtorMapper {
         badge: realtorData.badge,
         isBanned: realtorData.isBanned,
         reportCount: realtorData.reportCount,
-        firebaseDeviceToken: realtorData.firebaseDeviceToken || "",
+        firebaseDeviceToken: realtorData.firebaseDeviceToken,
 
       };
       return realtorEntity;
@@ -218,7 +218,7 @@ export class RealtorMapper {
       badge: realtor.badge,
       isBanned: realtor.isBanned,
       reportCount: realtor.reportCount,
-      firebaseDeviceToken:realtor.firebaseDeviceToken
+      firebaseDeviceToken: realtor.firebaseDeviceToken
     };
   }
 }
