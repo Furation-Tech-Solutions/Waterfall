@@ -466,6 +466,10 @@ export class JobDataSourceImpl implements JobDataSource {
             as: "jobOwnerData",
             foreignKey: "jobOwnerId",
           },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
+          },
         ],
 
         limit: itemsPerPage,
@@ -487,6 +491,10 @@ export class JobDataSourceImpl implements JobDataSource {
             model: Realtors,
             as: "jobOwnerData",
             foreignKey: "jobOwnerId",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
           },
         ],
 
