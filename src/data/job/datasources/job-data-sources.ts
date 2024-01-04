@@ -454,20 +454,13 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
       return filteredJobs.map((job: any) => job.toJSON());
       //-------------------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
+    } else if (query.q == "paymentPending") {
       const jobs = await Job.findAll({
         where: {
           jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+          jobProgress: "paymentPending",
         },
         include: [
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-            where: {
-              jobStatus: "JobCompleted", // Filter by applicantStatus
-              paymentStatus: false, // Filter by agreement
-            },
-          },
           {
             model: Realtors,
             as: "jobOwnerData",
@@ -483,19 +476,13 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
       return filteredJobs.map((job: any) => job.toJSON());
       //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "Completed") {
+    } else if (query.q == "completed") {
       const jobs = await Job.findAll({
         where: {
           jobOwnerId: loginId,
+          jobProgress: "completed",
         },
         include: [
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-            where: {
-              paymentStatus: true,
-            },
-          },
           {
             model: Realtors,
             as: "jobOwnerData",

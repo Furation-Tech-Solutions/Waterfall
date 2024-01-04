@@ -289,67 +289,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         };
       }
       //------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
-      // Check if the query parameter is "active"
-      const { rows: jobApplicant, count: total } =
-        await JobApplicant.findAndCountAll({
-          where: {
-            jobStatus: "JobCompleted", // Filter by applicantStatus
-            paymentStatus: false, // Filter by agreement
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-        });
-      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-      return {
-        jobApplicants: mappedJobApplicants,
-        totalCount: total,
-      };
-      //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "Completed") {
-      // Check if the query parameter is "active"
-      const { rows: jobApplicant, count: total } =
-        await JobApplicant.findAndCountAll({
-          where: {
-            paymentStatus: true, // Filter by agreement
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-        });
-      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-      return {
-        jobApplicants: mappedJobApplicants,
-        totalCount: total,
-      };
-      //-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
       const { rows: jobApplicant, count: total } =
