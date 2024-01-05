@@ -31,19 +31,32 @@ export interface NotInterestedQuery {
 
 // Implement the NotInterested Data Source that communicates with the database
 export class NotInterestedDataSourceImpl implements NotInterestedDataSource {
-  constructor(private db: Sequelize) {}
+  constructor(private db: Sequelize) { }
 
   // Implement the "create" method to insert a new NotInterestedModel into the database
   async create(notInterested: any): Promise<NotInterestedEntity> {
-    try {
-      const createdNotInterested = await NotInterested.create(notInterested);
 
-      // Return the created NotInterested as a plain JavaScript object
-      return createdNotInterested.toJSON();
-    } catch (error) {
-      // Handle the error or log it for debugging
-      throw new Error("Failed to create NotInterested");
+    // Check if the job owner has blocked the applicant
+    const job = await Job.findByPk(notInterested.jobId);
+    if (!job) {
+      throw ApiError.jobNotFound();
     }
+    const existingNotInterested = await NotInterested.findOne({
+      where: {
+        jobId: notInterested.jobId,
+        realtorId: notInterested.realtorId
+      },
+    });
+    // console.log(existingNotInterested?.dataValues.jobId, existingNotInterested?.dataValues.realtorId);
+    if (existingNotInterested !== null) {
+      // throw new Error("Job is already exists in Not Intrested list");
+      throw ApiError.JobthereInNotInterested();
+    }
+    const createdNotInterested = await NotInterested.create(notInterested);
+
+    // Return the created NotInterested as a plain JavaScript object
+    return createdNotInterested.toJSON();
+
   }
 
   // Implement the "delete" method to remove a NotInterested record from the database by ID
