@@ -141,6 +141,20 @@ class ApiError extends ErrorClass {
       "forbidden"
     );
   }
+  static applicantReported(): ApiError {
+    return new ApiError(
+      HttpStatus.FORBIDDEN,
+      ErrorMessage.APPLICANT_REPORTED,
+      "applicant_reported"
+    );
+  }
+  static applicantBlocked(): ApiError {
+    return new ApiError(
+      HttpStatus.FORBIDDEN,
+      ErrorMessage.APPLICANT_BLOCKED,
+      "applicant_blocked"
+    );
+  }
   static brandLogoDeletionError(): ApiError {
     return new ApiError(
       HttpStatus.INTERNAL_SERVER_ERROR,

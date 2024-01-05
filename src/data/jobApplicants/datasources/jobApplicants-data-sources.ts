@@ -67,7 +67,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       });
 
       if (existingReport) {
-        throw new Error("The applicant can't apply for a job they've been reported");
+         throw ApiError.applicantReported();
       }
 
       // Check if the job owner has blocked the applicant
@@ -90,7 +90,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       });
 
       if (blockingRecord) {
-        throw new Error("User can't apply for this job as they've been blocked from JobOwner");
+        throw ApiError.applicantBlocked();
       }
 
 
