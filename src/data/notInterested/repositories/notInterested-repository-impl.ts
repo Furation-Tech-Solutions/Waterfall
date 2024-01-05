@@ -33,10 +33,17 @@ export class NotInterestedRepositoryImpl implements NotInterestedRepository {
     } catch (error: any) {
       // Handle error cases:
       // If the error is an unauthorized ApiError with a status code of 401, return it as Left
+
       if (error instanceof ApiError && error.status === 401) {
         return Left<ErrorClass, NotInterestedEntity>(ApiError.unAuthorized());
       }
-
+      if (error instanceof ApiError && error.status === 404) {
+        return Left<ErrorClass, NotInterestedEntity>(ApiError.jobNotFound());
+      }
+      if (error instanceof ApiError && error.status === 409) {
+        return Left<ErrorClass, NotInterestedEntity>(ApiError.JobthereInNotInterested());
+      }
+    
       // Otherwise, return a custom error with a BAD_REQUEST status and the error message as Left
       return Left<ErrorClass, NotInterestedEntity>(
         ApiError.customError(HttpStatus.BAD_REQUEST, error.message)

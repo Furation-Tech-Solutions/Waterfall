@@ -205,8 +205,24 @@ class ApiError extends ErrorClass {
   static accountExist(): ApiError {
     return new ApiError(
       HttpStatus.CONFLICT,
-      ErrorMessage.TAX_TYPE_EXIST,
+      ErrorMessage.ACCOUNT_EXIST,
       "account Exist"
+    );
+  }
+
+  static jobNotFound(): ApiError {
+    return new ApiError(
+      HttpStatus.NOT_FOUND,
+      ErrorMessage.JOB_NOT_FOUND,
+      "jobnotfound"
+    );
+  }
+
+  static JobthereInNotInterested(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.JOB_EXIST_IN_NOT_INTERESTED,
+      "jobExistInNotInterested"
     );
   }
 

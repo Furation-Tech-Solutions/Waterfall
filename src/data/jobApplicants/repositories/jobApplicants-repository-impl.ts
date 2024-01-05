@@ -21,44 +21,44 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
     this.dataSource = dataSource;
   }
 
-// Method to create a new job applicant
-async createJobApplicant(
-  jobApplicant: JobApplicantModel,
-  loginId: string
-): Promise<Either<ErrorClass, JobApplicantEntity>> {
-  try {
-    // Attempt to create a job applicant using the data source
-    const createdJobApplicant = await this.dataSource.create(jobApplicant, loginId);
+  // Method to create a new job applicant
+  async createJobApplicant(
+    jobApplicant: JobApplicantModel,
+    loginId: string
+  ): Promise<Either<ErrorClass, JobApplicantEntity>> {
+    try {
+      // Attempt to create a job applicant using the data source
+      const createdJobApplicant = await this.dataSource.create(jobApplicant, loginId);
 
-    // Return a Right Either indicating success with the created job applicant
-    return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
-  } catch (error: any) {
-    if (error instanceof ApiError && error.name === "account Exist") {
-      return Left<ErrorClass, any>(ApiError.applicantExist());
+      // Return a Right Either indicating success with the created job applicant
+      return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
+    } catch (error: any) {
+      if (error instanceof ApiError && error.name === "jobnotfound") {
+        return Left<ErrorClass, any>(ApiError.jobNotFound());
+      }
+      if (error instanceof ApiError && error.name === " jobowner_conflict") {
+        return Left<ErrorClass, any>(ApiError.jobownerconflict());
+      }
+      // Handle different error scenarios
+      if (error instanceof ApiError && error.name === "applicant_blocked") {
+        // If applicant is blocked or reported, return a Forbidden error
+        return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantBlocked());
+      }
+      // Handle different error scenarios
+      if (error instanceof ApiError && error.name === "applicant_reported") {
+        // If applicant is blocked or reported, return a Forbidden error
+        return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantReported());
+      }
+      if (error instanceof ApiError && error.status === 401) {
+        // If unauthorized, return an Unauthorized error
+        return Left<ErrorClass, JobApplicantEntity>(ApiError.unAuthorized());
+      }
+      // Return a custom error with a Bad Request status and the error message
+      return Left<ErrorClass, JobApplicantEntity>(
+        ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
+      );
     }
-    if (error instanceof ApiError && error.name === " jobowner_conflict") {
-      return Left<ErrorClass, any>(ApiError.jobownerconflict());
-    }
-    // Handle different error scenarios
-    if (error instanceof ApiError && error.name === "applicant_blocked") {
-      // If applicant is blocked or reported, return a Forbidden error
-      return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantBlocked());
-    }
-    // Handle different error scenarios
-    if (error instanceof ApiError && error.name === "applicant_reported") {
-      // If applicant is blocked or reported, return a Forbidden error
-      return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantReported());
-    }
-    if (error instanceof ApiError && error.status === 401) {
-      // If unauthorized, return an Unauthorized error
-      return Left<ErrorClass, JobApplicantEntity>(ApiError.unAuthorized());
-    }
-    // Return a custom error with a Bad Request status and the error message
-    return Left<ErrorClass, JobApplicantEntity>(
-      ApiError.customError(HttpStatus.BAD_REQUEST, error.message)
-    );
   }
-}
 
 
   // Method to update a job applicant by ID
