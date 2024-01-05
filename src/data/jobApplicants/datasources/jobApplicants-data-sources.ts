@@ -147,6 +147,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       ],
       // include: 'tags', // Replace 'tags' with the actual name of your association
     });
+    console.log(jobApplicant,"inside dtsrc")
 
     // If a job applicant record is found, convert it to a plain JavaScript object before returning
     return jobApplicant ? jobApplicant.toJSON() : null;

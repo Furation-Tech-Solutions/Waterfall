@@ -1,5 +1,5 @@
 // Import necessary dependencies and modules
-import { JobCountEntity, JobEntity, JobModel } from "@domain/job/entities/job"; // Import the JobEntity and JobModel from the specified location
+import { ExpenditureGraphEntity, JobCountEntity, JobEntity, JobModel } from "@domain/job/entities/job"; // Import the JobEntity and JobModel from the specified location
 import { Either } from "monet"; // Import the Either type from the "monet" library
 import { ErrorClass } from "@presentation/error-handling/api-error"; // Import the ErrorClass from the specified location
 import { JobQuery } from "@data/job/datasources/job-data-sources";
@@ -23,4 +23,6 @@ export interface JobRepository {
 
   // Define a method to find the total number of posted jobs and return an Either monad with the count or an ErrorClass
   TotalCount(query: JobQuery): Promise<Either<ErrorClass, JobCountEntity>>;
+
+  getGraphData(query: JobQuery): Promise<Either<ErrorClass, ExpenditureGraphEntity>>;
 }
