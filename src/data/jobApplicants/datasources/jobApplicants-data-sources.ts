@@ -44,62 +44,56 @@ export interface JobApplicantQuery {
 export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
-  // Method to create a new job applicant
   async create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity> {
     try {
-      // Check if the applicant has already applied for the same job
-      const existingApplication = await JobApplicant.findOne({
-        where: {
-          jobId: jobApplicant.jobId,
-          applicantId: jobApplicant.applicantId,
-        },
-      });
-
-      // Update the record with the provided data if it exists
-      if (existingApplication) {
-        throw ApiError.applicantExist();
-      }
-      // Check if the applicant has been reported
-      const existingReport = await Report.findOne({
-        where: {
-          toRealtorId: jobApplicant.applicantId,
-        },
-      });
-
-      if (existingReport) {
-         throw ApiError.applicantReported();
-      }
-
+      
+      
       // Check if the job owner has blocked the applicant
       const job = await Job.findByPk(jobApplicant.jobId);
-      if (!job) {
+      if(!job){
         throw new Error("Job not found");
       }
-      const jobOwnerID = job.getDataValue("jobOwnerId");
-
-      // Check if the job owner ID is the same as req.user ID
-      if (jobOwnerID === loginId) {
-        throw ApiError.jobownerconflict();
+      else{
+        const jobOwnerID = job.getDataValue("jobOwnerId");
+        const blockingRecord = await Blocking.findOne({
+          where: {
+            fromRealtorId: jobOwnerID,
+            toRealtorId: jobApplicant.applicantId,
+          },
+        });
+        // Check if the applicant has been reported
+        const existingReport = await Report.findOne({
+          where: {
+            toRealtorId: jobApplicant.applicantId,
+          },
+        });
+        // Check if the applicant has already applied for the same job
+        const existingApplication = await JobApplicant.findOne({
+          where: {
+            jobId: jobApplicant.jobId,
+            applicantId: jobApplicant.applicantId,
+          },
+        });
+        if (jobOwnerID === jobApplicant.applicantId) {
+        throw new Error("Job owner cannot apply for their own job");
       }
+      else if (existingApplication) {
+          throw new Error("The applicant has already applied for this job");
+        }
+  
+        else if (existingReport) {
+           throw ApiError.applicantReported();
+        }
+           // Check if the job owner ID is the same as req.user ID
+  
+      
+        else if (blockingRecord) {
+          throw ApiError.applicantBlocked();
+        }
 
-      const blockingRecord = await Blocking.findOne({
-        where: {
-          fromRealtorId: jobOwnerID,
-          toRealtorId: jobApplicant.applicantId,
-        },
-      });
-
-      if (blockingRecord) {
-        throw ApiError.applicantBlocked();
       }
-
-
-
-
-
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
-
-
+      
       // Count the number of existing applicants with "Pending" status
       const pendingApplicants = await JobApplicant.count({
         where: {
@@ -123,7 +117,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       throw error;
     }
   }
-
+    
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {
