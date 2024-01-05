@@ -26,7 +26,11 @@ export const UNDEFINE_MESSAGE = "mongourl or mongooptions are undefined";
 
 export const SERVER_RUNNING = "your server is running on port";
 
-export const FORBIDDEN = "You are not authorized to do that!"
+export const FORBIDDEN = "You are not authorized to do that!";
+
+export const APPLICANT_REPORTED = "The applicant can't apply for a job they've been reported";
+
+export const APPLICANT_BLOCKED = "User can't apply for this job as they've been blocked from JobOwner";
 
 export const AWS_PRESIGN_ERROR = "unable to create presigned URL";
 
