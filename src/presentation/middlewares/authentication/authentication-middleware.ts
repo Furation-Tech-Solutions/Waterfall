@@ -28,11 +28,9 @@ import { sequelize } from "@main/sequelizeClient";
     let realtorDataSource = new RealtorDataSourceImpl(sequelize)
      
     const idToken = authHeader.split(" ")[1]; // Extracting the token part after "Bearer "
-         
     try {
       
       const user = await admin.auth().verifyIdToken(idToken);
-       
       if (user) {
         const dbUser = await realtorDataSource.read(user.uid)
         if(dbUser) {

@@ -107,10 +107,12 @@ export class JobApplicantService {
       },
       (result: JobApplicantEntity) => {
         const resData = JobApplicantMapper.toEntity(result, true);
+        console.log(resData,"resData in service")
         this.sendSuccessResponse(
           res,
           resData,
-          "Job applicant retrieved successfully"
+          "Job applicant retrieved successfully",
+          
         );
       }
     );

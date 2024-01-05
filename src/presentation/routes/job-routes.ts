@@ -12,6 +12,7 @@ import { UpdateJob } from "@domain/job/usecases/update-job"; // Importing the Up
 import { GettotalCount } from "@domain/job/usecases/get-total-counts"; // Importing the GettotalCount use case
 import { validateJobInputMiddleware } from "@presentation/middlewares/job/validation-middleware"; // Importing a middleware for job input validation
 import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
+import { GetGraphData } from "@domain/job/usecases/get-graph-data";
 
 // Create an instance of the JobDataSourceImpl and pass the Sequelize connection
 const jobDataSource = new JobDataSourceImpl(sequelize);
@@ -25,7 +26,8 @@ const deleteJobUsecase = new DeleteJob(jobRepository);
 const getJobByIdUsecase = new GetJobById(jobRepository);
 const updateJobUsecase = new UpdateJob(jobRepository);
 const getAllJobUsecase = new GetAllJobs(jobRepository);
-const GettotalCountUsecase = new GettotalCount(jobRepository);
+const gettotalCountUsecase = new GettotalCount(jobRepository);
+const getGraphDataUsecase=new GetGraphData(jobRepository)
 
 // Initialize JobService and inject required dependencies
 const jobService = new JobService(
@@ -34,7 +36,8 @@ const jobService = new JobService(
   getJobByIdUsecase,
   updateJobUsecase,
   getAllJobUsecase,
-  GettotalCountUsecase
+  gettotalCountUsecase,
+  getGraphDataUsecase
 );
 
 // Create an Express router
@@ -56,6 +59,7 @@ jobRouter.get("/",
 // Route handling for getting the total feedback count
 jobRouter.get("/count",verifyUser, jobService.getTotalCount.bind(jobService));
 
+jobRouter.get("/graphData",verifyUser,jobService.getGraphData.bind(jobService))
 // Route handling for getting a Job by ID
 jobRouter.get("/:id",verifyUser, jobService.getJobById.bind(jobService)); // Route URL for getting a job by ID
 

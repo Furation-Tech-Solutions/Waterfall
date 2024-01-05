@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import { JobCountEntity, JobEntity, JobModel } from "@domain/job/entities/job";
+import { ExpenditureGraphEntity, JobCountEntity, JobEntity, JobModel } from "@domain/job/entities/job";
 import { JobRepository } from "@domain/job/repositories/job-repository";
 import {
   JobDataSource,
@@ -138,7 +138,21 @@ export class JobRepositoryImpl implements JobRepository {
       // Return a Right monad with the count on success
       return Right<ErrorClass, JobCountEntity>(count);
     } catch (error: any) {
+      // console.log(error, "error in repo")
       return Left<ErrorClass, JobCountEntity>(ApiError.customError(400, error.message));
+    }
+  }
+  async getGraphData(query:JobQuery):Promise<Either<ErrorClass,ExpenditureGraphEntity>>{
+    try{
+    // Call the job repository method to retrieve the count of posted jobs
+    const graphData = await this.dataSource.graphData(query);
+
+    // Return a Right monad with the count on success
+      return Right<ErrorClass, ExpenditureGraphEntity>(graphData);
+    }
+    catch(error:any){
+      return Left<ErrorClass, ExpenditureGraphEntity>(ApiError.customError(400, error.message));
+
     }
   }
 }
