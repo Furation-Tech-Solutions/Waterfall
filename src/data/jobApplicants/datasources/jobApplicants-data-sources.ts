@@ -157,46 +157,123 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
     return jobApplicant ? jobApplicant.toJSON() : null;
   }
 
-  // Method to get all job applicants based on query parameters
-  async getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse> {
-    //-------------------------------------------------------------------------------------------------------------
-    // Extract relevant information from the query parameters
-    let loginId = query.id;
-    const currentPage = query.page || 1; // Default to page 1
-    const itemsPerPage = query.limit || 10; // Default to 10 items per page
-
-    const offset = (currentPage - 1) * itemsPerPage;
-    //-------------------------------------------------------------------------------------------------------------------------------
-
-    if (query.q === "upcomingTask") {
-      {
-        // Retrieve upcoming tasks for the specified realtor
-        // const jobApplicant = await JobApplicant.findAll({
-        //   where: {
-        //     agreement: true, // Now, it's a boolean
-        //     jobStatus: "Pending",
-        //     applicantId: loginId,
-        //   },
-        //   include: [
-        //     {
-        //       model: Job,
-        //       as: "jobData",
-        //       foreignKey: "jobId",
-        //     },
-        //     {
-        //       model: Realtors,
-        //       as: "applicantData",
-        //       foreignKey: "applicantId",
-        //     },
-        //   ],
-        //   limit: itemsPerPage, // Limit the number of results per page
-        //   offset: offset, // Calculate the offset based on the current page
-        // });
-
+    // Method to get all job applicants based on query parameters
+    async getAll(query: JobApplicantQuery): Promise<JobApplicantsResponse> {
+      //-------------------------------------------------------------------------------------------------------------
+      // Extract relevant information from the query parameters
+      let loginId = query.id;
+      const currentPage = query.page || 1; // Default to page 1
+      const itemsPerPage = query.limit || 10; // Default to 10 items per page
+  
+      const offset = (currentPage - 1) * itemsPerPage;
+      //-------------------------------------------------------------------------------------------------------------------------------
+  
+      if (query.q === "upcomingTask") {
+          const { rows: jobApplicant, count: total } =
+            await JobApplicant.findAndCountAll({
+              where: {
+                agreement: true, // Now, it's a boolean
+                jobStatus: "Pending",
+                applicantId: loginId,
+              },
+              include: [
+                {
+                  model: Job,
+                  as: "jobData",
+                  foreignKey: "jobId",
+                },
+                {
+                  model: Realtors,
+                  as: "applicantData",
+                  foreignKey: "applicantId",
+                },
+              ],
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
+            });
+  
+          const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+  
+          return {
+            jobApplicants: mappedJobApplicants,
+            totalCount: total,
+          };
+        //------------------------------------------------------------------------------------------------------------------------------
+      } else if (query.q === "jobAssigned") {
+          // Retrieve job applicants for assigned jobs
+          const { rows: jobApplicant, count: total } =
+            await JobApplicant.findAndCountAll({
+              where: {
+                agreement: true, // Now, it's a boolean
+                jobStatus: "Pending",
+              },
+              include: [
+                {
+                  model: Job,
+                  as: "jobData",
+                  foreignKey: "jobId",
+                  where: {
+                    jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                  },
+                },
+                {
+                  model: Realtors,
+                  as: "applicantData",
+                  foreignKey: "applicantId",
+                },
+              ],
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
+            });
+  
+          const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+  
+          return {
+            jobApplicants: mappedJobApplicants,
+            totalCount: total,
+          };
+        //------------------------------------------------------------------------------------------------------------------------------
+      } else if (query.q === "jobResponse") {
+          // Retrieve job applicants with pending responses
+          const { rows: jobApplicant, count: total } =
+            await JobApplicant.findAndCountAll({
+              where: {
+                applicantStatus: "Pending",
+              },
+              include: [
+                {
+                  model: Job,
+                  as: "jobData",
+                  foreignKey: "jobId",
+                  where: {
+                    jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                  },
+                },
+                {
+                  model: Realtors,
+                  as: "applicantData",
+                  foreignKey: "applicantId",
+                },
+              ],
+              limit: itemsPerPage, // Limit the number of results per page
+              offset: offset, // Calculate the offset based on the current page
+            });
+  
+          const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
+  
+          return {
+            jobApplicants: mappedJobApplicants,
+            totalCount: total,
+          };
+        //------------------------------------------------------------------------------------------------------------------
+      }
+      else if (query.q === "acceptedJobApplications") {
+  
         const { rows: jobApplicant, count: total } =
           await JobApplicant.findAndCountAll({
             where: {
-              agreement: true, // Now, it's a boolean
+              applicantStatus: "Accept",
+              agreement: false, // Now, it's a boolean
               jobStatus: "Pending",
               applicantId: loginId,
             },
@@ -215,31 +292,26 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             limit: itemsPerPage, // Limit the number of results per page
             offset: offset, // Calculate the offset based on the current page
           });
-
+  
         const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
+  
         return {
           jobApplicants: mappedJobApplicants,
           totalCount: total,
         };
+        //------------------------------------------------------------------------------------------------------------------------------
       }
-      //------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobAssigned") {
-      {
-        // Retrieve job applicants for assigned jobs
+      else {
+        // Retrieve all job applicants with optional pagination
         const { rows: jobApplicant, count: total } =
           await JobApplicant.findAndCountAll({
-            where: {
-              agreement: true, // Now, it's a boolean
-              jobStatus: "Pending",
-            },
             include: [
               {
                 model: Job,
                 as: "jobData",
                 foreignKey: "jobId",
                 where: {
-                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+                  // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
                 },
               },
               {
@@ -251,80 +323,14 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             limit: itemsPerPage, // Limit the number of results per page
             offset: offset, // Calculate the offset based on the current page
           });
-
         const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
+  
         return {
           jobApplicants: mappedJobApplicants,
           totalCount: total,
         };
       }
-      //------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.q === "jobResponse") {
-      {
-        // Retrieve job applicants with pending responses
-        const { rows: jobApplicant, count: total } =
-          await JobApplicant.findAndCountAll({
-            where: {
-              applicantStatus: "Pending",
-            },
-            include: [
-              {
-                model: Job,
-                as: "jobData",
-                foreignKey: "jobId",
-                where: {
-                  jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-                },
-              },
-              {
-                model: Realtors,
-                as: "applicantData",
-                foreignKey: "applicantId",
-              },
-            ],
-            limit: itemsPerPage, // Limit the number of results per page
-            offset: offset, // Calculate the offset based on the current page
-          });
-
-        const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-        return {
-          jobApplicants: mappedJobApplicants,
-          totalCount: total,
-        };
-      }
-      //------------------------------------------------------------------------------------------------------------------
-    } else {
-      // Retrieve all job applicants with optional pagination
-      const { rows: jobApplicant, count: total } =
-        await JobApplicant.findAndCountAll({
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                // jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-          limit: itemsPerPage, // Limit the number of results per page
-          offset: offset, // Calculate the offset based on the current page
-        });
-      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-      return {
-        jobApplicants: mappedJobApplicants,
-        totalCount: total,
-      };
     }
-  }
 
   // Method to update an existing job applicant by ID
   async update(
