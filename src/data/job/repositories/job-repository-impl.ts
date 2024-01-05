@@ -48,6 +48,9 @@ export class JobRepositoryImpl implements JobRepository {
       // Return a Right monad with a successful response on success
       return Right<ErrorClass, void>(res);
     } catch (error: any) {
+      if (error instanceof ApiError && error.name === "jobnotfound") {
+        return Left<ErrorClass, any>(ApiError.jobNotFound());
+      }
       // Return a Left monad with a custom error and the error message
       if (error instanceof ApiError && error.name === "cannot_delete_job") {
         return Left<ErrorClass, any>(ApiError.cannotDeleteJob());
@@ -146,15 +149,15 @@ export class JobRepositoryImpl implements JobRepository {
       return Left<ErrorClass, JobCountEntity>(ApiError.customError(400, error.message));
     }
   }
-  async getGraphData(query:JobQuery):Promise<Either<ErrorClass,ExpenditureGraphEntity>>{
-    try{
-    // Call the job repository method to retrieve the count of posted jobs
-    const graphData = await this.dataSource.graphData(query);
+  async getGraphData(query: JobQuery): Promise<Either<ErrorClass, ExpenditureGraphEntity>> {
+    try {
+      // Call the job repository method to retrieve the count of posted jobs
+      const graphData = await this.dataSource.graphData(query);
 
-    // Return a Right monad with the count on success
+      // Return a Right monad with the count on success
       return Right<ErrorClass, ExpenditureGraphEntity>(graphData);
     }
-    catch(error:any){
+    catch (error: any) {
       return Left<ErrorClass, ExpenditureGraphEntity>(ApiError.customError(400, error.message));
 
     }

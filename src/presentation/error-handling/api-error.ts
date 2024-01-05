@@ -155,10 +155,9 @@ class ApiError extends ErrorClass {
       "applicant_blocked"
     );
   }
-
   static cannotDeleteJob(): ApiError {
     return new ApiError(
-      HttpStatus.METHOD_NOT_FOUND,
+      HttpStatus.CONFLICT,
       ErrorMessage.CANNOT_DELETE_JOB,
       "cannot_delete_job"
     );
