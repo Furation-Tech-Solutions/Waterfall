@@ -1,6 +1,6 @@
 // Import necessary modules and dependencies
 import { Model, Op, Sequelize, where } from "sequelize";
-import { JobCountEntity, JobCountModel, JobEntity, JobModel } from "@domain/job/entities/job";
+import { ExpenditureGraphEntity, ExpenditureGraphModel, JobCountEntity, JobCountModel, JobEntity, JobModel } from "@domain/job/entities/job";
 import Job from "@data/job/models/job-model";
 import Realtors from "@data/realtors/model/realtor-model";
 import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
@@ -13,6 +13,8 @@ import {
 import ApiError from "@presentation/error-handling/api-error";
 import NotInterested from "@data/notInterested/model/notInterested-models";
 import CallLog from "@data/callLog/models/callLog-model";
+import { ConnectionsModel } from "@domain/connections/entities/connections_entities";
+import Transactions from "@data/paymentGateway/models/paymentGateway-models";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -33,6 +35,9 @@ export interface JobDataSource {
 
   // Method to retrieve a total job posted count
   counts(query: JobQuery): Promise<JobCountEntity>;
+
+  graphData(query: JobQuery): Promise<ExpenditureGraphEntity>;
+
 }
 
 // Define a JobQuery object to encapsulate parameters
@@ -671,315 +676,22 @@ export class JobDataSourceImpl implements JobDataSource {
     return updatedJob.toJSON();
   }
 
-  // Method to retrieve the total number of posted jobs
-  // async counts(query: JobQuery): Promise<number> {
-  //   let loginId = query.id;
-
-  //   const currentPage = query.page || 1; // Default to page 1
-
-  //   const itemsPerPage = query.limit || 10; // Default to 10 items per page
-  //   const offset = (currentPage - 1) * itemsPerPage;
-
-  //   //-------------------------------------------------------------------------------------------------------------------------------------
-
-  //   if (query.q === "posted") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //     });
-  //     return count;
-  //   } else if (query.q === "accepted") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             applicantStatus: "Accept",
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //     //----------------------------------------------------------------------------------------------------------------------
-  //   } else if (query.q === "completedjobsforowner") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             paymentStatus: true,
-  //             jobStatus: "JobCompleted",
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //     //---------------------------------------------------------------------------------------------------------------------------------------
-  //   } else if (query.q === "scheduled") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         jobOwnerId: loginId,
-  //         liveStatus: false,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             agreement: true, // Now, it's a boolean
-  //             jobStatus: "Pending",
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //     //------------------------------------------------------------------------------------------------------------------------------------------------
-  //   } else if (query.q === "applied") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             applicantId: loginId,
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //     //----------------------------------------------------------------------------------------------------------------------------------------
-  //   } else if (query.q === "assigned") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         liveStatus: false,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         liveStatus: false,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             applicantId: loginId,
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //     //----------------------------------------------------------------------------------------------------------------------------------------
-  //   } else if (query.q === "completedjobforapplicant") {
-  //     let whereCondition = {};
-
-  //     if (query.year && query.months && query.months.length > 0) {
-  //       // If year and months are provided, filter by year and months
-  //       whereCondition = {
-  //         liveStatus: false,
-  //         [Op.and]: [
-  //           Sequelize.where(
-  //             Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
-  //             query.year
-  //           ),
-  //           {
-  //             [Op.or]: query.months.map((month) => {
-  //               return Sequelize.where(
-  //                 Sequelize.fn("EXTRACT", Sequelize.literal("MONTH FROM date")),
-  //                 month
-  //               );
-  //             }),
-  //           },
-  //         ],
-  //       };
-  //     } else {
-  //       whereCondition = {
-  //         liveStatus: false,
-  //       };
-  //     }
-
-  //     const count = await Job.count({
-  //       where: whereCondition,
-  //       include: [
-  //         {
-  //           model: JobApplicant,
-  //           as: "applicantsData",
-  //           where: {
-  //             applicantId: loginId,
-  //             jobStatus: "JobCompleted",
-  //           },
-  //         },
-  //       ],
-  //     });
-  //     return count;
-  //   } else {
-  //     return 0;
-  //   }
-  //   //--------------------------------------------------------------------------------------------------------------------
-  // }
+  
 
 
 
   async counts(query: JobQuery): Promise<JobCountEntity> {
     const loginId = query.id;
+    const monthToFilter= query.months|| [];
+    const yearToFilter = query.year;
 
+    console.log(yearToFilter,"years",query)
+
+    const jobData=await Job.findAll({
+      where :{
+        jobOwnerId:loginId
+      }
+    })
     const conditionsMap: Record<string, any> = {
       posted: {
         where: { jobOwnerId: loginId },
@@ -1071,14 +783,80 @@ export class JobDataSourceImpl implements JobDataSource {
     };
 
     for (const key in conditionsMap) {
+      console.log(key,"key ")
+      let whereCondition: any =  {};
+      if (query.year) {
+        // If year is provided, filter by year
+        // console.log(query.year,"year inside if condition")
+        whereCondition = {
+          ...whereCondition,
+          [Op.and]: Sequelize.where(
+            Sequelize.fn("EXTRACT", Sequelize.literal("YEAR FROM date")),
+            query.year
+          ),
+        };
+        // console.log(whereCondition,"where condition inside year if")
+      }
+     
+
+      if (query.months && query.months.length > 0) {
+        const validMonths = query.months.filter(month => !isNaN(month));
+        const monthFilters = validMonths.map(month => Sequelize.where(
+            Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM date')),
+            month
+        ));
+
+        whereCondition.date = {
+            ...whereCondition.date,
+            [Op.or]: monthFilters,
+        };
+    }
+      
+      
+
       const count = await Job.count({
-        where: conditionsMap[key].where || {},
+        where: {...conditionsMap[key].where,...whereCondition },
         include: conditionsMap[key].include || [],
       });
+      console.log(count,"count ")
       jobCounts[key as keyof JobCountEntity] = count;
     }
 
     return jobCounts;
+  }
+
+  async graphData(query:JobQuery):Promise<ExpenditureGraphEntity>{
+    console.log("inside dtsrc")
+    console.log(query,"query")
+
+       const currentYear = new Date().getFullYear();
+       const transactions = await Transactions.findAll({
+        where: {
+          fromRealtorId: query.id,
+        },
+      });
+      console.log(transactions,"transaction")
+
+      const transactionsByMonth: { [key: string]: any[] } = {};
+      const totalAmountByMonth: { [key: string]: number } = {};
+
+      for (let i = 0; i < 12; i++) {
+        const monthName = new Date(new Date().getFullYear(), i).toLocaleString('default', { month: 'long' });
+        totalAmountByMonth[monthName] = 0;
+      }
+
+      transactions.forEach((transaction: any) => {
+        const createdAt: Date = transaction.createdAt;
+        const month: number = createdAt.getMonth(); // Get month (0-indexed)
+        const monthName: string = new Date(new Date().getFullYear(), month).toLocaleString('default', { month: 'long' });
+        // const monthName: string = new Date(month).toLocaleString('default', { month: 'long' });
+    
+        totalAmountByMonth[monthName] += Number(transaction.amount);
+        // transactionsByMonth[monthName].push(transaction);
+      });
+      console.log(totalAmountByMonth,"transaction by month")
+      const expenditureGraph = new ExpenditureGraphEntity(totalAmountByMonth);
+      return expenditureGraph;
   }
 
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { JobEntity, JobModel, JobMapper, JobCountEntity } from "@domain/job/entities/job";
+import { JobEntity, JobModel, JobMapper, JobCountEntity, ExpenditureGraphEntity } from "@domain/job/entities/job";
 import { CreateJobUsecase } from "@domain/job/usecases/create-job";
 import { DeleteJobUsecase } from "@domain/job/usecases/delete-job";
 import { GetJobByIdUsecase } from "@domain/job/usecases/get-job-by-id";
@@ -11,6 +11,7 @@ import { Either } from "monet";
 import SESMailService from "./email-ses-services";
 import SMSService from "./sms-service";
 import { NotificationSender } from "./push-notification-services";
+import { GetGraphDataUseCase } from "@domain/job/usecases/get-graph-data";
 
 export class JobService {
   private readonly createJobUsecase: CreateJobUsecase;
@@ -19,6 +20,7 @@ export class JobService {
   private readonly updateJobUsecase: UpdateJobUsecase;
   private readonly getAllJobsUsecase: GetAllJobsUsecase;
   private readonly gettotalCountUsecase: GettotalCountUsecase;
+  private readonly getGraphDataUsecase: GetGraphDataUseCase;
 
   constructor(
     createJobUsecase: CreateJobUsecase,
@@ -26,7 +28,8 @@ export class JobService {
     getJobByIdUsecase: GetJobByIdUsecase,
     updateJobUsecase: UpdateJobUsecase,
     getAllJobsUsecase: GetAllJobsUsecase,
-    gettotalCountUsecase: GettotalCountUsecase
+    gettotalCountUsecase: GettotalCountUsecase,
+    getGraphDataUsecase: GetGraphDataUseCase,
   ) {
     this.createJobUsecase = createJobUsecase;
     this.deleteJobUsecase = deleteJobUsecase;
@@ -34,6 +37,7 @@ export class JobService {
     this.updateJobUsecase = updateJobUsecase;
     this.getAllJobsUsecase = getAllJobsUsecase;
     this.gettotalCountUsecase = gettotalCountUsecase;
+    this.getGraphDataUsecase=getGraphDataUsecase
   }
 
   private sendSuccessResponse(
@@ -195,19 +199,60 @@ export class JobService {
     const query: any = {};
 
     query.q = req.query.q as string;
+    // query.year = req.query.year ;
     query.page = parseInt(req.query.page as string, 10);
     query.limit = parseInt(req.query.limit as string, 10);
     query.id = loginId;
     query.year = parseInt(req.query.year as string, 10);
-    query.months = [parseInt(req.query.month as string, 10)];
+    query.months = (req.query.months as string || '').split(',').map(month => parseInt(month, 10)).filter(month => !isNaN(month));
+    // query.months = [parseInt(req.query.month as string, 10)];
+    console.log(query.months,"inisde service")
+
+    
+    
 
     const count: Either<ErrorClass, JobCountEntity> =
       await this.gettotalCountUsecase.execute(query);
     count.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 500),
+      (error: ErrorClass) => {
+        // console.log(error,"error in service"),
+        this.sendErrorResponse(res, error, 500)},
       (result: JobCountEntity) => {
         this.sendSuccessResponse(res,  result );
       }
     );
   }
+  async getGraphData(req: Request, res: Response): Promise<void> {
+    console.log("inside grapgh data")
+    let id: string = req.user;
+    let loginId = id; // For testing purposes, manually set loginId to "2"
+
+    const query: any = {};
+
+    query.q = req.query.q as string;
+    // query.year = req.query.year ;
+    query.page = parseInt(req.query.page as string, 10);
+    query.limit = parseInt(req.query.limit as string, 10);
+    query.id = loginId;
+    query.year = parseInt(req.query.year as string, 10);
+    query.months = (req.query.months as string || '').split(',').map(month => parseInt(month, 10)).filter(month => !isNaN(month));
+    // query.months = [parseInt(req.query.month as string, 10)];
+    console.log(query.months,"inisde service")
+
+    
+    
+
+    const graphData: Either<ErrorClass, ExpenditureGraphEntity> =
+      await this.getGraphDataUsecase.execute(query);
+      graphData.cata(
+      (error: ErrorClass) => {
+        console.log(error,"error in service"),
+        this.sendErrorResponse(res, error, 500)},
+      (result: ExpenditureGraphEntity) => {
+        console.log(result,"result")
+        this.sendSuccessResponse(res,result );
+      }
+    );
+  }
 }
+
