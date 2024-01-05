@@ -86,7 +86,7 @@ export class JobService {
       await this.deleteJobUsecase.execute(jobId);
 
     response.cata(
-      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       () => {
         this.sendSuccessResponse(res, {}, "Job deleted successfully", 204);
       }

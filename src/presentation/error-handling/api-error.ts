@@ -155,6 +155,15 @@ class ApiError extends ErrorClass {
       "applicant_blocked"
     );
   }
+
+  static cannotDeleteJob(): ApiError {
+    return new ApiError(
+      HttpStatus.METHOD_NOT_FOUND,
+      ErrorMessage.CANNOT_DELETE_JOB,
+      "cannot_delete_job"
+    );
+  }
+
   static brandLogoDeletionError(): ApiError {
     return new ApiError(
       HttpStatus.INTERNAL_SERVER_ERROR,
