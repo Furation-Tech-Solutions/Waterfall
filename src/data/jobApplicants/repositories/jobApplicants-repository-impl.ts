@@ -24,15 +24,21 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
   // Method to create a new job applicant
   async createJobApplicant(
     jobApplicant: JobApplicantModel,
-    loginId:string
+    loginId: string
   ): Promise<Either<ErrorClass, JobApplicantEntity>> {
     try {
       // Attempt to create a job applicant using the data source
-      const createdJobApplicant = await this.dataSource.create(jobApplicant,loginId);
+      const createdJobApplicant = await this.dataSource.create(jobApplicant, loginId);
 
       // Return a Right Either indicating success with the created job applicant
       return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
     } catch (error: any) {
+      if (error instanceof ApiError && error.name === "account Exist") {
+        return Left<ErrorClass, any>(ApiError.applicantExist());
+      }
+      if (error instanceof ApiError && error.name === " jobowner_conflict") {
+        return Left<ErrorClass, any>(ApiError.jobownerconflict());
+      }
       // Handle different error scenarios
       if (error instanceof ApiError && error.status === 401) {
         // If unauthorized, return an Unauthorized error

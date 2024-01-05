@@ -182,6 +182,7 @@ export class CallLogService {
     const query: any = {}; // Create an empty query object
     // Assign values to properties of the query object
     query.id = Id;
+    query.jobId = parseInt(req.query.jobId as string, 10);
     query.page = parseInt(req.query.page as string, 10); // Parse 'page' as a number
     query.limit = parseInt(req.query.limit as string, 10); // Parse 'limit' as a number
 

@@ -17,7 +17,7 @@ import { JobApplicantsResponse } from "types/jobApplicant/responseType";
 // Create JobApplicantDataSource Interface
 export interface JobApplicantDataSource {
   // Method to create a new job applicant
-  create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity>;
+  create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity>;
 
   // Method to update an existing job applicant by ID
   update(id: string, updatedData: any): Promise<JobApplicantEntity>;
@@ -45,7 +45,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
   // Method to create a new job applicant
-  async create(jobApplicant: any,loginId:string): Promise<JobApplicantEntity> {
+  async create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity> {
     try {
       
       
@@ -97,6 +97,10 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
       
 
       
+
+
+
+
 
       const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
 
@@ -291,67 +295,6 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         };
       }
       //------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
-      // Check if the query parameter is "active"
-      const { rows: jobApplicant, count: total } =
-        await JobApplicant.findAndCountAll({
-          where: {
-            jobStatus: "JobCompleted", // Filter by applicantStatus
-            paymentStatus: false, // Filter by agreement
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-        });
-      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-      return {
-        jobApplicants: mappedJobApplicants,
-        totalCount: total,
-      };
-      //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "Completed") {
-      // Check if the query parameter is "active"
-      const { rows: jobApplicant, count: total } =
-        await JobApplicant.findAndCountAll({
-          where: {
-            paymentStatus: true, // Filter by agreement
-          },
-          include: [
-            {
-              model: Job,
-              as: "jobData",
-              foreignKey: "jobId",
-              where: {
-                jobOwnerId: loginId, // Use the correct way to filter by jobOwner
-              },
-            },
-            {
-              model: Realtors,
-              as: "applicantData",
-              foreignKey: "applicantId",
-            },
-          ],
-        });
-      const mappedJobApplicants = jobApplicant.map((jobA) => jobA.toJSON());
-
-      return {
-        jobApplicants: mappedJobApplicants,
-        totalCount: total,
-      };
-      //-----------------------------------------------------------------------------------------------------------------------------------------
     } else {
       // Retrieve all job applicants with optional pagination
       const { rows: jobApplicant, count: total } =
@@ -587,13 +530,13 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         await associatedJob.update({
           liveStatus: true,
         });
-    
+
         const currentDate = new Date();
 
 
         const lastDate: Date | string | null | undefined = associatedJob.applyBy;
 
-    
+
         if (
           lastDate &&
           new Date(lastDate).toDateString() === currentDate.toDateString()
@@ -601,7 +544,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
           const fromTime = new Date(associatedJob.fromTime);
 
           const currentTime = new Date();
-    
+
           // Calculate 10 hours before fromTime of the day
           const tenHoursBeforeFromTime = new Date(
             fromTime.getFullYear(),
@@ -612,7 +555,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
             0
           );
 
-    
+
           if (currentTime >= tenHoursBeforeFromTime) {
             // console.log(currentTime >= tenHoursBeforeFromTime, "currentTime >= tenHoursBeforeFromTime")
             await associatedJob.update({
@@ -622,7 +565,7 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
         }
       }
     }
-    
+
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Update the job applicant record with the provided data
     await jobApplicant.update(updatedData);

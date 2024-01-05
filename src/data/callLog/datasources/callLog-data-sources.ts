@@ -28,11 +28,12 @@ export interface CallLogQuery {
   id: number;
   page: number;
   limit: number;
+  jobId: number;
 }
 
 // CallLog Data Source communicates with the database
 export class CallLogDataSourceImpl implements CallLogDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Method to create a new call log
   async create(callLog: any): Promise<CallLogEntity> {
@@ -64,7 +65,7 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
         {
           model: JobApplicant,
           foreignKey: "jobApplicantId",
-          as: "jobApplicantData"
+          as: "jobApplicantData",
         },
       ],
       // include: 'tags', // Replace 'tags' with the actual name of your association if needed
@@ -77,6 +78,8 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
   // Method to retrieve all call logs
   async getAll(query: CallLogQuery): Promise<CallLogEntity[]> {
     let loginId = query.id;
+    let jobId: number | undefined=query.jobId;
+
     // Set defaults for pagination
     const currentPage = query.page || 1; // Default to page 1
     const itemsPerPage = query.limit || 10; // Default to 10 items per page
@@ -85,23 +88,46 @@ export class CallLogDataSourceImpl implements CallLogDataSource {
     const offset = (currentPage - 1) * itemsPerPage;
 
     // Retrieve all call log records from the database with pagination
-    const callLog = await CallLog.findAll({
-      include: [
-        {
-          model: JobApplicant,
-          foreignKey: "jobApplicantId",
-          as: "jobApplicantData",
-          where: {
-            applicantId: loginId
-          },
+     if (query.jobId) {
+      const callLogs = await CallLog.findAll({
+        where: {
+          jobId: jobId,
         },
-      ],
-      limit: itemsPerPage, // Limit the number of results per page
-      offset: offset, // Calculate the offset based on the current page
-    });
+        include: [
+          {
+            model: JobApplicant,
+            foreignKey: "jobApplicantId",
+            as: "jobApplicantData",
+          },
+        ],
+        limit: itemsPerPage, // Limit the number of results per page
+        offset: offset, // Calculate the offset based on the current page
+      });
 
-    // Convert the retrieved call logs to an array of plain JavaScript objects before returning
-    return callLog.map((callLog: any) => callLog.toJSON());
+      // Convert the retrieved call logs to an array of plain JavaScript objects before returning
+      return callLogs.map((callLog: any) => callLog.toJSON());
+      
+     } else{
+      const callLogs = await CallLog.findAll({
+        include: [
+          {
+            model: JobApplicant,
+            foreignKey: "jobApplicantId",
+            as: "jobApplicantData",
+            where:{
+              applicantId: loginId
+            }
+          },
+        ],
+        limit: itemsPerPage, // Limit the number of results per page
+        offset: offset, // Calculate the offset based on the current page
+      });
+
+      // Convert the retrieved call logs to an array of plain JavaScript objects before returning
+      return callLogs.map((callLog: any) => callLog.toJSON());
+
+     }
+  
   }
 
   // Method to update an existing call log by ID

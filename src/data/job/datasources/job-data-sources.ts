@@ -459,24 +459,21 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
       return filteredJobs.map((job: any) => job.toJSON());
       //-------------------------------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "PaymentPending") {
+    } else if (query.q == "paymentPending") {
       const jobs = await Job.findAll({
         where: {
           jobOwnerId: loginId, // Use the correct way to filter by jobOwner
+          jobProgress: "paymentPending",
         },
         include: [
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-            where: {
-              jobStatus: "JobCompleted", // Filter by applicantStatus
-              paymentStatus: false, // Filter by agreement
-            },
-          },
           {
             model: Realtors,
             as: "jobOwnerData",
             foreignKey: "jobOwnerId",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
           },
         ],
 
@@ -488,23 +485,21 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
       return filteredJobs.map((job: any) => job.toJSON());
       //-----------------------------------------------------------------------------------------------------------------------
-    } else if (query.q == "Completed") {
+    } else if (query.q == "completed") {
       const jobs = await Job.findAll({
         where: {
           jobOwnerId: loginId,
+          jobProgress: "completed",
         },
         include: [
-          {
-            model: JobApplicant,
-            as: "applicantsData",
-            where: {
-              paymentStatus: true,
-            },
-          },
           {
             model: Realtors,
             as: "jobOwnerData",
             foreignKey: "jobOwnerId",
+          },
+          {
+            model: JobApplicant,
+            as: "applicantsData",
           },
         ],
 
@@ -605,7 +600,7 @@ export class JobDataSourceImpl implements JobDataSource {
     } else {
       // Set up the initial conditions for the Sequelize query
       let whereCondition: any = {
-        jobOwnerId: loginId, // Filter jobs by the logged-in user's ID
+        // jobOwnerId: !loginId, // Filter jobs by the logged-in user's ID
       };
 
       // Check if the 'feeType' parameter exists in the query
@@ -653,7 +648,12 @@ export class JobDataSourceImpl implements JobDataSource {
       const filteredJobs = await applyNotInterestedFilter(jobs);
 
       // Return the filtered jobs as JSON objects
-      return filteredJobs.map((job: any) => job.toJSON());
+      // return filteredJobs.map((job: any) => job.toJSON());
+
+      const filteredRecommendedJobs = filteredJobs.filter(
+        (job) => job.getDataValue("jobOwnerId") !== loginId
+      );
+      return filteredRecommendedJobs.map((job: any) => job.toJSON());
     }
   }
 
