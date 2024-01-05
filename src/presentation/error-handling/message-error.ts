@@ -32,6 +32,8 @@ export const APPLICANT_REPORTED = "The applicant can't apply for a job they've b
 
 export const APPLICANT_BLOCKED = "User can't apply for this job as they've been blocked from JobOwner";
 
+export const CANNOT_DELETE_JOB = "Owner cannot delete job as it has been already accepted";
+
 export const AWS_PRESIGN_ERROR = "unable to create presigned URL";
 
 export const BRAND_LOGO_DELETION_ERROR = "unable to delete brand logo";

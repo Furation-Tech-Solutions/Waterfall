@@ -79,7 +79,7 @@ export class JobDataSourceImpl implements JobDataSource {
 
     // If there are applicants with agreement=true, prevent deletion
     if (hasApplicants) {
-      throw new Error("Cannot delete job with applicants");
+      throw ApiError.cannotDeleteJob();
     }
 
     // Delete the job record where the ID matches the provided ID
