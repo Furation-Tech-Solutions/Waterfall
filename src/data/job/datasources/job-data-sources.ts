@@ -15,6 +15,7 @@ import NotInterested from "@data/notInterested/model/notInterested-models";
 import CallLog from "@data/callLog/models/callLog-model";
 import { ConnectionsModel } from "@domain/connections/entities/connections_entities";
 import Transactions from "@data/paymentGateway/models/paymentGateway-models";
+import FeedBacks from "@data/feedBack/model/feedBack-model";
 
 // Create an interface JobDataSource to define the contract for interacting with job data
 export interface JobDataSource {
@@ -685,13 +686,12 @@ export class JobDataSourceImpl implements JobDataSource {
     const monthToFilter= query.months|| [];
     const yearToFilter = query.year;
 
-    console.log(yearToFilter,"years",query)
-
     const jobData=await Job.findAll({
       where :{
         jobOwnerId:loginId
       }
     })
+
     const conditionsMap: Record<string, any> = {
       posted: {
         where: { jobOwnerId: loginId },
@@ -770,6 +770,7 @@ export class JobDataSourceImpl implements JobDataSource {
           },
         ],
       },
+     
     };
 
     const jobCounts: JobCountEntity = {
@@ -780,14 +781,55 @@ export class JobDataSourceImpl implements JobDataSource {
       applied: 0,
       assigned: 0,
       completedjobforapplicant: 0,
+      feedbackGiven:0,
+      feedbackTaken:0
     };
+ 
+    const feedbackFilter: Record<string, any> = {};
+const whereConditions: any[] = [];
+
+if (yearToFilter) {
+  whereConditions.push(
+    Sequelize.where(
+      Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM "createdAt"')),
+      yearToFilter
+    )
+  );
+}
+
+if (monthToFilter.length > 0) {
+  const validMonths = monthToFilter.filter(month => !isNaN(month));
+  const monthFilters = validMonths.map(month =>
+    Sequelize.where(
+      Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "createdAt"')),
+      month
+    )
+  );
+  whereConditions.push({ [Op.or]: monthFilters });
+}
+
+    // Fetch feedback counts filtered by month and year
+  const feedbackGivenCount = await FeedBacks.count({
+    where: {
+      fromRealtorId: loginId,
+      [Op.and]: whereConditions,
+    },
+  });
+
+  const feedbackTakenCount = await FeedBacks.count({
+    where: {
+      toRealtorId: loginId,
+      [Op.and]: whereConditions,
+    },
+  });
+
+  // Assign feedback counts to the jobCounts object
+  jobCounts.feedbackGiven = feedbackGivenCount;
+  jobCounts.feedbackTaken = feedbackTakenCount;
 
     for (const key in conditionsMap) {
-      console.log(key,"key ")
       let whereCondition: any =  {};
       if (query.year) {
-        // If year is provided, filter by year
-        // console.log(query.year,"year inside if condition")
         whereCondition = {
           ...whereCondition,
           [Op.and]: Sequelize.where(
@@ -795,7 +837,6 @@ export class JobDataSourceImpl implements JobDataSource {
             query.year
           ),
         };
-        // console.log(whereCondition,"where condition inside year if")
       }
      
 
@@ -818,7 +859,6 @@ export class JobDataSourceImpl implements JobDataSource {
         where: {...conditionsMap[key].where,...whereCondition },
         include: conditionsMap[key].include || [],
       });
-      console.log(count,"count ")
       jobCounts[key as keyof JobCountEntity] = count;
     }
 
@@ -826,36 +866,42 @@ export class JobDataSourceImpl implements JobDataSource {
   }
 
   async graphData(query:JobQuery):Promise<ExpenditureGraphEntity>{
-    console.log("inside dtsrc")
-    console.log(query,"query")
 
        const currentYear = new Date().getFullYear();
-       const transactions = await Transactions.findAll({
+       const expenses = await Transactions.findAll({
         where: {
           fromRealtorId: query.id,
         },
       });
-      console.log(transactions,"transaction")
-
-      const transactionsByMonth: { [key: string]: any[] } = {};
-      const totalAmountByMonth: { [key: string]: number } = {};
+      const earning = await Transactions.findAll({
+        where: {
+          toRealtorId: query.id,
+        },
+      });
+      const totalExpenseByMonth: { [key: string]: number } = {};
+      const totalEarningByMonth: { [key: string]: number } = {};
 
       for (let i = 0; i < 12; i++) {
         const monthName = new Date(new Date().getFullYear(), i).toLocaleString('default', { month: 'long' });
-        totalAmountByMonth[monthName] = 0;
+        totalExpenseByMonth[monthName] = 0;
+        totalEarningByMonth[monthName]=0
       }
 
-      transactions.forEach((transaction: any) => {
+      expenses.forEach((transaction: any) => {
+        const createdAt: Date = transaction.createdAt;
+        const month: number = createdAt.getMonth(); // Get month (0-indexed)
+        const monthName: string = new Date(new Date().getFullYear(), month).toLocaleString('default', { month: 'long' });    
+        totalExpenseByMonth[monthName] += Number(transaction.amount);
+      });
+      earning.forEach((transaction: any) => {
         const createdAt: Date = transaction.createdAt;
         const month: number = createdAt.getMonth(); // Get month (0-indexed)
         const monthName: string = new Date(new Date().getFullYear(), month).toLocaleString('default', { month: 'long' });
-        // const monthName: string = new Date(month).toLocaleString('default', { month: 'long' });
     
-        totalAmountByMonth[monthName] += Number(transaction.amount);
-        // transactionsByMonth[monthName].push(transaction);
+        totalEarningByMonth[monthName] += Number(transaction.amount);
       });
-      console.log(totalAmountByMonth,"transaction by month")
-      const expenditureGraph = new ExpenditureGraphEntity(totalAmountByMonth);
+      
+      const expenditureGraph = new ExpenditureGraphEntity(totalExpenseByMonth,totalEarningByMonth);
       return expenditureGraph;
   }
 
