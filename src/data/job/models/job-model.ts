@@ -93,6 +93,7 @@ const Job = sequelize.define(
     // Email of the client associated with the job
     clientEmail: {
       type: DataTypes.STRING,
+      defaultValue:""
       // allowNull: false,
     },
 
@@ -100,8 +101,9 @@ const Job = sequelize.define(
     clientPhoneNumber: {
       type: DataTypes.STRING,
       // allowNull: false,
+      defaultValue:"",
       validate: {
-        len: [10, 12], // Validate length between 3 and 30 characters
+        // len: [10, 12], // Validate length between 3 and 30 characters
       },
     },
 

@@ -11,7 +11,13 @@ import JobApplicant from "@data/jobApplicants/models/jobApplicants-models";
 import ApiError from "@presentation/error-handling/api-error";
 import Realtor from "@data/realtors/model/realtor-model";
 import Stripe from 'stripe';
+import env from "@main/config/env";
+const stripe_secret_key = env.stripe_secret_key;
+const stripe_public_key = env.stripe_public_key;
+// const stripe = new Stripe(`${stripe_secret_key}`);
 const stripe = new Stripe('sk_test_51OL6H0IZoxttFA7OkUh1eTIgn2aX2GDIw3GPrUk37pQOHzCgyRpgb691kMcBiy90qkbdxbaTP7kmERH9I4iFFzTc00ndt8cjPR');
+const stripe_public = new Stripe(`${stripe_public_key}`);
+
 
 // Define a Query object to encapsulate parameters
 export interface Query {
@@ -158,6 +164,17 @@ export class PaymentGatewayDataSourceImpl implements PaymentGatewayDataSource {
 
   // Define a method to create a Connect Express account
   async createAccount(loginId: string, data: any): Promise<any> {
+
+    // // Create a token with the card details
+    // const { token, error } = await stripe_public.createToken(card, {
+    //   card: {
+    //     number: data.cardNumber,
+    //     exp_month: data.cardExpiry.split('/')[0],
+    //     exp_year: data.cardExpiry.split('/')[1],
+    //     cvc: data.cardCvc,
+    //   },
+    // });
+    // console.log(token);
 
     const realtor: any = await Realtor.findOne({
       where: { id: loginId, deletedStatus: false },
