@@ -48,6 +48,13 @@ export class JobRepositoryImpl implements JobRepository {
       // Return a Right monad with a successful response on success
       return Right<ErrorClass, void>(res);
     } catch (error: any) {
+      if (error instanceof ApiError && error.name === "jobnotfound") {
+        return Left<ErrorClass, any>(ApiError.jobNotFound());
+      }
+      // Return a Left monad with a custom error and the error message
+      if (error instanceof ApiError && error.name === "cannot_delete_job") {
+        return Left<ErrorClass, any>(ApiError.cannotDeleteJob());
+      }
       // If an error occurs during job deletion
 
       // Return a Left monad with a custom error and the error message

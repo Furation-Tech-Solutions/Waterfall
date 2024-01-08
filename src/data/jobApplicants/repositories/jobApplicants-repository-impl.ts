@@ -33,13 +33,22 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       // Return a Right Either indicating success with the created job applicant
       return Right<ErrorClass, JobApplicantEntity>(createdJobApplicant);
     } catch (error: any) {
-      if (error instanceof ApiError && error.name === "account Exist") {
-        return Left<ErrorClass, any>(ApiError.applicantExist());
+      if (error instanceof ApiError && error.name === "jobnotfound") {
+        return Left<ErrorClass, any>(ApiError.jobNotFound());
       }
       if (error instanceof ApiError && error.name === " jobowner_conflict") {
         return Left<ErrorClass, any>(ApiError.jobownerconflict());
       }
       // Handle different error scenarios
+      if (error instanceof ApiError && error.name === "applicant_blocked") {
+        // If applicant is blocked or reported, return a Forbidden error
+        return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantBlocked());
+      }
+      // Handle different error scenarios
+      if (error instanceof ApiError && error.name === "applicant_reported") {
+        // If applicant is blocked or reported, return a Forbidden error
+        return Left<ErrorClass, JobApplicantEntity>(ApiError.applicantReported());
+      }
       if (error instanceof ApiError && error.status === 401) {
         // If unauthorized, return an Unauthorized error
         return Left<ErrorClass, JobApplicantEntity>(ApiError.unAuthorized());
@@ -50,6 +59,7 @@ export class JobApplicantRepositoryImpl implements JobApplicantRepository {
       );
     }
   }
+
 
   // Method to update a job applicant by ID
   async updateJobApplicant(

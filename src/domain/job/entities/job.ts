@@ -221,6 +221,8 @@ export class JobCountModel{
   ){}
 }
 
+
+
 export class ExpenditureGraphModel{
   constructor(
     public month: number = 0,

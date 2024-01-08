@@ -141,6 +141,27 @@ class ApiError extends ErrorClass {
       "forbidden"
     );
   }
+  static applicantReported(): ApiError {
+    return new ApiError(
+      HttpStatus.FORBIDDEN,
+      ErrorMessage.APPLICANT_REPORTED,
+      "applicant_reported"
+    );
+  }
+  static applicantBlocked(): ApiError {
+    return new ApiError(
+      HttpStatus.FORBIDDEN,
+      ErrorMessage.APPLICANT_BLOCKED,
+      "applicant_blocked"
+    );
+  }
+  static cannotDeleteJob(): ApiError {
+    return new ApiError(
+      HttpStatus.METHOD_NOT_FOUND,
+      ErrorMessage.CANNOT_DELETE_JOB,
+      "cannot_delete_job"
+    );
+  }
   static brandLogoDeletionError(): ApiError {
     return new ApiError(
       HttpStatus.INTERNAL_SERVER_ERROR,
@@ -182,8 +203,24 @@ class ApiError extends ErrorClass {
   static accountExist(): ApiError {
     return new ApiError(
       HttpStatus.CONFLICT,
-      ErrorMessage.TAX_TYPE_EXIST,
+      ErrorMessage.ACCOUNT_EXIST,
       "account Exist"
+    );
+  }
+
+  static jobNotFound(): ApiError {
+    return new ApiError(
+      HttpStatus.NOT_FOUND,
+      ErrorMessage.JOB_NOT_FOUND,
+      "jobnotfound"
+    );
+  }
+
+  static JobthereInNotInterested(): ApiError {
+    return new ApiError(
+      HttpStatus.CONFLICT,
+      ErrorMessage.JOB_EXIST_IN_NOT_INTERESTED,
+      "jobExistInNotInterested"
     );
   }
 

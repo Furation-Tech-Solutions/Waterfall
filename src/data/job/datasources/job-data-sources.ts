@@ -71,16 +71,19 @@ export class JobDataSourceImpl implements JobDataSource {
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
     // Check if there are JobApplicants with agreement=true for the given job
+    const job = await Job.findByPk(id);
+    if (!job) {
+      throw ApiError.jobNotFound();
+    }
     const hasApplicants = await JobApplicant.findOne({
       where: {
         jobId: id,
         agreement: true,
       },
     });
-
     // If there are applicants with agreement=true, prevent deletion
     if (hasApplicants) {
-      throw new Error("Cannot delete job with applicants");
+      throw ApiError.cannotDeleteJob();
     }
 
     // Delete the job record where the ID matches the provided ID
@@ -683,15 +686,16 @@ export class JobDataSourceImpl implements JobDataSource {
 
   async counts(query: JobQuery): Promise<JobCountEntity> {
     const loginId = query.id;
-    const monthToFilter= query.months|| [];
+    const monthToFilter = query.months || [];
     const yearToFilter = query.year;
 
-    const jobData=await Job.findAll({
-      where :{
-        jobOwnerId:loginId
+    console.log(yearToFilter, "years", query)
+
+    const jobData = await Job.findAll({
+      where: {
+        jobOwnerId: loginId
       }
     })
-
     const conditionsMap: Record<string, any> = {
       posted: {
         where: { jobOwnerId: loginId },
