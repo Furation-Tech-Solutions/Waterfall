@@ -162,7 +162,6 @@ class ApiError extends ErrorClass {
       "cannot_delete_job"
     );
   }
-
   static brandLogoDeletionError(): ApiError {
     return new ApiError(
       HttpStatus.INTERNAL_SERVER_ERROR,

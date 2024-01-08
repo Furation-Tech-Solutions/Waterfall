@@ -45,7 +45,7 @@ export class JobApplicantService {
       success: true,
       message,
       documentCount: data.totalCount,
-      data: data.allAplicants,
+      data: data.allApplicants,
     });
   }
 
@@ -139,22 +139,26 @@ export class JobApplicantService {
     jobApplicants.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, error.status),
       (jobApplicants: JobApplicantsResponse) => {
-        if (jobApplicants.jobApplicants.length === 0) {
-          this.sendSuccessResponse(res, [], "Success", 200);
-        } else {
-          const allAplicants = jobApplicants.jobApplicants.map(
-            (jobApplicant: any) => JobApplicantMapper.toEntity(jobApplicant)
-          );
-          const totalCount = jobApplicants.totalCount;
+         if (jobApplicants.jobApplicants.length === 0) {
+           const resData = {
+             allApplicants: [],
+             totalCount: 0,
+           };
+           this.sendSuccessResponse(res, resData);
+         } else {
+           const allApplicants = jobApplicants.jobApplicants.map(
+             (jobApplicant: any) => JobApplicantMapper.toEntity(jobApplicant)
+           );
+           const totalCount = jobApplicants.totalCount;
 
-          const resData = {
-            allAplicants,
-            totalCount,
-          };
+           const resData = {
+             allApplicants,
+             totalCount,
+           };
 
-          this.sendSuccessResponse(res, resData);
-        }
-      }
+           this.sendSuccessResponse(res, resData);
+         }
+      } 
     );
   }
 
