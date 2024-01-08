@@ -9,22 +9,36 @@ interface MessageInput {
   senderId: string;
   receiverId: string;
   message: string;
+  connectionId: number;
+  messageType: string;
+  seen:boolean;
 }
 
 // Create a function for validating the Message input
 const messageValidator = async (input: MessageInput, isUpdate: boolean = false) => {
   // Define a schema for validating the input using Joi
   const messageSchema = Joi.object<MessageInput>({
-    // Validate sender"
-    senderId: isUpdate ? Joi.string().optional() : Joi.string().required(),
-
-    // Validate receiver
-    receiverId: isUpdate ? Joi.string().optional() : Joi.string().required(),
-
-    // Validate message
-    message: Joi.string().allow("").required().messages({
-      "string.required": "message is required",
+    senderId: Joi.string().required().messages({
+      "string.base": "SenderId must be a string",
+      "any.required": "SenderId is required",
     }),
+    receiverId: Joi.string().required().messages({
+      "string.base": "ReceiverId must be a string",
+      "any.required": "ReceiverId is required",
+    }),
+    connectionId: Joi.number().required().messages({
+      "number.base": "ConnectionId must be a number",
+      "any.required": "ConnectionId is required",
+    }),
+    message: Joi.string().required().messages({
+      "string.base": "Message must be a string",
+      "any.required": "Message is required",
+    }),
+    messageType: Joi.string().valid("Text", "Image", "Others").required().messages({
+      "any.only": "Invalid messageType",
+      "any.required": "MessageType is required",
+    }),
+    seen: Joi.boolean().optional(),
   });
 
   // Validate the input against the schema
@@ -54,7 +68,7 @@ export const validateMessageInputMiddleware = (isUpdate: boolean = false) => {
     try {
       // Extract the request body
       const { body } = req;
-
+      
       // Validate the Message input using the messageValidator
       const validatedInput: MessageInput = await messageValidator(body, isUpdate);
 
