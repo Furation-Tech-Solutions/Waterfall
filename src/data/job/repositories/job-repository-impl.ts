@@ -149,15 +149,15 @@ export class JobRepositoryImpl implements JobRepository {
       return Left<ErrorClass, JobCountEntity>(ApiError.customError(400, error.message));
     }
   }
-  async getGraphData(query: JobQuery): Promise<Either<ErrorClass, ExpenditureGraphEntity>> {
-    try {
-      // Call the job repository method to retrieve the count of posted jobs
-      const graphData = await this.dataSource.graphData(query);
+  async getGraphData(query:JobQuery):Promise<Either<ErrorClass,ExpenditureGraphEntity>>{
+    try{
+    // Call the job repository method to retrieve the count of posted jobs
+    const graphData = await this.dataSource.graphData(query);
 
-      // Return a Right monad with the count on success
+    // Return a Right monad with the count on success
       return Right<ErrorClass, ExpenditureGraphEntity>(graphData);
     }
-    catch (error: any) {
+    catch(error:any){
       return Left<ErrorClass, ExpenditureGraphEntity>(ApiError.customError(400, error.message));
 
     }
