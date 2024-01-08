@@ -8,6 +8,8 @@ export const NO_USERS_FOUND = "No users found";
 
 export const NO_DATA_FOUND = "data not found";
 
+export const JOB_NOT_FOUND = "job not found";
+
 export const GENERIC_ERROR = "An unexpected error occurred";
 
 export const DELETED_SUCCESS = "deleted successfully";
@@ -45,6 +47,8 @@ export const OVERLAPPING_DATE = "You have already added that date";
 export const ROLE_CONFLICT = "role is already exist"
 
 export const NAME_EXIST = "name already exists";
+
+export const JOB_EXIST_IN_NOT_INTERESTED = "job already exist in not interested list";
 
 export const TAX_TYPE_EXIST = "tax type already exists";
 

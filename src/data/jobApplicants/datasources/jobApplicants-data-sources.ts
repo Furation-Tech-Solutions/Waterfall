@@ -45,79 +45,74 @@ export class JobApplicantDataSourceImpl implements JobApplicantDataSource {
   constructor(private db: Sequelize) { }
 
   async create(jobApplicant: any, loginId: string): Promise<JobApplicantEntity> {
-    try {
-      
-      
-      // Check if the job owner has blocked the applicant
-      const job = await Job.findByPk(jobApplicant.jobId);
-      if(!job){
-        throw new Error("Job not found");
-      }
-      else{
-        const jobOwnerID = job.getDataValue("jobOwnerId");
-        const blockingRecord = await Blocking.findOne({
-          where: {
-            fromRealtorId: jobOwnerID,
-            toRealtorId: jobApplicant.applicantId,
-          },
-        });
-        // Check if the applicant has been reported
-        const existingReport = await Report.findOne({
-          where: {
-            toRealtorId: jobApplicant.applicantId,
-          },
-        });
-        // Check if the applicant has already applied for the same job
-        const existingApplication = await JobApplicant.findOne({
-          where: {
-            jobId: jobApplicant.jobId,
-            applicantId: jobApplicant.applicantId,
-          },
-        });
-        if (jobOwnerID === jobApplicant.applicantId) {
-        throw new Error("Job owner cannot apply for their own job");
-      }
-      else if (existingApplication) {
-          throw new Error("The applicant has already applied for this job");
-        }
-  
-        else if (existingReport) {
-           throw ApiError.applicantReported();
-        }
-           // Check if the job owner ID is the same as req.user ID
-  
-      
-        else if (blockingRecord) {
-          throw ApiError.applicantBlocked();
-        }
 
-      }
-      const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
-      
-      // Count the number of existing applicants with "Pending" status
-      const pendingApplicants = await JobApplicant.count({
-        where: {
-          jobId: jobApplicant.jobId,
-          applicantStatus: "Pending",
-        },
-      });
+    // Check if the job owner has blocked the applicant
+    const job = await Job.findByPk(jobApplicant.jobId);
+    if (!job) {
+      throw ApiError.jobNotFound();
+    }
 
-      // Check if the new applicant can be created based on the status and limit
-      if (pendingApplicants < parseInt(numberOfApplicantsLimit)) {
-        // Create a new job applicant record in the database
-        const createdJobApplicant = await JobApplicant.create(jobApplicant);
+    const jobOwnerID = job.getDataValue("jobOwnerId");
+    const blockingRecord = await Blocking.findOne({
+      where: {
+        fromRealtorId: jobOwnerID,
+        toRealtorId: jobApplicant.applicantId,
+      },
+    });
+    // Check if the applicant has been reported
+    const existingReport = await Report.findOne({
+      where: {
+        toRealtorId: jobApplicant.applicantId,
+      },
+    });
+    // Check if the applicant has already applied for the same job
+    const existingApplication = await JobApplicant.findOne({
+      where: {
+        jobId: jobApplicant.jobId,
+        applicantId: jobApplicant.applicantId,
+      },
+    });
+    if (jobOwnerID === jobApplicant.applicantId) {
+      // throw new Error("Job owner cannot apply for their own job");
+      throw ApiError.jobownerconflict();
+    }
+    if (existingApplication) {
+      // throw new Error("The applicant has already applied for this job");
+      throw ApiError.applicantExist();
+    }
 
-        // console.log(createdJobApplicant.dataValues, "createdJobApplicant");
-        return createdJobApplicant.toJSON();
-      } else {
-        // Throw an error if the limit is exceeded
-        throw new Error("Number of applicants exceeds the limit");
-      }
-    } catch (error) {
-      throw error;
+    if (existingReport) {
+      throw ApiError.applicantReported();
+    }
+    // Check if the job owner ID is the same as req.user ID
+
+    else if (blockingRecord) {
+      throw ApiError.applicantBlocked();
+    }
+
+    const numberOfApplicantsLimit = job.getDataValue("numberOfApplicants");
+
+    // Count the number of existing applicants with "Pending" status
+    const pendingApplicants = await JobApplicant.count({
+      where: {
+        jobId: jobApplicant.jobId,
+        applicantStatus: "Pending",
+      },
+    });
+
+    // Check if the new applicant can be created based on the status and limit
+    if (pendingApplicants < parseInt(numberOfApplicantsLimit)) {
+      // Create a new job applicant record in the database
+      const createdJobApplicant = await JobApplicant.create(jobApplicant);
+
+      // console.log(createdJobApplicant.dataValues, "createdJobApplicant");
+      return createdJobApplicant.toJSON();
+    } else {
+      // Throw an error if the limit is exceeded
+      throw new Error("Number of applicants exceeds the limit");
     }
   }
-    
+
 
   // Method to read a job applicant by ID
   async read(id: string): Promise<JobApplicantEntity | null> {

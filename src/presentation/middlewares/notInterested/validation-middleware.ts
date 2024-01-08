@@ -17,26 +17,26 @@ const notInterestedValidator = (
   const notInterestedSchema = Joi.object<NotInterestedInput>({
     realtorId: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "Realtor must be a string",
-          "string.empty": "Realtor is required",
-          "any.required": "Realtor is required",
-        })
+        "string.base": "realtorId must be a string",
+        "string.empty": "realtorId is required",
+        "any.required": "realtorId is required",
+      })
       : Joi.string().required().messages({
-          "string.base": "Realtor must be a string",
-          "string.empty": "Realtor is required",
-          "any.required": "Realtor is required",
-        }),
+        "string.base": "realtorId must be a string",
+        "string.empty": "realtorId is required",
+        "any.required": "realtorId is required",
+      }),
     jobId: isUpdate
       ? Joi.number().optional().messages({
-          "string.base": "Job must be a number",
-          "string.empty": "Job is required",
-          "any.required": "Job is required",
-        })
+        "string.base": "jobId must be a number",
+        "string.empty": "jobId is required",
+        "any.required": "jobId is required",
+      })
       : Joi.number().required().messages({
-          "string.base": "Job must be a number",
-          "string.empty": "Job is required",
-          "any.required": "Job is required",
-        }),
+        "string.base": "jobId must be a number",
+        "string.empty": "jobId is required",
+        "any.required": "jobId is required",
+      }),
   });
 
   // Validate the input against the schema

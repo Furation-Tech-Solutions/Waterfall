@@ -70,13 +70,16 @@ export class JobDataSourceImpl implements JobDataSource {
   // Method to delete a job record by ID
   async delete(id: string): Promise<void> {
     // Check if there are JobApplicants with agreement=true for the given job
+    const job = await Job.findByPk(id);
+    if (!job) {
+      throw ApiError.jobNotFound();
+    }
     const hasApplicants = await JobApplicant.findOne({
       where: {
         jobId: id,
         agreement: true,
       },
     });
-
     // If there are applicants with agreement=true, prevent deletion
     if (hasApplicants) {
       throw ApiError.cannotDeleteJob();
@@ -676,20 +679,20 @@ export class JobDataSourceImpl implements JobDataSource {
     return updatedJob.toJSON();
   }
 
-  
+
 
 
 
   async counts(query: JobQuery): Promise<JobCountEntity> {
     const loginId = query.id;
-    const monthToFilter= query.months|| [];
+    const monthToFilter = query.months || [];
     const yearToFilter = query.year;
 
-    console.log(yearToFilter,"years",query)
+    console.log(yearToFilter, "years", query)
 
-    const jobData=await Job.findAll({
-      where :{
-        jobOwnerId:loginId
+    const jobData = await Job.findAll({
+      where: {
+        jobOwnerId: loginId
       }
     })
     const conditionsMap: Record<string, any> = {
@@ -783,8 +786,8 @@ export class JobDataSourceImpl implements JobDataSource {
     };
 
     for (const key in conditionsMap) {
-      console.log(key,"key ")
-      let whereCondition: any =  {};
+      console.log(key, "key ")
+      let whereCondition: any = {};
       if (query.year) {
         // If year is provided, filter by year
         // console.log(query.year,"year inside if condition")
@@ -797,66 +800,66 @@ export class JobDataSourceImpl implements JobDataSource {
         };
         // console.log(whereCondition,"where condition inside year if")
       }
-     
+
 
       if (query.months && query.months.length > 0) {
         const validMonths = query.months.filter(month => !isNaN(month));
         const monthFilters = validMonths.map(month => Sequelize.where(
-            Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM date')),
-            month
+          Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM date')),
+          month
         ));
 
         whereCondition.date = {
-            ...whereCondition.date,
-            [Op.or]: monthFilters,
+          ...whereCondition.date,
+          [Op.or]: monthFilters,
         };
-    }
-      
-      
+      }
+
+
 
       const count = await Job.count({
-        where: {...conditionsMap[key].where,...whereCondition },
+        where: { ...conditionsMap[key].where, ...whereCondition },
         include: conditionsMap[key].include || [],
       });
-      console.log(count,"count ")
+      console.log(count, "count ")
       jobCounts[key as keyof JobCountEntity] = count;
     }
 
     return jobCounts;
   }
 
-  async graphData(query:JobQuery):Promise<ExpenditureGraphEntity>{
+  async graphData(query: JobQuery): Promise<ExpenditureGraphEntity> {
     console.log("inside dtsrc")
-    console.log(query,"query")
+    console.log(query, "query")
 
-       const currentYear = new Date().getFullYear();
-       const transactions = await Transactions.findAll({
-        where: {
-          fromRealtorId: query.id,
-        },
-      });
-      console.log(transactions,"transaction")
+    const currentYear = new Date().getFullYear();
+    const transactions = await Transactions.findAll({
+      where: {
+        fromRealtorId: query.id,
+      },
+    });
+    console.log(transactions, "transaction")
 
-      const transactionsByMonth: { [key: string]: any[] } = {};
-      const totalAmountByMonth: { [key: string]: number } = {};
+    const transactionsByMonth: { [key: string]: any[] } = {};
+    const totalAmountByMonth: { [key: string]: number } = {};
 
-      for (let i = 0; i < 12; i++) {
-        const monthName = new Date(new Date().getFullYear(), i).toLocaleString('default', { month: 'long' });
-        totalAmountByMonth[monthName] = 0;
-      }
+    for (let i = 0; i < 12; i++) {
+      const monthName = new Date(new Date().getFullYear(), i).toLocaleString('default', { month: 'long' });
+      totalAmountByMonth[monthName] = 0;
+    }
 
-      transactions.forEach((transaction: any) => {
-        const createdAt: Date = transaction.createdAt;
-        const month: number = createdAt.getMonth(); // Get month (0-indexed)
-        const monthName: string = new Date(new Date().getFullYear(), month).toLocaleString('default', { month: 'long' });
-        // const monthName: string = new Date(month).toLocaleString('default', { month: 'long' });
-    
-        totalAmountByMonth[monthName] += Number(transaction.amount);
-        // transactionsByMonth[monthName].push(transaction);
-      });
-      console.log(totalAmountByMonth,"transaction by month")
-      const expenditureGraph = new ExpenditureGraphEntity(totalAmountByMonth);
-      return expenditureGraph;
+    transactions.forEach((transaction: any) => {
+      const createdAt: Date = transaction.createdAt;
+      const month: number = createdAt.getMonth(); // Get month (0-indexed)
+      const monthName: string = new Date(new Date().getFullYear(), month).toLocaleString('default', { month: 'long' });
+      // const monthName: string = new Date(month).toLocaleString('default', { month: 'long' });
+
+      totalAmountByMonth[monthName] += Number(transaction.amount);
+      // transactionsByMonth[monthName].push(transaction);
+    });
+    console.log(totalAmountByMonth, "transaction by month")
+    const expenditureGraph = new ExpenditureGraphEntity(totalAmountByMonth);
+    return expenditureGraph;
   }
 
 
