@@ -157,7 +157,7 @@ class ApiError extends ErrorClass {
   }
   static cannotDeleteJob(): ApiError {
     return new ApiError(
-      HttpStatus.CONFLICT,
+      HttpStatus.METHOD_NOT_FOUND,
       ErrorMessage.CANNOT_DELETE_JOB,
       "cannot_delete_job"
     );

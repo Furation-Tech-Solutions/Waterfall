@@ -15,10 +15,9 @@ const postgressURL = env.postgressURL;
 try {
   if (postgressURL === undefined) {
     throw ApiError.SQLError();
-  }
+}
 
   sequelize.sync().then(() => {
-
     app.listen(env.port, () => {
       console.log("Table synchronized successfully.");
       console.log(`${Message.SERVER_RUNNING}  ${env.port}`);
@@ -29,7 +28,7 @@ try {
   const cronClass = new CronJob()
   cronClass.expiredJobNotification()
   cronClass.notifyOwnerNoApplicants()
-  // notificationWithCron()
+
 
 } catch (error) {
   console.log("error is this-", error, "error");
