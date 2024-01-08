@@ -215,9 +215,13 @@ export class JobCountModel{
     public scheduled: number = 0,
     public applied: number = 0,
     public assigned: number = 0,
-    public completedjobforapplicant: number = 0
+    public completedjobforapplicant: number = 0,
+    public feedbackGiven:number=0,
+    public feedbackTaken:number=0
   ){}
 }
+
+
 
 export class ExpenditureGraphModel{
   constructor(
@@ -234,12 +238,15 @@ export class JobCountEntity{
     public scheduled: number ,
     public applied: number ,
     public assigned: number ,
-    public completedjobforapplicant: number
+    public completedjobforapplicant: number,
+    public feedbackGiven:number,
+    public feedbackTaken:number
   ){}
 }
 export class ExpenditureGraphEntity{
   constructor(
-    public totals: { [key: string]: number }
+    public expenditure: { [key: string]: number },
+    public earning: { [key: string]: number }
     // public month: number ,
     // public amount: number ,
   ){}

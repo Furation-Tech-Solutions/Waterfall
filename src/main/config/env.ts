@@ -17,4 +17,7 @@ export default {
   user: process.env.USER,
   password: process.env.PASSWORD,
   postgressURL: process.env.POSTGRESS_URL ?? "",
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  stripe_public_key: process.env.STRIPE_PUBLIC_KEY,
+
 };

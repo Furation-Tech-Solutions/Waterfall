@@ -42,178 +42,166 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
     // Validate location
     location: isUpdate
       ? Joi.string().optional().min(5).max(200).messages({
-          "string.base": "Location must be a string",
-          "string.min": "Location should be at least 5 characters",
-          "string.max": "Location should be under 200 characters",
-          "any.required": "Location is required",
-        })
+        "string.base": "Location must be a string",
+        "string.min": "Location should be at least 5 characters",
+        "string.max": "Location should be under 200 characters",
+        "any.required": "Location is required",
+      })
       : Joi.string().required().min(5).max(200).messages({
-          "string.base": "Location must be a string",
-          "string.empty": "Location is required",
-          "string.min": "Location should be at least 5 characters",
-          "string.max": "Location should be under 200 characters",
-          "any.required": "Location is required",
-        }),
+        "string.base": "Location must be a string",
+        "string.empty": "Location is required",
+        "string.min": "Location should be at least 5 characters",
+        "string.max": "Location should be under 200 characters",
+        "any.required": "Location is required",
+      }),
 
     // Validate address
     address: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "Address must be a string",
-          "string.empty": "Address is required",
-          "any.required": "Address is required",
-        })
+        "string.base": "Address must be a string",
+        "string.empty": "Address is required",
+        "any.required": "Address is required",
+      })
       : Joi.string().required().messages({
-          "string.base": "Address must be a string",
-          "string.empty": "Address is required",
-          "any.required": "Address is required",
-        }),
+        "string.base": "Address must be a string",
+        "string.empty": "Address is required",
+        "any.required": "Address is required",
+      }),
 
     // Validate date
     date: isUpdate
       ? Joi.date().optional().messages({
-          "date.base": "Date must be a valid date",
-          "any.required": "Date is required",
-        })
+        "date.base": "Date must be a valid date",
+        "any.required": "Date is required",
+      })
       : Joi.date().required().messages({
-          "date.base": "Date must be a valid date",
-          "any.required": "Date is required",
-        }),
+        "date.base": "Date must be a valid date",
+        "any.required": "Date is required",
+      }),
 
     // Validate number of applicants
     numberOfApplicants: isUpdate
       ? Joi.string()
-          .valid(...Object.values(numberOfApplicantsEnum))
-          .optional()
-          .messages({
-            "any.only": "Invalid number of applicants",
-            "any.required": "Number of applicants is required",
-          })
+        .valid(...Object.values(numberOfApplicantsEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid number of applicants",
+          "any.required": "Number of applicants is required",
+        })
       : Joi.string()
-          .valid(...Object.values(numberOfApplicantsEnum))
-          .required()
-          .messages({
-            "any.only": "Invalid number of applicants",
-            "any.required": "Number of applicants is required",
-          }),
+        .valid(...Object.values(numberOfApplicantsEnum))
+        .required()
+        .messages({
+          "any.only": "Invalid number of applicants",
+          "any.required": "Number of applicants is required",
+        }),
 
     // Validate from time
     fromTime: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "From time must be a string",
-          "string.empty": "From time is required",
-          "any.required": "From time is required",
-        })
+        "string.base": "From time must be a string",
+        "string.empty": "From time is required",
+        "any.required": "From time is required",
+      })
       : Joi.string().required().messages({
-          "string.base": "From time must be a string",
-          "string.empty": "From time is required",
-          "any.required": "From time is required",
-        }),
+        "string.base": "From time must be a string",
+        "string.empty": "From time is required",
+        "any.required": "From time is required",
+      }),
 
     // Validate to time
     toTime: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "To time must be a string",
-          "string.empty": "To time is required",
-          "any.required": "To time is required",
-        })
+        "string.base": "To time must be a string",
+        "string.empty": "To time is required",
+        "any.required": "To time is required",
+      })
       : Joi.string().required().messages({
-          "string.base": "To time must be a string",
-          "string.empty": "To time is required",
-          "any.required": "To time is required",
-        }),
+        "string.base": "To time must be a string",
+        "string.empty": "To time is required",
+        "any.required": "To time is required",
+      }),
     applyBy: isUpdate
       ? Joi.date().optional().messages({
-          "applyBy.base": "applyBy must be a valid date",
-        })
+        "applyBy.base": "applyBy must be a valid date",
+      })
       : Joi.date().required().messages({
-          "applyBy.base": "applyBy must be a valid date",
-          "any.required": "applyBy is required",
-        }),
+        "applyBy.base": "applyBy must be a valid date",
+        "any.required": "applyBy is required",
+      }),
 
     // Validate job type
     jobType: isUpdate
       ? Joi.string()
-          .valid(...Object.values(jobTypeEnum))
-          .optional()
-          .messages({
-            "any.only": "Invalid job type",
-            "any.required": "Job type is required",
-          })
+        .valid(...Object.values(jobTypeEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid job type",
+          "any.required": "Job type is required",
+        })
       : Joi.string()
-          .valid(...Object.values(jobTypeEnum))
-          .required()
-          .messages({
-            "any.only": "Invalid job type",
-            "any.required": "Job type is required",
-          }),
+        .valid(...Object.values(jobTypeEnum))
+        .required()
+        .messages({
+          "any.only": "Invalid job type",
+          "any.required": "Job type is required",
+        }),
 
     // Validate client email
     clientEmail: isUpdate
       ? Joi.string().optional().email().messages({
-          "string.base": "Client email must be a string",
-          "string.empty": "Client email is required",
-          "string.email": "Invalid client email format",
-          "any.required": "Client email is required",
-        })
+        "string.base": "Client email must be a string",
+        "string.email": "Invalid client email format",
+      })
       : Joi.string().optional().email().messages({
-          "string.base": "Client email must be a string",
-          "string.empty": "Client email is required",
-          "string.email": "Invalid client email format",
-          "any.required": "Client email is required",
-        }),
+        "string.base": "Client email must be a string",
+        "string.email": "Invalid client email format",
+      }),
 
     // Validate client phone number
     clientPhoneNumber: isUpdate
       ? Joi.string()
-          .optional()
-          // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
-          .messages({
-            "string.base": "Client phone number must be a string",
-            "string.empty": "Client phone number is required",
-            "string.min": "contact should have at least 10 characters",
-            "string.max": "contact should have less than 13 characters",
-          })
+        .optional()
+        // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
+        .messages({
+          "string.base": "Client phone number must be a string",
+        })
       : Joi.string()
-          .optional()
-          .min(10)
-          .max(12)
-          // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
-          .messages({
-            "string.base": "Client phone number must be a string",
-            "string.empty": "Client phone number is required",
-            "string.min": "contact should have at least 10 characters",
-            "string.max": "contact should have less than 13 characters",
-          }),
+        .optional()
+        // .pattern(new RegExp(/^\d{3}-\d{3}-\d{4}$/))
+        .messages({
+          "string.base": "Client phone number must be a string",
+        }),
 
     // Validate fee type
     feeType: isUpdate
       ? Joi.string()
-          .valid(...Object.values(feeTypeEnum))
-          .optional()
-          .messages({
-            "any.only": "Invalid fee type",
-            "any.required": "Fee type is required",
-          })
+        .valid(...Object.values(feeTypeEnum))
+        .optional()
+        .messages({
+          "any.only": "Invalid fee type",
+          "any.required": "Fee type is required",
+        })
       : Joi.string()
-          .valid(...Object.values(feeTypeEnum))
-          .required()
-          .messages({
-            "any.only": "Invalid fee type",
-            "any.required": "Fee type is required",
-          }),
+        .valid(...Object.values(feeTypeEnum))
+        .required()
+        .messages({
+          "any.only": "Invalid fee type",
+          "any.required": "Fee type is required",
+        }),
 
     // Validate fee
     fee: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "Fee must be a string",
-          "string.empty": "Fee is required",
-          "any.required": "Fee is required",
-        })
+        "string.base": "Fee must be a string",
+        "string.empty": "Fee is required",
+        "any.required": "Fee is required",
+      })
       : Joi.string().required().messages({
-          "string.base": "Fee must be a string",
-          "string.empty": "Fee is required",
-          "any.required": "Fee is required",
-        }),
+        "string.base": "Fee must be a string",
+        "string.empty": "Fee is required",
+        "any.required": "Fee is required",
+      }),
 
     // Validate description
     description: Joi.string().optional().messages({
@@ -225,54 +213,54 @@ const jobValidator = (input: JobInput, isUpdate: boolean = false) => {
     // Validate attachments as an array of URIs
     attachments: isUpdate
       ? Joi.array().items(Joi.string().uri()).messages({
-          "array.base": "Attachments must be an array of strings",
-          "array.items": "Attachments must be valid URIs",
-        })
+        "array.base": "Attachments must be an array of strings",
+        "array.items": "Attachments must be valid URIs",
+      })
       : Joi.array().items(Joi.string().uri()).messages({
-          "array.base": "Attachments must be an array of strings",
-          "array.items": "Attachments must be valid URIs",
-        }),
+        "array.base": "Attachments must be an array of strings",
+        "array.items": "Attachments must be valid URIs",
+      }),
     // Validate delete reason
     deleteReason: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "Delete reason must be a string",
-          "string.empty": "Delete reason is required",
-          "any.required": "Delete reason is required",
-        })
+        "string.base": "Delete reason must be a string",
+        "string.empty": "Delete reason is required",
+        "any.required": "Delete reason is required",
+      })
       : Joi.string().optional().messages({
-          "string.base": "Delete reason must be a string",
-          "string.empty": "Delete reason is required",
-          "any.required": "Delete reason is required",
-        }),
+        "string.base": "Delete reason must be a string",
+        "string.empty": "Delete reason is required",
+        "any.required": "Delete reason is required",
+      }),
     jobProgress: isUpdate
       ? Joi.string().optional().messages({
-          "string.base": "jobProgress must be a string",
-        })
+        "string.base": "jobProgress must be a string",
+      })
       : Joi.string().optional().messages({
-          "string.base": "jobProgress must be a string",
-        }),
+        "string.base": "jobProgress must be a string",
+      }),
     coordinates: Joi.object({
       latitude: Joi.string().optional(),
       longitude: Joi.string().optional(),
     }),
     liveStatus: isUpdate
       ? Joi.boolean().optional().messages({
-          "boolean.base": "liveStatus must be a boolean",
-          "any.required": "liveStatus is required",
-        })
+        "boolean.base": "liveStatus must be a boolean",
+        "any.required": "liveStatus is required",
+      })
       : Joi.boolean().optional().messages({
-          "boolean.base": "liveStatus must be a boolean",
-          "any.required": "liveStatus is required",
-        }),
+        "boolean.base": "liveStatus must be a boolean",
+        "any.required": "liveStatus is required",
+      }),
     urgentRequirement: isUpdate
       ? Joi.boolean().optional().messages({
-          "boolean.base": "urgentRequirement must be a boolean",
-          "any.required": "urgentRequirement is required",
-        })
+        "boolean.base": "urgentRequirement must be a boolean",
+        "any.required": "urgentRequirement is required",
+      })
       : Joi.boolean().optional().messages({
-          "boolean.base": "urgentRequirement must be a boolean",
-          "any.required": "urgentRequirement is required",
-        }),
+        "boolean.base": "urgentRequirement must be a boolean",
+        "any.required": "urgentRequirement is required",
+      }),
   });
 
   // Validate the input against the schema
