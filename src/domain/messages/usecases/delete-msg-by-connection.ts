@@ -1,0 +1,29 @@
+// Import necessary dependencies and types
+import { ErrorClass } from "@presentation/error-handling/api-error";
+import { MessageEntity, MessageModel } from "../entities/msg"; // Import the MessagesModel and MessagesEntity
+import { MessagesRepository } from "../repositories/msg-repository"; // Import the MessagesRepository
+import { Either, Right, Left } from "monet";
+
+// Define the interface for the DeleteMessages use case
+export interface DeleteMessagesByConnectionUsecase {
+  execute: (connectionId: number) => Promise<Either<ErrorClass, void>>;
+}
+
+// Implement the Deletemessages use case
+export class DeleteMessageByConnection implements DeleteMessagesByConnectionUsecase {
+  private readonly messagesRepository: MessagesRepository;
+
+  // Constructor to initialize the messagesRepository
+  constructor(messagesRepository: MessagesRepository) {
+    this.messagesRepository = messagesRepository;
+  }
+
+  // Implementation of the execute method
+  // This method takes an ID and returns a Promise with an Either result
+  async execute(connectionId: number): Promise<Either<ErrorClass, void>> {
+    // Delegate the deletion of messages to the messagesRepository
+    return await this.messagesRepository.deleteMessagesByConnection(
+      connectionId
+    );
+  }
+}

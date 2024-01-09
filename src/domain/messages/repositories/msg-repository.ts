@@ -13,9 +13,7 @@ export interface MessagesRepository {
   ): Promise<Either<ErrorClass, MessageEntity>>;
   // Method to delete a message entity by its ID
   deleteMessage(id: string): Promise<Either<ErrorClass, void>>;
-  getMessageById(
-    id: string
-  ): Promise<Either<ErrorClass, MessageEntity>>;
+  getMessageById(id: string): Promise<Either<ErrorClass, MessageEntity>>;
   updateMessage(
     id: string,
     data: MessageModel
@@ -24,4 +22,7 @@ export interface MessagesRepository {
     loginId: string,
     query: Query
   ): Promise<Either<ErrorClass, MessageEntity[]>>;
+  deleteMessagesByConnection(
+    connectionId: number
+  ): Promise<Either<ErrorClass, void>>;
 }

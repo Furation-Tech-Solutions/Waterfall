@@ -13,6 +13,7 @@ import { GetAllMessageUsecase } from "@domain/messages/usecases/get-all-msg";
 import { Either } from "monet";
 import { Query } from "@data/messages/datasources/msg-datasource";
 import { NotificationSender } from "./push-notification-services";
+import { DeleteMessagesByConnectionUsecase } from "@domain/messages/usecases/delete-msg-by-connection";
 
 export class MessagesServices {
   private readonly createMessagesUsecase: CreateMessagesUsecase;
@@ -20,19 +21,22 @@ export class MessagesServices {
   private readonly getByIdMessageUsecase: GetByIdMessageUsecase;
   private readonly updateMessageUsecase: UpdateMessageUsecase;
   private readonly getAllMessageUsecase: GetAllMessageUsecase;
+  private readonly deleteMessagesByConnectionUsecase: DeleteMessagesByConnectionUsecase;
 
   constructor(
     createMessagesUsecase: CreateMessagesUsecase,
     deleteMessagesUsecase: DeleteMessagesUsecase,
     getByIdMessageUsecase: GetByIdMessageUsecase,
     updateMessageUsecase: UpdateMessageUsecase,
-    getAllMessageUsecase: GetAllMessageUsecase
+    getAllMessageUsecase: GetAllMessageUsecase,
+    deleteMessagesByConnectionUsecase: DeleteMessagesByConnectionUsecase
   ) {
     this.createMessagesUsecase = createMessagesUsecase;
     this.deleteMessagesUsecase = deleteMessagesUsecase;
     this.getByIdMessageUsecase = getByIdMessageUsecase;
     this.updateMessageUsecase = updateMessageUsecase;
     this.getAllMessageUsecase = getAllMessageUsecase;
+    this.deleteMessagesByConnectionUsecase = deleteMessagesByConnectionUsecase;
   }
 
   private sendSuccessResponse(
@@ -76,11 +80,15 @@ export class MessagesServices {
           201
         );
         // console.log(result)
-        const pushNotification = new NotificationSender()
-        pushNotification.customNotification(result.senderId, result.receiverId, "sendMessage")
+        const pushNotification = new NotificationSender();
+        pushNotification.customNotification(
+          result.senderId,
+          result.receiverId,
+          "sendMessage"
+        );
       }
     );
-    // 
+    //
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {
@@ -92,12 +100,7 @@ export class MessagesServices {
     deletedMessages.cata(
       (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
       () => {
-        this.sendSuccessResponse(
-          res,
-          {},
-          "Message deleted successfully",
-          204
-        );
+        this.sendSuccessResponse(res, {}, "Message deleted successfully", 204);
       }
     );
   }
@@ -133,10 +136,8 @@ export class MessagesServices {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-
     let loginId = req.user as string;
     // let Id = req.user;
-
 
     const query: Query = {};
 
@@ -147,7 +148,6 @@ export class MessagesServices {
     query.searchList = req.query.search as string;
     // query.toId = toId;
     query.toId = req.headers.toid as string;
-
 
     const clientMessages: Either<ErrorClass, MessageEntity[]> =
       await this.getAllMessageUsecase.execute(loginId, query);
@@ -179,14 +179,14 @@ export class MessagesServices {
         this.sendErrorResponse(res, error, 404);
       },
       async (existingData: MessageEntity) => {
-        const updatedMessageEntity: MessageEntity =
-          MessageMapper.toEntity(Data, true, existingData);
+        const updatedMessageEntity: MessageEntity = MessageMapper.toEntity(
+          Data,
+          true,
+          existingData
+        );
 
         const updatedMessages: Either<ErrorClass, MessageEntity> =
-          await this.updateMessageUsecase.execute(
-            id,
-            updatedMessageEntity
-          );
+          await this.updateMessageUsecase.execute(id, updatedMessageEntity);
 
         updatedMessages.cata(
           (error: ErrorClass) => {
@@ -201,6 +201,18 @@ export class MessagesServices {
             );
           }
         );
+      }
+    );
+  }
+  async deleteMessageByConnection(req: Request, res: Response): Promise<void> {
+    let connectionId = parseInt(req.params.connectionId, 10);
+    const deletedMessagesByConnection: Either<ErrorClass, void> =
+      await this.deleteMessagesByConnectionUsecase.execute(connectionId);
+
+    deletedMessagesByConnection.cata(
+      (error: ErrorClass) => this.sendErrorResponse(res, error, 404),
+      () => {
+        this.sendSuccessResponse(res, {}, "Message deleted successfully", 204);
       }
     );
   }

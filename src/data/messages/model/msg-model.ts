@@ -10,6 +10,11 @@ export const messageTypeEnum = {
   OTHERS: "Others",
 };
 
+export const seenEnum = {
+  READ: "Read",
+  UNREAD: "Unread"
+};
+
 // Define a Sequelize model called 'Message' with three fields: 'sender', 'receiver', and 'message'
 const Message = sequelize.define("Message", {
   // Define the 'sender' field
@@ -37,9 +42,9 @@ const Message = sequelize.define("Message", {
   messageType: {
     type: DataTypes.ENUM(...Object.values(messageTypeEnum)),
   },
-  seen: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+  status: {
+    type: DataTypes.ENUM(...Object.values(seenEnum)),
+
   },
 });
 

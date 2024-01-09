@@ -25,9 +25,7 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     data: MessageModel
   ): Promise<Either<ErrorClass, MessageEntity>> {
     try {
-      const createdMessage = await this.messageDataSource.createMsg(
-        data
-      ); // Use the createdMessage data source
+      const createdMessage = await this.messageDataSource.createMsg(data); // Use the createdMessage data source
 
       return Right<ErrorClass, MessageEntity>(createdMessage);
     } catch (error: any) {
@@ -38,13 +36,9 @@ export class MessagesRepositoryImpl implements MessagesRepository {
   }
 
   // Delete a message entry by ID
-  async deleteMessage(
-    id: string
-  ): Promise<Either<ErrorClass, void>> {
+  async deleteMessage(id: string): Promise<Either<ErrorClass, void>> {
     try {
-      const result = await this.messageDataSource.deleteMsg(
-        id
-      ); // Use the messages data source
+      const result = await this.messageDataSource.deleteMsg(id); // Use the messages data source
 
       return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
     } catch (e) {
@@ -61,10 +55,7 @@ export class MessagesRepositoryImpl implements MessagesRepository {
     data: MessageModel
   ): Promise<Either<ErrorClass, MessageEntity>> {
     try {
-      const updatedMessages = await this.messageDataSource.updateMsg(
-        id,
-        data
-      ); // Use the Messages data source
+      const updatedMessages = await this.messageDataSource.updateMsg(id, data); // Use the Messages data source
       return Right<ErrorClass, MessageEntity>(updatedMessages);
     } catch (e) {
       return Left<ErrorClass, MessageEntity>(ApiError.badRequest());
@@ -94,19 +85,34 @@ export class MessagesRepositoryImpl implements MessagesRepository {
   }
 
   // Retrieve a message entry by its ID
-  async getMessageById(
-    id: string
-  ): Promise<Either<ErrorClass, MessageEntity>> {
+  async getMessageById(id: string): Promise<Either<ErrorClass, MessageEntity>> {
     try {
-      const messages = await this.messageDataSource.read(
-        id
-      ); // Use the messages data source
+      const messages = await this.messageDataSource.read(id); // Use the messages data source
       return Right<ErrorClass, MessageEntity>(messages);
     } catch (e) {
       if (e instanceof ApiError && e.name === "notfound") {
         return Left<ErrorClass, MessageEntity>(ApiError.notFound());
       }
       return Left<ErrorClass, MessageEntity>(ApiError.badRequest());
+    }
+  }
+  // Delete a message entry by ID
+  async deleteMessagesByConnection(
+    connectionId: number
+  ): Promise<Either<ErrorClass, void>> {
+    try {
+      const result = await this.messageDataSource.deleteMessagesByConnectionId(
+        connectionId
+      ); // Use the messages data source
+
+      return Right<ErrorClass, void>(result); // Return Right if the deletion was successful
+    } catch (e) {
+      if (e instanceof ApiError && e.name === "notfound") {
+        console.log(e);
+        
+        return Left<ErrorClass, void>(ApiError.notFound());
+      }
+      return Left<ErrorClass, void>(ApiError.badRequest());
     }
   }
 }

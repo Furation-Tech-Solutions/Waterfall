@@ -1,0 +1,35 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.io Chat</title>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+      const socket = io("http://localhost:8080/", {
+        transports: ["websocket"],
+      });
+
+      // Get the connectionId from the server
+      const connectionId = "1";
+
+      // Join the room using the connectionId
+      socket.emit("joinRoom", connectionId);
+
+      // Listen for new messages
+      socket.on("newMessage", (data) => {
+        console.log("New Message:", data);
+        // Handle displaying the new message in your UI
+      });
+
+      // Example sending a message
+      const senderId = "1"; // Replace with the actual sender's ID
+      const content = "where are you?";
+      socket.emit("sendMessage", { connectionId, senderId, content });
+    </script>
+  </body>
+</html>

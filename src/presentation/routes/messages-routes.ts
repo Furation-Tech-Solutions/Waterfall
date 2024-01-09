@@ -1,4 +1,3 @@
-
 import { sequelize } from "@main/sequelizeClient";
 import { Router } from "express";
 import { MessagesServices } from "@presentation/services/messages-services"; // Import the messagesServices
@@ -11,6 +10,7 @@ import { GetByIdMessage } from "@domain/messages/usecases/get-msg-by-id";
 import { UpdateMessage } from "@domain/messages/usecases/update-msg";
 import { validateMessageInputMiddleware } from "@presentation/middlewares/message/validation-middleware";
 import { verifyUser } from "@presentation/middlewares/authentication/authentication-middleware";
+import { DeleteMessageByConnection } from "@domain/messages/usecases/delete-msg-by-connection";
 
 // import { validatemessagesInputMiddleware } from "@presentation/middlewares/messages/validation-messages";
 
@@ -26,6 +26,9 @@ const deleteMessagesUsecase = new DeleteMessage(messagesRepository);
 const getMessagesByIdUsecase = new GetByIdMessage(messagesRepository);
 const getAllMessagesUsecase = new GetAllMessage(messagesRepository);
 const updateMessagesUsecase = new UpdateMessage(messagesRepository);
+const deleteMessagesByConnectionUsecase = new DeleteMessageByConnection(
+  messagesRepository
+);
 
 // Initialize messagesServices and inject required dependencies
 const messagesService = new MessagesServices(
@@ -33,7 +36,8 @@ const messagesService = new MessagesServices(
   deleteMessagesUsecase,
   getMessagesByIdUsecase,
   updateMessagesUsecase,
-  getAllMessagesUsecase
+  getAllMessagesUsecase,
+  deleteMessagesByConnectionUsecase
 );
 
 // Create an Express router
@@ -62,7 +66,11 @@ messagesRouter.get(
 );
 
 // Route handling for getting all messages
-messagesRouter.get("/",verifyUser, messagesService.getAllMessages.bind(messagesService));
+messagesRouter.get(
+  "/",
+  verifyUser,
+  messagesService.getAllMessages.bind(messagesService)
+);
 
 // Route handling for updating a messages by ID
 messagesRouter.put(
@@ -70,4 +78,11 @@ messagesRouter.put(
   verifyUser,
   validateMessageInputMiddleware(true),
   messagesService.updateMessages.bind(messagesService)
+);
+
+// Route handling for deleting a messages by ID
+messagesRouter.delete(
+  "/byConnection/:connectionId",
+  verifyUser,
+  messagesService.deleteMessageByConnection.bind(messagesService)
 );

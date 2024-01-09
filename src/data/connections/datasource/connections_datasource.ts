@@ -17,6 +17,7 @@ export interface Query {
   toId: string;
 }
 
+
 // Create ConnectionsDataSource Interface
 export interface ConnectionsDataSource {
 
@@ -30,13 +31,15 @@ export interface ConnectionsDataSource {
 
 // Connections Data Source communicates with the database
 export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
-  constructor(private db: Sequelize) { }
+  constructor(private db: Sequelize) {}
 
   // Create a new connection
   async createReq(newConnection: any): Promise<ConnectionsEntity> {
     if (newConnection.fromId === newConnection.toId) {
-      throw new Error("Connection cannot be created as sender and receiver are same.");
-    };
+      throw new Error(
+        "Connection cannot be created as sender and receiver are same."
+      );
+    }
 
     const existingConnection = await Connections.findOne({
       where: {
@@ -85,24 +88,30 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
 
   // Delete a connection
   async deleteReq(id: string, loginId: string): Promise<void> {
-    const deletedConnection = await Connections.destroy({
+
+    // Find the connection to be deleted
+    const connection: any = await Connections.findOne({
       where: {
         [Op.or]: [
-          {
-            toId: id,
-            fromId: loginId,
-          },
-          {
-            fromId: id,
-            toId: loginId,
-          },
+          { toId: id, fromId: loginId },
+          { fromId: id, toId: loginId },
         ],
       },
     });
-
-    if (deletedConnection === 0) {
-      // Handle error if deletion was not successful
+    if (!connection) {
+      // Handle error if the connection is not found
+      throw ApiError.notFound();
     }
+
+    // Manually delete associated messages
+    await Message.destroy({
+      where: {
+        connectionId: connection.id as number, // Assuming 'id' is of type number
+      },
+    });
+
+    // Use Sequelize's destroy method to delete the connection
+    await connection.destroy();
   }
 
   // Retrieve a connection by ID
@@ -163,7 +172,10 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Retrieve connections based on a query
-  async getAll(loginId: string, query: Query): Promise<ConnectionsEntity[] | any[]> {
+  async getAll(
+    loginId: string,
+    query: Query
+  ): Promise<ConnectionsEntity[] | any[]> {
     const loginID = loginId;
     const currentPage = query.page || 1;
     const itemsPerPage = query.limit || 10;
@@ -206,13 +218,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             friend.fromId === id ? friend.toId : friend.fromId
           )
           .filter((id: string | null) => id !== null);
-        console.log(friendIds, "friendIds from 199");// working
+        console.log(friendIds, "friendIds from 199"); // working
         return friendIds;
       };
 
-      const [myFriends] = await Promise.all([
-        findFriendIds(loginID),
-      ]);
+      const [myFriends] = await Promise.all([findFriendIds(loginID)]);
 
       const friendsArray: any[] = await Promise.all(
         myFriends.map(async (friendId: string) => {
@@ -268,9 +278,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
         return friendIds;
       };
 
-      const [myFriends] = await Promise.all([
-        findFriendIds(loginID),
-      ]);
+      const [myFriends] = await Promise.all([findFriendIds(loginID)]);
 
       const friendsArray: any[] = await Promise.all(
         myFriends.map(async (friendId: string) => {
@@ -366,7 +374,7 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             [Op.not]: loginID, // Exclude the current user
             [Op.notIn]: myFriends.map((friend: any) => friend), // Exclude existing friends
           },
-          deletedStatus: false
+          deletedStatus: false,
           // location: user.location
         },
       });
@@ -401,7 +409,11 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
   }
 
   // Update a connection by ID
-  async updateReq(id: string, loginId: string, updatedData: any): Promise<ConnectionsEntity> {
+  async updateReq(
+    id: string,
+    loginId: string,
+    updatedData: any
+  ): Promise<ConnectionsEntity> {
     // console.log(id, loginId, updatedData);
     const connection: any = await Connections.findOne({
       where: {
