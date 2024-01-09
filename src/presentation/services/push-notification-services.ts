@@ -47,6 +47,9 @@ export class NotificationSender {
 
         case 'noApplicantsNotification':
            return this.realtorDataSource.read(senderId)
+
+        case 'successfullPayment':
+           return this.realtorDataSource.read(senderId)
   
       default:
         throw new Error('Invalid event type');
@@ -86,6 +89,9 @@ export class NotificationSender {
            return this.realtorDataSource.read(receiverId)
 
         case 'noApplicantsNotification':
+           return this.realtorDataSource.read(receiverId)
+
+        case 'successfullPayment':
            return this.realtorDataSource.read(receiverId)
   
       // Add other cases for different event types
@@ -146,6 +152,11 @@ export class NotificationSender {
         case 'noApplicantsNotification':
         title = 'Action Required: No Applicants Received';
         body = `Hi ${receiver.firstName}, it seems your job listing hasn't received any applicants. Consider renewing or reposting it to attract more candidates and keep it active.`;
+        break;
+
+        case 'successfullPayment':
+        title = 'Payment Status:Payment Success';
+        body = `Hello ${receiver.firstName}, your payment has been successfully processed! `;
         break;
         
 

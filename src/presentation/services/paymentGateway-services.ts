@@ -21,6 +21,7 @@ import { UpdateAccountUsecase } from "@domain/paymentGateway/usecases/updateAcco
 import ApiError, { ErrorClass } from "@presentation/error-handling/api-error";
 import { Either } from "monet";
 import { Query } from "@data/paymentGateway/datasources/paymentGateway-data-sources";
+import { NotificationSender } from "./push-notification-services";
 
 export class PaymentGatewayService {
   private readonly createPaymentGatewayUsecase: CreatePaymentGatewayUsecase;
@@ -361,8 +362,19 @@ export class PaymentGatewayService {
       (result: any) => {
         if (result.length === 0) {
           this.sendSuccessResponse(res, [], "Success", 200);
+          console.log(result,"result")
+          // if(result.status==="successsed"){
+
+          // }
+         
         } else {
           this.sendSuccessResponse(res, result);
+          const pushNotification = new NotificationSender()
+
+          if(result.status==='succeeded'){
+          pushNotification.customNotification(result.fromRealtorId, result.toRealtorId, "successfullPayment")
+          pushNotification.customNotification(result.toRealtorId, result.fromRealtorId, "successfullPayment")
+          }
         }
       }
     )

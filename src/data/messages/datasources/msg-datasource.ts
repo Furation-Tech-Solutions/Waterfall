@@ -22,6 +22,7 @@ export interface MessageDataSource {
   deleteMsg(id: string): Promise<void>;
   read(id: string): Promise<any | null>;
   getAll(loginId: string, query: Query): Promise<MessageEntity[]>;
+  deleteMessagesByConnectionId(connectionId: number): Promise<void>;
 }
 
 // Message Data Source communicates with the database
@@ -234,37 +235,36 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       });
 
       return data.map((msg: any) => msg.toJSON());
-    } 
-      // If no searchList, get all messages
-      const data = await Message.findAll({
-        where: {
-          [Op.or]: [
-            {
-              senderId: loginId,
-            },
-            {
-              receiverId: loginId,
-            },
-          ],
-        },
-        include: [
+    }
+    // If no searchList, get all messages
+    const data = await Message.findAll({
+      where: {
+        [Op.or]: [
           {
-            model: Realtors,
-            as: "senderData",
-            foreignKey: "senderId",
+            senderId: loginId,
           },
           {
-            model: Realtors,
-            as: "receiverData",
-            foreignKey: "receiverId",
+            receiverId: loginId,
           },
         ],
-        limit: itemsPerPage,
-        offset: offset,
-      });
+      },
+      include: [
+        {
+          model: Realtors,
+          as: "senderData",
+          foreignKey: "senderId",
+        },
+        {
+          model: Realtors,
+          as: "receiverData",
+          foreignKey: "receiverId",
+        },
+      ],
+      limit: itemsPerPage,
+      offset: offset,
+    });
 
-      return data.map((msg: any) => msg.toJSON());
-    
+    return data.map((msg: any) => msg.toJSON());
   }
 
   async updateMsg(id: string, updatedData: any): Promise<MessageEntity> {
@@ -290,5 +290,20 @@ export class MessagesDataSourceImpl implements MessageDataSource {
       throw ApiError.notFound();
     }
     return updatedMessages.toJSON();
+  }
+  // Inside MessagesDataSourceImpl class
+  async deleteMessagesByConnectionId(connectionId: number): Promise<void> {
+    // try {
+    //   // Delete all messages associated with the given connectionId
+      const deleteMessageByConnection =await Message.destroy({
+        where: {
+          connectionId,
+        },
+      });
+  //   } catch (error) {
+  //     // Handle any errors during the deletion process
+  //     console.error("Error deleting messages by connectionId:", error);
+  //     throw new Error("Error deleting messages by connectionId");
+  //   }
   }
 }
