@@ -11,7 +11,7 @@ interface MessageInput {
   message: string;
   connectionId: number;
   messageType: string;
-  seen:boolean;
+  status: { senderId: string; receiverId: string };
 }
 
 // Create a function for validating the Message input
@@ -34,11 +34,17 @@ const messageValidator = async (input: MessageInput, isUpdate: boolean = false) 
       "string.base": "Message must be a string",
       "any.required": "Message is required",
     }),
-    messageType: Joi.string().valid("Text", "Image", "Others").required().messages({
-      "any.only": "Invalid messageType",
-      "any.required": "MessageType is required",
+    messageType: Joi.string()
+      .valid("Text", "Image", "Others")
+      .required()
+      .messages({
+        "any.only": "Invalid messageType",
+        "any.required": "MessageType is required",
+      }),
+    status: Joi.object({
+      senderId: Joi.string().optional(),
+      receiverId: Joi.string().optional(),
     }),
-    seen: Joi.boolean().optional(),
   });
 
   // Validate the input against the schema

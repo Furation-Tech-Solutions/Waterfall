@@ -12,7 +12,10 @@ export class MessageModel {
     public connectionId: number = 0,
     public message: string = "",
     public messageType: string = "",
-    public seen: boolean = false,
+    public status: { senderId: string; receiverId: string }= {
+      senderId: "Read",
+      receiverId: "Unread",
+    }
   ) {}
 }
 
@@ -24,7 +27,7 @@ export class MessageEntity {
     public connectionId: number,
     public message: string,
     public messageType: string,
-    public seen: boolean
+    public status: { senderId: string; receiverId: string },
   ) {}
 }
 
@@ -42,7 +45,7 @@ export class MessageMapper {
         connectionId: messageData.connectionId ?? existingMessage.connectionId,
         message: messageData.message ?? existingMessage.message,
         messageType: messageData.messageType ?? existingMessage.messageType,
-        seen: messageData.seen ?? existingMessage.seen,
+        status: messageData.status ?? existingMessage.status,
       };
     } else {
       const messageEntity: MessageEntity = {
@@ -52,7 +55,7 @@ export class MessageMapper {
         connectionId: messageData.connectionId,
         message: messageData.message,
         messageType: messageData.messageType,
-        seen: messageData.seen,
+        status: messageData.status,
       };
       return messageEntity;
     }
@@ -65,7 +68,7 @@ export class MessageMapper {
       connectionId: message.connectionId,
       message: message.message,
       messageType: message.messageType,
-      seen: message.seen,
+      status: message.status,
     };
   }
 }
