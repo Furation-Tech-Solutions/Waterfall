@@ -16,7 +16,7 @@ export const seenEnum = {
 };
 
 // Define a Sequelize model called 'Message' with three fields: 'sender', 'receiver', and 'message'
-const Message = sequelize.define("Message", {
+const Message = sequelize.define("MessageTesting", {
   // Define the 'sender' field
   senderId: {
     type: DataTypes.STRING,
