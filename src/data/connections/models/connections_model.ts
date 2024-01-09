@@ -6,7 +6,7 @@ import { sequelize } from "@main/sequelizeClient"; // Importing the sequelize in
 import Realtors from "@data/realtors/model/realtor-model"; // Importing the Realtors model
 
 // Define a Sequelize model called "Connections"
-const Connections = sequelize.define("Connections", {
+const Connections = sequelize.define("ConnectionsTesting", {
   // Define the "fromId" field with an INTEGER data type, which cannot be null
   fromId: {
     type: DataTypes.STRING,
