@@ -5,7 +5,8 @@ export class ConnectionsModel {
     public toId: string = "",
     public fromData: {} = {},
     public toData: {} = {},
-    public connected: boolean = false
+    public connected: boolean = false,
+    public messagesData: [] = [],
   ) {}
 }
 
@@ -17,7 +18,8 @@ export class ConnectionsEntity {
     public toId: string,
     public connected: boolean,
     public fromData: {},
-    public toData: {}
+    public toData: {},
+    public messagesData: [],
   ) {}
 }
 
@@ -58,6 +60,7 @@ export class ConnectionMapper {
         connected: connectionData.connected,
         toData: connectionData.toData,
         fromData: connectionData.fromData,
+        messagesData: connectionData.messagesData,
       };
       return connectionEntity;
     }
@@ -71,6 +74,7 @@ export class ConnectionMapper {
       connected: connection.connected,
       fromData: connection.fromData,
       toData: connection.toData,
+      messagesData: connection.messagesData,
     };
   }
 }

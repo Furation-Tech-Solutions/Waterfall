@@ -1,27 +1,33 @@
-// Define a class for the MessageModel, representing the structure of data sent in Express API requests
+
+export const messageTypeEnum = {
+  TEXT: "Text",
+  IMAGE: "Image",
+  OTHERS: "Others",
+};
+
 export class MessageModel {
   constructor(
     public senderId: string = "",
     public receiverId: string = "",
+    public connectionId: number = 0,
     public message: string = "",
-    public senderData: {} = {},
-    public receiverData: {} = {}
+    public messageType: string = "",
+    public seen: boolean = false,
   ) {}
 }
 
-// Define a class for the MessageEntity, representing data provided by the Message Repository and converted to an Express API response
 export class MessageEntity {
   constructor(
-    public id: number | undefined = undefined, // Set a default value for id
+    public id: number | undefined = undefined,
     public senderId: string,
     public receiverId: string,
+    public connectionId: number,
     public message: string,
-    public senderData: {},
-    public receiverData: {}
+    public messageType: string,
+    public seen: boolean
   ) {}
 }
 
-// Define a MessageMapper class to handle the mapping between MessageModel and MessageEntity
 export class MessageMapper {
   static toEntity(
     messageData: any,
@@ -29,48 +35,41 @@ export class MessageMapper {
     existingMessage?: MessageEntity
   ): MessageEntity {
     if (existingMessage != null) {
-      // If existingMessage is provided, merge the data from messageData with the existingMessage
       return {
         ...existingMessage,
-        senderId:
-          messageData.senderId !== undefined
-            ? messageData.senderId
-            : existingMessage.senderId,
-        receiverId:
-          messageData.receiverId !== undefined
-            ? messageData.receiverId
-            : existingMessage.receiverId,
-        message:
-          messageData.message !== undefined
-            ? messageData.message
-            : existingMessage.message,
+        senderId: messageData.senderId ?? existingMessage.senderId,
+        receiverId: messageData.receiverId ?? existingMessage.receiverId,
+        connectionId: messageData.connectionId ?? existingMessage.connectionId,
+        message: messageData.message ?? existingMessage.message,
+        messageType: messageData.messageType ?? existingMessage.messageType,
+        seen: messageData.seen ?? existingMessage.seen,
       };
     } else {
-      // If existingMessage is not provided, create a new MessageEntity using messageData
       const messageEntity: MessageEntity = {
-        id: includeId
-          ? messageData.id
-            ? messageData.id
-            : undefined
-          : messageData.id,
+        id: includeId ? messageData.id ?? undefined : messageData.id,
         senderId: messageData.senderId,
         receiverId: messageData.receiverId,
+        connectionId: messageData.connectionId,
         message: messageData.message,
-        senderData: messageData.senderData,
-        receiverData: messageData.receiverData,
+        messageType: messageData.messageType,
+        seen: messageData.seen,
       };
       return messageEntity;
     }
   }
 
-  // Convert a MessageEntity to a format suitable for a model
   static toModel(message: MessageEntity): any {
     return {
       senderId: message.senderId,
       receiverId: message.receiverId,
+      connectionId: message.connectionId,
       message: message.message,
-      senderData: message.senderData,
-      receiverData: message.receiverData,
+      messageType: message.messageType,
+      seen: message.seen,
     };
   }
 }
+
+
+
+// export { MessageModel, MessageEntity, MessageMapper };

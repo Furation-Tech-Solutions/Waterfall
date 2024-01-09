@@ -7,6 +7,7 @@ import Realtors from "@data/realtors/model/realtor-model";
 import { connections } from "mongoose";
 import { RealtorEntity, RealtorModel } from "@domain/realtors/entities/realtors";
 import Blocking from "@data/blocking/model/blocking-model";
+import Message from "@data/messages/model/msg-model";
 
 // Define a JobApplicantQuery object to encapsulate parameters
 export interface Query {
@@ -120,6 +121,10 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
           model: Realtors,
           as: "toData",
           foreignKey: "toId",
+        },
+        {
+          model: Message,
+          as: "messagesData", // Include the associated applicants' data
         },
       ],
     });
@@ -381,10 +386,15 @@ export class ConnectionsDataSourceImpl implements ConnectionsDataSource {
             as: "toData",
             foreignKey: "toId",
           },
+          {
+            model: Message,
+            as: "messagesData", // Include the associated applicants' data
+          },
         ],
         limit: itemsPerPage,
         offset: offset,
       });
+      console.log(data);
 
       return data.map((connection: any) => connection.toJSON());
     }
